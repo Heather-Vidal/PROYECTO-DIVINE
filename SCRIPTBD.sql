@@ -15,30 +15,30 @@ CREATE SCHEMA IF NOT EXISTS `DIVINE` DEFAULT CHARACTER SET utf8 ;
 USE `DIVINE` ;
 
 -- -----------------------------------------------------
+-- Table `DIVINE`.`CLIENTE`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `DIVINE`.`CLIENTE` (
+  `CI` INT NOT NULL,
+  `nombre` VARCHAR(45) NULL,
+  `direccion` VARCHAR(45) NULL,
+  `celular` INT NULL,
+  `rol` VARCHAR(45) NULL,
+  `estado` VARCHAR(45) NULL,
+  PRIMARY KEY (`CI`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `DIVINE`.`PRODUCTO`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `DIVINE`.`PRODUCTO` (
   `codigo` INT NOT NULL,
   `nombre` VARCHAR(45) NULL,
-  `cantidad` INT NULL,
+  `descripcion` VARCHAR(45) NULL,
   `precio` INT NULL,
   `costo` INT NULL,
-  `categoria` VARCHAR(45) NULL,
+  `stock` INT NULL,
   PRIMARY KEY (`codigo`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `DIVINE`.`CLIENTE`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `DIVINE`.`CLIENTE` (
-  `dni` INT NOT NULL,
-  `nombre` VARCHAR(45) NULL,
-  `apellido` VARCHAR(45) NULL,
-  `direccion` VARCHAR(45) NULL,
-  `nacimiento` DATE NULL,
-  `telefono` INT NULL,
-  PRIMARY KEY (`dni`))
 ENGINE = InnoDB;
 
 

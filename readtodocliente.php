@@ -187,14 +187,14 @@ body {
 <?php
 while($fila=$resultado->fetch_assoc()){
   echo "<div class='item'>";
-  echo "<p><span>DNI:</span> ".$fila['dni']."</p>";
-  echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
+  echo "<p><span>CI:</span> ".$fila['CI']."</p>";
+  echo "<p><span>nombre:</span> ".$fila['nombre']."</p>";
   echo "<p><span>Apellido:</span> ".$fila['apellido']."</p>";
   echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
   echo "<p><span>Fecha de Nacimiento:</span> ".$fila['nacimiento']."</p>";
   echo "<p><span>Telefono:</span> ".$fila['telefono']."</p>";
 
-  $dni=$fila['dni'];
+  $CI=$fila['CI'];
 
   echo "<div class='botones'>";
   echo "<a href='readunocliente.php? dni=$dni '><button>Mostrar</button></a>";
