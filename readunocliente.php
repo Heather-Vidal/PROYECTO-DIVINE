@@ -10,8 +10,8 @@ if($conn->connect_error){
   echo"OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
 }
 
-$dni=$_GET['dni'];
-$sql="SELECT * FROM CLIENTE WHERE dni=$dni";
+$CI=$_GET['CI'];
+$sql="SELECT * FROM CLIENTE WHERE CI=$CI";
 $resultado=$conn-> query($sql);
 
 if($resultado->num_rows > 0){
@@ -175,14 +175,14 @@ body {
     <div class="item">
 <?php
 while($fila=$resultado->fetch_assoc()){
-  echo "<p><span>DNI:</span> ".$fila['dni']."</p>";
+  echo "<p><span>CI:</span> ".$fila['CI']."</p>";
   echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>Apellido:</span> ".$fila['apellido']."</p>";
-  echo "<p><span>Dirección:</span> ".$fila['direccion']."</p>";
-  echo "<p><span>Fecha de Nacimiento:</span> ".$fila['nacimiento']."</p>";
-  echo "<p><span>Teléfono:</span> ".$fila['telefono']."</p>";
+  echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
+  echo "<p><span>Telefono:</span> ".$fila['celular']."</p>";
+  echo "<p><span>Rol:</span> ".$fila['rol']."</p>";
+  echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
 
-  $dni=$fila['dni'];
+  $CI=$fila['CI'];
 }
 ?>
     </div>
