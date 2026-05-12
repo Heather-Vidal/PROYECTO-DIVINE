@@ -145,10 +145,10 @@ body {
 if($conn->connect_error){
   echo "<div class='mensaje error'>❌ OCURRIÓ UN ERROR AL CONECTAR A LA BASE DE DATOS</div>";
 } else {
-    $dni = $_GET['dni'] ?? '';
+    $ci = $_GET['ci'] ?? '';
 
-    if($dni){
-        $sql="DELETE FROM CLIENTE WHERE dni=$dni";
+    if($ci){
+        $sql="DELETE FROM CLIENTE WHERE CI=$ci";
 
         if ($conn->query($sql)=== TRUE){
             echo "<div class='mensaje exito'>✔ EL CLIENTE HA SIDO ELIMINADO CON ÉXITO</div>";
@@ -156,7 +156,7 @@ if($conn->connect_error){
             echo "<div class='mensaje error'>⚠ ERROR AL ELIMINAR: ".$conn->error."</div>";
         }
     } else {
-        echo "<div class='mensaje error'>❌ DNI no especificado</div>";
+        echo "<div class='mensaje error'>❌ CI no especificado</div>";
     }
 }
 

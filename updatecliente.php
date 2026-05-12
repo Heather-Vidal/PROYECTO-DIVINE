@@ -148,14 +148,14 @@ if($conn->connect_error){
     echo '<div class="mensaje error">❌ No se pudo conectar con la base de datos</div>';
 }
 
-$dni= $_POST['dni'];
+$CI= $_POST['CI'];
 $nombre= $_POST['nombre'];
-$apellido= $_POST['apellido'];
 $direccion= $_POST['direccion'];
-$nacimiento=$_POST['nacimiento'];
-$telefono=$_POST['telefono'];
+$celular= $_POST['celular'];
+$rol=$_POST['rol'];
+$estado=$_POST['estado'];
 
-$sql="UPDATE CLIENTE SET nombre='$nombre',apellido='$apellido',direccion='$direccion',nacimiento='$nacimiento',telefono='$telefono' WHERE dni=$dni";
+$sql="UPDATE CLIENTE SET nombre='$nombre',direccion='$direccion',celular='$celular',rol='$rol',estado='$estado' WHERE CI=$CI";
 
 if ($conn->query($sql)=== TRUE){
     echo '<div class="mensaje exito">✔ El cliente se modificó exitosamente</div>';
