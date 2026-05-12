@@ -146,16 +146,23 @@ if($conn->connect_error){
     echo '<div class="mensaje error">❌ CONEXION FALLIDA</div>';
 }
 
-$dni = $_POST['dni'] ?? '';
-$nombre= $_POST['nombre'] ?? '';
-$apellido = $_POST['apellido'] ?? '';
-$direccion = $_POST['direccion'] ?? '';
-$nacimiento = $_POST['nacimiento'] ?? '';
-$telefono = $_POST['telefono'] ?? '';     
+$CI = $_POST['CI'] ?? '';
+$nombre = $_POST['nombre'] ?? '';
+$direccion= $_POST['direccion'] ?? '';
+$celular = $_POST['celular'] ?? '';
+$rol = $_POST['rol'] ?? '';
+$estado = $_POST['estado'] ?? '';     
+ 
 
-if($dni && $nombre && $apellido){
-    $sql = "INSERT INTO CLIENTE (dni,nombre,apellido,direccion,nacimiento,telefono)
-     VALUES('$dni','$nombre', '$apellido','$direccion','$nacimiento','$telefono')";
+if($CI && $nombre && $direccion && $celular && $rol && $estado){
+
+    $sql = "INSERT INTO CLIENTE (CI,nombre,direccion,celular,rol,estado)
+     VALUES('$CI','$nombre', '$direccion','$celular','$rol','$estado')";
+
+
+
+
+
 
     if ($conn->query($sql) === TRUE){
         echo '<div class="mensaje exito">✔ USUARIO REGISTRADO CORRECTAMENTE</div>';
