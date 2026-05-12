@@ -22,7 +22,7 @@ if($resultado->num_rows > 0){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clientes DIVINE</title>
 
-<!-- TIPOGRAFÍA ELEGANTE -->
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
@@ -189,17 +189,17 @@ while($fila=$resultado->fetch_assoc()){
   echo "<div class='item'>";
   echo "<p><span>CI:</span> ".$fila['CI']."</p>";
   echo "<p><span>nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>Apellido:</span> ".$fila['apellido']."</p>";
   echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
-  echo "<p><span>Fecha de Nacimiento:</span> ".$fila['nacimiento']."</p>";
-  echo "<p><span>Telefono:</span> ".$fila['telefono']."</p>";
+  echo "<p><span>Celular:</span> ".$fila['celular']."</p>";
+  echo "<p><span>Rol:</span> ".$fila['rol']."</p>";
+  echo "<p><span>estado:</span> ".$fila['estado']."</p>";
 
   $CI=$fila['CI'];
 
   echo "<div class='botones'>";
-  echo "<a href='readunocliente.php?dni=$dni '><button>Mostrar</button></a>";
-  echo "<a href='updateformcliente.php? dni=$dni '><button>Editar</button></a>";
-  echo "<a href='deletecliente.php? dni=$dni '><button>Eliminar</button></a>";
+  echo "<a href='readunocliente.php?dni=$CI '><button>Mostrar</button></a>";
+  echo "<a href='updateformcliente.php? dni=$CI '><button>Editar</button></a>";
+  echo "<a href='deletecliente.php? dni=$CI '><button>Eliminar</button></a>";
   echo "</div>";
 
   echo "</div>";
