@@ -167,24 +167,26 @@ input[type="submit"]:hover {
 
   <div class="grupo-campos">
 
-    <label for="dni"> DNI: </label>
-    <input type="int" name="dni" required>
+    <label for="CI"> CI: </label>
+    <input type="number" name="CI" required>
 
     <label for="nombre"> Nombre: </label>
     <input type="text" name="nombre" required>
 
-    <label for="apellido"> Apellido: </label>
-    <input type="text" name="apellido" required>
-
     <label for="direccion"> Dirección: </label>
     <input type="text" name="direccion" required>
 
-    <label for="nacimiento"> Fecha de nacimiento: </label>
-    <input type="date" name="nacimiento" required>
+ <label for="celular"> Teléfono: </label>
+    <input type="number" name="celular" required>
+ 
 
-    <label for="telefono"> Teléfono: </label>
-    <input type="int " name="telefono" required>
+    <label for="rol"> Rol: </label>
+    <input type="text" name="rol" required>
 
+ 
+
+    <label for="estado"> Estado: </label>
+    <input type="text" name="estado" required>
   </div>
 
   <input type="submit" value="Registrar">

@@ -10,19 +10,19 @@ if($conn->connect_error){
   echo"OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
 }
 
-$dni=$_GET['dni'];
-$sql="SELECT * FROM CLIENTE WHERE dni=$dni";
+$CI=$_GET['CI'];
+$sql="SELECT * FROM CLIENTE WHERE CI=$CI";
 $resultado=$conn-> query($sql);
 
 if($resultado->num_rows > 0){
 while($fila=$resultado->fetch_assoc()){
 
-$dni=$fila['dni'];
+$CI=$fila['CI'];
 $nombre=$fila['nombre'];
-$apellido=$fila['apellido'];
 $direccion=$fila['direccion'];
-$nacimiento=$fila['nacimiento'];
-$telefono=$fila['telefono'];
+$celular=$fila['celular'];
+$rol=$fila['rol'];
+$estado=$fila['estado'];
 
 }
 }
@@ -189,23 +189,24 @@ input[type="submit"]:hover {
 
   <div class="grupo-campos">
 
-    <label>DNI:</label>
-    <input type="text" name="dni" value="<?= $dni ?>" required>
+    <label>CI:</label>
+    <input type="number" name="CI" value="<?= $CI ?>" required>
 
     <label>Nombre:</label>
     <input type="text" name="nombre" value="<?= $nombre ?>" required>
 
-    <label>Apellido:</label>
-    <input type="text" name="apellido" value="<?= $apellido ?>" required>
-
-    <label>Dirección:</label>
+        <label>Dirección:</label>
     <input type="text" name="direccion" value="<?= $direccion ?>" required>
+    
 
-    <label>Fecha de Nacimiento:</label>
-    <input type="date" name="nacimiento" value="<?= $nacimiento ?>" required>
+    <label>Telefono:</label>
+    <input type="number" name="celular" value="<?= $celular ?>" required>
 
-    <label>Teléfono:</label>
-    <input type="text" name="telefono" value="<?= $telefono ?>" required>
+    <label>Rol:</label>
+    <input type="text" name="rol" value="<?= $rol ?>" required>
+
+    <label>Estado:</label>
+    <input type="text" name="estado" value="<?= $estado ?>" required>
 
   </div>
 
