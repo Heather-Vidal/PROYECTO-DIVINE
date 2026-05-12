@@ -1,85 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body{
-            display: grid;
-            grid-template-rows: 100px 500px 100px;
-            background: #EBE8D9 RGB	(235, 232, 217) ;
-            color: #111;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            display:grid;
-       grid-template-columns:50% 50%;
-       grid-template-areas: 
-       "uno uno"
-       " dos tres"
-       "cua cua";
-       gap:7px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divine Beauty</title>
+
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
+body{
+    background: #EBE8D9;
+    color: #111;
+    font-family: Arial, sans-serif;
+
+    display: grid;
+    grid-template-rows: 100px 650px auto 100px;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "uno uno"
+        "dos tres"
+        "main main"
+        "cua cua";
+    gap: 7px;
+}
+
+/* ===== HEADER ===== */
+header{
+    grid-area: uno;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px; 
+}
+div.logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+div.logo img{
+    width: 160px;
+    display: block;
+    margin: 15px auto;
+}
+
 nav{
     display: flex;
     gap: 35px;
 }
+
 nav a{
     text-decoration: none;
     color: #111;
-    font-weight: 500;
-    transition: 0.3s;
+     font-size: 20px;
+    transition: 0.3s all;
+    border-radius: 10px;
+    margin: 0 auto;
+    display: block;
 }
+
 nav a:hover{
     color: #000;
-}
-header{
-    grid-area:uno;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 30px;
-}
-.sub{
-    font-size:18px;
-    margin-bottom:30px;
-    max-width:500px;
-}
-.box{
-    background:#d6c8b3;
-    padding:20px;
-    border-radius:15px;
-    width:250px;
+    box-shadow: 0 0 0 3px #d6c8b3;
 }
 
-.box h2{
-    margin-bottom:10px;
-}
-
-.box p{
-    margin-bottom:15px;
-}
-
-.box a{
-    text-decoration:none;
-    background:#111;
-    color:white;
-    padding:10px 15px;
-    border-radius:10px;
-}
-h1{font-size:72px;line-height:1.05;font-weight:700}
-  h1  p{font-style:italic;font-family:Georgia,serif;font-weight:400}
-
-
-.derecha{
-    grid-area: tres;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.derecha{width: 350;}
+/* ===== SECCIÓN IZQUIERDA ===== */
 section{
     grid-area: dos;
     display: flex;
@@ -88,46 +77,234 @@ section{
     align-items: flex-start;
     padding: 0 30px;
 }
-footer{
-    grid-area: cua;
+
+h1{
+    font-size: 72px;
+    line-height: 1.05;
+    font-weight: 900;
 }
-    </style>
+
+.color{
+    font-style: italic;
+    font-family: Georgia, serif;
+    font-weight: 400;
+}
+
+.sub{
+    font-size: 18px;
+    margin-bottom: 30px;
+    max-width: 500px;
+}
+
+/* ===== BOX ===== */
+.box{
+    background: #d6c8b3;
+    padding: 20px;
+    border-radius: 15px;
+    width: 250px;
+}
+
+.box h2{
+    margin-bottom: 10px;
+}
+
+.box p{
+    margin-bottom: 15px;
+}
+
+.box a{
+    text-decoration: none;
+    background: #111;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+/* ===== IMAGEN DERECHA ===== */
+.derecha{
+    grid-area: tres;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.derecha img{
+    width: 550px;
+    max-width: 100%;
+}
+
+/* ===== MAIN ===== */
+main.principal{
+    grid-area: main;
+    background: #e9e5dd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 70px 0;
+}
+
+/* ===== CARACTERÍSTICAS ===== */
+.caracteristicas{
+    width: 85%;
+    background: #d6c8b3;
+    padding: 40px 30px;
+    border-radius: 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+}
+
+.caja-caracteristica{
+    border-radius: 15px;
+    overflow: hidden;
+    background: #ada5a5f3;
+    height: 200px;
+}
+
+.caja-caracteristica img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== TARJETAS ===== */
+.tarjetas{
+    margin-top: 70px;
+    width: 85%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.tarjeta{
+    background: #ffffff;
+    border-radius: 25px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: 0.3s ease;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta:hover{
+    transform: scale(1.05);
+}
+
+.tarjeta img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== FOOTER ===== */
+footer.pie{
+    grid-area: cua;
+    background-color: #d6c8b3;
+    color: #000000;
+    padding: 20px 10px;
+    font-family: Georgia, serif;
+}
+
+.footer-contenedor{
+    display: flex;
+    justify-content: center;
+    gap: 130px;
+    margin-bottom: 25px;
+}
+</style>
 </head>
+
 <body>
-    <header>
-          <img src="DIVINE-removebg-preview.png" alt="Logo" width="150">
-  <Nav>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="DIVINE-removebg-preview.png" alt="Logo" width="145">
+    </div>
+
+    <nav>
         <a href="#inicio">Inicio</a>
         <a href="#productos">Productos</a>
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
         <a href="#consulta">Consulta Personal</a>
-    </Nav>
-    </header>
-    <section>
+        <a href="lupa">
+            <img src="https://images.icon-icons.com/3065/PNG/512/search_magnifier_icon_190940.png" alt="lupa" width="25">
+        </a>
+        <a href="carrito">
+            <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
+        </a>
+        <a href="persona">
+            <img src="https://cdn-icons-png.flaticon.com/512/7531/7531708.png" alt="persona" width="25">
+        </a>
+    </nav>
+</header>
+
+<!-- SECCIÓN IZQUIERDA -->
+<section>
     <h1>
         Glow Starts <br>
-        With <label class="color">Natural Beauty</label>
+        With <span class="color">Natural Beauty</span>
     </h1>
+
     <p class="sub">
-        Productos inspirados en la elegancia de la naturaleza 
+        Productos inspirados en la elegancia de la naturaleza
         para cuidar tu piel y cabello.
     </p>
-        <section class="box">
+
+    <section class="box">
         <h2>ESENCIAS</h2>
-        <p>
-            Producto a base de esencias naturales.
-        </p>
+        <p>Producto a base de esencias naturales.</p>
         <a href="#">Añadir Producto</a>
     </section>
 </section>
 
-       <section class="derecha">
-
+<section class="derecha">
     <img src="divineee.png" alt="Beauty Products">
-
 </section>
 
-<footer></footer>
+<main class="principal">
+
+    <section class="caracteristicas">
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/736x/07/9a/16/079a161ed785efc26d2451d8fd3d3451.jpg" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4PvJpjnUGDjkF_Mw-VHV10iYUkdZ940gkQw&s" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/736x/98/dc/17/98dc175ff91df602482d6eca3acc90c5.jpg" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/1200x/be/a0/39/bea039dbfc9b87ecaa7c13b1af851a7e.jpg" alt="">
+        </div>
+    </section>
+
+    <section class="tarjetas">
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/1200x/e6/43/3a/e6433ab7609c3c63d5d7ca0a50bb0bf6.jpg" alt="">
+        </div>
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/736x/db/bc/fc/dbbcfc1f163cbf1256cda735f1a8c7a2.jpg" alt="">
+        </div>
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/1200x/a3/cb/06/a3cb06cc6ce57637c7f4aff1fc6f1109.jpg" alt="">
+        </div>
+    </section>
+
+</main>
+
+<footer class="pie">
+    <div class="footer-contenedor">
+        <p>© 2026 Divine Beauty</p>
+        <p>Contacto</p>
+        <p>Instagram</p>
+    </div>
+</footer>
+
 </body>
 </html>
