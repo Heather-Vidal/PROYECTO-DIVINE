@@ -189,8 +189,8 @@ while($fila=$resultado->fetch_assoc()){
 
     <!-- ACCIONES DEL CLIENTE -->
     <div class="botones">
-      <a class="boton" href="updateformcliente.php?dni=<?php echo $dni; ?>">Editar</a>
-      <a class="boton" href="deletecliente.php?dni=<?php echo $dni; ?>">Eliminar</a>
+      <a class="boton" href="updateformcliente.php?CI=<?php echo $CI; ?>">Editar</a>
+      <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">Eliminar</a>
     </div>
 
     <!-- NAVEGACIÓN GLOBAL -->

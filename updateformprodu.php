@@ -1,4 +1,4 @@
-8 <?php
+ <?php
 $servidor="localhost";
 $usuario="root";
 $contraseña="";
