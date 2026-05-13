@@ -168,10 +168,10 @@ body {
 <?php
 while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>Cantidad:</span> ".$fila['cantidad']."</p>";
+  echo "<p><span>Descripcion:</span> ".$fila['descripcion']."</p>";
   echo "<p><span>Precio:</span> ".$fila['precio']."</p>";
   echo "<p><span>Costo:</span> ".$fila['costo']."</p>";
-  echo "<p><span>Categoría:</span> ".$fila['categoria']."</p>";
+  echo "<p><span>Stock:</span> ".$fila['stock']."</p>";
   echo "<p><span>Codigo:</span> ".$fila['codigo']."</p>";
   $codigo=$fila['codigo'];
 }
