@@ -139,14 +139,14 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
       }
 
       $nombre = $_POST['nombre'];
-      $cantidad = $_POST['cantidad'];
+      $descripcion = $_POST['descripcion'];
       $precio = $_POST['precio'];
       $costo = $_POST['costo'];
-      $categoria = $_POST['categoria'];
+      $stock = $_POST['stock'];
       $codigo = $_POST['codigo'];
 
-      $sql = "INSERT INTO PRODUCTO (nombre,cantidad,precio,costo,categoria,codigo)
-       VALUES('$nombre', '$cantidad','$precio','$costo','$categoria','$codigo')";
+      $sql = "INSERT INTO PRODUCTO (nombre,descripcion,precio,costo,stock,codigo)
+       VALUES('$nombre', '$descripcion','$precio','$costo','$stock','$codigo')";
 
       if ($conn->query($sql) === TRUE) {
           echo '<div class="mensaje exito"> ✔ PRODUCTO GUARDADO EXITOSAMENTE</div>';
