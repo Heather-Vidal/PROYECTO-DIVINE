@@ -10,7 +10,8 @@
 .caja{
     display:grid;
     grid-template-columns:320px 1fr;
-    grid-template-areas:"sidebar contenido";
+    grid-template-areas:
+    " sidebar contenido";
     min-height:100vh;  
     font-family:'Poppins',sans-serif;
     background:linear-gradient(135deg,#cbb4a1,#e9ddd4);
@@ -22,7 +23,34 @@
     background:#bfa892;
     padding:30px 20px;
     border-right:5px solid #f3e7df;
+        animation:latido 3s infinite ease-in-out;
+    transform-origin:center;
 }
+@keyframes latido{
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.05);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+
+}
+
+.cuadro{
+    grid-area:contenido;
+    padding:40px;
+}
+.cajota{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
 .uno{
     background:#ccb6a2;
     border:5px solid #f3e7df;
@@ -31,12 +59,11 @@
     border-radius:30px;
     box-shadow:0 10px 30px rgba(0,0,0,0.15);
     transition:0.5s;
+    
 }
-
 .uno:hover{
     transform:translateY(-10px) scale(1.02);
 }
-
 .uno img{
     width:220px;
     height:220px;
@@ -45,7 +72,6 @@
     border:6px solid white;
     transition:0.5s;
 }
-
 .uno img:hover{
     transform:scale(1.08) rotate(3deg);
 }
@@ -75,16 +101,6 @@
     transform:scale(1.03);
 }
 
-.cuadro{
-    grid-area:contenido;
-    padding:40px;
-}
-
-.cajota{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:30px;
-}
 
 .bloque{
     background:#efe4dc;
@@ -169,15 +185,11 @@
 <body>
 
 <div class="caja">
-
-    <!-- SIDEBAR -->
     <aside class="cajita">
 
         <div class="uno">
-            <img src="https://i.pinimg.com/1200x/24/e6/d8/24e6d80d98c90fe6b59b9a3d02122abc.jpg" alt="Administrador">
-
+            <img src="https://i.pinimg.com/736x/4a/54/a0/4a54a016d7b01e9f18f6f5d7f2511a05.jpg" alt="Administrador">
             <h2>MAITE ALLENDE</h2>
-
             <div class="dos">PERFIL ADMINISTRADOR</div>
 
             <div class="tres">
