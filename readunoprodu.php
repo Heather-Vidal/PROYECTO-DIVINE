@@ -168,7 +168,11 @@ body {
 <?php
 while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
+<<<<<<< HEAD
   echo "<p><span>Descripcion:</span> ".$fila['descripcion']."</p>";
+=======
+  echo "<p><span>descripcion:</span> ".$fila['descripcion']."</p>";
+>>>>>>> bbaf54968e712b41b59d147b5afa3ac92040efef
   echo "<p><span>Precio:</span> ".$fila['precio']."</p>";
   echo "<p><span>Costo:</span> ".$fila['costo']."</p>";
   echo "<p><span>Stock:</span> ".$fila['stock']."</p>";
