@@ -4,107 +4,54 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Perfil</title>
-
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-
- 
- 
-
-
-
-
-
-
-
-/* =========================
-   BODY PRINCIPAL
-========================= */
-
 body{
-
     height:100vh;
-
     background:
     linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)),
     url("fondo.png") no-repeat center;
-
     background-size:cover;
-
     overflow:hidden;
-
     display:grid;
-
-    /* DIVIDE EL BODY EN 2 COLUMNAS */
     grid-template-columns:27% 73%;
-
     grid-template-areas:
     "panel contenido";
 }
 
-/*  
-   MAIN IZQUIERDO
- */
-
-
-
-/* =========================
-   MAIN DERECHO
-========================= */
-
 .bodyzote{
-
     grid-area:contenido;
-
     height:100%;
-
     display:grid;
-
     grid-template-areas:
     "top"
     "mid"
     "bottom";
-
     grid-template-rows:25% 40% 35%;
 }
-
-
 .bodycito::before{
-
     content:"";
-
     position:absolute;
-
     top:18px;
     left:18px;
     right:18px;
     bottom:18px;
-
     border:3px dotted rgba(255,255,255,0.45);
-
     pointer-events:none;
 }
- 
 .bodycito {
-
  padding:35px;
-
 border:3px solid rgba(255,255,255,0.35);
-
 position:relative;
       position:absolute;
     left:0;
     top:0;
-
     width:27%;
     height:100%;
-
     z-index:2;
-
     background:
     linear-gradient(
         rgba(185,170,145,0.78),
@@ -113,31 +60,20 @@ position:relative;
     );
 
     border:1px dashed rgba(255,255,255,0.35);
-
     display:grid;
-
     grid-template-areas:
     "sec1"
     "sec2"
     "sec3";
-
     grid-template-rows:45% 30% 25%;
 }
-
-/* ===== section 1 ===== */
-
 .bodycito_sec1{
 
     grid-area:sec1;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:20px;
 }
 
@@ -145,97 +81,58 @@ position:relative;
 
     width:170px;
     height:170px;
-
     border-radius:50%;
-
     overflow:hidden;
-
     border:4px solid rgba(255,255,255,0.25);
 }
 
 .perfil img{
-
     width:100%;
     height:100%;
-
     object-fit:cover;
 }
 
 .estrellas{
-
     color:#8d7760;
-
     font-size:28px;
-
     letter-spacing:5px;
 }
-
-/* ===== section 2 ===== */
-
 .bodycito_sec2{
-
     grid-area:sec2;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:25px;
 }
 
 .btn_lateral{
-
     width:230px;
-
     padding:14px;
-
     background:transparent;
-
     border:1px solid rgba(255,255,255,0.55);
-
     color:white;
-
     text-transform:uppercase;
-
     font-weight:bold;
-
     cursor:pointer;
-
     transition:0.3s;
 }
 
 .btn_lateral:hover{
-
     background:rgba(255,255,255,0.15);
 }
-
-/* ===== section 3 ===== */
-
 .bodycito_sec3{
-
     grid-area:sec3;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     gap:35px;
 }
 
 .bodycito_sec3 i{
-
     color:white;
-
     font-size:28px;
-
     cursor:pointer;
-
     transition:0.3s;
 }
 
@@ -245,11 +142,6 @@ position:relative;
 
     color:#f7e7d3;
 }
-
-/* =======================================
-   MAIN DERECHO
-======================================= */
-
 .bodyzote{
 
     width:100%;
@@ -265,164 +157,97 @@ position:relative;
     grid-template-rows:25% 40% 35%;
 }
 
-/* ===== section 1 ===== */
-
 .bodyzote_sec1{
-
     grid-area:top;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     color:white;
-
     font-size:58px;
-
     letter-spacing:10px;
-
     font-weight:200;
 }
 
-/* ===== section 2 ===== */
-
 .bodyzote_sec2{
-
     grid-area:mid;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:35px;
 }
 
 .fila{
-
     width:45%;
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     border-bottom:1px solid rgba(255,255,255,0.2);
-
     padding-bottom:12px;
 }
 
 .label{
-
     width:150px;
-
     padding:10px;
-
     border:1px solid rgba(255,255,255,0.45);
-
     text-align:center;
-
     color:white;
-
     font-size:12px;
-
     font-weight:bold;
 }
 
 .valor{
 
     color:#7b6754;
-
     font-size:32px;
-
     font-weight:600;
 }
-
-/* ===== section 3 ===== */
-
 .bodyzote_sec3{
 
     grid-area:bottom;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     gap:45px;
-
     flex-wrap:wrap;
 }
-
 .btn_menu{
-
     width:190px;
-
     height:70px;
-
     border:none;
-
     border-radius:50px;
-
     background:
     linear-gradient(
         90deg,
         rgba(201,185,164,0.95),
         rgba(171,145,117,0.95)
     );
-
     color:white;
-
     text-transform:uppercase;
-
     font-size:22px;
-
     font-weight:bold;
-
     cursor:pointer;
-
     transition:0.3s;
 }
 
 .btn_menu:hover{
-
     transform:scale(1.05);
-
     opacity:0.9;
 }
-
 </style>
 </head>
 
 <body>
-
-<!-- MAIN IZQUIERDO -->
-
 <main class="bodycito">
 
-    <!-- section 1 -->
-
     <section class="bodycito_sec1">
-
         <figure class="perfil">
-
-            <img src="perfil.jpg">
-
+            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg">
         </figure>
 
         <h2 class="estrellas">★★★★★</h2>
 
     </section>
-
-    <!-- section 2 -->
-
     <section class="bodycito_sec2">
 
         <button class="btn_lateral">
@@ -435,8 +260,6 @@ position:relative;
 
     </section>
 
-    <!-- section 3 -->
-
     <section class="bodycito_sec3">
 
         <i class="fa-brands fa-instagram"></i>
@@ -448,20 +271,13 @@ position:relative;
     </section>
 
 </main>
-
-<!-- MAIN DERECHO -->
-
 <main class="bodyzote">
-
-    <!-- section 1 -->
-
     <section class="bodyzote_sec1">
 
         <h1>ADRIANA SANCHEZ</h1>
 
     </section>
 
-    <!-- section 2 -->
 
     <section class="bodyzote_sec2">
 
@@ -474,51 +290,35 @@ position:relative;
         </article>
 
         <article class="fila">
-
             <h3 class="label">EDAD:</h3>
-
             <p class="valor">45 años</p>
-
         </article>
-
         <article class="fila">
-
             <h3 class="label">CONTACTO:</h3>
-
             <p class="valor">60239445</p>
-
         </article>
-
     </section>
-
-    <!-- section 3 -->
-
     <section class="bodyzote_sec3">
 
         <button class="btn_menu">
             ventas
         </button>
-
         <button class="btn_menu">
             stock
         </button>
-
         <button class="btn_menu">
             pedidos
         </button>
-
         <button class="btn_menu">
             historial
         </button>
-
         <button class="btn_menu">
             actualizar
         </button>
-
     </section>
 
 </main>
 
 </body>
 </html>
-```
+

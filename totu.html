@@ -27,6 +27,29 @@ body{
         "cua cua";
     gap: 7px;
 }
+header{
+    grid-area: uno;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+}
+
+body{
+    background: #EBE8D9;
+    color: #111;
+    font-family: Arial, sans-serif;
+
+    display: grid;
+    grid-template-rows: 100px 650px auto 100px;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "uno uno"
+        "dos tres"
+        "main main"
+        "cua cua";
+    gap: 7px;
+}
 
 /* ===== HEADER ===== */
 header{
@@ -305,6 +328,5 @@ footer.pie{
         <p>Instagram</p>
     </div>
 </footer>
-
 </body>
 </html>
