@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfil Premium</title>
-
-<link rel="stylesheet"
+<link rel="stylesheet" 
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+
 body{
     height:100vh;
 
@@ -23,114 +23,12 @@ body{
     "panel contenido";
     font-family:Arial, Helvetica, sans-serif;
 }
+a{color: inherit;          /* hereda el color del texto */
+  text-decoration: none;   /* quita el subrayado */}
 .bodycito{
 
- 
-/* =========================
-   MAIN DERECHO
-========================= */
-
-.bodyzote{
-
-    grid-area:contenido;
-
-    height:100%;
-
-    display:grid;
-
-    grid-template-areas:
-    "top"
-    "mid"
-    "bottom";
-
-    grid-template-rows:25% 40% 35%;
-}
-
-
- 
-.bodycito::before{
- 
-.bodyzote_bloq1 {
-    grid-area: titulo;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  background: 
-        linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-        url("fondo.png") no-repeat center fixed;
-
-    background-size: 100% 100%;
-
-   height: 98vh;
-
- 
-
-    content:"";
-
-    position:absolute;
-
-    top:18px;
-    left:18px;
-    right:18px;
-    bottom:18px;
-
-    border:3px dotted rgba(255,255,255,0.45);
-
-    pointer-events:none;
-}
- 
- 
-.bodyzote_bloq2 {
-    grid-area: datos;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-  background: 
-        linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-        url("fondo.png") no-repeat center fixed;
-
-    background-size: 100% 100%;
-
-   height: 98vh;
-
-}
-.bodyzote_bloq3 {
-    grid-area: seccion;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  background: 
-        linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)),
-        url("fondo.png") no-repeat center fixed;
-
-    background-size: 100% 100%;
-
-   height: 98vh;
-
-
-
-}
-
-
-
-
-
-
-
- 
-.bodycito {
-
- padding:35px;
-
-border:3px solid rgba(255,255,255,0.35);
-
-position:relative;
-      position:absolute;
- 
     grid-area:panel;
     position:absolute;
- 
     left:0;
     top:0;
     width:22%;
@@ -144,57 +42,8 @@ position:relative;
         rgba(145,130,105,0.78)
     );
 
- 
-    border:1px dashed rgba(255,255,255,0.35);
-
-    display:grid;
- 
-}
-.bodycito_bloq1 {
-    background:
-        linear-gradient(
-    
-    rgba(175, 160, 135, 0.65),
-    rgba(160, 145, 120, 0.65),
-    rgba(145, 130, 105, 0.65)
-        );
-    grid-area: imagen;
-    display: flex;
-    justify-content: center;
-    align-items: center;
- 
-
-}
-.bodycito_bloq2 {
-    grid-area: botones;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-background:
-        linear-gradient(
-    
-    rgba(175, 160, 135, 0.65),
-    rgba(160, 145, 120, 0.65),
-    rgba(145, 130, 105, 0.65)
-        );
-}
-.bodycito_bloq3 {
-    grid-area: redes;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-background:
-        linear-gradient(
-    
-    rgba(175, 160, 135, 0.65),
-    rgba(160, 145, 120, 0.65),
-    rgba(145, 130, 105, 0.65)
-        );
- 
     border:2px solid rgba(255,255,255,0.25);
     display:grid;
- 
     grid-template-areas:
     "sec1"
     "sec2"
@@ -254,6 +103,7 @@ background:
 }
 
 .btn_lateral{
+   
     width:230px;
     padding:14px;
     background:transparent;
@@ -265,6 +115,7 @@ background:
     transition:0.4s;
 }
 .btn_lateral:hover{
+   
     background:rgba(255,255,255,0.15);
     transform:scale(1.08);
     box-shadow:
@@ -345,7 +196,7 @@ background:
     font-weight:bold;
 }
 .valor{
-    color:#7b6754;
+    color:#cfcbc6;
     font-size:32px;
     font-weight:600;
 }
@@ -553,6 +404,11 @@ background:
     }
 }
 </style>
+
+
+
+
+
 </head>
 <body>
 <main class="bodycito">
@@ -561,7 +417,7 @@ background:
 
         <figure class="perfil">
 
-            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg">
+            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg"&gt;
 
         </figure>
 
@@ -576,7 +432,7 @@ background:
         </button>
 
         <button class="btn_lateral">
-            explorar
+           <a href="totu.php"> Explorar</a>
         </button>
 
     </section>
