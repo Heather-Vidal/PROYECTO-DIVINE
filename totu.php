@@ -267,6 +267,8 @@ footer.pie{
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
         <a href="#consulta">Consulta Personal</a>
+        <a href="perfilvendedor.html">Vendedor</a>
+        <a href="admin.html">Administrador</a>
         <a href="#">
             <img src="https://images.icon-icons.com/3065/PNG/512/search_magnifier_icon_190940.png" alt="lupa" width="25">
         </a>
@@ -300,7 +302,7 @@ footer.pie{
 </section>
 
 <section class="derecha">
-    <img src="productos prin.png" alt="Beauty Products">
+    <img src="derus.png" alt="Beauty Products">
 </section>
 
 <main class="principal">
