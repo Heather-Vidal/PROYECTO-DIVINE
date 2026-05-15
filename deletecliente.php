@@ -137,7 +137,7 @@ body {
     <div class="encabezado">Cliente Eliminado</div>
 
     <div class="contenido">
-
+      
       <!-- Imagen como en los otros ejemplos -->
       <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="icono">
 
@@ -145,10 +145,10 @@ body {
 if($conn->connect_error){
   echo "<div class='mensaje error'>❌ OCURRIÓ UN ERROR AL CONECTAR A LA BASE DE DATOS</div>";
 } else {
-    $ci = $_GET['ci'] ?? '';
+    $CI = $_GET['CI'] ?? '';
 
-    if($ci){
-        $sql="DELETE FROM CLIENTE WHERE CI=$ci";
+    if($CI){
+        $sql="DELETE FROM CLIENTE WHERE CI=$CI";
 
         if ($conn->query($sql)=== TRUE){
             echo "<div class='mensaje exito'>✔ EL CLIENTE HA SIDO ELIMINADO CON ÉXITO</div>";

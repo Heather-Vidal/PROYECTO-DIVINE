@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divine Beauty</title>
+
+<style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background: #EBE8D9;
+    color: #111;
+    font-family: Arial, sans-serif;
+
+    display: grid;
+    grid-template-rows: 100px 650px auto 100px;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "uno uno" 
+        "dos tres"
+        "main main"
+        "cua cua";
+    gap: 7px;
+}
+header{
+    grid-area: uno;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+}
+
+body{
+    background: #EBE8D9;
+    color: #111;
+    font-family: Arial, sans-serif;
+
+    display: grid;
+    grid-template-rows: 100px 730px auto 100px;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        "uno uno"
+        "dos tres"
+        "main main"
+        "cua cua";
+    gap: 7px;
+}
+
+/* ===== HEADER ===== */
+header{
+    grid-area: uno;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 10px; 
+}
+a{
+    font-family: "Lora", serif;
+  font-optical-sizing: auto;
+}
+div.logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+div.logo img{
+    width: 160px;
+ margin-top: 15px;
+}
+
+nav{
+    display: flex;
+    gap: 35px;
+}
+
+nav a{
+    text-decoration: none;
+    color: #111;
+     font-size: 20px;
+    transition: 0.3s all;
+    border-radius: 10px;
+    display: block;
+}
+
+nav a:hover{
+    color: #000;
+transform: translateY(3px);}
+
+/* ===== SECCIÓN IZQUIERDA ===== */
+section{
+    grid-area: dos;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 30px;
+}
+
+h1{
+    font-size: 72px;
+    line-height: 1.05;
+    font-weight: 900;
+    margin-top: -55PX;
+}
+
+.color{
+    font-style: italic;
+    font-family: Georgia, serif;
+    font-weight: 400;
+}
+
+.sub{
+    font-size: 18px;
+    margin-bottom: 30px;
+    max-width: 500px;
+}
+
+/* ===== BOX ===== */
+.box{
+    position: relative;
+    background: #d6c8b3;
+    padding: 20px;
+    border-radius: 15px;
+    width: 380px;
+    height: 250px;
+    display:flex;
+    align-items: center;
+    padding-left:160px
+}
+
+.box h2{
+
+    margin-bottom: 30px;
+}
+
+.box p{
+    margin-bottom: 55px;
+    z-index: 5;
+    margin:10 auto;
+}
+
+.box a{
+    z-index: 5;
+    text-decoration: none;
+    background: #111;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display: inline-block;
+    margin:0;
+}
+.box img{
+    z-index: 10;
+    position: absolute;
+    width: 170px;
+    bottom:10px;
+    left: 20px;
+}
+
+.derecha{
+    grid-area: tres;
+    display: flex;
+    justify-content: right;
+    align-items: right;
+}
+.derecha img{
+    width: 100%;
+    max-width: 885px;
+    border-radius: 15px;
+}
+main.principal{
+    grid-area: main;
+    background: #e9e5dd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 70px 0;
+}
+
+.caracteristicas{
+    border-radius: 30px;
+    width: 95%;
+    background: #ddc9b7;
+    padding:  40px 30px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+}
+.caja-caracteristica{
+    overflow: hidden;
+    background: #ada5a5f3;
+    height: 400px;
+    border-radius: 15px;}
+.caja-caracteristica img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s;
+}
+.caja-caracteristica:hover img{
+    transform: scale(1.1);
+}
+.tarjetas{
+    margin-top: 70px;
+    width: 85%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+.tarjeta{
+    background: #ffffff;
+    border-radius: 25px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: 0.3s ease;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta:hover{
+    transform: scale(1.05);
+}
+
+.tarjeta img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== FOOTER ===== */
+footer.pie{
+    grid-area: cua;
+    background-color: #d6c8b3;
+    color: #000000;
+    padding: 20px 10px;
+    font-family: Georgia, serif;
+}
+
+.footer-contenedor{
+    display: flex;
+    justify-content: center;
+    gap: 130px;
+    margin-bottom: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="logo">
+        <img src="DIVINE-removebg-preview.png" alt="Logo" width="145">
+    </div>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#productos">Productos</a>
+        <a href="#ofertas">Ofertas</a>
+        <a href="#contacto">Contacto</a>
+        <a href="#consulta">Consulta Personal</a>
+        <a href="perfilvendedor.html">Vendedor</a>
+        <a href="admin.html">Administrador</a>
+        <a href="#">
+            <img src="https://images.icon-icons.com/3065/PNG/512/search_magnifier_icon_190940.png" alt="lupa" width="25">
+        </a>
+        <a href="#">
+            <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
+        </a>
+        <a href="formcliente.php">
+            <img src="https://cdn-icons-png.flaticon.com/512/7531/7531708.png" alt="persona" width="25">
+        </a>
+    </nav>
+</header>
+
+<!-- SECCIÓN IZQUIERDA -->
+<section>
+    <h1>
+        Glow Starts <br>
+        With <span class="color">Natural Beauty</span>
+    </h1>
+
+    <p class="sub">
+        Productos inspirados en la elegancia de la naturaleza
+        para cuidar tu piel y cabello.
+    </p>
+
+    <section class="box">
+        <h2>ESENCIAS</h2>
+        <p>Producto a base de esencias naturales.</p>
+        <img src="crema.png" alt="crema" width="80px">
+        <a href="formularioprodu.php">Añadir Producto</a>
+    </section>
+</section>
+
+<section class="derecha">
+    <img src="derus.png" alt="Beauty Products">
+</section>
+
+<main class="principal">
+
+    <section class="caracteristicas">
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/736x/07/9a/16/079a161ed785efc26d2451d8fd3d3451.jpg" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4PvJpjnUGDjkF_Mw-VHV10iYUkdZ940gkQw&s" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/736x/98/dc/17/98dc175ff91df602482d6eca3acc90c5.jpg" alt="">
+        </div>
+        <div class="caja-caracteristica">
+            <img src="https://i.pinimg.com/1200x/be/a0/39/bea039dbfc9b87ecaa7c13b1af851a7e.jpg" alt="">
+        </div>
+    </section>
+
+    <section class="tarjetas">
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/1200x/e6/43/3a/e6433ab7609c3c63d5d7ca0a50bb0bf6.jpg" alt="">
+        </div>
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/736x/db/bc/fc/dbbcfc1f163cbf1256cda735f1a8c7a2.jpg" alt="">
+        </div>
+        <div class="tarjeta">
+            <img src="https://i.pinimg.com/1200x/a3/cb/06/a3cb06cc6ce57637c7f4aff1fc6f1109.jpg" alt="">
+        </div>
+    </section>
+
+</main>
+
+<footer class="pie">
+    <div class="footer-contenedor">
+        <p>© 2026 Divine Beauty</p>
+        <p>Contacto</p>
+        <p>Instagram</p>
+    </div>
+</footer>
+</body>
+</html>

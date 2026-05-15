@@ -1,4 +1,4 @@
- <?php
+<?php
 $servidor="localhost";
 $usuario="root";
 $contraseña="";
@@ -135,20 +135,20 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
       if ($conn->connect_error) {
           echo '<div class="mensaje error">❌ NO TE PUDISTE CONECTAR CON LA BD UnU</div>';
       }
-
+      
       $nombre = $_POST['nombre'];
-      $cantidad = $_POST['cantidad'];
+      $descripcion = $_POST['descripcion'];
       $precio = $_POST['precio'];
       $costo = $_POST['costo'];
-      $categoria = $_POST['categoria'];
+      $stock = $_POST['stock'];
       $codigo = $_POST['codigo'];
-
+    
       $sql = "UPDATE PRODUCTO 
               SET nombre='$nombre',
-                  cantidad='$cantidad',
+                  descripcion='$descripcion',
                   precio='$precio',
                   costo='$costo',
-                  categoria='$categoria'
+                  stock='$stock'
               WHERE codigo=$codigo";
 
       if ($conn->query($sql) === TRUE) {

@@ -1,60 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Beauty Landing Page</title>
-  <style>
-    *
-    {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-    body{background:#e9e5dc;color:#111}
-    header{display:flex;justify-content:space-between;align-items:center;padding:25px 60px}
-    nav{display:flex;gap:35px;font-size:15px}
-    nav a{text-decoration:none;color:#111;font-weight:500;transition:0.3s}
-    nav a:hover{color:#5b5548}
-    .hero{display:flex;justify-content:space-between;align-items:center;padding:40px 60px 80px;gap:40px}
-    .left{max-width:550px}
-    h1{font-size:72px;line-height:1.05;font-weight:700}
-    h1 span{font-style:italic;font-family:Georgia,serif;font-weight:400}
-    .subtitle{margin:20px 0;font-size:22px;line-height:1.4}
-    .card{margin-top:40px;background:#f4efe6;border-radius:24px;padding:20px;display:flex;gap:20px;align-items:center;width:430px}
-    .card img{width:110px;border-radius:18px}
-    .btn{display:inline-block;background:#5b5548;color:#fff;padding:12px 22px;border-radius:30px;text-decoration:none;margin-top:15px}
-    .right img{width:700px;max-width:100%}
-    .logo{font-size:42px;font-family:Georgia,serif;font-weight:bold}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Divine - Natural Beauty</title>
+    <style>
+        :root {
+            --bg-color: #e8e4db;
+            --text-dark: #1a1a1a;
+            --accent-color: #ffffff;
+            --font-serif: 'Georgia', serif;
+            --font-sans: 'Arial', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: var(--font-sans);
+        }
+
+        /* Barra de Navegación */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: var(--font-serif);
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-dark);
+            margin: 0 15px;
+            font-size: 14px;
+        }
+
+        .icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Sección Hero */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 50px;
+            min-height: 70vh;
+            position: relative;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .hero-content h1 span {
+            font-style: italic;
+        }
+
+        .hero-content p {
+            max-width: 400px;
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Tarjeta de Producto (Esencias) */
+        .product-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 380px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .product-img {
+            width: 100px;
+            height: 120px;
+            background: #fff;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .product-info h3 {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 18px;
+        }
+
+        .btn-add {
+            background: #2b2b2b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* Imagen Principal (Simulada con un contenedor) */
+        .hero-image-container {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .main-product-img {
+            width: 400px;
+            height: 500px;
+            background: linear-gradient(145deg, #d1ccc0, #f0ede6);
+            border-radius: 200px 200px 20px 20px; /* Arco superior */
+            box-shadow: 20px 20px 60px #c5c2ba, -20px -20px 60px #ffffff;
+        }
+
+    </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="DIVINE (3).png" alt="" width="150px" >
-    </div>
-    <nav>
-      <a href="#inicio">Inicio</a>
-      <a href="#productos">Productos</a>
-      <a href="#ofertas">Ofertas</a>
-      <a href="#contacto">Contacto</a>
-      <a href="#consulta">Consulta Personal</a>
-    </nav>
-  </header>
 
-  <section class="hero">
-    <div class="left">
-      <h1>Glow Starts<br>With <span>Natural Beauty</span></h1>
-      <p class="subtitle">Productos inspirados en la elegancia de la naturaleza para cuidar tu piel y cabello.</p>
-
-      <div class="card">
-        <div>
-          <h2>ESENCIAS</h2>
-          <p>Producto a base de esencias naturales.</p>
-          <a href="#" class="btn">Añadir Producto</a>
+    <header>
+        <div class="logo">... D I V I N E ...</div>
+        <nav>
+            <a href="#">Inicio</a>
+            <a href="#">Productos ▼</a>
+            <a href="#">Ofertas</a>
+            <a href="#">Contacto</a>
+            <a href="#">Consulta Personal</a>
+        </nav>
+        <div class="icons">
+            <span>🔍</span>
+            <span>🛒</span>
+            <span>👤</span>
+            <span>☰</span>
         </div>
-      </div>
-    </div>
+    </header>
 
-    <div class="right"><center>
-      <img src="divineee.png" alt="Beauty Products">
-    </center></section>div>
-  </section>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Glow Starts<br>With <span>Natural Beauty</span></h1>
+            <p>Productos inspirados en la elegancia de la naturaleza para cuidar tu piel y cabello.</p>
+            
+            <div class="product-card">
+                <div class="product-img">
+                    🧴
+                </div>
+                <div class="product-info">
+                    <h3>ESENCIAS</h3>
+                    <p style="font-size: 12px; margin: 5px 0;">Producto a base de esencias naturales.</p>
+                    <div>⭐⭐⭐⭐⭐</div>
+                    <button class="btn-add">Añadir Producto ↗</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-image-container">
+            <div class="main-product-img"></div>
+        </div>
+    </section>
+
 </body>
 </html>

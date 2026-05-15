@@ -197,9 +197,9 @@ while($fila=$resultado->fetch_assoc()){
   $CI=$fila['CI'];
 
   echo "<div class='botones'>";
-  echo "<a href='readunocliente.php?dni=$CI '><button>Mostrar</button></a>";
-  echo "<a href='updateformcliente.php? dni=$CI '><button>Editar</button></a>";
-  echo "<a href='deletecliente.php? dni=$CI '><button>Eliminar</button></a>";
+  echo "<a href='readunocliente.php?CI=$CI '><button>Mostrar</button></a>";
+  echo "<a href='updateformcliente.php? CI=$CI '><button>Editar</button></a>";
+  echo "<a href='deletecliente.php? CI=$CI '><button>Eliminar</button></a>";
   echo "</div>";
 
   echo "</div>";

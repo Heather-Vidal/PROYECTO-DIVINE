@@ -1,57 +1,31 @@
- ```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Perfil</title>
+<title>Perfil Premium</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-
- 
- 
-
-
-
-
-
-
-
-/* =========================
-   BODY PRINCIPAL
-========================= */
-
 body{
-
     height:100vh;
 
     background:
     linear-gradient(rgba(0,0,0,0.15), rgba(0,0,0,0.15)),
     url("fondo.png") no-repeat center;
-
     background-size:cover;
-
     overflow:hidden;
-
     display:grid;
-
-    /* DIVIDE EL BODY EN 2 COLUMNAS */
-    grid-template-columns:27% 73%;
-
+    grid-template-columns:22% 78%;
     grid-template-areas:
     "panel contenido";
+    font-family:Arial, Helvetica, sans-serif;
 }
+.bodycito{
 
-/*  
-   MAIN IZQUIERDO
- */
-
-
-
+ 
 /* =========================
    MAIN DERECHO
 ========================= */
@@ -73,9 +47,9 @@ body{
 }
 
 
-<<<<<<< Updated upstream
+ 
 .bodycito::before{
-=======
+ 
 .bodyzote_bloq1 {
     grid-area: titulo;
     display: flex;
@@ -89,7 +63,7 @@ body{
 
    height: 98vh;
 
->>>>>>> Stashed changes
+ 
 
     content:"";
 
@@ -104,9 +78,8 @@ body{
 
     pointer-events:none;
 }
-<<<<<<< Updated upstream
  
-=======
+ 
 .bodyzote_bloq2 {
     grid-area: datos;
     display: flex;
@@ -145,7 +118,7 @@ body{
 
 
 
->>>>>>> Stashed changes
+ 
 .bodycito {
 
  padding:35px;
@@ -154,14 +127,16 @@ border:3px solid rgba(255,255,255,0.35);
 
 position:relative;
       position:absolute;
+ 
+    grid-area:panel;
+    position:absolute;
+ 
     left:0;
     top:0;
-
-    width:27%;
+    width:22%;
     height:100%;
-
     z-index:2;
-
+    padding:35px;
     background:
     linear-gradient(
         rgba(185,170,145,0.78),
@@ -169,11 +144,11 @@ position:relative;
         rgba(145,130,105,0.78)
     );
 
-<<<<<<< Updated upstream
+ 
     border:1px dashed rgba(255,255,255,0.35);
 
     display:grid;
-=======
+ 
 }
 .bodycito_bloq1 {
     background:
@@ -216,261 +191,178 @@ background:
     rgba(160, 145, 120, 0.65),
     rgba(145, 130, 105, 0.65)
         );
->>>>>>> Stashed changes
-
+ 
+    border:2px solid rgba(255,255,255,0.25);
+    display:grid;
+ 
     grid-template-areas:
     "sec1"
     "sec2"
     "sec3";
-
     grid-template-rows:45% 30% 25%;
+    animation:panelMove 5s infinite ease-in-out;
 }
+.bodycito::before{
 
-/* ===== section 1 ===== */
-
+    content:"";
+    position:absolute;
+    top:18px;
+    left:18px;
+    right:18px;
+    bottom:18px;
+    border:3px dotted rgba(255,255,255,0.45);
+    pointer-events:none;
+}
 .bodycito_sec1{
-
     grid-area:sec1;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:20px;
 }
-
 .perfil{
-
-    width:170px;
-    height:170px;
-
+    width:240px;
+    height:240px;
     border-radius:50%;
-
     overflow:hidden;
-
-    border:4px solid rgba(255,255,255,0.25);
+    border:5px solid rgba(255,255,255,0.35);
+    animation:perfilGlow 4s infinite ease-in-out;
+    box-shadow:
+    0 0 25px rgba(255,255,255,0.25),
+    0 0 60px rgba(255,255,255,0.15);
+    transition:0.5s;
 }
 
 .perfil img{
-
     width:100%;
     height:100%;
-
     object-fit:cover;
 }
-
 .estrellas{
-
     color:#8d7760;
-
-    font-size:28px;
-
+    font-size:50px;
     letter-spacing:5px;
 }
-
-/* ===== section 2 ===== */
-
 .bodycito_sec2{
-
     grid-area:sec2;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:25px;
 }
 
 .btn_lateral{
-
     width:230px;
-
     padding:14px;
-
     background:transparent;
-
     border:1px solid rgba(255,255,255,0.55);
-
     color:white;
-
     text-transform:uppercase;
-
     font-weight:bold;
-
     cursor:pointer;
-
-    transition:0.3s;
+    transition:0.4s;
 }
-
 .btn_lateral:hover{
-
     background:rgba(255,255,255,0.15);
+    transform:scale(1.08);
+    box-shadow:
+    0 0 15px rgba(255,255,255,0.3);
 }
-
-/* ===== section 3 ===== */
-
 .bodycito_sec3{
-
     grid-area:sec3;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     gap:35px;
 }
 
 .bodycito_sec3 i{
-
     color:white;
-
     font-size:28px;
-
     cursor:pointer;
-
-    transition:0.3s;
+    transition:0.4s;
 }
 
 .bodycito_sec3 i:hover{
-
-    transform:scale(1.2);
-
+    transform:
+    scale(1.35)
+    rotate(8deg);
     color:#f7e7d3;
+    text-shadow:
+    0 0 10px white,
+    0 0 25px white;
 }
-
-/* =======================================
-   MAIN DERECHO
-======================================= */
-
 .bodyzote{
-
+    grid-area:contenido;
     width:100%;
     height:100%;
-
     display:grid;
-
     grid-template-areas:
     "top"
     "mid"
     "bottom";
-
     grid-template-rows:25% 40% 35%;
+    animation:entrada 1.2s ease;
 }
-
-/* ===== section 1 ===== */
-
 .bodyzote_sec1{
-
     grid-area:top;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     color:white;
-
     font-size:58px;
-
     letter-spacing:10px;
-
     font-weight:200;
 }
-
-/* ===== section 2 ===== */
-
 .bodyzote_sec2{
-
     grid-area:mid;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:center;
-
     align-items:center;
-
     gap:35px;
 }
 
 .fila{
-
     width:45%;
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     border-bottom:1px solid rgba(255,255,255,0.2);
-
     padding-bottom:12px;
+    animation:entrada 1.5s ease;
 }
 
 .label{
-
     width:150px;
-
     padding:10px;
-
     border:1px solid rgba(255,255,255,0.45);
-
     text-align:center;
-
     color:white;
-
     font-size:12px;
-
     font-weight:bold;
 }
-
 .valor{
-
     color:#7b6754;
-
     font-size:32px;
-
     font-weight:600;
 }
-
-/* ===== section 3 ===== */
-
 .bodyzote_sec3{
 
     grid-area:bottom;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     gap:45px;
-
     flex-wrap:wrap;
 }
-
 .btn_menu{
 
     width:190px;
-
     height:70px;
-
     border:none;
-
     border-radius:50px;
 
     background:
@@ -483,47 +375,199 @@ background:
     color:white;
 
     text-transform:uppercase;
-
     font-size:22px;
-
     font-weight:bold;
-
     cursor:pointer;
-
-    transition:0.3s;
+    transition:0.4s;
 }
 
 .btn_menu:hover{
 
-    transform:scale(1.05);
+    transform:
+    scale(1.12)
+    translateY(-6px);
+    opacity:0.95;
+    box-shadow:
+    0 10px 25px rgba(0,0,0,0.35);
+}
+@keyframes perfilGlow{
 
-    opacity:0.9;
+    0%{
+
+        transform:scale(1);
+        box-shadow:
+        0 0 25px rgba(255,255,255,0.2),
+        0 0 50px rgba(255,255,255,0.1);
+    }
+
+    50%{
+
+        transform:scale(1.12);
+        box-shadow:
+        0 0 35px rgba(255,255,255,0.9),
+        0 0 90px rgba(255,255,255,0.5),
+        0 0 140px rgba(255,255,255,0.3);
+    }
+
+    100%{
+
+        transform:scale(1);
+        box-shadow:
+        0 0 25px rgba(255,255,255,0.2),
+        0 0 50px rgba(255,255,255,0.1);
+    }
 }
 
+@keyframes panelMove{
+    0%{
+        transform:scale(1);
+    }
+
+    50%{
+        transform:scale(1.03);
+    }
+
+    100%{
+        transform:scale(1);
+    }
+}
+
+@keyframes entrada{
+
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+@media (max-width: 768px){
+
+    body{
+        overflow-y:auto;
+        overflow-x:hidden;
+        grid-template-columns:100%;
+        grid-template-areas:
+        "panel"
+        "contenido";
+    }
+
+    .bodycito{
+        position:relative;
+        width:100%;
+        height:auto;
+        padding:25px 15px;
+        grid-template-rows:auto auto auto;
+        gap:25px;
+        animation:none;
+    }
+
+    .bodycito::before{
+        top:10px;
+        left:10px;
+        right:10px;
+        bottom:10px;
+    }
+
+    .perfil{
+        width:170px;
+        height:170px;
+    }
+
+    .estrellas{
+        font-size:35px;
+        text-align:center;
+    }
+
+    .bodycito_sec2{
+        gap:18px;
+    }
+
+    .btn_lateral{
+        width:90%;
+        font-size:14px;
+    }
+
+    .bodycito_sec3{
+        gap:25px;
+        padding-bottom:10px;
+    }
+
+    .bodycito_sec3 i{
+        font-size:24px;
+    }
+
+    .bodyzote{
+        width:100%;
+        height:auto;
+        padding:20px 10px;
+        grid-template-rows:auto auto auto;
+        gap:30px;
+    }
+
+    .bodyzote_sec1{
+        text-align:center;
+        padding-top:10px;
+    }
+
+    .bodyzote_sec1 h1{
+        font-size:32px;
+        letter-spacing:4px;
+    }
+
+    .bodyzote_sec2{
+        gap:22px;
+    }
+
+    .fila{
+
+        width:95%;
+        flex-direction:column;
+        gap:12px;
+        padding-bottom:18px;
+    }
+
+    .label{
+        width:80%;
+        font-size:11px;
+    }
+
+    .valor{
+        font-size:24px;
+        text-align:center;
+    }
+
+    .bodyzote_sec3{
+        gap:18px;
+        padding-bottom:25px;
+    }
+
+    .btn_menu{
+
+        width:140px;
+        height:58px;
+        font-size:16px;
+    }
+}
 </style>
 </head>
-
 <body>
-
-<!-- MAIN IZQUIERDO -->
-
 <main class="bodycito">
-
-    <!-- section 1 -->
 
     <section class="bodycito_sec1">
 
         <figure class="perfil">
 
-            <img src="perfil.jpg">
+            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg">
 
         </figure>
 
         <h2 class="estrellas">★★★★★</h2>
 
     </section>
-
-    <!-- section 2 -->
 
     <section class="bodycito_sec2">
 
@@ -537,8 +581,6 @@ background:
 
     </section>
 
-    <!-- section 3 -->
-
     <section class="bodycito_sec3">
 
         <i class="fa-brands fa-instagram"></i>
@@ -550,20 +592,13 @@ background:
     </section>
 
 </main>
-
-<!-- MAIN DERECHO -->
-
 <main class="bodyzote">
-
-    <!-- section 1 -->
 
     <section class="bodyzote_sec1">
 
         <h1>ADRIANA SANCHEZ</h1>
 
     </section>
-
-    <!-- section 2 -->
 
     <section class="bodyzote_sec2">
 
@@ -578,7 +613,6 @@ background:
         <article class="fila">
 
             <h3 class="label">EDAD:</h3>
-
             <p class="valor">45 años</p>
 
         </article>
@@ -586,36 +620,18 @@ background:
         <article class="fila">
 
             <h3 class="label">CONTACTO:</h3>
-
             <p class="valor">60239445</p>
 
         </article>
 
     </section>
 
-    <!-- section 3 -->
-
     <section class="bodyzote_sec3">
-
-        <button class="btn_menu">
-            ventas
-        </button>
-
-        <button class="btn_menu">
-            stock
-        </button>
-
-        <button class="btn_menu">
-            pedidos
-        </button>
-
-        <button class="btn_menu">
-            historial
-        </button>
-
-        <button class="btn_menu">
-            actualizar
-        </button>
+        <button class="btn_menu">ventas</button>
+        <button class="btn_menu">stock</button>
+        <button class="btn_menu">pedidos</button>
+        <button class="btn_menu">historial</button>
+        <button class="btn_menu">actualizar</button>
 
     </section>
 
@@ -623,4 +639,3 @@ background:
 
 </body>
 </html>
-```

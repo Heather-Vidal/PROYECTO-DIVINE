@@ -17,10 +17,10 @@ $resultado=$conn-> query($sql);
 if($resultado->num_rows > 0){
     while($fila=$resultado->fetch_assoc()){
         $nombre=$fila['nombre'];
-        $cantidad=$fila['cantidad'];
+        $descripcion=$fila['descripcion'];
         $precio=$fila['precio'];
         $costo=$fila['costo'];
-        $categoria=$fila['categoria'];
+        $stock=$fila['stock'];
         $codigo=$fila['codigo'];
     }
 }
@@ -187,8 +187,8 @@ input[type="submit"]:hover {
     <label>Nombre:</label>
     <input type="text" name="nombre" value="<?= $nombre ?>" required>
 
-    <label>Cantidad:</label>
-    <input type="number" name="cantidad" value="<?= $cantidad ?>" required>
+    <label>Descripción:</label>
+    <input type="text" name="descripcion" value="<?= $descripcion ?>" required>
 
     <label>Precio:</label>
     <input type="number" name="precio" value="<?= $precio ?>" required>
@@ -196,8 +196,8 @@ input[type="submit"]:hover {
     <label>Costo:</label>
     <input type="number" name="costo" value="<?= $costo ?>" required>
 
-    <label>Categoría:</label>
-    <input type="text" name="categoria" value="<?= $categoria ?>" required>
+    <label>stock:</label>
+    <input type="number" name="stock" value="<?= $stock ?>" required>
 
     <label>Código:</label>
     <input type="number" name="codigo" value="<?= $codigo ?>" required>
