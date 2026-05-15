@@ -12,7 +12,7 @@
       grid-template-areas: 
         "dos tres";
       margin: 0;
-      position: relative; /* Importante para posicionar el link central */
+      position: relative;
     }
 
   
@@ -56,13 +56,8 @@
        margin: 0;
       text-align: center;
       cursor: pointer;
-      position: relative; /* necesario para la línea animada */
+      position: relative;
     }
-
-    /* Agregado: línea animada debajo del h1 */
-    
-
-    /* Pantalla negra de transición */
     .pantalla-negra {
       position: fixed;
       bottom: -100%;
@@ -115,7 +110,7 @@
     
   }
   #link {
-   top: 50%;              /* Lo pongo realmente al centro vertical */
+   top: 50%;      
     left: 50%;
     transform: translate(-50%, -50%);
   }
