@@ -83,8 +83,8 @@ label {
 }
 
 input[type="text"],
-input[type="int"],
-input[type="int "],
+input[type="number"],
+input[type="number"],
 input[type="date"] {
   padding: 12px 14px;
   border: 1px solid #ccb899;
