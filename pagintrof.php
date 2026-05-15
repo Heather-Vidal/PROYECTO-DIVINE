@@ -146,7 +146,7 @@
   </section>
 
   <!-- Link central DIVINE -->
-  <a href="paginaprinc2.php" id="link">
+  <a href="totu.php" id="link">
     <h1 class="hola">DIVINE</h1>
   </a>
 

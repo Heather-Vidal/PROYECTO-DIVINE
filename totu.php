@@ -105,6 +105,7 @@ h1{
     font-size: 72px;
     line-height: 1.05;
     font-weight: 900;
+    margin-top: -55PX;
 }
 
 .color{
@@ -121,40 +122,57 @@ h1{
 
 /* ===== BOX ===== */
 .box{
+    position: relative;
     background: #d6c8b3;
     padding: 20px;
     border-radius: 15px;
-    width: 250px;
+    width: 380px;
+    height: 250px;
+    display:flex;
+    align-items: center;
+    padding-left:160px
 }
 
 .box h2{
-    margin-bottom: 10px;
+
+    margin-bottom: 30px;
 }
 
 .box p{
-    margin-bottom: 15px;
+    margin-bottom: 55px;
+    z-index: 5;
+    margin:10 auto;
 }
 
 .box a{
+    z-index: 5;
     text-decoration: none;
     background: #111;
     color: white;
     padding: 10px 15px;
     border-radius: 10px;
     display: inline-block;
+    margin:0;
+}
+.box img{
+    z-index: 10;
+    position: absolute;
+    width: 170px;
+    bottom:10px;
+    left: 20px;
 }
 
-/* ===== IMAGEN DERECHA ===== */
 .derecha{
     grid-area: tres;
     display: flex;
     justify-content: right;
     align-items: right;
-    width: 70px;
-
 }
-
-/* ===== MAIN ===== */
+.derecha img{
+    width: 100%;
+    max-width: 885px;
+    border-radius: 15px;
+}
 main.principal{
     grid-area: main;
     background: #e9e5dd;
@@ -164,11 +182,10 @@ main.principal{
     padding: 70px 0;
 }
 
-/* ===== CARACTERÍSTICAS ===== */
 .caracteristicas{
     border-radius: 30px;
     width: 95%;
-    background: #ddc9b7; /* color marrón */
+    background: #ddc9b7;
     padding:  40px 30px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -256,7 +273,7 @@ footer.pie{
         <a href="#">
             <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
         </a>
-        <a href="#">
+        <a href="formcliente.php">
             <img src="https://cdn-icons-png.flaticon.com/512/7531/7531708.png" alt="persona" width="25">
         </a>
     </nav>
@@ -277,7 +294,8 @@ footer.pie{
     <section class="box">
         <h2>ESENCIAS</h2>
         <p>Producto a base de esencias naturales.</p>
-        <a href="#">Añadir Producto</a>
+        <img src="crema.png" alt="crema" width="80px">
+        <a href="formularioprodu.php">Añadir Producto</a>
     </section>
 </section>
 
