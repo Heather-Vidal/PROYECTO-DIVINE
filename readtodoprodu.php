@@ -9,7 +9,6 @@ $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 if($conn->connect_error){
   echo"OCURRIÓ UN ERROR SORRY UnU";
 }
-
 $sql="SELECT * FROM PRODUCTO";
 $resultado=$conn-> query($sql);
 
@@ -89,8 +88,7 @@ body {
 
 .item:hover {
   background: #e0d5b0;
-  transform: translateY(-6px); /* sube un poquito al pasar el mouse */
-}
+  transform: translateY(-6px);
 
 .item p {
   margin: 6px 0;
@@ -150,8 +148,6 @@ body {
   color: #364e63;
   transform: scale(1.05);
 }
-
-/* Versión para celular */
 @media (max-width: 768px) {
   .contenedor {
     grid-template-columns: 1fr;

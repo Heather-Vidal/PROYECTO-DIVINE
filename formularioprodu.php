@@ -16,7 +16,6 @@ body {
   margin: 0;
 }
 
-/* FORMULARIO */
 form {
   background: #f5e9d8;
   padding: 50px;
@@ -128,8 +127,6 @@ input[type="submit"]:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 30px rgba(77,103,127,0.35);
 }
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
   form {
     grid-template-columns: 1fr;

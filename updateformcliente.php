@@ -70,15 +70,12 @@ form {
   grid-gap: 30px;
 }
 
-/* IMAGEN */
 .imagen {
   grid-area: imagen;
   background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center / contain no-repeat;
   border-radius: 15px;
   height: 250px;
 }
-
-/* TÍTULO */
 h2 {
   grid-area: titulo;
   margin: 0;
@@ -88,8 +85,6 @@ h2 {
   letter-spacing: 1px;
   text-align: center;
 }
-
-/* LEYENDA */
 legend {
   grid-area: leyenda;
   font-weight: bold;
@@ -129,8 +124,6 @@ input:focus {
   border-color: #364e63;
   box-shadow: 0 0 8px rgba(54,78,99,0.3);
 }
-
-/* BOTÓN */
 input[type="submit"] {
   grid-area: boton;
   margin-top: 10px;
@@ -151,8 +144,6 @@ input[type="submit"]:hover {
   background: #c5a46d;
   transform: scale(1.03);
 }
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
   form {
     grid-template-columns: 1fr;
