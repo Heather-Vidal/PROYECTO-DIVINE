@@ -11,28 +11,37 @@
     padding: 0;
     box-sizing: border-box;
 }
-
-body{
-    background: #EBE8D9;
-    color: #111;
-    font-family: Arial, sans-serif;
-
-    display: grid;
-    grid-template-rows: 100px 650px auto 100px;
-    grid-template-columns: 50% 50%;
-    grid-template-areas:
-        "uno uno" 
-        "dos tres"
-        "main main"
-        "cua cua";
-    gap: 7px;
-}
-header{
-    grid-area: uno;
+.pantalla-negra{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px 40px;
+    z-index: 9999;
+}
+
+.pantalla-negra h1{
+    color: white;
+    font-size: 80px;
+    font-family: "Lora", serif;
+    letter-spacing: 8px;
+}
+
+.pantalla-negra-activa{
+    animation: bajarPantalla 1.2s ease forwards;
+}
+
+@keyframes bajarPantalla{
+    from{
+        top: 0;
+    }
+    to{
+        top: 100%;
+    }
 }
 
 body{
@@ -105,7 +114,7 @@ h1{
     font-size: 72px;
     line-height: 1.05;
     font-weight: 900;
-    margin-top: -55PX;
+    margin-top: -20px;
 }
 
 .color{
@@ -130,18 +139,18 @@ h1{
     height: 250px;
     display:flex;
     align-items: center;
-    padding-left:160px
+    padding-left:160px;
+    margin-top: 100px;
 }
 
 .box h2{
 
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .box p{
     margin-bottom: 55px;
     z-index: 5;
-    margin:10 auto;
 }
 
 .box a{
@@ -152,7 +161,9 @@ h1{
     padding: 10px 15px;
     border-radius: 10px;
     display: inline-block;
-    margin:0;
+    margin-bottom:10px;
+    position: relative;
+    bottom:30px;
 }
 .box img{
     z-index: 10;
@@ -250,11 +261,35 @@ footer.pie{
     gap: 130px;
     margin-bottom: 25px;
 }
+.pantalla-negra {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 2em;
+      font-weight: bold;
+      z-index: 9999;
+    }
+    .pantalla-negra-activa {
+      animation: bajarPantalla 1s ease forwards;
+    }
+    @keyframes bajarPantalla {
+      from { top: 0; }
+      to { top: 100%; }
+    }
 </style>
 </head>
 
 <body>
-
+<section class="pantalla-negra" id="pantallaNegra">
+    <h1>DIVINE</h1>
+   </section>
 <!-- HEADER -->
 <header>
     <div class="logo">
@@ -295,14 +330,14 @@ footer.pie{
 
     <section class="box">
         <h2>ESENCIAS</h2>
-        <p>Producto a base de esencias naturales.</p>
+        <center><p>Producto a base de esencias naturales.</p></center>
         <img src="crema.png" alt="crema" width="80px">
         <a href="formularioprodu.php">Añadir Producto</a>
     </section>
 </section>
 
 <section class="derecha">
-    <img src="derus.png" alt="Beauty Products">
+    <img src="productos.png" alt="Beauty Products">
 </section>
 
 <main class="principal">
@@ -312,7 +347,7 @@ footer.pie{
             <img src="https://i.pinimg.com/736x/07/9a/16/079a161ed785efc26d2451d8fd3d3451.jpg" alt="">
         </div>
         <div class="caja-caracteristica">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4PvJpjnUGDjkF_Mw-VHV10iYUkdZ940gkQw&s" alt="">
+            <img src="producs.jpg" alt="">
         </div>
         <div class="caja-caracteristica">
             <img src="https://i.pinimg.com/736x/98/dc/17/98dc175ff91df602482d6eca3acc90c5.jpg" alt="">
@@ -343,5 +378,12 @@ footer.pie{
         <p>Instagram</p>
     </div>
 </footer>
+ <script>
+    window.onload = function() {
+      setTimeout(() => {
+        document.getElementById("pantallaNegra").classList.add("pantalla-negra-activa");
+      }, 800);
+    };
+  </script>
 </body>
 </html>
