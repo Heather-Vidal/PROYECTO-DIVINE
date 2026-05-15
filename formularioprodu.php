@@ -16,7 +16,6 @@ body {
   margin: 0;
 }
 
-/* FORMULARIO */
 form {
   background: #f5e9d8;
   padding: 50px;
@@ -128,8 +127,6 @@ input[type="submit"]:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 30px rgba(77,103,127,0.35);
 }
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
   form {
     grid-template-columns: 1fr;
@@ -159,7 +156,7 @@ input[type="submit"]:hover {
     <label for="nombre">Nombre:</label>
     <input type="text" name="nombre" required>
 
-    <label for="descripcion">descripcion:</label>
+    <label for="descripcion">Descripción:</label>
     <input type="text" name="descripcion" required>
 
     <label for="precio">Precio:</label>
@@ -171,7 +168,7 @@ input[type="submit"]:hover {
     <label for="stock">Stock:</label>
     <input type="number" name="stock" required>
 
-    <label for="codigo">Código:</label>
+     <label for="codigo">Código:</label>
     <input type="number" name="codigo" required>
   </div>
 

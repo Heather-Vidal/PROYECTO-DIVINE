@@ -129,7 +129,6 @@ h1{
     max-width: 500px;
 }
 
-/* ===== BOX ===== */
 .box{
     position: relative;
     background: #d6c8b3;

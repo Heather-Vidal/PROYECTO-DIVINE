@@ -49,8 +49,6 @@ form {
   border-radius: 15px;
   height: 250px;
 }
-
-/* Título */
 h2 {
   grid-area: titulo;
   margin: 0 0 5px;
@@ -63,7 +61,6 @@ h2 {
   width: fit-content;
 }
 
-/* Leyenda */
 legend {
   grid-area: leyenda;
   font-weight: bold;
@@ -72,8 +69,6 @@ legend {
   letter-spacing: 1px;
   font-family: "Playfair Display", serif;
 }
-
-/* Campos */
 .grupo-campos {
   grid-area: campos;
   display: flex;
@@ -88,8 +83,8 @@ label {
 }
 
 input[type="text"],
-input[type="int"],
-input[type="int "],
+input[type="number"],
+input[type="number"],
 input[type="date"] {
   padding: 12px 14px;
   border: 1px solid #ccb899;
@@ -103,8 +98,6 @@ input:focus {
   border-color: #364e63;
   box-shadow: 0 0 8px rgba(54,78,99,0.3);
 }
-
-/* Botón */
 input[type="submit"] {
   grid-area: boton;
   margin-top: 10px;
@@ -125,8 +118,6 @@ input[type="submit"]:hover {
   background: #c5a46d;
   transform: scale(1.03);
 }
-
-/* ====== Mobile ====== */
 @media (max-width: 768px) {
   form {
     grid-template-columns: 1fr;

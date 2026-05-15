@@ -62,8 +62,6 @@ body {
   font-weight: 700;
   margin: 0;
   letter-spacing: 2px;
-
-  /* línea dorada */
   border-bottom: 3px solid #c5a46d;
   padding-bottom: 10px;
   width: fit-content;
@@ -93,8 +91,6 @@ body {
   font-weight: bold;
   color: #364e63;
 }
-
-/* Botones de edición y eliminación */
 .botones {
   margin-top: 20px;
   text-align: center;
@@ -120,8 +116,6 @@ body {
   transform: scale(1.05);
   box-shadow: 0 5px 20px rgba(197,164,109,0.7);
 }
-
-/* NAV inferior: volver e ir a lista */
 .navegacion {
   margin-top: 20px;
   text-align: center;
@@ -178,14 +172,10 @@ while($fila=$resultado->fetch_assoc()){
   
 ?>
     </div>
-
-    <!-- ACCIONES DEL PRODUCTO -->
     <div class="botones">
       <a href="updateformprodu.php?codigo=<?php echo $codigo; ?>" class="boton">Editar</a>
       <a href="deleteprodu.php?codigo=<?php echo $codigo; ?>" class="boton">Eliminar</a>
     </div>
-
-    <!-- NAVEGACIÓN GLOBAL -->
     <div class="navegacion">
       <a href="readtodoprodu.php" class="boton2">Ver productos</a>
       <a href="paginaprinc2.php" class="boton2">⬅ Volver al inicio</a>

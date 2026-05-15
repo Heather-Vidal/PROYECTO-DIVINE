@@ -149,14 +149,11 @@ body {
   box-shadow: 0 4px 15px rgba(54,78,99,0.6);
   transition: 0.3s ease;
 }
-
 .volver a:hover {
   background: #c5a46d;
   color: #364e63;
   transform: scale(1.06);
 }
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .contenedor {
     grid-template-columns: 1fr;
