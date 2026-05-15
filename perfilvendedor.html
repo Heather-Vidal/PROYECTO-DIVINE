@@ -291,7 +291,114 @@ body{
         transform:translateY(0);
     }
 }
+@media (max-width: 768px){
 
+    body{
+        overflow-y:auto;
+        overflow-x:hidden;
+        grid-template-columns:100%;
+        grid-template-areas:
+        "panel"
+        "contenido";
+    }
+
+    .bodycito{
+        position:relative;
+        width:100%;
+        height:auto;
+        padding:25px 15px;
+        grid-template-rows:auto auto auto;
+        gap:25px;
+        animation:none;
+    }
+
+    .bodycito::before{
+        top:10px;
+        left:10px;
+        right:10px;
+        bottom:10px;
+    }
+
+    .perfil{
+        width:170px;
+        height:170px;
+    }
+
+    .estrellas{
+        font-size:35px;
+        text-align:center;
+    }
+
+    .bodycito_sec2{
+        gap:18px;
+    }
+
+    .btn_lateral{
+        width:90%;
+        font-size:14px;
+    }
+
+    .bodycito_sec3{
+        gap:25px;
+        padding-bottom:10px;
+    }
+
+    .bodycito_sec3 i{
+        font-size:24px;
+    }
+
+    .bodyzote{
+        width:100%;
+        height:auto;
+        padding:20px 10px;
+        grid-template-rows:auto auto auto;
+        gap:30px;
+    }
+
+    .bodyzote_sec1{
+        text-align:center;
+        padding-top:10px;
+    }
+
+    .bodyzote_sec1 h1{
+        font-size:32px;
+        letter-spacing:4px;
+    }
+
+    .bodyzote_sec2{
+        gap:22px;
+    }
+
+    .fila{
+
+        width:95%;
+        flex-direction:column;
+        gap:12px;
+        padding-bottom:18px;
+    }
+
+    .label{
+        width:80%;
+        font-size:11px;
+    }
+
+    .valor{
+        font-size:24px;
+        text-align:center;
+    }
+
+    .bodyzote_sec3{
+        gap:18px;
+        padding-bottom:25px;
+    }
+
+    .btn_menu{
+
+        width:140px;
+        height:58px;
+        font-size:16px;
+    }
+}
 </style>
 </head>
 <body>
