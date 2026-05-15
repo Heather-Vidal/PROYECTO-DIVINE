@@ -12,8 +12,6 @@ $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modificar Cliente - DIVINE</title>
-
-<!-- Tipografía -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>

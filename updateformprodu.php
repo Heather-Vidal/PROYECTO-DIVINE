@@ -45,8 +45,6 @@ body {
   min-height: 100vh;
   margin: 0;
 }
-
-/* FORMULARIO */
 form {
   background: #f5e9d8;
   padding: 50px;
@@ -65,8 +63,6 @@ form {
     "imagen boton";
   transition: transform 0.35s ease;
 }
-
-/* IMAGEN */
 .imagen {
   grid-area: imagen;
   background: url("https://i.pinimg.com/736x/23/fd/c5/23fdc5871b591de154e3e9b889036562.jpg") center center / cover no-repeat;
@@ -75,8 +71,6 @@ form {
   filter: brightness(0.9) saturate(1.1);
   box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
 }
-
-/* TITULO */
 h2 {
   grid-area: titulo;
   margin: 0 0 8px;
@@ -88,8 +82,6 @@ h2 {
   padding-bottom: 8px;
   width: fit-content;
 }
-
-/* LEYENDA */
 legend {
   grid-area: leyenda;
   font-weight: bold;
@@ -97,8 +89,6 @@ legend {
   font-size: 18px;
   font-family: "Playfair Display", serif;
 }
-
-/* CAMPOS */
 .grupo-campos {
   grid-area: campos;
   display: flex;
@@ -122,7 +112,6 @@ input[type="number"] {
   outline: none;
   transition: 0.35s ease, box-shadow 0.35s ease;
 }
-
 input[type="text"]:focus,
 input[type="number"]:focus {
   border-color: #364e63;
@@ -153,8 +142,6 @@ input[type="submit"]:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 30px rgba(77,103,127,0.35);
 }
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
   form {
     grid-template-columns: 1fr;

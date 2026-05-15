@@ -23,7 +23,6 @@ if($resultado->num_rows > 0){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Detalle del Cliente - DIVINE</title>
 
-<!-- TIPOGRAFÍA -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
@@ -49,15 +48,12 @@ body {
   grid-template-columns: 1fr;
   grid-gap: 30px;
 }
-
-/* Imagen decorativa */
 .imagen {
   background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center / contain no-repeat;
   border-radius: 20px;
   min-height: 200px;  
 }
 
-/* Título elegante */
 .titulo {
   text-align: center;
   color: #364e63;
@@ -71,8 +67,6 @@ body {
   margin: 0 auto;
   padding-bottom: 6px;
 }
-
-/* Caja del cliente */
 .item {
   background: #f5e9d8;
   padding: 25px;
@@ -108,7 +102,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Botones estilos */
 .boton {
   background: #364e63;
   color: #c5a46d;
@@ -127,7 +120,6 @@ body {
   box-shadow: 0 5px 20px rgba(197,164,109,0.7);
 }
 
-/* NAV estilo del código de producto */
 .navegacion {
   margin-top: 20px;
   text-align: center;
@@ -154,7 +146,6 @@ body {
   box-shadow: 0 5px 20px rgba(197,164,109,0.7);
 }
 
-/* MEDIA QUERY copiado del estilo de PRODUCTO */
 @media (max-width: 768px) {
   .contenedor {
     padding: 25px;
