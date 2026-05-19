@@ -110,7 +110,7 @@
     
   }
   #link {
-   top: 50%;      
+   top: 50%;              /* Lo pongo realmente al centro vertical */
     left: 50%;
     transform: translate(-50%, -50%);
   }
