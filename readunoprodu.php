@@ -178,7 +178,7 @@ while($fila=$resultado->fetch_assoc()){
     </div>
     <div class="navegacion">
       <a href="readtodoprodu.php" class="boton2">Ver productos</a>
-      <a href="paginaprinc2.php" class="boton2">⬅ Volver al inicio</a>
+      <a href="totu.php" class="boton2">⬅ Volver al inicio</a>
     </div>
 
   </div>

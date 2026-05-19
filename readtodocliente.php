@@ -205,7 +205,7 @@ while($fila=$resultado->fetch_assoc()){
     </div>
 
     <div class='volver'>
-      <a href="paginaprinc2.php">⬅ Volver al inicio</a>
+      <a href="totu.php">⬅ Volver al inicio</a>
     </div>
 
   </div>
