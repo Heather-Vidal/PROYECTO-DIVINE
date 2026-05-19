@@ -89,7 +89,7 @@ body {
 .item:hover {
   background: #e0d5b0;
   transform: translateY(-6px);
-
+}
 .item p {
   margin: 6px 0;
   color: #2b2b2b;
