@@ -35,7 +35,6 @@ form {
   transition: transform 0.35s ease;
 }
 
- 
 
 /* IMAGEN */
 .imagen {
