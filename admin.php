@@ -10,7 +10,7 @@
     display:grid;
     grid-template-columns:320px 1fr;
     grid-template-areas:
-    " sidebar contenido";
+    "sidebar contenido";
     min-height:100vh;  
     font-family:'Poppins',sans-serif;
     background:linear-gradient(135deg,#cbb4a1,#e9ddd4);
@@ -22,9 +22,10 @@
     background:#bfa892;
     padding:30px 20px;
     border-right:5px solid #f3e7df;
-        animation:latido 3s infinite ease-in-out;
+    animation:latido 3s infinite ease-in-out;
     transform-origin:center;
 }
+
 @keyframes latido{
     0%{
         transform:scale(1);
@@ -37,13 +38,13 @@
     100%{
         transform:scale(1);
     }
-
 }
 
 .cuadro{
     grid-area:contenido;
     padding:40px;
 }
+
 .cajota{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
@@ -58,11 +59,12 @@
     border-radius:30px;
     box-shadow:0 10px 30px rgba(0,0,0,0.15);
     transition:0.5s;
-    
 }
+
 .uno:hover{
     transform:translateY(-10px) scale(1.02);
 }
+
 .uno img{
     width:220px;
     height:220px;
@@ -71,6 +73,7 @@
     border:6px solid white;
     transition:0.5s;
 }
+
 .uno img:hover{
     transform:scale(1.08) rotate(3deg);
 }
@@ -100,7 +103,6 @@
     transform:scale(1.03);
 }
 
-
 .bloque{
     background:#efe4dc;
     padding:35px;
@@ -122,17 +124,22 @@
     font-size:30px;
 }
 
-.bloque li{
-    background:white;
+/* ESTILOS PARA LOS LINKS */
+.bloque a{
     display:inline-block;
+    background:white;
     margin:8px 5px;
     padding:10px 18px;
     border-radius:30px;
     font-size:18px;
+    text-decoration:none;
+    color:#6e5d5d;
+    font-weight:bold;
     transition:0.3s;
+    box-shadow:0 5px 10px rgba(0,0,0,0.08);
 }
 
-.bloque li:hover{
+.bloque a:hover{
     background:#b89f89;
     color:white;
     transform:scale(1.08);
@@ -177,6 +184,7 @@
         text-align:center;
     }
 }
+
 footer{
     background:#bfa892;
     color:white;
@@ -198,50 +206,63 @@ footer p{
 <body>
 
 <div class="caja">
+
     <aside class="cajita">
 
         <div class="uno">
+
             <img src="https://i.pinimg.com/736x/4a/54/a0/4a54a016d7b01e9f18f6f5d7f2511a05.jpg" alt="Administrador">
+
             <h2>MAITE ALLENDE</h2>
+
             <div class="dos">PERFIL ADMINISTRADOR</div>
 
             <div class="tres">
                 <p>Edad: 26 años</p>
                 <p>Ciudad: Cochabamba</p>
             </div>
+
         </div>
 
     </aside>
 
-    <!-- CONTENIDO -->
     <main class="cuadro">
 
         <section class="cajota">
 
             <article class="bloque">
+
                 <h3>• Gestionar Usuarios</h3>
-                <ul>
-                    <a href="formcliente.php">crear</a>
-                      <a href="updatecliente.php">editar </a>  
-                       <a href="deletecliente.php">Eliminar</a>
-                </ul>
+
+                <div class="links">
+                    <a href="formcliente.php">Crear</a>
+                    <a href="updatecliente.php">Editar</a>
+                    <a href="deletecliente.php">Eliminar</a>
+                </div>
+
             </article>
 
             <article class="bloque">
+
                 <h3>• Gestionar Productos</h3>
-                <ul>
-                     <a href="formularioprodu.php">Registrar</a>  
-                    <a href="update.php">editar</a>
-                        <a href="deleteprodu.php">eliminar</a>
-                </ul>
+
+                <div class="links">
+                    <a href="formularioprodu.php">Registrar</a>
+                    <a href="update.php">Editar</a>
+                    <a href="deleteprodu.php">Eliminar</a>
+                </div>
+
             </article>
 
             <article class="bloque">
+
                 <h3>• Asignar Roles</h3>
-                <ul>
-                      <a href="formcliente.php">administrador</a>
-                        <a href="perfilvendedor.php">vendedor</a>
-                </ul>
+
+                <div class="links">
+                    <a href="formcliente.php">Administrador</a>
+                    <a href="perfilvendedor.php">Vendedor</a>
+                </div>
+
             </article>
 
             <article class="bloque">
@@ -255,18 +276,24 @@ footer p{
         </section>
 
         <section class="frase">
+
             <p>
                 “Gestionando la excelencia en cada proceso de Divine.
                 Nuestro objetivo es asegurar que cada producto llegue
                 con la mejor experiencia y calidad posible.”
             </p>
+
         </section>
 
     </main>
 
 </div>
+
 <footer>
-        <p>© 2026 Divine Beauty</p>  <p>Contacto</p>    <p>Instagram</p>
+    <p>© 2026 Divine Beauty</p>
+    <p>Contacto</p>
+    <p>Instagram</p>
 </footer>
+
 </body>
 </html>
