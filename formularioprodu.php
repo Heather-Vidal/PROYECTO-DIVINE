@@ -156,7 +156,7 @@ input[type="submit"]:hover {
     <label for="nombre">Nombre:</label>
     <input type="text" name="nombre" required>
 
-    <label for="descripcion">descripcion:</label>
+    <label for="descripcion">Descripción:</label>
     <input type="text" name="descripcion" required>
 
     <label for="precio">Precio:</label>
@@ -168,7 +168,7 @@ input[type="submit"]:hover {
     <label for="stock">Stock:</label>
     <input type="number" name="stock" required>
 
-    <label for="codigo">Código:</label>
+     <label for="codigo">Código:</label>
     <input type="number" name="codigo" required>
   </div>
 

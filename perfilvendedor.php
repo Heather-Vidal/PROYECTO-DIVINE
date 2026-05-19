@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Perfil Premium</title>
-
-<link rel="stylesheet"
+<link rel="stylesheet" 
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
+
 body{
     height:100vh;
 
@@ -23,6 +23,8 @@ body{
     "panel contenido";
     font-family:Arial, Helvetica, sans-serif;
 }
+a{color: inherit;          /* hereda el color del texto */
+  text-decoration: none;   /* quita el subrayado */}
 .bodycito{
 
     grid-area:panel;
@@ -101,6 +103,7 @@ body{
 }
 
 .btn_lateral{
+   
     width:230px;
     padding:14px;
     background:transparent;
@@ -112,6 +115,7 @@ body{
     transition:0.4s;
 }
 .btn_lateral:hover{
+   
     background:rgba(255,255,255,0.15);
     transform:scale(1.08);
     box-shadow:
@@ -192,7 +196,7 @@ body{
     font-weight:bold;
 }
 .valor{
-    color:#7b6754;
+    color:#cfcbc6;
     font-size:32px;
     font-weight:600;
 }
@@ -400,6 +404,11 @@ body{
     }
 }
 </style>
+
+
+
+
+
 </head>
 <body>
 <main class="bodycito">
@@ -408,7 +417,7 @@ body{
 
         <figure class="perfil">
 
-            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg">
+            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg"&gt;
 
         </figure>
 
@@ -423,7 +432,7 @@ body{
         </button>
 
         <button class="btn_lateral">
-            explorar
+           <a href="totu.php"> Explorar</a>
         </button>
 
     </section>

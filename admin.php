@@ -221,26 +221,26 @@ footer p{
             <article class="bloque">
                 <h3>• Gestionar Usuarios</h3>
                 <ul>
-                    <li>Crear</li>
-                    <li>Editar</li>
-                    <li>Eliminar</li>
+                    <a href="formcliente.php">crear</a>
+                      <a href="updatecliente.php">editar </a>  
+                       <a href="deletecliente.php">Eliminar</a>
                 </ul>
             </article>
 
             <article class="bloque">
                 <h3>• Gestionar Productos</h3>
                 <ul>
-                    <li>Registrar</li>
-                    <li>Editar</li>
-                    <li>Eliminar</li>
+                     <a href="formularioprodu.php">Registrar</a>  
+                    <a href="update.php">editar</a>
+                        <a href="deleteprodu.php">eliminar</a>
                 </ul>
             </article>
 
             <article class="bloque">
                 <h3>• Asignar Roles</h3>
                 <ul>
-                    <li>Administrador</li>
-                    <li>Vendedor</li>
+                      <a href="formcliente.php">administrador</a>
+                        <a href="perfilvendedor.php">vendedor</a>
                 </ul>
             </article>
 

@@ -187,7 +187,7 @@ while($fila=$resultado->fetch_assoc()){
     <!-- NAVEGACIÓN GLOBAL -->
     <div class="navegacion">
       <a class="boton2" href="readtodocliente.php">Ver clientes</a>
-      <a class="boton2" href="paginaprinc2.php">⬅ Volver al inicio</a>
+      <a class="boton2" href="totu.php">⬅ Volver al inicio</a>
     </div>
 
   </div>
