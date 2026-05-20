@@ -303,7 +303,7 @@ footer.pie{
         <a href="#contacto">Contacto</a>
         <a href="#consulta">Consulta Personal</a>
         <a href="perfilvendedor.php">Vendedor</a>
-        <a href="admin.html">Administrador</a>
+        <a href="admin.php">Administrador</a>
         <a href="#">
             <img src="https://images.icon-icons.com/3065/PNG/512/search_magnifier_icon_190940.png" alt="lupa" width="25">
         </a>
