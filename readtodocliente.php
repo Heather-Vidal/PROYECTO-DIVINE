@@ -13,7 +13,7 @@ if($conn->connect_error){
 $sql="SELECT * FROM CLIENTE";
 $resultado=$conn-> query($sql);
 
-if($resultado->num_rows > 0){
+ 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -182,6 +182,7 @@ body {
     <div class="lista">
 
 <?php
+if($resultado->num_rows > 0){
 while($fila=$resultado->fetch_assoc()){
   echo "<div class='item'>";
   echo "<p><span>CI:</span> ".$fila['CI']."</p>";

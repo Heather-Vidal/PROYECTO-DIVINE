@@ -4,27 +4,27 @@ $usuario="root";
 $contraseña="";
 $nombreBD="DIVINE";
 
-$conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
+$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 
 if($conn->connect_error){
-  echo"OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
+    die("Ocurrió un error de conexión");
 }
 
-$CI=$_GET['CI'];
-$sql="SELECT * FROM CLIENTE WHERE CI=$CI";
-$resultado=$conn-> query($sql);
+$CI = $_GET['CI'];
+
+$sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";
+$resultado = $conn->query($sql);
 
 if($resultado->num_rows > 0){
-while($fila=$resultado->fetch_assoc()){
+    while($fila = $resultado->fetch_assoc()){
 
-$CI=$fila['CI'];
-$nombre=$fila['nombre'];
-$direccion=$fila['direccion'];
-$celular=$fila['celular'];
-$rol=$fila['rol'];
-$estado=$fila['estado'];
-
-}
+        $CI = $fila['CI'];
+        $nombre = $fila['nombre'];
+        $direccion = $fila['direccion'];
+        $celular = $fila['celular'];
+        $rol = $fila['rol'];
+        $estado = $fila['estado'];
+    }
 }
 ?>
 
@@ -39,130 +39,119 @@ $estado=$fila['estado'];
 
 <style>
 
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #e9e5dd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
-  margin: 0;
+body{
+    font-family: 'Poppins', sans-serif;
+    background: #e9e5dd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+    margin: 0;
 }
 
-/* FORMULARIO PRINCIPAL */
-form {
-  position: relative;
-  background: #f5e9d8;
-  padding: 40px 40px 60px 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  max-width: 600px;
-  width: 85%;
-  display: grid;
+/* FORMULARIO */
+form{
+    background: #f5e9d8;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    max-width: 600px;
+    width: 85%;
 
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas:
-    "titulo titulo"
-    "imagen imagen"
-    "leyenda leyenda"
-    "campos campos"
-    "boton boton";
-  grid-gap: 30px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
 }
 
-.imagen {
-  grid-area: imagen;
-  background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center / contain no-repeat;
-  border-radius: 15px;
-  height: 250px;
+/* IMAGEN */
+.imagen{
+    background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center/contain no-repeat;
+    height: 220px;
 }
-h2 {
-  grid-area: titulo;
-  margin: 0;
-  font-size: 32px;
-  color: #364e63;
-  font-family: "Playfair Display", serif;
-  letter-spacing: 1px;
-  text-align: center;
+
+/* TITULO */
+h2{
+    margin: 0;
+    text-align: center;
+    color: #364e63;
+    font-size: 32px;
+    font-family: "Playfair Display", serif;
 }
-legend {
-  grid-area: leyenda;
-  font-weight: bold;
-  color: #c5a46d;
-  font-size: 18px;
-  letter-spacing: 1px;
-  font-family: "Playfair Display", serif;
-  text-align: center;
+
+legend{
+    text-align: center;
+    color: #c5a46d;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 /* CAMPOS */
-.grupo-campos {
-  grid-area: campos;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.grupo-campos{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-label {
-  color: #364e63;
-  font-size: 15px;
-  font-weight: 500;
+label{
+    color: #364e63;
+    font-weight: 500;
+    margin-bottom: -10px;
 }
 
+/* AQUÍ ESTABA EL ERROR */
 input[type="text"],
-input[type="int"],
-input[type="date"] {
-  padding: 12px 14px;
-  border: 1px solid #ccb899;
-  border-radius: 8px;
-  font-size: 15px;
-  background: #ffffff;
-  transition: 0.3s;
+input[type="number"],
+input[type="date"]{
+
+    padding: 14px;
+    border: 1px solid #ccb899;
+    border-radius: 10px;
+    font-size: 15px;
+    background: white;
+    outline: none;
+    transition: 0.3s;
 }
 
-input:focus {
-  border-color: #364e63;
-  box-shadow: 0 0 8px rgba(54,78,99,0.3);
-}
-input[type="submit"] {
-  grid-area: boton;
-  margin-top: 10px;
-  padding: 14px;
-  background: #364e63;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: 0.3s;
-  box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+/* EFECTO */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus{
+
+    border-color: #364e63;
+    box-shadow: 0 0 10px rgba(54,78,99,0.3);
+    transform: scale(1.01);
 }
 
-input[type="submit"]:hover {
-  background: #c5a46d;
-  transform: scale(1.03);
+/* BOTON */
+input[type="submit"]{
+
+    padding: 14px;
+    background: #364e63;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.25);
 }
-@media (max-width: 768px) {
-  form {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "imagen"
-      "titulo"
-      "leyenda"
-      "campos"
-      "boton";
-    padding: 25px;
-  }
 
-  .imagen {
-    height: 220px;
-  }
+input[type="submit"]:hover{
+    background: #c5a46d;
+    transform: scale(1.03);
+}
 
-  input[type="submit"] {
-    width: 100%;
-  }
+/* RESPONSIVE */
+@media(max-width:768px){
+
+    form{
+        padding: 25px;
+    }
+
+    .imagen{
+        height: 180px;
+    }
 }
 
 </style>
@@ -172,36 +161,35 @@ input[type="submit"]:hover {
 
 <form action="updatecliente.php" method="POST">
 
-  <div class="imagen"></div>
+    <div class="imagen"></div>
 
-  <h2>MODIFICAR CLIENTE</h2>
+    <h2>MODIFICAR CLIENTE</h2>
 
-  <legend>DATOS A EDITAR:</legend>
+    <legend>DATOS A EDITAR</legend>
 
-  <div class="grupo-campos">
+    <div class="grupo-campos">
 
-    <label>CI:</label>
-    <input type="number" name="CI" value="<?= $CI ?>" required>
+        <label>CI:</label>
+        <input type="number" name="CI" value="<?= $CI ?>" required>
 
-    <label>Nombre:</label>
-    <input type="text" name="nombre" value="<?= $nombre ?>" required>
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="<?= $nombre ?>" required>
 
         <label>Dirección:</label>
-    <input type="text" name="direccion" value="<?= $direccion ?>" required>
-    
+        <input type="text" name="direccion" value="<?= $direccion ?>" required>
 
-    <label>Telefono:</label>
-    <input type="number" name="celular" value="<?= $celular ?>" required>
+        <label>Teléfono:</label>
+        <input type="number" name="celular" value="<?= $celular ?>" required>
 
-    <label>Rol:</label>
-    <input type="text" name="rol" value="<?= $rol ?>" required>
+        <label>Rol:</label>
+        <input type="text" name="rol" value="<?= $rol ?>" required>
 
-    <label>Estado:</label>
-    <input type="text" name="estado" value="<?= $estado ?>" required>
+        <label>Estado:</label>
+        <input type="text" name="estado" value="<?= $estado ?>" required>
 
-  </div>
+    </div>
 
-  <input type="submit" value="Guardar Cambios">
+    <input type="submit" value="Guardar Cambios">
 
 </form>
 
