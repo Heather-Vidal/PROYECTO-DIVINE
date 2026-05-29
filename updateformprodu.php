@@ -32,9 +32,63 @@ if($resultado->num_rows > 0){
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modificar Producto DIVINE</title>
-
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
+<script>
+$(document).ready(function() {
+  $("form").validate({
+    rules: {
+      nombre: "required",
+      descripcion: "required",
+      precio: {
+        required: true,
+        number: true,
+        min: 0
+      },
+      costo: {
+        required: true,
+        number: true,
+        min: 0
+      },
+      stock: {
+        required: true,
+        number: true,
+        min: 0
+      },
+      codigo: {
+        required: true,
+        number: true,
+        min: 0
+      }
+    },
+    messages: {
+      nombre: "Por favor, ingresa el nombre del producto.",
+      descripcion: "Por favor, ingresa la descripción del producto.",
+      precio: {
+        required: "Por favor, ingresa el precio del producto.",
+        number: "Por favor, ingresa un número válido para el precio.",
+        min: "El precio no puede ser negativo."
+      },
+      costo: {
+        required: "Por favor, ingresa el costo del producto.",
+        number: "Por favor, ingresa un número válido para el costo.",
+        min: "El costo no puede ser negativo."
+      },
+      stock: {
+        required: "Por favor, ingresa la cantidad en stock del producto.",
+        number: "Por favor, ingresa un número válido para el stock.",
+        min: "El stock no puede ser negativo."
+      },
+      codigo: {
+        required: "Por favor, ingresa el código del producto.",
+        number: "Por favor, ingresa un número válido para el código.",
+        min: "El código no puede ser negativo."
+      }
+    }
+  });
+});
 <style>
 body {
   font-family: 'Inter', sans-serif;
