@@ -35,6 +35,9 @@ if($resultado->num_rows > 0){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Editar Cliente - DIVINE</title>
 
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
