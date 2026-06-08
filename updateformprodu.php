@@ -89,6 +89,7 @@ $(document).ready(function() {
     }
   });
 });
+</script>
 <style>
 body {
   font-family: 'Inter', sans-serif;
@@ -249,4 +250,4 @@ input[type="submit"]:hover {
 </form>
 
 </body>
-</html>
+</html> 
