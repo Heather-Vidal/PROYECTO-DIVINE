@@ -160,6 +160,42 @@ input[type="submit"]:hover{
 
 </style>
 </head>
+
+<body>
+
+<form action="updatecliente.php" method="POST">
+
+    <div class="imagen"></div>
+
+    <h2>MODIFICAR CLIENTE</h2>
+
+    <legend>DATOS A EDITAR</legend>
+
+    <div class="grupo-campos">
+
+        <label>CI:</label>
+        <input type="number" name="CI" value="<?= $CI ?>" required>
+
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="<?= $nombre ?>" required>
+
+        <label>Dirección:</label>
+        <input type="text" name="direccion" value="<?= $direccion ?>" required>
+
+        <label>Teléfono:</label>
+        <input type="number" name="celular" value="<?= $celular ?>" required>
+
+        <label>Rol:</label>
+        <input type="text" name="rol" value="<?= $rol ?>" required>
+
+        <label>Estado:</label>
+        <input type="text" name="estado" value="<?= $estado ?>" required>
+
+    </div>
+
+    <input type="submit" value="Guardar Cambios">
+
+</form>
 <script>
 
 $(document).ready(function(){
@@ -242,42 +278,6 @@ $(document).ready(function(){
 });
 
 </script>
-
-<body>
-
-<form action="updatecliente.php" method="POST">
-
-    <div class="imagen"></div>
-
-    <h2>MODIFICAR CLIENTE</h2>
-
-    <legend>DATOS A EDITAR</legend>
-
-    <div class="grupo-campos">
-
-        <label>CI:</label>
-        <input type="number" name="CI" value="<?= $CI ?>" required>
-
-        <label>Nombre:</label>
-        <input type="text" name="nombre" value="<?= $nombre ?>" required>
-
-        <label>Dirección:</label>
-        <input type="text" name="direccion" value="<?= $direccion ?>" required>
-
-        <label>Teléfono:</label>
-        <input type="number" name="celular" value="<?= $celular ?>" required>
-
-        <label>Rol:</label>
-        <input type="text" name="rol" value="<?= $rol ?>" required>
-
-        <label>Estado:</label>
-        <input type="text" name="estado" value="<?= $estado ?>" required>
-
-    </div>
-
-    <input type="submit" value="Guardar Cambios">
-
-</form>
 
 </body>
 </html>
