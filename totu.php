@@ -298,7 +298,7 @@ footer.pie{
 
     <nav>
         <a href="#inicio">Inicio</a>
-        <a href="#productos">Productos</a>
+        <a href="productos.php">Productos</a>
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
         <a href="#consulta">Consulta Personal</a>
