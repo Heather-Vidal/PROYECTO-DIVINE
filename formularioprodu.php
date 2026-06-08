@@ -83,9 +83,11 @@ legend {
   flex-direction: column;
   gap: 18px;
 }
-.error{
-
-color:red;
+ .error {
+    opacity: 0.8;
+    color: red;
+    position: relative;
+    top: -5px;
 }
 label {
   color: #364e63;
