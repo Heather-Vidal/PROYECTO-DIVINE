@@ -34,8 +34,8 @@ if($resultado->num_rows > 0){
 <title>Modificar Producto DIVINE</title>
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap&quot; rel="stylesheet">
 <script>
 $(document).ready(function() {
   $("form").validate({
@@ -89,6 +89,7 @@ $(document).ready(function() {
     }
   });
 });
+</script>
 <style>
 body {
   font-family: 'Inter', sans-serif;
@@ -249,4 +250,4 @@ input[type="submit"]:hover {
 </form>
 
 </body>
-</html>
+</html> 

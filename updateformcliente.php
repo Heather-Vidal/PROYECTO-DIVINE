@@ -12,7 +12,7 @@ if($conn->connect_error){
 
 $CI = $_GET['CI'];
 
-$sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";
+$sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";             
 $resultado = $conn->query($sql);
 
 if($resultado->num_rows > 0){
@@ -160,6 +160,88 @@ input[type="submit"]:hover{
 
 </style>
 </head>
+<script>
+
+$(document).ready(function(){
+    $("#formCliente").validate({
+
+        rules:{
+            CI:{
+                required:true,
+                number:true,
+                minlength:7,
+                
+            },
+
+            nombre:{
+                required:true,
+                minlength:3,
+            },
+
+            direccion:{
+                required:true,
+                minlength:5,
+            },
+
+            celular:{
+                required:true,
+                number:true,
+                minlength:8,
+                maxlength:8
+            },
+
+            rol:{
+                required:true,
+                minlength:3
+            },
+            
+            estado:{
+                required:true,
+                minlength:3
+            }
+
+        },
+
+        messages:{
+
+            CI:{
+                required:"Ingrese el CI",
+                number:"Solo se permiten números",
+                minlength:"El CI debe tener al menos 7 dígitos",
+                maxlength:"El CI no puede superar 12 dígitos"
+            },
+
+            nombre:{
+                required:"Ingrese el nombre",
+                minlength:"Debe tener al menos 3 caracteres"
+            },
+
+            direccion:{
+                required:"Ingrese la dirección",
+                minlength:"La dirección es demasiado corta"
+            },
+
+            celular:{
+                required:"Ingrese el teléfono",
+                number:"Solo se permiten números",
+                minlength:"Debe tener 8 dígitos",
+                maxlength:"Debe tener 8 dígitos"
+            },
+
+            rol:{
+                required:"Ingrese el rol",
+                minlength:"Debe tener al menos 3 caracteres"
+            },
+
+            estado:{
+                required:"Ingrese el estado",
+                minlength:"Debe tener al menos 3 caracteres"
+            }
+        },
+    });
+});
+
+</script>
 
 <body>
 
