@@ -89,6 +89,7 @@ $(document).ready(function() {
     }
   });
 });
+</script>
 <style>
 body {
   font-family: 'Inter', sans-serif;
