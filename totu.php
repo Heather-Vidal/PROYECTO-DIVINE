@@ -292,10 +292,9 @@ footer.pie{
    </section>
 <!-- HEADER -->
 <header>
-  <div class="logo">
+    <div class="logo">
         <a href="pagintrof.php"> <img src="DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
     </div>
-
 
     <nav>
         <a href="totu.php">Inicio</a>
@@ -309,10 +308,10 @@ footer.pie{
             <img src="./imagenes/lupa-removebg-preview.png" lt="carrito" width="25">
         </a>
         <a href="#">
-            <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
+            <img src="./imagenes/carrito.png" alt="carrito" width="25">
         </a>
         <a href="formcliente.php">
-            <img src="https://cdn-icons-png.flaticon.com/512/7531/7531708.png" alt="persona" width="25">
+            <img src="./imagenes/persona.png" alt="persona" width="25">
         </a>
     </nav>
 </header>
@@ -338,35 +337,35 @@ footer.pie{
 </section>
 
 <section class="derecha">
-    <img src="productos.png" alt="Beauty Products">
+    <img src="./imagenes/productos.png" alt="Beauty Products">
 </section>
 
 <main class="principal">
 
     <section class="caracteristicas">
         <div class="caja-caracteristica">
-            <img src="https://i.pinimg.com/736x/07/9a/16/079a161ed785efc26d2451d8fd3d3451.jpg" alt="">
+            <img src="./imagenes/productosblancos.jpg" alt="">
         </div>
         <div class="caja-caracteristica">
-            <img src="producs.jpg" alt="">
+            <img src="./imagenes/producs.jpg" alt="">
         </div>
         <div class="caja-caracteristica">
-            <img src="https://i.pinimg.com/736x/98/dc/17/98dc175ff91df602482d6eca3acc90c5.jpg" alt="">
+            <img src=" ./imagenes/productos01.jpg" alt="">
         </div>
         <div class="caja-caracteristica">
-            <img src="https://i.pinimg.com/1200x/be/a0/39/bea039dbfc9b87ecaa7c13b1af851a7e.jpg" alt="">
+            <img src=" ./imagenes/coco.jpg" alt="">
         </div>
     </section>
 
     <section class="tarjetas">
         <div class="tarjeta">
-            <img src="https://i.pinimg.com/1200x/e6/43/3a/e6433ab7609c3c63d5d7ca0a50bb0bf6.jpg" alt="">
+            <img src="./imagenes/cabellolacio.jpg" alt="">
         </div>
         <div class="tarjeta">
-            <img src="https://i.pinimg.com/736x/db/bc/fc/dbbcfc1f163cbf1256cda735f1a8c7a2.jpg" alt="">
+            <img src="./imagenes/rosa.jpg" alt="">
         </div>
         <div class="tarjeta">
-            <img src="https://i.pinimg.com/1200x/a3/cb/06/a3cb06cc6ce57637c7f4aff1fc6f1109.jpg" alt="">
+            <img src="./imagenes/castaño.jpg" alt="">
         </div>
     </section>
 
