@@ -190,7 +190,7 @@ input[type="submit"]:hover {
 
 $(document).ready(function(){
 
-    $("form").validate({
+    $("formprodu").validate({
 
         rules:{
             CI:{
