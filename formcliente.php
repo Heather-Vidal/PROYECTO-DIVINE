@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Registro - DIVINE</title>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap&quot; rel="stylesheet">
 
@@ -183,6 +186,39 @@ input[type="submit"]:hover {
   <input type="submit" value="Registrar">
 
 </form>
+<script>
 
+$(document).ready(function(){
+
+    $("formprodu").validate({
+
+        rules:{
+            CI:{
+                required:true,
+                number:true,
+                minlength:7
+            },
+
+            nombre:{
+                required:true,
+                minlength:3
+            }
+        },
+
+        messages:{
+            CI:{
+                required:"Ingrese su CI"
+            },
+
+            nombre:{
+                required:"Ingrese su nombre"
+            }
+        }
+
+    });
+
+});
+
+</script>
 </body>
 </html>

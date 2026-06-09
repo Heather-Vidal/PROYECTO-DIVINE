@@ -298,14 +298,14 @@ footer.pie{
 
     <nav>
         <a href="#inicio">Inicio</a>
-        <a href="#productos">Productos</a>
+        <a href="productos.php">Productos</a>
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
         <a href="#consulta">Consulta Personal</a>
         <a href="perfilvendedor.php">Vendedor</a>
-        <a href="admin.html">Administrador</a>
+        <a href="admin.php">Administrador</a>
         <a href="#">
-            <img src="https://images.icon-icons.com/3065/PNG/512/search_magnifier_icon_190940.png" alt="lupa" width="25">
+            <img src="./imagenes/lupa-removebg-preview.png" lt="carrito" width="25">
         </a>
         <a href="#">
             <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
@@ -331,7 +331,7 @@ footer.pie{
     <section class="box">
         <h2>ESENCIAS</h2>
         <center><p>Producto a base de esencias naturales.</p></center>
-        <img src="crema.png" alt="crema" width="80px">
+        <img src="./imagenes/crema.png" alt="cremca" width="80px">
         <a href="formularioprodu.php">Añadir Producto</a>
     </section>
 </section>

@@ -12,7 +12,7 @@ if($conn->connect_error){
 $sql="SELECT * FROM PRODUCTO";
 $resultado=$conn-> query($sql);
 
- 
+  
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -200,6 +200,12 @@ while($fila=$resultado->fetch_assoc()){
   </div>
 </body>
 </html>
+
+
+
+
+
+
 <?php
 }
 $conn->close();

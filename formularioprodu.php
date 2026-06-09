@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formulario Productos DIVINE</title>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>;
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+ 
 <style>
 body {
   font-family: 'Inter', sans-serif;
@@ -78,7 +83,12 @@ legend {
   flex-direction: column;
   gap: 18px;
 }
-
+ .error {
+    opacity: 0.8;
+    color: red;
+    position: relative;
+    top: -5px;
+}
 label {
   color: #364e63;
   font-size: 15px;
@@ -146,33 +156,92 @@ input[type="submit"]:hover {
 </head>
 <body>
 
-<form action="createprodu.php" method="POST">
+<form id="formprodu" action="createprodu.php" method="POST">
   <div class="imagen"></div>
   <h2>REGISTRO DE PRODUCTOS DIVINE</h2>
   <legend>PRODUCTO:</legend>
 
   <div class="grupo-campos">
     <label for="nombre">Nombre:</label>
-    <input type="text" name="nombre" required>
+    <input type="text" name="nombre"  >
 
     <label for="descripcion">Descripción:</label>
-    <input type="text" name="descripcion" required>
+    <input type="text" name="descripcion"  >
 
     <label for="precio">Precio:</label>
-    <input type="number" name="precio" required>
+    <input type="number" name="precio"  >
 
     <label for="costo">Costo:</label>
-    <input type="number" name="costo" required>
+    <input type="number" name="costo"  >
 
     <label for="stock">Stock:</label>
-    <input type="number" name="stock" required>
+    <input type="number" name="stock"  >
 
      <label for="codigo">Código:</label>
-    <input type="number" name="codigo" required>
+    <input type="number" name="codigo"  >
   </div>
 
   <input type="submit" value="Enviar">
 </form>
+<script>
+$(document).ready(function(){
+
+    $("#formprodu").validate({
+
+        rules:{
+            nombre:{
+                required:true
+            },
+            descripcion:{
+                required:true
+            },
+            precio:{
+                required:true,
+                number:true
+            },
+            costo:{
+                required:true,
+                number:true
+            },
+            stock:{
+                required:true,
+                number:true
+            },
+            codigo:{
+                required:true,
+                number:true
+            }
+        },
+
+        messages:{
+            nombre:{
+                required:"Ingrese el nombre del producto"
+            },
+            descripcion:{
+                required:"Ingrese la descripción"
+            },
+            precio:{
+                required:"Ingrese el precio",
+                number:"Solo se permiten números"
+            },
+            costo:{
+                required:"Ingrese el costo",
+                number:"Solo se permiten números"
+            },
+            stock:{
+                required:"Ingrese el stock",
+                number:"Solo se permiten números"
+            },
+            codigo:{
+                required:"Ingrese el código",
+                number:"Solo se permiten números"
+            }
+        }
+
+    });
+
+});
+</script>
 
 </body>
 </html>
