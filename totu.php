@@ -292,12 +292,13 @@ footer.pie{
    </section>
 <!-- HEADER -->
 <header>
-    <div class="logo">
-        <img src="DIVINE-removebg-preview.png" alt="Logo" width="145">
+  <div class="logo">
+        <a href="pagintrof.php"> <img src="DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
     </div>
 
+
     <nav>
-        <a href="#inicio">Inicio</a>
+        <a href="totu.php">Inicio</a>
         <a href="productos.php">Productos</a>
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
