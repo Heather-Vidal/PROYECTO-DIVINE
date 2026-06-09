@@ -45,22 +45,22 @@ $(document).ready(function() {
       precio: {
         required: true,
         number: true,
-        min: 0
+        min: 2
       },
       costo: {
         required: true,
         number: true,
-        min: 0
+        min: 2
       },
       stock: {
         required: true,
         number: true,
-        min: 0
+        min: 2
       },
       codigo: {
         required: true,
         number: true,
-        min: 0
+        min: 5
       }
     },
     messages: {
