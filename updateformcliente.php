@@ -200,8 +200,7 @@ input[type="submit"]:hover{
 
 $(document).ready(function(){
     $("#formCliente").validate({
-
-        rules:{
+            rules:{
             CI:{
                 required:true,
                 number:true,
