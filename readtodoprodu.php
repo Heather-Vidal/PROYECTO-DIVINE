@@ -12,7 +12,7 @@ if($conn->connect_error){
 $sql="SELECT * FROM PRODUCTO";
 $resultado=$conn-> query($sql);
 
-if($resultado->num_rows > 0){
+ 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -175,6 +175,7 @@ body {
     <h2 class="titulo">LISTA DE PRODUCTOS DIVINE</h2>
     <div class="lista">
 <?php
+if($resultado->num_rows > 0){
 while($fila=$resultado->fetch_assoc()){
   echo "<div class='item'>";
   echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";

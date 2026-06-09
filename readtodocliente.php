@@ -13,7 +13,7 @@ if($conn->connect_error){
 $sql="SELECT * FROM CLIENTE";
 $resultado=$conn-> query($sql);
 
-if($resultado->num_rows > 0){
+ 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -182,6 +182,7 @@ body {
     <div class="lista">
 
 <?php
+if($resultado->num_rows > 0){
 while($fila=$resultado->fetch_assoc()){
   echo "<div class='item'>";
   echo "<p><span>CI:</span> ".$fila['CI']."</p>";
@@ -189,7 +190,7 @@ while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
   echo "<p><span>Celular:</span> ".$fila['celular']."</p>";
   echo "<p><span>Rol:</span> ".$fila['rol']."</p>";
-  echo "<p><span>estado:</span> ".$fila['estado']."</p>";
+  echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
 
   $CI=$fila['CI'];
 
@@ -214,4 +215,5 @@ while($fila=$resultado->fetch_assoc()){
 
 <?php
 }
+$conn->close();
 ?>
