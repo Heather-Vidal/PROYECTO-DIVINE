@@ -6,11 +6,10 @@
     <title>Document</title>
     <style>
         header{
-    grid-area: uno;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 10px; 
+    padding: 10px 10px;
 }
 a{
     font-family: "Lora", serif;
@@ -48,10 +47,11 @@ transform: translateY(3px);}
 </head>
 <body>
  <header>
-    <div class="logo">
-        <a href="pagintrof.php"> <img src="DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
-    </div>
-
+<div class="logo">
+    <a href="pagintrof.php">
+        <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo" width="145">
+    </a>
+</div>
     <nav>
         <a href="totu.php">Inicio</a>
         <a href="productos.php">Productos</a>
@@ -61,7 +61,7 @@ transform: translateY(3px);}
         <a href="perfilvendedor.php">Vendedor</a>
         <a href="admin.php">Administrador</a>
         <a href="#">
-            <img src="./imagenes/lupa-removebg-preview.png" lt="carrito" width="25">
+            <img src="./imagenes/lupa-removebg-preview.png" alt="carrito" width="25">
         </a>
         <a href="#">
             <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">

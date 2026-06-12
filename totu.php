@@ -293,7 +293,7 @@ footer.pie{
 <!-- HEADER -->
 <header>
     <div class="logo">
-        <a href="pagintrof.php"> <img src="DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
+        <a href="pagintrof.php"> <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
     </div>
 
     <nav>
