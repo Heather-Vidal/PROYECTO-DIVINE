@@ -1,3 +1,13 @@
+<?php
+session_start();
+if($_SESSION['nombre'] == null){
+    header("Location: loginformcliente.php");
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -452,7 +462,7 @@ a{color: inherit;
 
     <section class="bodyzote_sec1">
 
-        <h1>ADRIANA SANCHEZ</h1>
+     <?php echo $_SESSION['nombre']; ?>
 
     </section>
 

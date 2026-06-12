@@ -141,7 +141,7 @@ label.error{
     <div class="campos">
 
         <label>Usuario</label>
-        <input type="text" name="usuario" id="usuario">
+        <input type="text" name="nombre" id="usuario">
 
         <label>CI</label>
         <input type="password" name="CI" id="password">

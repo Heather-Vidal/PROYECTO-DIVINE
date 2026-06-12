@@ -10,6 +10,15 @@ if($conn->connect_error){
 }
 
 $CI= $_POST['CI'];
-$usuario= $_POST['usuario'];
-$sql="SELECT * FROM CLIENTE WHERE usuario= ;
+$nombre= $_POST['nombre'];
+$sql="SELECT * FROM CLIENTE WHERE nombre= '$nombre' AND CI='$CI'";
+$resultado= $conn->query($sql);
+
+if($resultado->num_rows > 0){
+   session_start();
+   $_SESSION['nombre'] = $nombre;
+    header("Location:  perfilvendedor.php");
+} else {
+    echo  'Usuario o contraseña incorrectos ';
+}
 ?>
