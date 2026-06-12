@@ -160,7 +160,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     </div>
 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
+      <a href="../totu.php" class="boton">⬅ Volver al inicio</a>
       <a href="readtodoprodu.php" class="boton">Ver productos ➡</a>
     </div>
   </div>
