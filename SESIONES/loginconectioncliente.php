@@ -18,6 +18,7 @@ if($resultado->num_rows > 0){
    session_start();
    $_SESSION['nombre'] = $nombre;
     header("Location:  perfilvendedor.php");
+    header("Location:../perfilvendedor.php");
 } else {
     echo  'Usuario o contraseña incorrectos ';
 }
