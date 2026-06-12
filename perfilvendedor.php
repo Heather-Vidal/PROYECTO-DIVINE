@@ -1,3 +1,10 @@
+
+<?php
+session_start();
+if($_SESSION['nombre'] == null){
+    header("Location: loginformcliente.php");
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
