@@ -11,7 +11,9 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Producto Modificado - DIVINE</title>
+<title>Guardar Producto - DIVINE</title>
+
+<!-- Tipografía -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
@@ -132,27 +134,24 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
       <?php
       if ($conn->connect_error) {
           echo '<div class="mensaje error">❌ NO TE PUDISTE CONECTAR CON LA BD UnU</div>';
+      } else {
+          echo " ";
       }
-      
+
       $nombre = $_POST['nombre'];
       $descripcion = $_POST['descripcion'];
       $precio = $_POST['precio'];
       $costo = $_POST['costo'];
       $stock = $_POST['stock'];
       $codigo = $_POST['codigo'];
-    
-      $sql = "UPDATE PRODUCTO 
-              SET nombre='$nombre',
-                  descripcion='$descripcion',
-                  precio='$precio',
-                  costo='$costo',
-                  stock='$stock'
-              WHERE codigo=$codigo";
+
+      $sql = "INSERT INTO PRODUCTO (nombre,descripcion,precio,costo,stock,codigo)
+       VALUES('$nombre', '$descripcion','$precio','$costo','$stock','$codigo')";
 
       if ($conn->query($sql) === TRUE) {
-          echo '<div class="mensaje exito"> ✔ PRODUCTO ACTUALIZADO EXITOSAMENTE</div>';
+          echo '<div class="mensaje exito"> ✔ PRODUCTO GUARDADO EXITOSAMENTE</div>';
       } else {
-          echo '<div class="mensaje error"> ⚠ ERROR AL ACTUALIZAR EL PRODUCTO</div>';
+          echo '<div class="mensaje error"> ⚠  ERROR: ' . $sql . '<br>' . $conn->error . '</div>';
       }
 
       $conn->close();
@@ -160,7 +159,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     </div>
 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
+      <a href="../totu.php" class="boton">⬅ Volver al inicio</a>
       <a href="readtodoprodu.php" class="boton">Ver productos ➡</a>
     </div>
   </div>

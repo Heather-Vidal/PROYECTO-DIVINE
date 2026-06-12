@@ -310,7 +310,7 @@ footer.pie{
         <a href="#">
             <img src="./imagenes/carrito.png" alt="carrito" width="25">
         </a>
-        <a href="formcliente.php">
+        <a href="./CRUD-cliente/formcliente.php">
             <img src="./imagenes/persona.png" alt="persona" width="25">
         </a>
     </nav>
@@ -332,7 +332,7 @@ footer.pie{
         <h2>ESENCIAS</h2>
         <center><p>Producto a base de esencias naturales.</p></center>
         <img src="./imagenes/crema.png" alt="cremca" width="80px">
-        <a href="formularioprodu.php">Añadir Producto</a>
+        <a href="./CRUD-producto/formularioprodu.php">Añadir Producto</a>
     </section>
 </section>
 

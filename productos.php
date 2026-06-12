@@ -261,7 +261,7 @@ z-index: 3;
 
         <div class="hero-derecha">
           <div class="tarjeta-muestra">
-            <img src="https://i.pinimg.com/736x/37/81/67/3781674c6f7cbb06eef43b531b673bed.jpg">
+            <img src="./imagenes/producto0.jpg">
             <h4>Tratamiento nutritivo</h4>
             <p>Formato 50ml — Hidratación profunda</p>
           </div>
@@ -290,7 +290,7 @@ z-index: 3;
     <section class="productos">
  <h2> ZONA DE HAIRCARE</h2> 
  <article class="producto">
-          <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=60 ">
+          <img src="./imagenes/coco.jpg ">
           <div class="producto-meta">
             <h4>Aceite de coco</h4>
             <p>Brillo extenso y luminoso</p>
@@ -298,7 +298,7 @@ z-index: 3;
         </article>
                     
         <article class="producto">
-          <img src="https://images.unsplash.com/photo-1678799021566-2e2a748e9dd6?auto=format&fit=crop&w=800&q=60">
+          <img src="./imagenes/aceitedealmendra.avif">
           <div class="producto-meta">
             <h4>Aceite de Almendras</h4>
             <p>Brillo y control del frizz</p>
@@ -306,7 +306,7 @@ z-index: 3;
         </article>
 
         <article class="producto">
-          <img src="https://images.unsplash.com/photo-1647739543627-f2f002011c62?auto=format&fit=crop&w=800&q=60">
+          <img src="./imagenes/serum.avif">
           <div class="producto-meta">
             <h4>Aceite de Jojoba</h4>
             <p>Acabado suave y luminoso</p>
@@ -314,7 +314,7 @@ z-index: 3;
         </article>
 
         <article class="producto">
-          <img src="https://images.unsplash.com/photo-1669281393403-e1f3248dce2b?auto=format&fit=crop&w=800&q=60">
+          <img src="./imagenes/aceitedeargan.avif">
           <div class="producto-meta">
             <h4>Aceite de Argán</h4>
             <p>Reparación profunda — 30 ml</p>
@@ -322,7 +322,7 @@ z-index: 3;
         </article>
 
         <article class="producto">
-          <img src="https://images.unsplash.com/photo-1647934174425-61136513aed7?auto=format&fit=crop&w=800&q=60">
+          <img src="./imagenes/Aceitemultivitamínico.avif">
           <div class="producto-meta">
             <h4>Aceite Multivitaminico</h4>
             <p>Hidratación intensa</p>
@@ -330,7 +330,7 @@ z-index: 3;
         </article>
 
         <article class="producto">
-          <img src="https://images.unsplash.com/photo-1707379426703-5920fb03375e?auto=format&fit=crop&w=800&q=60">
+          <img src="./imagenes/Aceitedericino.avif">
           <div class="producto-meta">
             <h4>Aceite de Ricino</h4>
             <p>Fortalecimiento del cuero cabelludo</p>
@@ -339,7 +339,7 @@ z-index: 3;
  <h2> ZONA DE SKINCARE</h2> 
  
       <article class="producto">
-        <img src="https://i.pinimg.com/736x/ca/8e/68/ca8e68396782b4173184d4625c07707d.jpg">
+        <img src="./imagenes/crema.jpg">
         <div class="producto-meta">
           <h4>Serum revitalizante</h4>
           <p>30 ml — Acción reparadora</p>
@@ -347,7 +347,7 @@ z-index: 3;
       </article>
 
       <article class="producto">
-        <img src="https://i.pinimg.com/736x/dc/65/fd/dc65fd0b78dd7c78dca4ffbd598441a6.jpg">
+        <img src="./imagenescremademanos.jpg">
         <div class="producto-meta">
           <h4>Crema nutritiva</h4>
           <p>Piel suave y radiante</p>
@@ -355,7 +355,7 @@ z-index: 3;
       </article>
 
       <article class="producto">
-        <img src="https://i.pinimg.com/1200x/08/ba/5a/08ba5a455330abd413ef0d156822d29d.jpg">
+        <img src="./imagenes/cremanaranja.jpg">
         <div class="producto-meta">
           <h4>Aceite facial</h4>
           <p>Brillo y control de frizz</p>
@@ -363,7 +363,7 @@ z-index: 3;
       </article>
 
       <article class="producto">
-        <img src="https://i.pinimg.com/736x/aa/35/51/aa3551a3a51e8ce570cba0e6d08879ce.jpg">
+        <img src="./imagenes/cremarosa.jpg">
         <div class="producto-meta">
           <h4>Loción iluminadora</h4>
           <p>Acabado glow natural</p>
@@ -371,7 +371,7 @@ z-index: 3;
       </article>
 
       <article class="producto">
-        <img src="https://i.pinimg.com/1200x/1b/1e/f4/1b1ef42f6ea9abc86e2456ddcd4b2ced.jpg">
+        <img src="./imagenes/naranja.jpg">
         <div class="producto-meta">
           <h4>Mascarilla de escencias</h4>
           <p>Limpieza profunda</p>
@@ -379,7 +379,7 @@ z-index: 3;
       </article>
 
       <article class="producto">
-        <img src="https://i.pinimg.com/736x/60/4d/61/604d618118094a2132099c4924b50f2c.jpg">
+        <img src="./imagenes/pepino.jpg">
         <div class="producto-meta">
           <h4>Mascarilla detox</h4>
           <p>Limpieza profunda</p>

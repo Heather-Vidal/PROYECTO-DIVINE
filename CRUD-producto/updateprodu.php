@@ -9,11 +9,9 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Registro - DIVINE</title>
-
-<!-- Tipografía -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Producto Modificado - DIVINE</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
@@ -64,12 +62,6 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     box-shadow: 0 4px 10px rgba(54, 78, 99, 0.2);
     font-size: 18px;
     color: #2b2b2b;
-  }
-
-  .icono {
-    width: 120px; /* aumentamos tamaño respecto al ejemplo */
-    margin-bottom: 20px;
-    filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.3));
   }
 
   .mensaje {
@@ -134,54 +126,43 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 <body>
   <div class="contenedor">
-    <div class="encabezado">REGISTRADO!</div>
+    <div class="encabezado">DIVINE</div>
 
     <div class="contenido">
+      <?php
+      if ($conn->connect_error) {
+          echo '<div class="mensaje error">❌ NO TE PUDISTE CONECTAR CON LA BD UnU</div>';
+      }
+      
+      $nombre = $_POST['nombre'];
+      $descripcion = $_POST['descripcion'];
+      $precio = $_POST['precio'];
+      $costo = $_POST['costo'];
+      $stock = $_POST['stock'];
+      $codigo = $_POST['codigo'];
+    
+      $sql = "UPDATE PRODUCTO 
+              SET nombre='$nombre',
+                  descripcion='$descripcion',
+                  precio='$precio',
+                  costo='$costo',
+                  stock='$stock'
+              WHERE codigo=$codigo";
 
-      <!-- Imagen como en el segundo ejemplo -->
-      <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="icono">
+      if ($conn->query($sql) === TRUE) {
+          echo '<div class="mensaje exito"> ✔ PRODUCTO ACTUALIZADO EXITOSAMENTE</div>';
+      } else {
+          echo '<div class="mensaje error"> ⚠ ERROR AL ACTUALIZAR EL PRODUCTO</div>';
+      }
 
-<?php
-if($conn->connect_error){
-    echo '<div class="mensaje error">❌ CONEXION FALLIDA</div>';
-}
-
-$CI = $_POST['CI'] ?? '';
-$nombre = $_POST['nombre'] ?? '';
-$direccion= $_POST['direccion'] ?? '';
-$celular = $_POST['celular'] ?? '';
-$rol = $_POST['rol'] ?? '';
-$estado = $_POST['estado'] ?? '';     
- 
-
-if($CI && $nombre && $direccion && $celular && $rol && $estado){
-
-    $sql = "INSERT INTO CLIENTE (CI,nombre,direccion,celular,rol,estado)
-     VALUES('$CI','$nombre', '$direccion','$celular','$rol','$estado')";
-
-
-
-
-
-
-    if ($conn->query($sql) === TRUE){
-        echo '<div class="mensaje exito">✔ USUARIO REGISTRADO CORRECTAMENTE</div>';
-    } else {
-        echo '<div class="mensaje error">⚠ ERROR: '.$sql.'<br>'.$conn->error.'</div>';
-    }
-} else {
-    echo '<div class="mensaje error">❌ Por favor complete todos los campos requeridos</div>';
-}
-
-$conn->close();
-?>
+      $conn->close();
+      ?>
     </div>
 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
-      <a href="readtodocliente.php" class="boton">Ver clientes ➡</a>
+      <a href="../totu.php" class="boton">⬅ Volver al inicio</a>
+      <a href="readtodoprodu.php" class="boton">Ver productos ➡</a>
     </div>
-
   </div>
 </body>
 </html>
