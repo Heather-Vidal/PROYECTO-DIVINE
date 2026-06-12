@@ -212,6 +212,7 @@ footer p{
         <div class="uno">
 
             <img src="https://i.pinimg.com/736x/4a/54/a0/4a54a016d7b01e9f18f6f5d7f2511a05.jpg" alt="Administrador">
+            <img src=" ./imagenes/admin.jpg" alt="Administrador">
 
             <h2>MAITE ALLENDE</h2>
 

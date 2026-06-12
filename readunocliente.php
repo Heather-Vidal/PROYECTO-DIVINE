@@ -50,6 +50,7 @@ body {
 }
 .imagen {
   background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center / contain no-repeat;
+  background: url("./imagenes/persona.png") center / contain no-repeat;
   border-radius: 20px;
   min-height: 200px;  
 }

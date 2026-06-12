@@ -417,7 +417,7 @@ a{color: inherit;          /* hereda el color del texto */
 
         <figure class="perfil">
 
-            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg"&gt;
+            <img src="./imagenes/vendedora.jpg"&gt;
 
         </figure>
 
