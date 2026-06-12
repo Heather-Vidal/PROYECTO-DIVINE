@@ -293,11 +293,11 @@ footer.pie{
 <!-- HEADER -->
 <header>
     <div class="logo">
-        <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo" width="145">
+        <a href="pagintrof.php"> <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo" width="145"></a>
     </div>
 
     <nav>
-        <a href="#inicio">Inicio</a>
+        <a href="totu.php">Inicio</a>
         <a href="productos.php">Productos</a>
         <a href="#ofertas">Ofertas</a>
         <a href="#contacto">Contacto</a>
@@ -310,7 +310,7 @@ footer.pie{
         <a href="#">
             <img src="./imagenes/carrito.png" alt="carrito" width="25">
         </a>
-        <a href="formcliente.php">
+        <a href="./CRUD-cliente/formcliente.php">
             <img src="./imagenes/persona.png" alt="persona" width="25">
         </a>
     </nav>
@@ -332,7 +332,7 @@ footer.pie{
         <h2>ESENCIAS</h2>
         <center><p>Producto a base de esencias naturales.</p></center>
         <img src="./imagenes/crema.png" alt="cremca" width="80px">
-        <a href="formularioprodu.php">Añadir Producto</a>
+        <a href="./CRUD-producto/formularioprodu.php">Añadir Producto</a>
     </section>
 </section>
 

@@ -211,7 +211,7 @@ footer p{
 
         <div class="uno">
 
-            <img src=" ./imagenes/admin.jpg" alt="Administrador">
+            <img src="./imagenes/admin.jpg" alt="Administrador">
 
             <h2>MAITE ALLENDE</h2>
 
