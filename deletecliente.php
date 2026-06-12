@@ -139,7 +139,6 @@ body {
     <div class="contenido">
       
       <!-- Imagen como en los otros ejemplos -->
-      <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="icono">
       <img src="./imagenes/persona.png" class="icono">
 
 <?php

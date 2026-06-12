@@ -52,7 +52,6 @@ body {
 
 .imagen {
   grid-area: imagen;
-  background: url("https://i.pinimg.com/736x/23/fd/c5/23fdc5871b591de154e3e9b889036562.jpg") center center / cover no-repeat;
   background: url("./imagenes/aceitecapilar.jpg") center center / cover no-repeat;
   border-radius: 20px;
   min-height: 400px;

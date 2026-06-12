@@ -139,7 +139,6 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     <div class="contenido">
 
       <!-- Imagen como en el segundo ejemplo -->
-      <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="icono">
       <img src=" ./imagenes/persona.png" class="icono">
 
 <?php
