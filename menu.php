@@ -67,10 +67,10 @@ transform: translateY(3px);}
             <img src="./imagenes/lupa-removebg-preview.png" alt="carrito" width="25">
         </a>
         <a href="#">
-            <img src="https://cdn-icons-png.freepik.com/512/107/107831.png" alt="carrito" width="25">
+            <img src="./imagenes/carrito.png" alt="carrito" width="25">
         </a>
         <a href="formcliente.php">
-            <img src="https://cdn-icons-png.flaticon.com/512/7531/7531708.png" alt="persona" width="25">
+            <img src="./imagenes/persona.png" alt="persona" width="25">
         </a>
     </nav>
 </header>
