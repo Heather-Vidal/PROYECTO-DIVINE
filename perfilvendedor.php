@@ -1,3 +1,13 @@
+<?php
+session_start();
+if($_SESSION['nombre'] == null){
+    header("Location: loginformcliente.php");
+}
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +33,7 @@ body{
     "panel contenido";
     font-family:Arial, Helvetica, sans-serif;
 }
-a{color: inherit;          /* hereda el color del texto */
+a{color: inherit;          
   text-decoration: none;   /* quita el subrayado */}
 .bodycito{
 
@@ -417,7 +427,7 @@ a{color: inherit;          /* hereda el color del texto */
 
         <figure class="perfil">
 
-            <img src="https://i.pinimg.com/736x/c1/d3/cd/c1d3cd03241e3229f1a25b7879798a66.jpg"&gt;
+            <img src="./imagenes/vendedor.jpg"&gt;
 
         </figure>
 
@@ -452,7 +462,7 @@ a{color: inherit;          /* hereda el color del texto */
 
     <section class="bodyzote_sec1">
 
-        <h1>ADRIANA SANCHEZ</h1>
+     <?php echo $_SESSION['nombre']; ?>
 
     </section>
 

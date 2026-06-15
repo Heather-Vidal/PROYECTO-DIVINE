@@ -84,10 +84,10 @@ legend {
   gap: 18px;
 }
  .error {
-    opacity: 0.8;
-    color: red;
-    position: relative;
-    top: -5px;
+    opacity: 0.4;
+    color: #77630a;
+    font-size:15px;
+ 
 }
 label {
   color: #364e63;

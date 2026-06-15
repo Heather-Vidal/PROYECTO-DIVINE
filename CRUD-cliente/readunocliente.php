@@ -1,17 +1,17 @@
- <?php
+  <?php
 $servidor="localhost";
 $usuario="root";
 $contraseña="";
 $nombreBD="DIVINE";
 
 $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);                 
-
+ 
 if($conn->connect_error){
   echo"OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
 }
 
-$codigo=$_GET['codigo'];
-$sql="SELECT * FROM PRODUCTO WHERE codigo=$codigo";
+$CI=$_GET['CI'];
+$sql="SELECT * FROM CLIENTE WHERE CI=$CI";
 $resultado=$conn-> query($sql);
 
 if($resultado->num_rows > 0){
@@ -21,7 +21,7 @@ if($resultado->num_rows > 0){
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Detalle del Producto - DIVINE</title>
+<title>Detalle del Cliente - DIVINE</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
@@ -43,60 +43,63 @@ body {
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   width: 90%;
-  max-width: 700px;
+  max-width: 600px;
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 25px;
+  grid-gap: 30px;
 }
-
 .imagen {
-  background: url("https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg") center center / cover no-repeat;
+  background: url("./imagenes/persona.png") center / contain no-repeat;
   border-radius: 20px;
-  min-height: 300px;
+  min-height: 200px;  
 }
 
 .titulo {
   text-align: center;
   color: #364e63;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   margin: 0;
   letter-spacing: 2px;
-  border-bottom: 3px solid #c5a46d;
-  padding-bottom: 10px;
-  width: fit-content;
-  margin-left: auto;
-  margin-right: auto;
-}
 
+  border-bottom: 3px solid #c5a46d;
+  width: fit-content;
+  margin: 0 auto;
+  padding-bottom: 6px;
+}
 .item {
   background: #f5e9d8;
   padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(54,78,99,0.25);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 10px rgba(54,78,99,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Hover */
 .item:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 22px rgba(54,78,99,0.4);
 }
 
 .item p {
-  margin: 8px 0;
-  color: #2b2b2b;
+  margin: 10px 0;
   font-size: 17px;
+  color: #2b2b2b;
 }
 
 .item span {
-  font-weight: bold;
+  font-weight: 700;
   color: #364e63;
 }
+
+/* Botones tipo PRODUCTO */
 .botones {
   margin-top: 20px;
   text-align: center;
   display: flex;
   justify-content: center;
   gap: 15px;
+  flex-wrap: wrap;
 }
 
 .boton {
@@ -116,6 +119,7 @@ body {
   transform: scale(1.05);
   box-shadow: 0 5px 20px rgba(197,164,109,0.7);
 }
+
 .navegacion {
   margin-top: 20px;
   text-align: center;
@@ -156,29 +160,34 @@ body {
 <body>
   <div class="contenedor">
     <div class="imagen"></div>
-    <h2 class="titulo">DETALLE DEL PRODUCTO</h2>
+
+    <h2 class="titulo">DETALLE DEL CLIENTE</h2>
 
     <div class="item">
 <?php
 while($fila=$resultado->fetch_assoc()){
+  echo "<p><span>CI:</span> ".$fila['CI']."</p>";
   echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>descripcion:</span> ".$fila['descripcion']."</p>";
-  echo "<p><span>Precio:</span> ".$fila['precio']."</p>";
-  echo "<p><span>Costo:</span> ".$fila['costo']."</p>";
-  echo "<p><span>Stock:</span> ".$fila['stock']."</p>";
-  echo "<p><span>Codigo:</span> ".$fila['codigo']."</p>";
-  $codigo=$fila['codigo'];
+  echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
+  echo "<p><span>Telefono:</span> ".$fila['celular']."</p>";
+  echo "<p><span>Rol:</span> ".$fila['rol']."</p>";
+  echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
+
+  $CI=$fila['CI'];
 }
-  
 ?>
     </div>
+
+    <!-- ACCIONES DEL CLIENTE -->
     <div class="botones">
-      <a href="updateformprodu.php?codigo=<?php echo $codigo; ?>" class="boton">Editar</a>
-      <a href="deleteprodu.php?codigo=<?php echo $codigo; ?>" class="boton">Eliminar</a>
+      <a class="boton" href="updateformcliente.php?CI=<?php echo $CI; ?>">Editar</a>
+      <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">Eliminar</a>
     </div>
+
+    <!-- NAVEGACIÓN GLOBAL -->
     <div class="navegacion">
-      <a href="readtodoprodu.php" class="boton2">Ver productos</a>
-      <a href="totu.php" class="boton2">⬅ Volver al inicio</a>
+      <a class="boton2" href="readtodocliente.php">Ver clientes</a>
+      <a class="boton2" href="../totu.php">⬅ Volver al inicio</a>
     </div>
 
   </div>

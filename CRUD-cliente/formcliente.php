@@ -48,7 +48,7 @@ form {
 /* Imagen */
 .imagen {
   grid-area: imagen;
-  background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center / contain no-repeat;
+  background: url("./imagenes/personaform.png") center / contain no-repeat;
   border-radius: 15px;
   height: 250px;
 }
