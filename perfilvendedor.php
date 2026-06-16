@@ -760,8 +760,14 @@ justify-self:center;
 </style>
 </head>
 <body>
+<<<<<<< HEAD
 
 <div class="container">
+=======
+<main class="bodycito">
+<h1>ñlmdvksl</h1>
+    <section class="bodycito_sec1">
+>>>>>>> c5212ac2f7f78429dea5571768b67b6521a7ece5
 
 
 <div class="hero">

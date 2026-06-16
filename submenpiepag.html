@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructura Completa</title>
+    <style>
+        /* Eliminamos los márgenes por defecto */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Contenedor padre de TODA la pantalla */
+        .pantalla-completa {
+            display: flex;
+            flex-direction: column; /* Alinea los bloques principales hacia abajo */
+            height: 100vh; /* 100% del alto de la pantalla */
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+        }
+
+        /* 1. Caja Superior (Header) */
+        .caja-superior {
+            background-color: #2c3e50; /* Gris oscuro */
+            padding: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* 2. Contenedor del Medio (Sujeta las dos columnas) */
+        .seccion-central {
+            display: flex; /* Alinea las dos columnas de forma horizontal */
+            flex: 1; /* Ocupa todo el espacio restante entre arriba y abajo */
+        }
+
+        /* Estilos para las dos mitades */
+        .mitad {
+            flex: 1; /* 50% de ancho cada una */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .izquierda {
+            background-color: #3498db; /* Azul */
+        }
+
+        .derecha {
+            background-color: #2ecc71; /* Verde */
+        }
+
+        /* 3. Caja Inferior (Footer) */
+        .caja-inferior {
+            background-color: #34495e; /* Gris medio */
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="pantalla-completa">
+        
+        <header class="caja-superior">
+            <h2>Caja Superior (Ocupa todo el ancho)</h2>
+        </header>
+
+        <main class="seccion-central">
+            <div class="mitad izquierda">
+                <h3>Columna Izquierda</h3>
+                <p>Contenido izquierdo</p>
+            </div>
+            <div class="mitad derecha">
+                <h3>Columna Derecha</h3>
+                <p>Contenido derecho</p>
+            </div>
+        </main>
+
+        <footer class="caja-inferior">
+            <p>Caja Inferior (Ocupa todo el ancho abajo)</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
+  <h3>MISIÓN</h3>
+            <p>Brindar productos naturales que cuiden el cabello y la piel, promoviendo la belleza auténtica y saludable.
+    Queremos que cada persona se sienta segura, cómoda y conectada con su propio bienestar, usando ingredientes naturales que realmente funcionan.</p>
+          <h3>VISIÓN</h3>
+            <p>Convertirnos en una marca reconocida por promover el cuidado natural del cabello y la piel, ampliando nuestra línea de productos y llegando a más personas que confíen en la belleza natural.</p>

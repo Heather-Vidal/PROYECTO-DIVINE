@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* 1. RESETEO GLOBAL (Limpio de posiciones que rompen el layout) */
+        /* 1. EL RESETEO SIEMPRE VA ARRIBA */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #fff;
+            background-color: #fff; /* O el color de fondo que desees */
         }
 
         header {
@@ -22,15 +22,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 40px;
-            width: 100%; 
+            padding: 10px 40px; /* Un poco más de espacio a los lados */
+            width: 100%;
         }
 
         a {
             font-family: "Lora", serif;
-            font-optical-sizing: auto;
-            color: #111;
             text-decoration: none;
+            color: #111;
         }
 
         div.logo {
@@ -43,14 +42,22 @@
             display: block;
         }
 
+        /* Contenedor derecho para los iconos */
+        .iconos-derecha {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
         nav {
             display: flex;
+            align-items: center;
         }
 
         .menu {
             list-style: none;
             display: flex;
-            align-items: center;
+            gap: 15px; /* Controla la separación entre pestañas */
         }
 
         .menu li {
@@ -59,8 +66,8 @@
 
         .menu li a {
             display: block;
-            padding: 15px 20px;
-            font-size: 20px;
+            padding: 10px 15px;
+            font-size: 18px;
             transition: 0.3s all;
             border-radius: 10px;
         }
@@ -70,45 +77,24 @@
             transform: translateY(3px);
         }
 
-        /* Contenedor de iconos de la derecha */
-        .iconos-derecha {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        /* 2. SUBMENÚ (Heredado y corregido con z-index correcto) */
+        /* Submenú corregido */
         .submenu {
             display: none;
             position: absolute;
             top: 100%;
             left: 0;
-            background: white;
-            min-width: 200px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,.2);
-            z-index: 9999;
-            padding: 10px 0;
             list-style: none;
-        }
-
-        .submenu li {
-            width: 100%;
+            min-width: 180px;
+            background-color: #ffffff; /* Fondo blanco para que no se vea transparente */
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1); /* Sombra para que resalte */
+            z-index: 1000;
         }
 
         .submenu li a {
-            display: block;
-            color: #111;
-            padding: 12px 20px;
-            font-size: 18px; /* Un toque más pequeño para jerarquía visual */
+            padding: 10px 15px;
         }
 
-        .submenu li a:hover {
-            background: #f5f5f5;
-            transform: none; /* Evita que el texto del submenú se mueva de lado */
-        }
-
-        .menu li:hover > .submenu {
+        .menu li:hover .submenu {
             display: block;
         }
     </style>
@@ -117,7 +103,7 @@
 
     <header>
         <div class="logo">
-            <a href="pagintrof.php"> 
+            <a href="pagintrof.php">
                 <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo">
             </a>
         </div>
@@ -150,7 +136,7 @@
             <a href="formcliente.php">
                 <img src="./imagenes/persona.png" alt="Perfil" width="25">
             </a>
-        </div> 
+        </div>
     </header>
 
 </body>
