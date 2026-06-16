@@ -427,7 +427,7 @@ a{color: inherit;
 
         <figure class="perfil">
 
-            <img src="./imagenes/vendedor.jpg"&gt;
+            <img src="./imagenes/vendedor.jpg";
 
         </figure>
 
