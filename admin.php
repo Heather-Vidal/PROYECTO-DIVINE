@@ -204,7 +204,7 @@ footer p{
 </head>
 
 <body>
-<?php include 'menu.php'; ?>
+<?php include 'submenu.php'; ?>
 <div class="caja">
 
     <aside class="cajita">
