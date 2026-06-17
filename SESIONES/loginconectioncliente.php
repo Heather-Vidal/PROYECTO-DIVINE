@@ -25,7 +25,8 @@ if(mysqli_num_rows($resultado) > 0){
     // Guardar datos en la sesión
     $_SESSION['CI'] = $fila['CI'];
     $_SESSION['nombre'] = $fila['nombre'];
-    $_SESSION['telefono']=$fila['telefono'];
+        $_SESSION['estado'] = $fila['estado'];
+    $_SESSION['celular']=$fila['celular'];
     $_SESSION['rol']=$fila['rol'];
 }if($_SESSION['rol']=="vendedor"){
 

@@ -1,298 +1,604 @@
+ <?php
+session_start();
+if($_SESSION['nombre'] == null){
+    header("Location: loginformcliente.php");
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Administrador</title>
+<title>Panel Administrativo - Divine Beauty</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-.caja{
-    display:grid;
-    grid-template-columns:320px 1fr;
-    grid-template-areas:
-    "sidebar contenido";
-    min-height:100vh;  
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
     font-family:'Poppins',sans-serif;
-    background:linear-gradient(135deg,#cbb4a1,#e9ddd4);
-    color:#6e5d5d;
 }
 
-.cajita{
-    grid-area:sidebar;
-    background:#bfa892;
-    padding:30px 20px;
-    border-right:5px solid #f3e7df;
-    animation:latido 3s infinite ease-in-out;
-    transform-origin:center;
+:root{
+    --rosa:#d96c8d;
+    --rosa-oscuro:#b84f72;
+    --rosa-claro:#fde7ef;
+    --blanco:#ffffff;
+    --crema:#fff8fa;
+    --texto:#5b4b52;
 }
 
-@keyframes latido{
-    0%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.05);
-    }
-
-    100%{
-        transform:scale(1);
-    }
+body{
+    background:linear-gradient(
+    135deg,
+    #fff7fa,
+    #fdeef3,
+    #fffafc
+    );
+    min-height:100vh;
+    overflow-x:hidden;
 }
 
-.cuadro{
-    grid-area:contenido;
+/* FONDOS DECORATIVOS */
+
+body::before{
+    content:'';
+    position:fixed;
+    width:500px;
+    height:500px;
+    border-radius:50%;
+    background:#f7bfd0;
+    filter:blur(180px);
+    opacity:.4;
+    top:-150px;
+    right:-100px;
+    animation:float 10s infinite ease-in-out;
+}
+
+body::after{
+    content:'';
+    position:fixed;
+    width:400px;
+    height:400px;
+    border-radius:50%;
+    background:#f48fb1;
+    filter:blur(180px);
+    opacity:.25;
+    bottom:-100px;
+    left:-100px;
+    animation:float 12s infinite ease-in-out;
+}
+
+.logo{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--rosa-oscuro);
+}
+
+nav{
+    display:flex;
+    gap:25px;
+}
+
+nav a{
+    text-decoration:none;
+    color:var(--texto);
+    transition:.3s;
+}
+
+nav a:hover{
+    color:var(--rosa);
+}
+
+.admin-btn{
+    background:var(--rosa);
+    color:white;
+    border:none;
+    padding:12px 22px;
+    border-radius:30px;
+    cursor:pointer;
+    transition:.4s;
+}
+
+.admin-btn:hover{
+    background:var(--rosa-oscuro);
+    transform:translateY(-3px);
+}
+
+/* CONTENEDOR */
+
+.contenedor{
+    display:flex;
+    gap:30px;
     padding:40px;
 }
 
-.cajota{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:30px;
+/* PERFIL */
+
+.sidebar{
+    width:320px;
 }
 
-.uno{
-    background:#ccb6a2;
-    border:5px solid #f3e7df;
-    padding:25px;
+.perfil{
+    background:linear-gradient(
+    180deg,
+    var(--rosa),
+    var(--rosa-oscuro)
+    );
+
+    color:white;
+
+    border-radius:35px;
+    padding:35px;
     text-align:center;
-    border-radius:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.15);
-    transition:0.5s;
+
+    box-shadow:0 20px 40px rgba(217,108,141,.3);
+
+    animation:slideLeft 1s ease;
 }
 
-.uno:hover{
-    transform:translateY(-10px) scale(1.02);
-}
-
-.uno img{
-    width:220px;
-    height:220px;
+.perfil img{
+    width:140px;
+    height:140px;
     border-radius:50%;
     object-fit:cover;
-    border:6px solid white;
-    transition:0.5s;
+    border:5px solid rgba(255,255,255,.4);
+    transition:.5s;
 }
 
-.uno img:hover{
-    transform:scale(1.08) rotate(3deg);
-}
-
-.dos{
-    margin-top:15px;
-    border-top:4px solid white;
-    padding-top:15px;
-    font-size:13px;
-    letter-spacing:4px;
-    font-weight:bold;
-}
-
-.tres{
-    margin-top:30px;
-    background:white;
-    border-radius:40px;
-    padding:30px;
-    text-align:left;
-    line-height:2;
-    font-size:22px;
-    box-shadow:0 10px 20px rgba(0,0,0,0.1);
-    transition:0.4s;
-}
-
-.tres:hover{
-    transform:scale(1.03);
-}
-
-.bloque{
-    background:#efe4dc;
-    padding:35px;
-    border-radius:35px;
-    min-height:180px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
-    transition:0.5s;
-    position:relative;
-    overflow:hidden;
-}
-
-.bloque:hover{
-    transform:translateY(-12px);
-    box-shadow:0 20px 35px rgba(0,0,0,0.2);
-}
-
-.bloque h3{
-    margin-bottom:20px;
-    font-size:30px;
-}
-
-/* ESTILOS PARA LOS LINKS */
-.bloque a{
-    display:inline-block;
-    background:white;
-    margin:8px 5px;
-    padding:10px 18px;
-    border-radius:30px;
-    font-size:18px;
-    text-decoration:none;
-    color:#6e5d5d;
-    font-weight:bold;
-    transition:0.3s;
-    box-shadow:0 5px 10px rgba(0,0,0,0.08);
-}
-
-.bloque a:hover{
-    background:#b89f89;
-    color:white;
+.perfil img:hover{
     transform:scale(1.08);
 }
 
-.frase{
-    margin-top:40px;
+.perfil h2{
+    margin-top:20px;
+}
+
+.cargo{
+    margin-top:15px;
     background:white;
-    padding:35px;
-    border-radius:35px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.12);
-    font-size:28px;
-    font-style:italic;
-    color:#555;
-    line-height:1.6;
+    color:var(--rosa-oscuro);
+    padding:10px 18px;
+    border-radius:30px;
+    font-weight:600;
+    display:inline-block;
 }
 
-@media(max-width:900px){
-
-    .caja{
-        grid-template-columns:1fr;
-        grid-template-areas:
-        "sidebar"
-        "contenido";
-    }
-
-    .cajita{
-        border-right:none;
-        border-bottom:5px solid #f3e7df;
-    }
-
-    .cuadro{
-        padding:20px;
-    }
-
-    .uno img{
-        width:160px;
-        height:160px;
-    }
-
-    .frase{
-        text-align:center;
-    }
+.info{
+    margin-top:25px;
+    line-height:2;
 }
+
+/* PANEL */
+
+.panel{
+    flex:1;
+}
+
+/* BIENVENIDA */
+
+.bienvenida{
+    background:white;
+    padding:30px;
+    border-radius:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+    animation:fadeUp .8s ease;
+}
+
+.bienvenida h1{
+    color:var(--rosa-oscuro);
+}
+
+.bienvenida p{
+    color:var(--texto);
+    margin-top:10px;
+}
+
+/* ESTADÍSTICAS */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:20px;
+    margin-top:25px;
+}
+
+.stat{
+    background:white;
+    padding:25px;
+    text-align:center;
+    border-radius:25px;
+    transition:.4s;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.stat:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(217,108,141,.25);
+}
+
+.stat h2{
+    color:var(--rosa);
+    font-size:2rem;
+}
+
+.stat p{
+    color:var(--texto);
+}
+
+/* MÓDULOS */
+
+.modulos{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+    margin-top:30px;
+}
+
+.modulo{
+    background:white;
+    padding:25px;
+    border-radius:25px;
+    transition:.4s;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.modulo:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(217,108,141,.25);
+}
+
+.modulo h3{
+    color:var(--rosa-oscuro);
+    margin-bottom:20px;
+}
+
+.links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.links a{
+    text-decoration:none;
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    padding:10px 16px;
+    border-radius:30px;
+    transition:.3s;
+}
+
+.links a:hover{
+    background:var(--rosa);
+    color:white;
+}
+
+/* MENSAJE */
+
+.mensaje{
+    margin-top:30px;
+
+    background:linear-gradient(
+    135deg,
+    var(--rosa),
+    #f48fb1
+    );
+
+    color:white;
+
+    padding:40px;
+
+    border-radius:30px;
+
+    box-shadow:0 15px 40px rgba(217,108,141,.3);
+
+    animation:fadeUp 1s ease;
+}
+
+.mensaje p{
+    margin-top:15px;
+    line-height:1.8;
+}
+
+/* FOOTER */
 
 footer{
-    background:#bfa892;
+    margin-top:30px;
+    background:var(--rosa-oscuro);
     color:white;
-    text-align:center;
-    padding:25px;
-    font-size:18px;
-    letter-spacing:2px;
-    border-top:5px solid #f3e7df;
-    margin-top:20px;
-    box-shadow:0 -5px 15px rgba(0,0,0,0.1);
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    padding:20px;
 }
 
 footer p{
-    margin:8px 0;
+    cursor:pointer;
+    transition:.3s;
 }
+
+footer p:hover{
+    color:#ffd9e5;
+}
+.botones-perfil{
+    margin-top:25px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.botones-perfil button{
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    font-weight:600;
+    cursor:pointer;.botones-perfil{
+    margin-top:25px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.botones-perfil a{
+    padding:12px;
+    border:none;
+    border-radius:30px;
+    font-weight:600;
+    text-decoration:none;
+    text-align:center;
+    display:block;
+    transition:.3s;
+}
+
+/* BOTÓN EXPLORAR */
+.btn-explorar{
+    background:white;
+    color:var(--rosa-oscuro);
+}
+
+.btn-explorar:hover{
+    background:var(--rosa-claro);
+    transform:translateY(-3px);
+}
+
+/* BOTÓN CERRAR SESIÓN */
+.btn-cerrar{
+    background:#ff4d6d;
+    color:white;
+}
+
+.btn-cerrar:hover{
+    background:#e63956;
+    transform:translateY(-3px);
+}
+    transition:.3s;
+}
+
+/* BOTÓN EXPLORAR */
+.btn-explorar{
+    background:white;
+    color:var(--rosa-oscuro);
+}
+
+.btn-explorar:hover{
+    background:var(--rosa-claro);
+    transform:translateY(-3px);
+}
+
+/* BOTÓN CERRAR SESIÓN */
+.btn-cerrar{
+    background:#ff4d6d;
+    color:white;
+}
+
+.btn-cerrar:hover{
+    background:#e63956;
+    transform:translateY(-3px);
+}
+/* ANIMACIONES */
+
+@keyframes slideLeft{
+    from{
+        opacity:0;
+        transform:translateX(-60px);
+    }
+    to{
+        opacity:1;
+        transform:translateX(0);
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes float{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-30px);
+    }
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+    .contenedor{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    nav{
+        display:none;
+    }
+
+    footer{
+        flex-direction:column;
+        text-align:center;
+        gap:10px;
+    }
+}
+
 </style>
 </head>
 
 <body>
+
 <?php include 'submenu.php'; ?>
-<div class="caja">
 
-    <aside class="cajita">
+<div class="contenedor">
 
-        <div class="uno">
+    <aside class="sidebar">
+
+        <div class="perfil">
 
             <img src="./imagenes/admin.jpg" alt="Administrador">
 
-            <h2>MAITE ALLENDE</h2>
+            <h2><?php echo $_SESSION['nombre']?></h2>
 
-            <div class="dos">PERFIL ADMINISTRADOR</div>
-            <div class="tres">
-                <p>Edad: 26 años</p>
-                <p>Ciudad: Cochabamba</p>
+            <div class="cargo">
+                <?php echo $_SESSION['rol']?> GENERAL
+            </div>
+
+            <div class="info">
+                <p>CONTACTO: <?php echo $_SESSION['celular']?></p>
+
+              <em><p> " <?php echo $_SESSION['estado']?>"</p></em>   
             </div>
 
         </div>
 
     </aside>
 
-    <main class="cuadro">
+    <main class="panel">
 
-        <section class="cajota">
+        <section class="bienvenida">
 
-            <article class="bloque">
+            <h1>Bienvenida, <?php echo $_SESSION['nombre']?> </h1>
 
-                <h3>• Gestionar Usuarios</h3>
+            <p>
+                Administra usuarios, productos, pedidos,
+                ventas y reportes desde un solo lugar.
+            </p>
+
+        </section>
+
+        <section class="stats">
+
+            <div class="stat">
+                <h2>250</h2>
+                <p>Usuarios</p>
+            </div>
+
+            <div class="stat">
+                <h2>520</h2>
+                <p>Productos</p>
+            </div>
+
+            <div class="stat">
+                <h2>120</h2>
+                <p>Pedidos</p>
+            </div>
+
+            <div class="stat">
+                <h2>$85K</h2>
+                <p>Ventas</p>
+            </div>
+
+        </section>
+
+        <section class="modulos">
+
+            <div class="modulo">
+                <h3>Gestionar Usuarios</h3>
 
                 <div class="links">
                     <a href="formcliente.php">Crear</a>
                     <a href="updatecliente.php">Editar</a>
                     <a href="deletecliente.php">Eliminar</a>
                 </div>
+            </div>
 
-            </article>
-
-            <article class="bloque">
-
-                <h3>• Gestionar Productos</h3>
+            <div class="modulo">
+                <h3> Gestionar Productos</h3>
 
                 <div class="links">
                     <a href="formularioprodu.php">Registrar</a>
                     <a href="update.php">Editar</a>
                     <a href="deleteprodu.php">Eliminar</a>
                 </div>
+            </div>
 
-            </article>
-
-            <article class="bloque">
-
-                <h3>• Asignar Roles</h3>
+            <div class="modulo">
+                <h3> Asignar Roles</h3>
 
                 <div class="links">
-                    <a href="formcliente.php">Administrador</a>
+                    <a href="#">Administrador</a>
                     <a href="perfilvendedor.php">Vendedor</a>
                 </div>
+            </div>
 
-            </article>
+            <div class="modulo">
+                <h3> Visualizar Reportes</h3>
+            </div>
 
-            <article class="bloque">
-                <h3>• Visualizar Reportes</h3>
-            </article>
-
-            <article class="bloque">
-                <h3>• Supervisar Ventas y Pedidos</h3>
-            </article>
+            <div class="modulo">
+                <h3> Supervisar Ventas y Pedidos</h3>
+            </div>
 
         </section>
 
-        <section class="frase">
+        <section class="mensaje">
+
+            <h2>Panel Administrativo Empresarial</h2>
 
             <p>
-                “Gestionando la excelencia en cada proceso de Divine.
-                Nuestro objetivo es asegurar que cada producto llegue
-                con la mejor experiencia y calidad posible.”
+                Gestionando la excelencia en cada proceso de Divine Beauty.
+                Nuestro objetivo es garantizar una administración eficiente,
+                supervisar operaciones y ofrecer una experiencia de calidad.
             </p>
 
         </section>
 
     </main>
+<div class="botones-perfil">
+
+    <a href="#" class="btn-explorar">
+        Explorar
+    </a>
+
+    <a href="./SESIONES/logincerrarcliente.php" class="btn-cerrar">
+        Cerrar sesión
+    </a>
 
 </div>
-
+</div>
+ 
 <footer>
     <p>© 2026 Divine Beauty</p>
     <p>Contacto</p>
     <p>Instagram</p>
 </footer>
 
+ 
 </body>
 </html>
+
+
+ 

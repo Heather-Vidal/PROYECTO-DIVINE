@@ -139,7 +139,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     <div class="contenido">
 
       <!-- Imagen como en el segundo ejemplo -->
-      <img src=" ./imagenes/persona.png" class="icono">
+      <img src="../imagenes/persona.png" class="icono">
 
 <?php
 if($conn->connect_error){
@@ -178,7 +178,7 @@ $conn->close();
     </div>
 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
+      <a href="../totu.php" class="boton">⬅ Volver al inicio</a>
       <a href="readtodocliente.php" class="boton">Ver clientes ➡</a>
     </div>
 

@@ -2,5 +2,7 @@
 session_start();
 session_destroy();
 header("Location: loginformcliente.php");
+exit();
 ?>
+ 
  

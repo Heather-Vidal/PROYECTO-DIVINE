@@ -139,7 +139,7 @@ body {
     <div class="contenido">
       
       <!-- Imagen como en los otros ejemplos -->
-      <img src="./imagenes/persona.png" class="icono">
+      <img src="../imagenes/personaform.png" class="icono">
 
 <?php
 if($conn->connect_error){

@@ -13,24 +13,20 @@ if($_SESSION['nombre'] == null){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Beauty Glow Executive Center</title>
-
+ 
+<link href="https://fonts.cdnfonts.com/css/bestigia" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 
 :root{
-
 --cream:#faf6f0;
 --ivory:#fffaf3;
 --champagne:#d8c3a5;
 --gold:#b89968;
 --coffee:#6d5745;
 --soft:#f4e8d8;
-
 --shadow:0 15px 35px rgba(90,60,30,.18);
-
 }
-
-
 
 *{
 
@@ -40,108 +36,59 @@ box-sizing:border-box;
 font-family:'Poppins',sans-serif;
 
 }
-
-
-
+.fuente {
+        font-family: 'Bestigia', sans-serif;                                     
+  font-weight: 400px;
+  font-style: normal;
+}
 
 body{
-
 background:
-
 linear-gradient(
 135deg,
 #f3e3d0,
 #fff9ef,
 #e8d1b3
 );
-
-
 min-height:100vh;
-
 color:var(--coffee);
-
 }
-
-
-
 
 .container{
-
 padding:30px;
-
 max-width:1600px;
-
 margin:auto;
-
 }
 
-
-
-
 .hero{
-
-
 background:
-
 linear-gradient(
 135deg,
 #fffaf3,
 #efd8b8
 );
 
-
 border-radius:35px;
-
 padding:35px;
-
 box-shadow:var(--shadow);
-
 margin-bottom:25px;
-
 text-align:center;
-
 }
-
-
-
 
 .hero h1{
-
 font-size:42px;
-
 color:#63452c;
-
 }
-
-
-
-
 .hero p{
-
 color:#8b6848;
-
 }
-
-
-
-
 
 .grid-top{
-
 display:grid;
-
 grid-template-columns:420px 1fr;
-
 gap:25px;
-
 margin-bottom:25px;
-
 }
-
-
-
-
-
 
 .profile-card,
 .ai-card,
@@ -150,340 +97,160 @@ margin-bottom:25px;
 
 
 background:
-
 linear-gradient(
 145deg,
 #fffaf3,
 #ead5b8
 );
-
-
 border:1px solid #d4b37d;
-
 box-shadow:var(--shadow);
-
 }
 
-
-
-
-
 .profile-card{
-
 border-radius:30px;
-
 padding:30px;
 
 }
-
-
-
-
 .profile-header{
-
 text-align:center;
-
 }
-
-
-
-
 
 .profile-header img{
-
 width:170px;
-
 height:170px;
-
 border-radius:50%;
-
 object-fit:cover;
-
-
 border:6px solid #c9a267;
-
 }
-
-
-
-
 
 .profile-header h2{
-
 margin-top:15px;
-
 }
-
-
-
-
 
 .badge{
-
-
 display:inline-block;
-
 margin-top:10px;
-
 padding:8px 16px;
-
 background:#dfc39a;
-
 border-radius:25px;
-
 font-size:13px;
-
 font-weight:600;
-
 color:#5d422b;
-
-
 }
-
-
-
-
 
 .quote{
-
 margin-top:20px;
-
 padding:15px;
-
 background:#f7ead8;
-
 border-radius:15px;
-
 font-style:italic;
-
 }
-
-
-
-
 
 .progress{
-
 margin-top:20px;
 
 }
-
-
-
 
 
 .progress-bar{
-
 height:12px;
-
 background:#dec7a7;
-
 border-radius:20px;
-
 overflow:hidden;
-
 }
 
-
-
-
-
 .progress-fill{
-
 height:100%;
-
 width:98%;
-
-
 background:
-
 linear-gradient(
 90deg,
 #c69b5d,
 #98703d
 );
-
-
 }
 
 
 
-
 .profile-stats{
-
-
 display:grid;
-
 grid-template-columns:repeat(3,1fr);
-
 gap:10px;
-
 margin-top:20px;
-
-
 }
 
 
 
 
 .profile-stats div{
-
-
 background:#f8ead8;
-
 padding:15px;
-
 border-radius:15px;
-
 text-align:center;
-
-
 }
-
-
-
-
 
 .profile-stats strong{
-
 font-size:24px;
-
 display:block;
-
 }
-
-
-
-
-
-
-
 
 .ai-card{
-
-
 border-radius:30px;
-
 padding:30px;
-
 }
-
-
-
 
 
 .ai-card h2{
-
 margin-bottom:20px;
-
 color:#65452c;
-
 }
-
-
-
-
 
 .ai-box{
-
-
 background:#f8ead8;
-
 padding:25px;
-
 border-radius:20px;
-
 line-height:2;
-
 }
-
-
-
-
 
 .ai-recommendation{
-
-
 margin-top:20px;
-
 padding:20px;
-
 background:#fff0dc;
-
 border-left:5px solid var(--gold);
-
 border-radius:15px;
-
 }
-
-
-
 
 
 .grid-middle{
-
 display:grid;
-
 grid-template-columns:1fr 1fr;
-
 gap:25px;
-
 margin-bottom:25px;
-
 }
-
-
-
-
-
 
 .card{
-
-
 border-radius:30px;
-
 padding:25px;
-
 }
-
-
-
 
 
 .card h3{
-
 color:#65452c;
-
 }
-
-
-
 
 
 .goal-bar{
-
 height:18px;
-
 background:#dec7a7;
-
 border-radius:20px;
-
 overflow:hidden;
-
 }
 
 
-
-
 .goal-fill{
-
 height:100%;
-
 width:80%;
-
-
 background:
-
 linear-gradient(
 90deg,
 #c69b5d,
@@ -493,286 +260,286 @@ linear-gradient(
 
 }
 
-
-
-
-
 .live-item{
-
-
 padding:12px;
-
 margin-bottom:10px;
-
 background:#f8ead8;
-
 border-radius:12px;
 
 }
-
-
-
-
-
-
-
-
 
 /* BOTONES */
 
 .metrics{
 
-
 display:grid;
 
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:1fr 1fr;
 
-gap:18px;
+gap:12px; /* antes 20 */
 
 width:100%;
 
-margin-bottom:25px;
+margin-bottom:18px;
 
+align-items:start;
 
 }
 
 
 
-
+/* cajas un poco menos rectangulares */
 
 .button-card{
 
+height:175px; /* antes 205 */
 
-height:190px;
+min-width:0;
 
-
-text-decoration:none;
-
-color:inherit;
-
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-
-border-radius:25px;
-
-
-transition:.3s;
-
+padding:18px;
 
 }
 
 
 
-
-
-.button-card:hover{
-
-
-transform:translateY(-8px);
-
-
-box-shadow:
-
-0 20px 45px rgba(90,60,30,.28);
-
-
-}
-
-
-
-
-
-/* CENTRAR LOS DOS DE ABAJO */
-
-.button-card:nth-child(4){
-
-
-grid-column:1;
-
-justify-self:end;
-
-}
-
-
-
-.button-card:nth-child(5){
-
-
-grid-column:2;
-
-justify-self:start;
-
-}
-
-
-
-
-
-.metric{
-
-
-padding:20px;
-
-text-align:center;
-
-}
-
-
-
-
-.circle{
-
-
-width:95px;
-
-height:95px;
-
-border-radius:50%;
-
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-
-font-size:25px;
-
-font-weight:700;
-
-
-
-background:
-
-conic-gradient(
-
-#b89968 0deg,
-
-#b89968 340deg,
-
-#ead9bf 340deg,
-
-#ead9bf 360deg
-
-);
-
-
-color:#563d25;
-
-
-}
-
-
-
-
-
-.metric p{
-
-margin-top:12px;
-
-font-weight:700;
-
-color:#65452c;
-
-
-}
-
-
-
-
-
-
-
-.footer{
-
-
-text-align:center;
-
-padding:40px;
-
-
-color:#806047;
-
-
-}
-
-
-
-
-
-
-@media(max-width:1000px){
-
-
-.grid-top{
-
-grid-template-columns:1fr;
-
-}
-
-
-
-
-.grid-middle{
-
-grid-template-columns:1fr;
-
-}
-
-
-
+/* historial abajo centrado pero más cerca */
 
 .metrics{
 
+display:grid;
 
-grid-template-columns:1fr;
+grid-template-columns:1fr 1fr;
 
+column-gap:12px; /* espacio horizontal */
+
+row-gap:6px; /* espacio vertical ↓↓↓ */
+
+width:100%;
+
+margin-bottom:15px;
+
+align-items:start;
 
 }
 
 
 
-.button-card:nth-child(4),
+/* cajas menos largas */
 
-.button-card:nth-child(5){
+.button-card{
+
+height:170px;
+
+padding:15px;
+
+min-width:0;
+
+}
 
 
-grid-column:auto;
+
+/* HISTORIAL */
+
+.metrics a:nth-child(3){
+
+grid-column:1 / 3;
+
+width:42%;
 
 justify-self:center;
 
+/* acercarlo a las de arriba */
+margin-top:-50px;
 
 }
 
 
 
+/* cajas más largas */
+.button-card{
+
+height:205px;
+
+min-width:300px;
+
 }
 
 
+
+/* HISTORIAL ABAJO CENTRADO */
+
+.metrics a:nth-child(3){
+
+grid-column:1 / 3;
+
+width:52%;
+
+justify-self:center;
+
+}
+
+.button-card{
+height:190px;
+text-decoration:none;
+color:inherit;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+border-radius:25px;
+transition:.3s;
+}
+
+.button-card:hover{
+transform:translateY(-8px);
+box-shadow:
+0 20px 45px rgba(90,60,30,.28);
+}
+
+.metric{
+padding:20px;
+text-align:center;
+}
+
+ 
+/* IMAGENES DE BOTONES */
+
+.registro,
+.historial,
+.actualizar{
+
+width:100px;
+height:100px;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+margin:auto;
+
+}
+
+.registro img,
+.historial img,
+.actualizar img{
+
+width:100%;
+height:100%;
+
+object-fit:contain;
+
+/* si quieres redondas cambia 18px por 50% */
+border-radius:18px;
+
+transition:.3s;
+
+}
+
+.button-card:hover img{
+
+transform:scale(1.08);
+
+}
+.metric p{
+margin-top:12px;
+font-weight:700;
+color:#65452c;
+
+}
+.footer{
+text-align:center;
+padding:40px;
+color:#806047;
+
+}
+.profile-stats a{
+background:#f8ead8;
+padding:15px;
+border-radius:15px;
+text-align:center;
+text-decoration:none;
+color:inherit;
+display:block;
+transition:.3s;
+}
+
+.profile-stats a:hover{
+transform:translateY(-6px);
+box-shadow:0 15px 30px rgba(90,60,30,.25);
+}
+
+.profile-stats strong{
+font-size:24px;
+display:block;
+}
+
+@media(max-width:1000px){
+
+.grid-top{
+grid-template-columns:1fr;
+}
+
+.grid-middle{
+grid-template-columns:1fr;
+}
+
+.metrics{
+grid-template-columns:1fr;
+}
+}
+.logout-box{
+    margin-top:20px;
+    text-align:center;
+}
+
+.logout-btn{
+    display:block;
+    width:100%;
+    padding:14px;
+
+    background:linear-gradient(
+        135deg,
+        #b89968,
+        #8b6848
+    );
+
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+
+    border-radius:15px;
+
+    transition:.3s;
+    box-shadow:0 8px 20px rgba(90,60,30,.20);
+}
+
+.logout-btn:hover{
+    transform:translateY(-3px);
+
+    background:linear-gradient(
+        135deg,
+        #c9a267,
+        #9c7343
+    );
+
+    box-shadow:0 12px 25px rgba(90,60,30,.30);
+}
 </style>
 </head>
 <body>
-<<<<<<< HEAD
 
+<?php include 'submenu.php'; ?>
 <div class="container">
-=======
 <main class="bodycito">
-<h1>ñlmdvksl</h1>
+ 
     <section class="bodycito_sec1">
->>>>>>> c5212ac2f7f78429dea5571768b67b6521a7ece5
+
 
 
 <div class="hero">
 
-<h1>Hola!! Isabella </h1>
+<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?></h1>  
+
 
 <p>Perfil personal -  DIVINE</p>
 
@@ -795,11 +562,11 @@ justify-self:center;
 <img src="https://i.pravatar.cc/500?img=47">
 
 
-<h2>Isabella Fernández</h2>
+<h2> <?php echo $_SESSION['nombre']?> </h2>
 
 
 <div class="badge">
-👑 Administradora Ejecutiva Platinum
+ <?php echo $_SESSION['rol']?> - DIVINE
 </div>
 
 
@@ -810,7 +577,7 @@ justify-self:center;
 
 <div class="quote">
 
-"La belleza es confianza y la gestión es liderazgo."
+" <?php echo $_SESSION['estado']?>  ¿"
 
 </div>
 
@@ -821,7 +588,7 @@ justify-self:center;
 <div class="progress">
 
 
-<p>Desempeño General 98%</p>
+<p>Desempeño General 97%</p>
 
 
 <div class="progress-bar">
@@ -840,76 +607,57 @@ justify-self:center;
 
 <div class="profile-stats">
 
-
-<div>
-
+<a href="ventas.php" class="stat-card">
 <strong>356</strong>
-
 Ventas
+</a>
 
-</div>
-
-
-
-<div>
-
+<a href="pedidos.php" class="stat-card">
 <strong>24</strong>
+Pedidos
+</a>
 
-Reportes
-
-</div>
-
-
-
-<div>
-
+<a href="stock.php" class="stat-card">
 <strong>98%</strong>
-
-Éxito
-
-</div>
-
+Stock
+</a>
 
 </div>
 
-
+<div class="logout-box">
+    <a href="./SESIONES/logincerrarcliente.php" class="logout-btn">
+        Cerrar Sesión
+    </a>
+</div>
 
 </div>
 
-
-
-
-
-
-
-<!-- AHORA VAN LAS 5 CAJAS ARRIBA -->
 
 <div class="metrics">
 
+<a href="./CRUD-producto/formularioprodu.php" class="metric button-card">
 
-<a href="rendimiento.html" class="metric button-card">
+<div class="registro">
 
-<div class="circle">
-98%
+<img src="./imagenes/registro.svg">
+
 </div>
 
 <p>
-Rendimiento
+Registrar producto
 </p>
 
 </a>
 
-
-
-
 <a href="objetivos.html" class="metric button-card">
 
-<div class="circle">
-85%
-</div>
+<div class="historial">
 
+<img src="./imagenes/pedido.svg">
+
+</div>
 <p>
-Objetivos
+Actualizar pedido
 </p>
 
 </a>
@@ -919,24 +667,10 @@ Objetivos
 
 <a href="satisfaccion.html" class="metric button-card">
 
-<div class="circle">
-92%
-</div>
+<div class="actualizar">
 
-<p>
-Satisfacción
-</p>
+<img src="./imagenes/historial2.svg">
 
-</a>
-
-
-
-
-
-<a href="historial.html" class="metric button-card">
-
-<div class="circle">
-📜
 </div>
 
 <p>
@@ -944,52 +678,22 @@ Historial
 </p>
 
 </a>
-
-
-
-
-
-<a href="actualizar.html" class="metric button-card">
-
-<div class="circle">
-🔄
 </div>
 
-<p>
-Actualizar
-</p>
-
-</a>
-
-
 </div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <div class="grid-middle">
-
-
 
 <div class="card">
 
 
-<h3>🎯 Objetivo del Mes</h3>
+<h3>╰┈➤ Objetivo del Mes</h3>
 
 
 <p>Ventas alcanzadas</p>
 
 
-<h2>$8,000 / $10,000</h2>
+<h2>8,000 bs / 10,000 bs</h2>
 
 
 
@@ -998,8 +702,6 @@ Actualizar
 <div class="goal-fill"></div>
 
 </div>
-
-
 
 <p style="margin-top:15px;">
 
@@ -1012,15 +714,10 @@ Actualizar
 </div>
 
 
-
-
-
-
-
 <div class="card">
 
 
-<h3>🏆 Logros Desbloqueados</h3>
+<h3>♛ Logros Desbloqueados</h3>
 
 
 
@@ -1030,76 +727,43 @@ Actualizar
 
 </div>
 
-
-
 <div class="live-item">
 
 ✔ Inventario perfecto
 
 </div>
 
+<div class="live-item">
 
+✔ 50% pedidos realizados
 
+</div>
 
 <div class="live-item">
 
-✔ 95% satisfacción clientes
+✭Próximo: 500 ventas mensuales
 
 </div>
 
-
-
-
-<div class="live-item">
-
-🎯 Próximo: 500 ventas mensuales
-
 </div>
-
-
-
 </div>
-
-
-
-</div>
-
-
-
-
-
-
-
-
 
 <!-- RESUMEN IA AHORA ABAJO -->
 
 <div class="ai-card">
 
-
-<h2>🤖 Resumen Inteligente del Día</h2>
-
-
-
+<h2>🤖 Resumen del Día</h2>
 <div class="ai-box">
+    
+✿ 12 pedidos pendientes<br>
 
+✿ 3 reseñas sin responder<br>
 
-📦 12 pedidos pendientes<br>
+✿ 4 productos con stock bajo<br>
 
-⭐ 3 reseñas sin responder<br>
-
-⚠️ 4 productos con stock bajo<br>
-
-👥 8 nuevos clientes registrados<br>
-
-📈 Ventas proyectadas: +15%
-
+ 
 
 </div>
-
-
-
-
 
 <div class="ai-recommendation">
 
@@ -1117,19 +781,11 @@ Aplicar promoción al producto
 
 </div>
 
-
-
-
-
-
-
-
-
 <div class="card" style="margin-bottom:25px;">
 
 
 
-<h3>⚡ Actividad en Vivo</h3>
+<h3>⚡Ultimos Movimientos</h3>
 
 
 
@@ -1162,221 +818,14 @@ Hace 8 min · Pedido #458 entregado
 Hace 12 min · Nueva reseña de cliente
 
 </div>
-
-
-
 </div>
-
-
-
-
-
 <div class="footer">
 
 © 2026 Beauty Glow Executive Center • Luxury Edition ✨
 
 </div>
-
-
-
 </div>
-
-
 </body>
 </html>
-/*/* ================= BOTONES ADMINISTRADOR ================= */
 
 
-.metrics{
-
-display:grid;
-
-grid-template-columns:repeat(3,1fr);
-
-gap:20px;
-
-width:100%;
-
-margin-bottom:25px;
-
-}
-
-
-
-
-.button-card{
-
-height:190px;
-
-background:linear-gradient(
-145deg,
-#fffaf3,
-#ead5b8
-);
-
-border:1px solid #d4b37d;
-
-border-radius:25px;
-
-box-shadow:0 15px 35px rgba(90,60,30,.18);
-
-text-decoration:none;
-
-color:inherit;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-transition:.3s;
-
-}
-
-
-
-
-
-.button-card:hover{
-
-transform:translateY(-8px);
-
-box-shadow:0 25px 45px rgba(90,60,30,.25);
-
-}
-
-
-
-
-
-/* Historial */
-
-.button-card:nth-child(4){
-
-grid-column:1 / 2;
-
-width:100%;
-
-}
-
-
-
-
-
-/* Actualizar */
-
-.button-card:nth-child(5){
-
-grid-column:2 / 3;
-
-width:100%;
-
-}
-
-
-
-
-
-
-.metric{
-
-width:100%;
-
-height:190px;
-
-padding:20px;
-
-text-align:center;
-
-border-radius:25px;
-
-}
-
-
-
-
-.circle{
-
-width:95px;
-
-height:95px;
-
-border-radius:50%;
-
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-
-font-size:25px;
-
-font-weight:700;
-
-
-
-background:
-
-conic-gradient(
-
-#b89968 0deg,
-
-#b89968 340deg,
-
-#ead9bf 340deg,
-
-#ead9bf 360deg
-
-);
-
-
-color:#563d25;
-
-
-}
-
-
-
-
-
-.metric p{
-
-margin-top:15px;
-
-font-weight:700;
-
-color:#65452c;
-
-}
-
-
-
-
-
-
-@media(max-width:1000px){
-
-
-.metrics{
-
-grid-template-columns:1fr;
-
-}
-
-
-
-.button-card:nth-child(4),
-
-.button-card:nth-child(5){
-
-grid-column:auto;
-
-}
-
-
-}*/
