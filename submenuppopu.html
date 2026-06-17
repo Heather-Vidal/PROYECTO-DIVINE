@@ -1,263 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-      /* ===== SUBMENÚS INFORMACIÓN ===== */
-
-.menu-info{
-  width: 85%;
-  margin-top: 50px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+    margin:0;
+    background:#f5f5f5;
+    font-family:'Segoe UI',sans-serif;
 }
 
-.menu-info a{
-  background: #364e63;
-  color: white;
-  text-decoration: none;
-  padding: 12px 25px;
-  border-radius: 30px;
-  transition: 0.3s;
-  font-weight: bold;
+/* HERO */
+
+.hero{
+    width:85%;
+    margin:50px auto;
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:40px;
+    align-items:center;
 }
 
-.menu-info a:hover{
-  background: #c5a46d;
-  color: #364e63;
+.imagen-principal{
+    height:600px;
+    border-radius:30px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
 
-/* ===== PRESENTACIÓN ===== */
-
-.presentacion{
-  width: 85%;
-  margin-top: 40px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  align-items: center;
+.imagen-principal img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 
-.imagen-negocio{
-  height: 450px;
-  background: #d9d9d9;
-  border-radius: 30px;
-  overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,.2);
+.logo-divine{
+    font-size:70px;
+    color:#364e63;
+    margin-bottom:10px;
+    letter-spacing:5px;
+    font-family:Georgia, serif;
 }
 
-.imagen-negocio img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.descripcion{
+    font-size:18px;
+    line-height:1.8;
+    color:#555;
+    margin-bottom:30px;
 }
 
-.info-negocio{
-  background: white;
-  padding: 40px;
-  border-radius: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+.mision-vision{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
 }
 
-.info-negocio h2{
-  color: #364e63;
-  font-size: 40px;
-  margin-bottom: 20px;
+.caja-info{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.1);
+    border-left:8px solid #c5a46d;
 }
 
-.info-negocio p{
-  font-size: 18px;
-  line-height: 1.8;
+.caja-info h3{
+    color:#364e63;
+    margin-bottom:10px;
 }
 
-/* ===== CONTACTO Y UBICACIÓN ===== */
-
-.datos{
-  width: 85%;
-  margin-top: 50px;
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 30px;
+.caja-info p{
+    line-height:1.7;
+    color:#555;
 }
 
-.caja-dato{
-  background: white;
-  padding: 30px;
-  border-radius: 25px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
-  border-top: 8px solid #364e63;
+/* FOOTER */
+
+.footer-divine{
+    background:#364e63;
+    color:white;
+    padding:50px 10%;
 }
 
-.caja-dato h3{
-  color: #364e63;
-  margin-bottom: 15px;
-  font-size: 28px;
+.redes{
+    text-align:center;
+    margin-bottom:40px;
 }
 
-/* ===== MISIÓN Y VISIÓN ===== */
-
-.misionvision{
-  width: 85%;
-  margin-top: 60px;
-  margin-bottom: 70px;
+.redes a{
+    text-decoration:none;
+    color:#c5a46d;
+    font-size:28px;
+    margin:0 15px;
+    transition:.3s;
 }
 
-.titulo-mv{
-  text-align: center;
-  color: #364e63;
-  font-size: 42px;
-  margin-bottom: 40px;
+.redes a:hover{
+    color:white;
 }
 
-.contenedor-mv{
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 30px;
+.footer-contenido{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:40px;
 }
 
-.caja-mv{
-  background: #364e63;
-  color: white;
-  padding: 35px;
-  border-radius: 30px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+.footer-box h3{
+    color:#c5a46d;
+    margin-bottom:15px;
 }
 
-.caja-mv h3{
-  color: #c5a46d;
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 30px;
+.footer-box p{
+    line-height:1.8;
 }
 
-.caja-mv p{
-  line-height: 1.8;
-  text-align: justify;
+.copyright{
+    text-align:center;
+    margin-top:40px;
+    padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.2);
 }
+
+/* RESPONSIVE */
 
 @media(max-width:900px){
 
-.presentacion{
-  grid-template-columns:1fr;
+.hero{
+    grid-template-columns:1fr;
 }
 
-.datos{
-  grid-template-columns:1fr;
+.imagen-principal{
+    height:400px;
 }
 
-.contenedor-mv{
-  grid-template-columns:1fr;
+.logo-divine{
+    font-size:50px;
+    text-align:center;
+}
+
+.footer-contenido{
+    grid-template-columns:1fr;
 }
 }
-</style>
+  </style>
 
 </head>
+
 <body>
 
-<div class="menu-info">
+<!-- PRESENTACIÓN PRINCIPAL -->
 
-  <a href="#negocio">Negocio</a>
-  <a href="#contacto">Contacto</a>
-  <a href="#ubicacion">Ubicación</a>
-  <a href="#mision">Misión</a>
-  <a href="#vision">Visión</a>
+<section class="hero">
 
-</div>
+    <div class="imagen-principal">
 
-<!-- PRESENTACIÓN -->
-<section class="presentacion" id="negocio">
-
-  <div class="imagen-negocio">
-
-    <!-- AQUÍ PUEDES PONER TU FOTO -->
-    <img src="https://i.pinimg.com/736x/ea/76/57/ea765716067244e8b4f12c03c4cfbc86.jpg">
-
-  </div>
-
-  <div class="info-negocio">
-
-    <h2>DIVINE</h2>
-
-    <p>
-      DIVINE es un emprendimiento especializado en productos de belleza
-      natural para el cuidado de la piel y el cabello.
-      Nuestra propuesta combina elegancia, bienestar y calidad,
-      ofreciendo alternativas inspiradas en la naturaleza para
-      resaltar la belleza auténtica de cada persona.
-    </p>
-
-  </div>
-
-</section>
-
-<!-- CONTACTO Y UBICACIÓN -->
-
-<section class="datos">
-
-  <div class="caja-dato" id="contacto">
-
-    <h3>📞 Contacto</h3>
-
-    <p>Celular: 70000000</p>
-    <p>WhatsApp: 70000000</p>
-    <p>Correo: divine@gmail.com</p>
-
-  </div>
-
-  <div class="caja-dato" id="ubicacion">
-
-    <h3>📍 Ubicación</h3>
-
-    <p>
-      Cochabamba - Bolivia<br>
-      Zona Central<br>
-      Calle Principal N° 123
-    </p>
-
-  </div>
-
-</section>
-
-<!-- MISIÓN Y VISIÓN -->
-
-<section class="misionvision">
-
-  <h2 class="titulo-mv">
-    Nuestra Esencia
-  </h2>
-
-  <div class="contenedor-mv">
-
-    <div class="caja-mv" id="mision">
-
-      <h3>Misión</h3>
-
-      <p>
-        Brindar productos de belleza naturales y de calidad que
-        ayuden a nuestros clientes a cuidar su piel y cabello,
-        fortaleciendo su confianza y bienestar diario.
-      </p>
+        <img src="https://i.pinimg.com/736x/ea/76/57/ea765716067244e8b4f12c03c4cfbc86.jpg">
 
     </div>
 
-    <div class="caja-mv" id="vision">
+    <div class="contenido-principal">
 
-      <h3>Visión</h3>
+        <h1 class="logo-divine">DIVINE</h1>
 
-      <p>
-        Consolidarnos como una marca referente en Bolivia,
-        reconocida por la excelencia de nuestros productos,
-        innovación y compromiso con la belleza natural.
-      </p>
+        <p class="descripcion">
+            A principios del año 2024, nace Divine, una marca boliviana de cosméticos naturales que se inspira en la riqueza de la naturaleza y la diversidad cultural del país. Divine se ha comprometido a ofrecer productos de alta calidad que combinan ingredientes naturales con innovación científica para el cuidado del cabello y la piel. Con un enfoque en la sostenibilidad y la ética, Divine se posiciona como una marca confiable y comprometida con el cuidado personal y el respeto por la naturaleza.   
+        </p>
+
+        <div class="mision-vision">
+
+            <div class="caja-info">
+                <h3>Misión</h3>
+
+                <p>
+                    Brindar productos naturales y de calidad que ayuden a
+                    cuidar la piel y el cabello fortaleciendo el bienestar
+                    y la confianza de nuestros clientes. Ofrecer soluciones capilares y de skincare de origen natural que garanticen resultados visibles y un cuidado respetuoso de la salud. En Divine, trabajamos para que cada cliente experimente la comodidad y la seguridad de una piel y un cabello sanos, combinando la pureza de la naturaleza con la innovación en el cuidado personal.
+                </p>
+
+            </div>
+
+            <div class="caja-info">
+
+                <h3>Visión</h3>
+
+                <p>
+                    Ser una marca referente en Bolivia por la calidad,
+                    innovación y compromiso con la belleza natural. Ser reconocidos a nivel nacional e internacional como la marca de confianza para el cuidado integral del cabello y la piel. Nos proyectamos en constante evolución, diversificando nuestro catálogo de productos y expandiendo nuestro alcance para democratizar el acceso a una cosmética natural, efectiva y de calidad superior.
+                </p>
+
+            </div>
+
+        </div>
 
     </div>
 
-  </div>
+</section>
+<section class="historia-objetivos">
+    <div class="bloque-objetivos">
+
+        <h2>Nuestros Objetivos</h2>
+
+        <ul>
+            <li>Ofrecer productos de alta calidad para el cuidado personal.</li>
+            <li>Promover el uso de ingredientes naturales y responsables.</li>
+            <li>Garantizar la satisfacción y confianza de nuestros clientes.</li>
+            <li>Innovar constantemente en nuestros productos y servicios.</li>
+            <li>Posicionarnos como una marca líder en belleza natural.</li>
+        </ul>
+
+    </div>
 
 </section>
+
+
+<!-- PIE DE INFORMACIÓN -->
+
+<footer class="footer-divine">
+
+    <div class="redes">
+
+        <a href="#">📷</a>
+        <a href="#">📘</a>
+        <a href="#">🎵</a>
+
+    </div>
+
+    <div class="footer-contenido">
+
+        <div class="footer-box">
+
+            <h3>📞 Contacto</h3>
+
+            <p>Celular: 70000000</p>
+            <p>WhatsApp: 70000000</p>
+            <p>Correo: divine@gmail.com</p>
+
+        </div>
+
+        <div class="footer-box">
+
+            <h3>📍 Ubicación</h3>
+
+            <p>
+                Cochabamba - Bolivia<br>
+                Zona Central<br>
+                Calle Principal Nº 123
+            </p>
+
+        </div>
+
+        <div class="footer-box">
+
+            <h3>🌐 Redes Sociales</h3>
+
+            <p>Instagram: @divine</p>
+            <p>Facebook: Divine Bolivia</p>
+            <p>TikTok: @divine.oficial</p>
+
+        </div>
+
+    </div>
+
+    <div class="copyright">
+
+        © 2025 DIVINE - Todos los derechos reservados
+
+    </div>
+
+</footer>
+
 </body>
 </html>
