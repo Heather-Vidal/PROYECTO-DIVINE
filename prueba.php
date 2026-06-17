@@ -57,7 +57,7 @@
         .menu {
             list-style: none;
             display: flex;
-            gap: 15px; /* Controla la separación entre pestañas */
+            gap: 15px; 
         }
 
         .menu li {
@@ -77,7 +77,6 @@
             transform: translateY(3px);
         }
 
-        /* Submenú corregido */
         .submenu {
             display: none;
             position: absolute;
@@ -85,8 +84,8 @@
             left: 0;
             list-style: none;
             min-width: 180px;
-            background-color: #ffffff; /* Fondo blanco para que no se vea transparente */
-            box-shadow: 0px 4px 6px rgba(0,0,0,0.1); /* Sombra para que resalte */
+            background-color: #ffffff; 
+            box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
             z-index: 1000;
         }
 
@@ -114,15 +113,15 @@
                 <li>
                     <a href="#">Productos</a>
                     <ul class="submenu">
-                        <li><a href="#skin">Skin Care</a></li>
-                        <li><a href="#">Mascarillas</a></li>
+                        <li><a href="skincare.php">Skin Care</a></li>
+                        <li><a href="mascarillas.php">Mascarillas</a></li>
                     </ul>
                 </li>
+                <li><a href="nosotros.php">Nosotros</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
-                <li><a href="perfilvendedor.php">Vendedor</a></li>
-                <li><a href="admin.php">Administrador</a></li>
+            
             </ul>
         </nav>
 

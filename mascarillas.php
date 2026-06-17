@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Productos Capilares</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:linear-gradient(135deg,#f5f1ea,#ebe5db);
+}
+
+/* HEADER */
+
+header{
+    background:linear-gradient(135deg,#364e63,#4f6b82);
+    text-align:center;
+    padding:70px 20px;
+    color:white;
+    box-shadow:0 5px 20px rgba(0,0,0,.2);
+}
+
+header h1{
+    font-size:3rem;
+    font-weight:300;
+    letter-spacing:2px;
+}
+
+header p{
+    margin-top:10px;
+    color:#d8c19b;
+    font-size:1.1rem;
+}
+
+/* CONTENEDOR */
+
+.contenedor{
+    max-width:1200px;
+    margin:50px auto;
+    padding:20px;
+}
+
+.contenedor h2{
+    text-align:center;
+    color:#364e63;
+    margin-bottom:40px;
+    font-size:2rem;
+}
+
+/* GRID */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+
+/* TARJETAS */
+
+.card{
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    transition:.4s;
+    text-align:center;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+
+.card img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    transition:.5s;
+}
+
+.card:hover img{
+    transform:scale(1.05);
+}
+
+.card h3{
+    color:#364e63;
+    margin:15px 0 10px;
+}
+
+.precio{
+    color:#c5a46d;
+    font-size:1.4rem;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* CONTROLES */
+
+.controles{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin:15px 0;
+}
+
+.btn-cantidad{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:#364e63;
+    color:white;
+    font-size:1.2rem;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn-cantidad:hover{
+    background:#c5a46d;
+    transform:scale(1.1);
+}
+
+.cantidad{
+    font-size:1.2rem;
+    font-weight:bold;
+    min-width:25px;
+}
+
+/* BOTON CARRITO */
+
+.btn-carrito{
+    width:85%;
+    margin:0 auto 20px;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#364e63,#4f6b82);
+    color:white;
+    cursor:pointer;
+    font-size:1rem;
+    transition:.3s;
+}
+
+.btn-carrito:hover{
+    background:linear-gradient(135deg,#c5a46d,#d8b77d);
+    color:#364e63;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:780px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .card img{
+        height:300px;
+    }
+
+    header h1{
+        font-size:2.2rem;
+    }
+
+}
+
+</style>
+</head>
+<body>
+<?php include 'submenu.php'; ?>
+
+<header>
+    <h1>Productos Capilares</h1>
+    <p>Elegancia y cuidado natural</p>
+</header>
+
+<section class="contenedor">
+
+    <h2>Nuestros Productos</h2>
+
+    <div class="grid">
+
+        <div class="card">
+            <img src="./imagenes/aceitedecoco.avif" alt="Aceite de Coco">
+            <h3>Aceite de Coco</h3>
+            <p class="precio">Bs 35</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+        <div class="card">
+            <img src="./imagenes/aceitedeargan.avif" alt="Aceite de Argán">
+            <h3>Aceite de Argán</h3>
+            <p class="precio">Bs 48</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+        <div class="card">
+            <img src="./imagenes/aceitedealmendra.avif" alt="Aceite de Almendras">
+            <h3>Aceite de Almendras</h3>
+            <p class="precio">Bs 28</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+        <div class="card">
+            <img src="./imagenes/aceitedejojoba.avif" alt="Aceite de Jojoba">
+            <h3>Aceite de Jojoba</h3>
+            <p class="precio">Bs 40</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+        <div class="card">
+            <img src="./imagenes/Aceitemultivitamínico.avif" alt="Aceite Multivitamínico">
+            <h3>Aceite Multivitamínico</h3>
+            <p class="precio">Bs 52</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+        <div class="card">
+            <img src="./imagenes/Aceitedericino.avif" alt="Aceite de Ricino">
+            <h3>Aceite de Ricino</h3>
+            <p class="precio">Bs 38</p>
+
+            <div class="controles">
+                <button class="btn-cantidad menos">−</button>
+                <span class="cantidad">1</span>
+                <button class="btn-cantidad mas">+</button>
+            </div>
+
+            <button class="btn-carrito">🛒 Agregar al carrito</button>
+        </div>
+
+    </div>
+
+</section>
+
+
+</body>
+</html>
