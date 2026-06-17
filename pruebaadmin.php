@@ -1,9 +1,3 @@
- <?php
-session_start();
-if($_SESSION['nombre'] == null){
-    header("Location: loginformcliente.php");
-}
-?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -343,14 +337,12 @@ footer p:hover{
     gap:12px;
 }
 
-.botones-perfil a{
+.botones-perfil button{
     padding:12px;
     border:none;
     border-radius:30px;
     font-weight:600;
-    text-decoration:none;
-    text-align:center;
-    display:block;
+    cursor:pointer;
     transition:.3s;
 }
 
@@ -470,16 +462,15 @@ footer p:hover{
 
             <img src="./imagenes/admin.jpg" alt="Administrador">
 
-            <h2><?php echo $_SESSION['nombre']?></h2>
+            <h2>MAITE ALLENDE</h2>
 
             <div class="cargo">
-                <?php echo $_SESSION['rol']?> GENERAL
+                ADMINISTRADOR GENERAL
             </div>
 
             <div class="info">
-                <p>CONTACTO: <?php echo $_SESSION['celular']?></p>
-
-              <em><p> " <?php echo $_SESSION['estado']?>"</p></em>   
+                <p>Edad: 26 años</p>
+                <p>Ciudad: Cochabamba</p>
             </div>
 
         </div>
@@ -490,7 +481,7 @@ footer p:hover{
 
         <section class="bienvenida">
 
-            <h1>Bienvenida, <?php echo $_SESSION['nombre']?> </h1>
+            <h1>Bienvenida, Maite </h1>
 
             <p>
                 Administra usuarios, productos, pedidos,
@@ -578,27 +569,18 @@ footer p:hover{
 
     </main>
 <div class="botones-perfil">
-
-    <a href="#" class="btn-explorar">
-        Explorar
-    </a>
-
-    <a href="./SESIONES/logincerrarcliente.php" class="btn-cerrar">
-        Cerrar sesión
-    </a>
-
+    <button class="btn-explorar">Explorar</button>
+    <button class="btn-cerrar">Cerrar sesión</button>
 </div>
 </div>
- 
+
 <footer>
     <p>© 2026 Divine Beauty</p>
     <p>Contacto</p>
     <p>Instagram</p>
 </footer>
 
- 
 </body>
 </html>
 
 
- 

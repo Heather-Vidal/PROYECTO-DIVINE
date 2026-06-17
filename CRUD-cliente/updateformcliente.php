@@ -174,23 +174,22 @@ input[type="submit"]:hover{
     <div class="grupo-campos">
 
         <label>CI:</label>
-        <input type="number" name="CI" value="<?= $CI ?>" required>
+        <input type="number" name="CI" value="<?= $CI ?>" >
 
         <label>Nombre:</label>
-        <input type="text" name="nombre" value="<?= $nombre ?>" required>
+        <input type="text" name="nombre" value="<?= $nombre ?>" >
 
         <label>Dirección:</label>
-        <input type="text" name="direccion" value="<?= $direccion ?>" required>
+        <input type="text" name="direccion" value="<?= $direccion ?>" >
 
         <label>Teléfono:</label>
-        <input type="number" name="celular" value="<?= $celular ?>" required>
+        <input type="number" name="celular" value="<?= $celular ?>" >
 
         <label>Rol:</label>
-        <input type="text" name="rol" value="<?= $rol ?>" required>
+        <input type="text" name="rol" value="<?= $rol ?>" >
 
         <label>Estado:</label>
-        <input type="text" name="estado" value="<?= $estado ?>" required>
-
+        <input type="text" name="estado" value="<?= $estado ?>" >
     </div>
 
     <input type="submit" value="Guardar Cambios">
@@ -199,7 +198,7 @@ input[type="submit"]:hover{
 <script>
 
 $(document).ready(function(){
-    $("#formCliente").validate({
+    $("#formcliente").validate({
             rules:{
             CI:{
                 required:true,
