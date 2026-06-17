@@ -6,7 +6,7 @@ if($_SESSION['nombre'] == null){
 ?>
 
 
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
