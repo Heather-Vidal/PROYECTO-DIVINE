@@ -127,7 +127,21 @@ label.error{
         min-height:180px;
     }
 }
+  .btn-crear {
+            background-color: #a85a35;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+                align-self: center;            
+        }
 
+        .btn-crear:hover {
+            background-color: #c47e2f;
+        }
 </style>
 </head>
 <body>
@@ -147,9 +161,11 @@ label.error{
         <input type="password" name="CI" id="password">
 
     </div>
-
     <input type="submit" value="Ingresar">
-
+    <center> <button class="btn-crear" onclick="window.location.href='../CRUD-cliente/formcliente.php'; return false;">
+        Crear Cuenta
+    </button></center>
+    
 </form>
 
 <script>

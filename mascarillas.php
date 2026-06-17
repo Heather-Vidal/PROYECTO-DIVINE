@@ -121,6 +121,7 @@
   </style>
 </head>
 <body>
+<?php include 'submenu.php'; ?>
 
   <header>
     <h1 style="font-weight: 300; letter-spacing: 1px; font-size: 2.5rem;">Productos Capilares</h1>

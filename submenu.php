@@ -135,8 +135,6 @@
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
-                <li><a href="perfilvendedor.php">Vendedor</a></li>
-                <li><a href="admin.php">Administrador</a></li>
             </ul>
         </nav>
 
