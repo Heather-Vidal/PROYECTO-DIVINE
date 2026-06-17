@@ -182,6 +182,7 @@ header p{
 </style>
 </head>
 <body>
+<?php include 'submenu.php'; ?>
 
 <header>
     <h1>Productos Capilares</h1>
