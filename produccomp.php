@@ -200,7 +200,6 @@ height:400px;
 </style>
 </head>
 <body>
-
 <header>
 <div class="logo">RHODE BEAUTY</div>
 </header>

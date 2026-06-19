@@ -19,19 +19,23 @@ box-sizing:border-box;
 }
 
 body{
-margin:0;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#e9e5dd;
-font-family:'Poppins',sans-serif;
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background-image:url('../fondoo.png');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    font-family:'Poppins',sans-serif;
 }
 
 form{
 
-background:#f5e9d8;
-
+background: rgba(255, 182, 219, 0.9);
 width:850px;
 
 max-width:95%;
@@ -73,7 +77,7 @@ grid-area:titulo;
 
 margin:0;
 
-color:#364e63;
+color:#8b4f6b;
 
 font-family:'Playfair Display',serif;
 
@@ -101,7 +105,7 @@ gap:15px;
 
 label{
 
-color:#364e63;
+color:#8b4f6b;
 
 font-weight:500;
 
