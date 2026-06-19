@@ -273,6 +273,7 @@ body{
 
     <div class="imagen-principal">
         <img src="./imagenes/divineprod.jpg" alt="DIVINE">
+        <img src="" alt="">
     </div>
 
     <div class="contenido-principal">
