@@ -142,7 +142,7 @@
             <a href="#">
                 <img src="./imagenes/lupa-removebg-preview.png" alt="Buscar" width="25">
             </a>
-            <a href="#">
+            <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
                 <img src="./imagenes/carrito.png" alt="Carrito" width="25">
             </a>
             <a href="formcliente.php">

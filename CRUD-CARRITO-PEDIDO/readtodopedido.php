@@ -45,7 +45,7 @@ if ($resultado && $resultado->num_rows > 0) {
 
     while ($fila = $resultado->fetch_assoc()) {
 
-        $idPedido = $fila['idPedido']; // lo definimos aquí, pero SOLO para botones
+        $idPedido = $fila['ID']; // lo definimos aquí, pero SOLO para botones
 
         echo "<div class='item'>";
 

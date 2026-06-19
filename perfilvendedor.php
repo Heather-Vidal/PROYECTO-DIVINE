@@ -577,7 +577,7 @@ grid-template-columns:1fr;
 
 <div class="quote">
 
-" <?php echo $_SESSION['estado']?>  ¿"
+" <?php echo $_SESSION['estado']?>  "
 
 </div>
 
