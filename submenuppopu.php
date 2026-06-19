@@ -333,9 +333,9 @@ body{
 <footer class="footer-divine">
 
     <div class="redes">
-        <a href="#">📷</a>
-        <a href="#">📘</a>
-        <a href="#">🎵</a>
+        <a href="./imagenes/fase.jpg"></a>
+        <a href="./imagenes/wasa.jpg"></a>
+        <a href="./imagenes/instadiv.jpg"></a>
     </div>
 
     <div class="footer-contenido">
