@@ -177,8 +177,8 @@ body{
 .footer-divine{
     background:linear-gradient(
         135deg,
-        #d89aa7,
-        #bf7485
+        #ebbcc6,
+        #c7909d
     );
     color:white;
     padding:70px 10%;
@@ -208,11 +208,7 @@ body{
     grid-template-columns:repeat(3,1fr);
     gap:40px;
 }
-.footer-box redes{
-    background:rgba(255,255,255,.2);
-    padding:25px;
-    border-radius:20px;
-}
+
 .footer-box{
     background:rgba(255,255,255,.12);
     padding:25px;
