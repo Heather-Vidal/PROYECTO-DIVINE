@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 $servidor = "localhost";
 $usuario = "root";
@@ -11,43 +11,93 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-$codigo = $_POST["codigo"];
-$idpedido = $_POST["idpedido"];
-$cantidad = $_POST["cantidad"];
-$precio = $_POST["precio"];
 
-/* 1. Verificar si ya existe el producto en ese pedido */
-$check = "SELECT cantidad FROM CARRITO 
-          WHERE PRODUCTO_codigo='$codigo' AND PEDIDOS_ID='$idpedido'";
+$codigo = $_POST["codigo"] ?? null;
+$idpedido = $_POST["idpedido"] ?? null;
+$cantidad = $_POST["cantidad"] ?? 0;
+$precio = $_POST["precio"] ?? 0;
+
+
+if(!$codigo || !$idpedido){
+    die("Datos incompletos");
+}
+
+
+// evitar cantidad 0
+if($cantidad <= 0){
+    header("location: formcarrito.php?idPedido=".$idpedido);
+    exit();
+}
+
+
+/* Revisar si el producto ya existe EN ESTE PEDIDO */
+$check = "SELECT cantidad 
+          FROM CARRITO
+          WHERE PRODUCTO_codigo='$codigo'
+          AND PEDIDOS_ID='$idpedido'";
+
 
 $result = $conn->query($check);
 
-if ($result->num_rows > 0) {
 
-    /* 2. Si existe → actualizar cantidad */
+
+if($result->num_rows > 0){
+
+
+    // ya existe, aumentamos cantidad
+
     $row = $result->fetch_assoc();
 
     $nuevaCantidad = $row["cantidad"] + $cantidad;
+
     $nuevoTotal = $precio * $nuevaCantidad;
 
-    $update = "UPDATE CARRITO 
-               SET cantidad='$nuevaCantidad', costototal='$nuevoTotal'
-               WHERE PRODUCTO_codigo='$codigo' AND PEDIDOS_ID='$idpedido'";
+
+    $update = "UPDATE CARRITO
+               SET cantidad='$nuevaCantidad',
+               costototal='$nuevoTotal'
+               WHERE PRODUCTO_codigo='$codigo'
+               AND PEDIDOS_ID='$idpedido'";
+
 
     $conn->query($update);
 
-} else {
 
-    /* 3. Si no existe → insertar normal */
+
+}else{
+
+
+    // producto nuevo en este pedido
+
     $total = $precio * $cantidad;
 
-    $sql = "INSERT INTO CARRITO 
-            (PRODUCTO_codigo, PEDIDOS_ID, cantidad, costototal)
-            VALUES('$codigo','$idpedido','$cantidad','$total')";
+
+    $sql = "INSERT INTO CARRITO
+    (
+        PRODUCTO_codigo,
+        PEDIDOS_ID,
+        cantidad,
+        costototal
+    )
+    VALUES
+    (
+        '$codigo',
+        '$idpedido',
+        '$cantidad',
+        '$total'
+    )";
+
 
     $conn->query($sql);
+
 }
 
-header("location: formcarrito.php?idPedido=".$idpedido);
+
+
+header("Location: formcarrito.php?idPedido=".$idpedido);
+exit();
+
+
+$conn->close();
 
 ?>

@@ -334,7 +334,7 @@ body{
 
     <div class="redes">
         <img src="./imagenes/face.png" width="50" height="50" alt="Facebook">
-        <img src="./imagenes/wasti.png" width="50" height="50" alt="WhatsApp">
+        <img src="./imagenes/watsi.png" width="50" height="50" alt="WhatsApp">
         <img src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
     </div>
 
