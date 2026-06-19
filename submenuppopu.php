@@ -208,7 +208,11 @@ body{
     grid-template-columns:repeat(3,1fr);
     gap:40px;
 }
-
+.footer-box redes{
+    background:rgba(255,255,255,.2);
+    padding:25px;
+    border-radius:20px;
+}
 .footer-box{
     background:rgba(255,255,255,.12);
     padding:25px;
