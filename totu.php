@@ -50,13 +50,13 @@ body{
     font-family: Arial, sans-serif;
 
     display: grid;
-    grid-template-rows: 100px 730px auto 100px;
+    grid-template-rows: 100px 730px auto;
     grid-template-columns: 50% 50%;
     grid-template-areas:
         "uno uno"
         "dos tres"
         "main main"
-        "cua cua";
+        ;
     gap: 7px;
 }
 
@@ -284,21 +284,7 @@ main.principal{
     object-fit: cover;
 }
 
-/* ===== FOOTER ===== */
-footer.pie{
-    grid-area: cua;
-    background-color: #d6c8b3;
-    color: #000000;
-    padding: 20px 10px;
-    font-family: Georgia, serif;
-}
 
-.footer-contenedor{
-    display: flex;
-    justify-content: center;
-    gap: 130px;
-    margin-bottom: 25px;
-}
 .pantalla-negra {
       position: fixed;
       top: 0;
@@ -422,13 +408,7 @@ footer.pie{
 
 </main>
 
-<footer class="pie">
-    <div class="footer-contenedor">
-        <p>© 2026 Divine Beauty</p>
-        <p>Contacto</p>
-        <p>Instagram</p>
-    </div>
-</footer>
+
  <script>
     window.onload = function() {
       setTimeout(() => {
@@ -436,5 +416,7 @@ footer.pie{
       }, 800);
     };
   </script>
+  <?php include 'submenpiepag.php'; ?>
+
 </body>
 </html>

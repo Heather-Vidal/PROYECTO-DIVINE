@@ -156,6 +156,7 @@
       contenedor.appendChild(card);
     });
   </script>
+<?php include 'submenpiepag.php'; ?>
 
 </body>
 </html>
