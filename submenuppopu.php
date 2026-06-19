@@ -333,9 +333,9 @@ body{
 <footer class="footer-divine">
 
     <div class="redes">
-        <a href="./imagenes/fase.jpg"></a>
-        <a href="./imagenes/wasa.jpg"></a>
-        <a href="./imagenes/instadiv.jpg"></a>
+        <img src="./imagenes/fase.jpg" alt="Facebook">
+        <img src="./imagenes/wasa.jpg" alt="WhatsApp">
+        <img src="./imagenes/instadiv.jpg" alt="Instagram">
     </div>
 
     <div class="footer-contenido">
