@@ -47,15 +47,15 @@
 body{
     background: #EBE8D9;
     color: #111;
+    display:grid;
     font-family: Arial, sans-serif;
-
-    display: grid;
-    grid-template-rows: 100px 730px auto;
+    grid-template-rows: 100px 730px auto auto;
     grid-template-columns: 50% 50%;
     grid-template-areas:
         "uno uno"
         "dos tres"
         "main main"
+        "footer footer"
         ;
     gap: 7px;
 }
@@ -283,7 +283,9 @@ main.principal{
     height: 100%;
     object-fit: cover;
 }
-
+footer{
+    grid-area: footer;
+}
 
 .pantalla-negra {
       position: fixed;
