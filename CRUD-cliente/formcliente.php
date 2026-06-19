@@ -44,7 +44,7 @@ form {
 /* Imagen */
 .imagen {
   grid-area: imagen;
-  background: url("../imagenes/personaform.png") center / contain no-repeat;
+  background: url("../imagenes/persona.png") center / contain no-repeat;
   border-radius: 15px;
   height: 250px;
 }
