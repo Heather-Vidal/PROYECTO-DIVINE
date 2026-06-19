@@ -333,9 +333,9 @@ body{
 <footer class="footer-divine">
 
     <div class="redes">
-        <img src="./imagenes/face.jpg" width="50" height="50" alt="Facebook">
-        <img src="./imagenes/wasti.jpg" width="50" height="50" alt="WhatsApp">
-        <img src="./imagenes/instagram.jpg" width="50" height="50" alt="Instagram">
+        <img src="./imagenes/face.png" width="50" height="50" alt="Facebook">
+        <img src="./imagenes/wasti.png" width="50" height="50" alt="WhatsApp">
+        <img src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
     </div>
 
     <div class="footer-contenido">
