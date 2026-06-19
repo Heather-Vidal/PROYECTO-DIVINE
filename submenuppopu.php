@@ -15,7 +15,7 @@
 }
 
 body{
-    background:#f8eef0;
+    background: hsl(333, 90%, 92%);
     color:#333;
 }
 
