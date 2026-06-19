@@ -136,6 +136,7 @@ background:#b85f73;
 
 </style>
 </head>
+<?php include 'submenu.php'; ?>
 
 <body>
 
@@ -275,6 +276,7 @@ background:#b85f73;
 </div>
 
 </section>
+<?php include 'submenpiepag.php'; ?>
 
 </body>
 </html>
