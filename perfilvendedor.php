@@ -612,7 +612,7 @@ grid-template-columns:1fr;
 Ventas
 </a>
 
-<a href="pedidos.php" class="stat-card">
+<a href=" ./CRUD-CARRITO-PEDIDO/formpedido.php" class="stat-card">
 <strong>24</strong>
 Pedidos
 </a>

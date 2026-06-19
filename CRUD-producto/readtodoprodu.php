@@ -52,7 +52,7 @@ body {
 
 .imagen {
   grid-area: imagen;
-  background: url("./imagenes/aceitecapilar.jpg") center center / cover no-repeat;
+  background: url("../imagenes/aceitecapilar.jpg") center center / cover no-repeat;
   border-radius: 20px;
   min-height: 400px;
 }
@@ -125,28 +125,53 @@ body {
   transform: scale(1.05);
 }
 
-.volver {
+.volver{
   grid-column: span 2;
-  text-align: center;
-  margin-top: 25px;
+
+  display:flex;
+
+  justify-content:center;
+
+  gap:15px;
+
+  flex-wrap:wrap;
+
+  margin-top:25px;
 }
 
-.volver a {
-  text-decoration: none;
-  background: #364e63;
-  color: #c5a46d;
-  padding: 14px 38px;
-  border-radius: 30px;
-  font-weight: 700;
-  font-size: 17px;
-  box-shadow: 0 4px 15px rgba(54,78,99,0.6);
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.25s ease;
+.volver a{
+
+  text-decoration:none;
+
+  background:#364e63;
+
+  color:#c5a46d;
+
+  padding:14px 38px;
+
+  border-radius:30px;
+
+  font-weight:700;
+
+  font-size:17px;
+
+  box-shadow:0 4px 15px rgba(54,78,99,0.6);
+
+  transition:
+  background-color .3s,
+  color .3s,
+  transform .25s;
+
 }
 
-.volver a:hover {
-  background-color: #c5a46d;
-  color: #364e63;
-  transform: scale(1.05);
+.volver a:hover{
+
+  background:#c5a46d;
+
+  color:#364e63;
+
+  transform:scale(1.05);
+
 }
 @media (max-width: 768px) {
   .contenedor {
@@ -194,9 +219,17 @@ while($fila=$resultado->fetch_assoc()){
 }
 ?>
     </div>
-    <div class="volver">
-      <a href="../totu.php">⬅ Volver al inicio</a>
-    </div>
+  <div class="volver">
+
+  <a href="../totu.php">
+    ⬅ Volver al inicio
+  </a>
+
+  <a href="formularioprodu.php">
+    ＋ Registrar producto
+  </a>
+
+</div>
   </div>
 </body>
 </html>

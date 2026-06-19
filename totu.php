@@ -326,6 +326,7 @@ footer.pie{
 </head>
 
 <body>
+    
 <section class="pantalla-negra" id="pantallaNegra">
     <h1>DIVINE</h1>
    </section>
@@ -339,7 +340,7 @@ footer.pie{
             <ul class="menu">
                 <li><a href="totu.php">Inicio</a></li>
                 <li>
-                    <a href="#">Productos</a>
+                    <a href="produccomp.html">Productos</a>
                     <ul class="submenu">
                         <li><a href="skincare.php">Skin Care</a></li>
                         <li><a href="mascarillas.php">Mascarillas</a></li>
@@ -359,7 +360,7 @@ footer.pie{
             <a href="#">
                 <img src="./imagenes/carrito.png" alt="Carrito" width="25">
             </a>
-            <a href="formcliente.php">
+            <a href="./SESIONES/loginformcliente.php">
                 <img src="./imagenes/persona.png" alt="Perfil" width="25">
             </a>
         </div>

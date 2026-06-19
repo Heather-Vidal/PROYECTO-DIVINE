@@ -1,6 +1,6 @@
 <?php
     session_start();
-    $vendedor=$_SESSION['Nombre'];
+    $vendedor=$_SESSION['nombre'];
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +23,7 @@
     <input type="hidden" name="estado" value="En Proceso">
 
     Nombre Vendedor:
-    <input type="text" name="nombreVendedor" value="<?php echo $vendedor?>" readonly><br><br>
+    <input type="text" name="nombrevendedor" value="<?php echo $vendedor?>" readonly><br><br>
 
     <input type="submit" value="Nuevo Pedido">
 

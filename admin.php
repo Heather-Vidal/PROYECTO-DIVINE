@@ -325,114 +325,62 @@ footer p:hover{
     color:#ffd9e5;
 }
 .botones-perfil{
-    margin-top:25px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
 
-.botones-perfil button{
-    padding:12px;
-    border:none;
-    border-radius:30px;
-    font-weight:600;
-    cursor:pointer;.botones-perfil{
-    margin-top:25px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
+margin-top:30px;
+
+display:flex;
+
+justify-content:center;
+
 }
 
 .botones-perfil a{
-    padding:12px;
-    border:none;
-    border-radius:30px;
-    font-weight:600;
-    text-decoration:none;
-    text-align:center;
-    display:block;
-    transition:.3s;
+
+text-decoration:none;
+
+padding:13px 22px;
+
+border-radius:30px;
+
+font-weight:600;
+
+display:inline-block;
+
+transition:.3s;
+
 }
 
-/* BOTÓN EXPLORAR */
-.btn-explorar{
-    background:white;
-    color:var(--rosa-oscuro);
-}
-
-.btn-explorar:hover{
-    background:var(--rosa-claro);
-    transform:translateY(-3px);
-}
-
-/* BOTÓN CERRAR SESIÓN */
 .btn-cerrar{
-    background:#ff4d6d;
-    color:white;
+
+background:#ff4d6d;
+
+color:white;
+
 }
 
 .btn-cerrar:hover{
-    background:#e63956;
-    transform:translateY(-3px);
+
+background:#e63956;
+
+transform:translateY(-3px);
+
 }
-    transition:.3s;
-}
+
+
+ 
 
 /* BOTÓN EXPLORAR */
-.btn-explorar{
-    background:white;
-    color:var(--rosa-oscuro);
-}
+ 
+ 
 
-.btn-explorar:hover{
-    background:var(--rosa-claro);
-    transform:translateY(-3px);
-}
+ 
 
-/* BOTÓN CERRAR SESIÓN */
-.btn-cerrar{
-    background:#ff4d6d;
-    color:white;
-}
+ 
 
-.btn-cerrar:hover{
-    background:#e63956;
-    transform:translateY(-3px);
-}
-/* ANIMACIONES */
+ 
 
-@keyframes slideLeft{
-    from{
-        opacity:0;
-        transform:translateX(-60px);
-    }
-    to{
-        opacity:1;
-        transform:translateX(0);
-    }
-}
-
-@keyframes fadeUp{
-    from{
-        opacity:0;
-        transform:translateY(40px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0);
-    }
-    50%{
-        transform:translateY(-30px);
-    }
-}
-
-/* RESPONSIVE */
+  
+ 
 
 @media(max-width:900px){
 
@@ -467,20 +415,25 @@ footer p:hover{
     <aside class="sidebar">
 
         <div class="perfil">
-
             <img src="./imagenes/admin.jpg" alt="Administrador">
-
             <h2><?php echo $_SESSION['nombre']?></h2>
-
             <div class="cargo">
                 <?php echo $_SESSION['rol']?> GENERAL
             </div>
+        <div class="info">
+<p>CONTACTO: <?php echo $_SESSION['celular']?></p>
+<p>DIRECCIÓN: <?php echo $_SESSION['direccion']?></p>
+<em>
+<p>" <?php echo $_SESSION['estado']?>"</p>
+</em>
+<div class="botones-perfil">
+<a href="./SESIONES/logincerrarcliente.php"
+class="btn-cerrar">
+Cerrar sesión
+</a>
+</div>
 
-            <div class="info">
-                <p>CONTACTO: <?php echo $_SESSION['celular']?></p>
-
-              <em><p> " <?php echo $_SESSION['estado']?>"</p></em>   
-            </div>
+</div>
 
         </div>
 
@@ -499,29 +452,8 @@ footer p:hover{
 
         </section>
 
-        <section class="stats">
-
-            <div class="stat">
-                <h2>250</h2>
-                <p>Usuarios</p>
-            </div>
-
-            <div class="stat">
-                <h2>520</h2>
-                <p>Productos</p>
-            </div>
-
-            <div class="stat">
-                <h2>120</h2>
-                <p>Pedidos</p>
-            </div>
-
-            <div class="stat">
-                <h2>$85K</h2>
-                <p>Ventas</p>
-            </div>
-
-        </section>
+     
+      
 
         <section class="modulos">
 
@@ -577,17 +509,7 @@ footer p:hover{
         </section>
 
     </main>
-<div class="botones-perfil">
-
-    <a href="#" class="btn-explorar">
-        Explorar
-    </a>
-
-    <a href="./SESIONES/logincerrarcliente.php" class="btn-cerrar">
-        Cerrar sesión
-    </a>
-
-</div>
+ 
 </div>
  
 <footer>

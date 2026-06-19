@@ -126,7 +126,7 @@
             <ul class="menu">
                 <li><a href="totu.php">Inicio</a></li>
                 <li>
-                    <a href="#">Productos</a>
+                    <a href="produccomp.html">Productos</a>
                     <ul class="submenu">
                         <li><a href="#skin">Skin Care</a></li>
                         <li><a href="#">Mascarillas</a></li>
