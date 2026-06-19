@@ -58,7 +58,7 @@ if ($resultado && $resultado->num_rows > 0) {
         echo "<div class='botones'>";
 
         echo "<a href='readcarrito.php?idPedido=$idPedido'><button>Ver carrito</button></a>";
-        echo "<a href='updatepedido.php?idPedido=$idPedido'><button>Editar</button></a>";
+        echo "<a href='updateformpedido.php?idPedido=$idPedido'><button>Editar</button></a>";
         echo "<a href='deletepedido.php?idPedido=$idPedido'><button>Eliminar</button></a>";
 
         echo "</div>";
