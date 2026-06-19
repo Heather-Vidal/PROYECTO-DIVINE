@@ -19,12 +19,17 @@ body {
   align-items: center;
   padding: 40px 0;
   margin: 0;
+  background-image:url('../imagenes/fondote.png');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
 }
 
 /* ==== FORMULARIO ==== */
 form {
   position: relative;
-  background: #f5e9d8;
+  background: rgba(255, 212, 234, 0.9);
   padding: 40px 40px 60px 40px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
@@ -53,10 +58,10 @@ h2 {
   grid-area: titulo;
   margin: 0 0 5px;
   font-size: 32px;
-  color: #364e63;
+  color: #8b4f6b;
   font-family: "Playfair Display", serif;
   letter-spacing: 1px;
-  border-bottom: 3px solid #c5a46d;
+  border-bottom: 3px solid #fc63af;
   padding-bottom: 8px;
   width: fit-content;
 }
@@ -64,7 +69,7 @@ h2 {
 legend {
   grid-area: leyenda;
   font-weight: bold;
-  color: #c5a46d;
+  color: #8b4f6b;
   font-size: 17px;
   letter-spacing: 1px;
   font-family: "Playfair Display", serif;
@@ -78,7 +83,7 @@ legend {
 }
 
 label {
-  color: #364e63;
+  color: #af5276;
   font-size: 15px;
   font-weight: 500;
 }
@@ -89,7 +94,7 @@ input[type="number"],
 input[type="date"],
 select {
   padding: 12px 14px;
-  border: 1px solid #ccb899;
+  border: 1px solid #cc99b3;
   border-radius: 8px;
   font-size: 15px;
   background: #ffffff;
@@ -101,8 +106,8 @@ select {
 /* EFECTO FOCUS */
 input:focus,
 select:focus {
-  border-color: #364e63;
-  box-shadow: 0 0 8px rgba(54,78,99,0.3);
+  border-color: #5e3045;
+  box-shadow: 0 0 8px rgba(255, 92, 206, 0.3);
 }
 
 /* BOTÓN */
@@ -110,7 +115,7 @@ input[type="submit"] {
   grid-area: boton;
   margin-top: 10px;
   padding: 14px;
-  background: #364e63;
+  background: #63364b;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -123,7 +128,7 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-  background: #c5a46d;
+  background: #c56d99;
   transform: scale(1.03);
 }
 

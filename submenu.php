@@ -126,8 +126,8 @@
                 <li>
                     <a href="produccomp.html">Productos</a>
                     <ul class="submenu">
-                        <li><a href="#skin">Skin Care</a></li>
-                        <li><a href="#">Mascarillas</a></li>
+                        <li><a href="skincare.php">Skin Care</a></li>
+                        <li><a href="mascarillas.php">Mascarillas</a></li>
                     </ul>
                 </li>
                 <li><a href="submenuppopu.php">Historia</a></li>

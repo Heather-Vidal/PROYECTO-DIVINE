@@ -35,7 +35,7 @@ body{
 
 form{
 
-background: rgba(255, 182, 219, 0.9);
+background: rgba(255, 212, 234, 0.9);
 width:850px;
 
 max-width:95%;
@@ -83,7 +83,7 @@ font-family:'Playfair Display',serif;
 
 font-size:32px;
 
-border-bottom:3px solid #c5a46d;
+border-bottom:3px solid #f788d2;
 
 padding-bottom:10px;
 
@@ -118,7 +118,7 @@ width:100%;
 
 padding:12px;
 
-border:1px solid #ccb899;
+border:1px solid #f5b5d0;
 
 border-radius:8px;
 
@@ -130,24 +130,18 @@ input:focus{
 
 outline:none;
 
-border-color:#364e63;
+border-color:rgb(255, 192, 221);
 
 box-shadow:0 0 8px rgba(54,78,99,.3);
 
 }
 
 input[type="submit"]{
-
 grid-area:boton;
-
 padding:14px;
-
 border:none;
-
 border-radius:10px;
-
-background:#364e63;
-
+background:rgb(255, 97, 171);
 color:white;
 
 font-size:18px;
@@ -162,7 +156,7 @@ transition:.3s;
 
 input[type="submit"]:hover{
 
-background:#c5a46d;
+background:rgb(184, 126, 153);
 
 }
 
@@ -182,7 +176,7 @@ flex-wrap:wrap;
 
 .btn-crear{
 
-background:#a85a35;
+background:rgb(182, 45, 109);
 
 color:white;
 
@@ -202,7 +196,7 @@ transition:.3s;
 
 .btn-crear:hover{
 
-background:#c47e2f;
+background:rgb(231, 143, 184);
 
 }
 

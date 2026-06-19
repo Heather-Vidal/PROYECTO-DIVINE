@@ -24,7 +24,7 @@ header{
     background:linear-gradient(135deg,#364e63,#4f6b82);
     text-align:center;
     padding:70px 20px;
-    color:white;
+    color:black;
     box-shadow:0 5px 20px rgba(0,0,0,.2);
 }
 
