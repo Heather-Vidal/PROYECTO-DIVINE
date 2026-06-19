@@ -11,11 +11,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
-        body {
-            background-color: #fff;
-        }
-
         header {
             background: transparent;
             position: relative;
@@ -29,8 +24,8 @@
         a {
             font-family: "Lora", serif;
             font-optical-sizing: auto;
-            color: #111;
             text-decoration: none;
+            color:inherit;
         }
 
         div.logo {
@@ -97,7 +92,7 @@
 
         .submenu li a {
             display: block;
-            color: #111;
+           color:inherit;
             padding: 12px 20px;
             font-size: 18px; /* Un toque más pequeño para jerarquía visual */
         }
@@ -109,6 +104,11 @@
         .menu li:hover > .submenu {
             display: block;
         }
+        .menu a,
+.logo a,
+.iconos-derecha a {
+    color: inherit;
+}
     </style>
 </head>
 <body>
