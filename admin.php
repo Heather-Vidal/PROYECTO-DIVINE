@@ -366,22 +366,6 @@ transform:translateY(-3px);
 
 }
 
-
- 
-
-/* BOTÓN EXPLORAR */
- 
- 
-
- 
-
- 
-
- 
-
-  
- 
-
 @media(max-width:900px){
 
     .contenedor{

@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 $servidor = "localhost";
 $usuario = "root";
@@ -17,14 +17,36 @@ if (!$idPedido) {
     die("No llegó el ID del pedido");
 }
 
-$sql = "DELETE FROM PEDIDOS WHERE ID = '$idPedido'";
 
-if ($conn->query($sql) === TRUE) {
-    header("Location: readtodopedido.php");
-    exit();
+// PRIMERO BORRAMOS LOS PRODUCTOS DEL CARRITO DE ESE PEDIDO
+$sqlCarrito = "DELETE FROM CARRITO WHERE PEDIDOS_ID = '$idPedido'";
+
+
+if ($conn->query($sqlCarrito) === TRUE) {
+
+
+    // DESPUÉS BORRAMOS EL PEDIDO
+    $sqlPedido = "DELETE FROM PEDIDOS WHERE ID = '$idPedido'";
+
+
+    if ($conn->query($sqlPedido) === TRUE) {
+
+        header("Location: readtodopedido.php");
+        exit();
+
+    } else {
+
+        echo "Error al eliminar pedido: " . $conn->error;
+
+    }
+
+
 } else {
-    echo "Error al eliminar: " . $conn->error;
+
+    echo "Error al borrar carrito: " . $conn->error;
+
 }
+
 
 $conn->close();
 

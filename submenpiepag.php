@@ -9,8 +9,8 @@
 .footer-divine{
     background:linear-gradient(
         135deg,
-        #d89aa7,
-        #bf7485
+        #ebbcc6,
+        #c7909d
     );
     color:white;
     padding:70px 10%;
@@ -63,14 +63,16 @@
     border-top:1px solid rgba(255,255,255,.2);
 }
 
+
+
 </style>
 <body>
     <footer class="footer-divine">
 
     <div class="redes">
-        <a href="#">📷</a>
-        <a href="#">📘</a>
-        <a href="#">🎵</a>
+        <img src="./imagenes/face.png" width="50" height="50" alt="Facebook">
+        <img src="./imagenes/watsi.png" width="50" height="50" alt="WhatsApp">
+        <img src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
     </div>
 
     <div class="footer-contenido">

@@ -15,7 +15,7 @@
 }
 
 body{
-    background: hsl(333, 90%, 92%);
+    background:#f8eef0;
     color:#333;
 }
 
@@ -177,8 +177,8 @@ body{
 .footer-divine{
     background:linear-gradient(
         135deg,
-        #d89aa7,
-        #bf7485
+        #ebbcc6,
+        #c7909d
     );
     color:white;
     padding:70px 10%;
@@ -273,6 +273,7 @@ body{
 
     <div class="imagen-principal">
         <img src="./imagenes/divineprod.jpg" alt="DIVINE">
+        <img src="" alt="">
     </div>
 
     <div class="contenido-principal">
@@ -332,9 +333,9 @@ body{
 <footer class="footer-divine">
 
     <div class="redes">
-        <a href="#">📷</a>
-        <a href="#">📘</a>
-        <a href="#">🎵</a>
+        <img src="./imagenes/face.png" width="50" height="50" alt="Facebook">
+        <img src="./imagenes/watsi.png" width="50" height="50" alt="WhatsApp">
+        <img src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
     </div>
 
     <div class="footer-contenido">

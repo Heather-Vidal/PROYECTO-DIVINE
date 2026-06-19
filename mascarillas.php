@@ -283,6 +283,6 @@ header p{
 
 </section>
 
-
+<?php include 'submenpiepag.php'; ?>
 </body>
 </html>
