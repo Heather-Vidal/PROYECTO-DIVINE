@@ -9,8 +9,8 @@
 .footer-divine{
     background:linear-gradient(
         135deg,
-        #d89aa7,
-        #bf7485
+        #ebbcc6,
+        #c7909d
     );
     color:white;
     padding:70px 10%;
@@ -62,6 +62,7 @@
     padding-top:25px;
     border-top:1px solid rgba(255,255,255,.2);
 }
+
 
 
 </style>
