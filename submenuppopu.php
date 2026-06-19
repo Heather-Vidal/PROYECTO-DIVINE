@@ -267,6 +267,7 @@ body{
 </head>
 
 <body>
+<?php include 'submenu.php'; ?>
 
 <section class="hero">
 
@@ -278,7 +279,7 @@ body{
 
         <h1 class="titulo-divine">DIVINE</h1>
 
-        <a href="#" class="btn-divine">
+        <a href="produccomp.php" class="btn-divine">
             Descubrir Productos
         </a>
 

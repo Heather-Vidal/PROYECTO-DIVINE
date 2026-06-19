@@ -83,7 +83,6 @@
             position: absolute;
             top: 100%;
             left: 0;
-            background: white;
             min-width: 200px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,.2);
@@ -104,7 +103,6 @@
         }
 
         .submenu li a:hover {
-            background: #f5f5f5;
             transform: none; /* Evita que el texto del submenú se mueva de lado */
         }
 
@@ -132,6 +130,7 @@
                         <li><a href="#">Mascarillas</a></li>
                     </ul>
                 </li>
+                <li><a href="submenuppopu.php">Historia</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
