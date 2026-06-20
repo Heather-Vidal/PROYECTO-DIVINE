@@ -440,11 +440,6 @@ footer p:hover{
         display:none;
     }
 
-    footer{
-        flex-direction:column;
-        text-align:center;
-        gap:10px;
-    }
 }
 
 </style>
@@ -574,11 +569,7 @@ footer p:hover{
 </div>
 </div>
 
-<footer>
-    <p>© 2026 Divine Beauty</p>
-    <p>Contacto</p>
-    <p>Instagram</p>
-</footer>
+ <?php include 'submenpiepag.php'; ?>
 
 </body>
 </html>
