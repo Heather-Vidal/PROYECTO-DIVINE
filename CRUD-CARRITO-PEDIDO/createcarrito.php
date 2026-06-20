@@ -94,7 +94,9 @@ if($result->num_rows > 0){
 
 
 
-header("Location: formcarrito.php?idPedido=".$idpedido);
+ header("Location: formcarrito.php?idPedido=".$idpedido);
+ 
+
 exit();
 
 

@@ -576,7 +576,7 @@ grid-template-columns:1fr;
 
 </div>
 
-
+<p>CONTACTO: <?php echo $_SESSION['celular']?>  </p>
 
 
 

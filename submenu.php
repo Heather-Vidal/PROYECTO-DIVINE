@@ -124,7 +124,7 @@
             <ul class="menu">
                 <li><a href="totu.php">Inicio</a></li>
                 <li>
-                    <a href="produccomp.html">Productos</a>
+                    <a href="produccomp.php">Productos</a>
                     <ul class="submenu">
                         <li><a href="skincare.php">Skin Care</a></li>
                         <li><a href="mascarillas.php">Mascarillas</a></li>

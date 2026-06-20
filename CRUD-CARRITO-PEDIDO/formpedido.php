@@ -9,7 +9,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nuevo Pedido</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+ 
 <style>
 
 *{
@@ -20,18 +24,31 @@
 }
 
 body{
-    background:#f8eef0;
+    background:
+    linear-gradient(rgba(0,0,0,0.30), rgba(0,0,0,0.30)),
+    url('../imagenes/fondote.png');
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
+
+    margin:0;
 }
 
 .contenedor{
-    background:white;
+    background:rgba(255,255,255,.78);
+    backdrop-filter:blur(8px);
+
     padding:40px;
     width:450px;
+
     border-radius:30px;
+
     box-shadow:0 15px 35px rgba(0,0,0,.1);
 }
 
@@ -91,7 +108,17 @@ input[type="submit"]:hover{
     background:#b45d72;
     transform:translateY(-3px);
 }
+ 
 
+ .error{
+
+    color: #d85a5a;
+
+   font-family: 'Playfair Display', serif;
+
+}
+
+ 
 </style>
 
 </head>
@@ -117,7 +144,63 @@ input[type="submit"]:hover{
         <input type="submit" value="Nuevo Pedido">
 
     </form>
+<script>
 
+$(document).ready(function () {
+
+  $("form").validate({
+
+    rules: {
+
+      nombre: {
+        required: true,
+        minlength: 3,
+        maxlength: 40
+      },
+
+      fecha: {
+        required: true
+      },
+
+      estado: {
+        required: true
+      },
+
+      nombrevendedor: {
+        required: true,
+        minlength: 3
+      }
+
+    },
+
+    messages: {
+
+      nombre: {
+        required: "Ingrese el nombre del pedido",
+        minlength: "Mínimo 3 caracteres",
+        maxlength: "Máximo 40 caracteres"
+      },
+
+      fecha: {
+        required: "Seleccione una fecha"
+      },
+
+      estado: {
+        required: "Estado obligatorio"
+      },
+
+      nombrevendedor: {
+        required: "Debe existir un vendedor",
+        minlength: "Nombre demasiado corto"
+      }
+
+    }
+
+  });
+
+});
+
+</script>
 </div>
 
 </body>
