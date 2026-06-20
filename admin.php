@@ -306,24 +306,7 @@ nav a:hover{
 
 /* FOOTER */
 
-footer{
-    margin-top:30px;
-    background:var(--rosa-oscuro);
-    color:white;
-    display:flex;
-    justify-content:center;
-    gap:30px;
-    padding:20px;
-}
 
-footer p{
-    cursor:pointer;
-    transition:.3s;
-}
-
-footer p:hover{
-    color:#ffd9e5;
-}
 .botones-perfil{
 
 margin-top:30px;
@@ -496,13 +479,7 @@ Cerrar sesión
  
 </div>
  
-<footer>
-    <p>© 2026 Divine Beauty</p>
-    <p>Contacto</p>
-    <p>Instagram</p>
-</footer>
-
- 
+ <?php include 'submenpiepag.php'; ?>
 </body>
 </html>
 
