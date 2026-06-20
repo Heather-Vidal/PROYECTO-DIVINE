@@ -130,7 +130,7 @@
                         <li><a href="mascarillas.php">Mascarillas</a></li>
                     </ul>
                 </li>
-                <li><a href="submenuppopu.php">Historia</a></li>
+                <li><a href="mision-vision.php">Historia</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
@@ -144,7 +144,7 @@
             <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
                 <img src="./imagenes/carrito.png" alt="Carrito" width="25">
             </a>
-            <a href="formcliente.php">
+            <a href="./SESIONES/loginformcliente.php">
                 <img src="./imagenes/persona.png" alt="Perfil" width="25">
             </a>
         </div> 

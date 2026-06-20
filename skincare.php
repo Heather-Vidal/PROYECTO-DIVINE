@@ -1,161 +1,454 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aceites para el Cabello</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #e9e5dd;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    header {
-      background: #364e63;
-      text-align: center;
-      padding: 60px 20px;
-      color: #c5a46d;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+<title>Productos Faciales</title>
 
-    header h1 {
-      font-size: 2.8rem;
-      margin: 0;
-    }
+<style>
 
-    header p {
-      font-size: 1.2rem;
-      margin-top: 10px;
-      color: #c5a46d;
-    }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
 
-    .contenedor {
-  
-      max-width: 1200px;
-      margin: 50px auto;
-      padding: 20px;
-    }
+body{
+background:linear-gradient(135deg,#f8edf1,#ead7df);
+}
 
-    h2 {
-      text-align: center;
-      color: #364e63;
-      font-size: 2rem;
-      margin-bottom: 40px;
-    }
+/* HEADER */
 
-    /* GRID con áreas usando clases de producto */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: auto auto;
-      grid-template-areas:
-        "producto1 producto2 producto3"
-        "producto4 producto5 producto6";
-      gap: 40px;
-    }
+header{
+background:
+linear-gradient(
+135deg,
+#bf7485,
+#d89aa7
+);
 
-    .producto1 { grid-area: producto1; }
-    .producto2 { grid-area: producto2; }
-    .producto3 { grid-area: producto3; }
-    .producto4 { grid-area: producto4; }
-    .producto5 { grid-area: producto5; }
-    .producto6 { grid-area: producto6; }
+padding:80px 20px;
 
-    .card {
-      background: #ffffff;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      text-align: center;
-      transition: 0.3s ease;
-    }
+text-align:center;
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-    }
+color:white;
 
-    .card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
+box-shadow:0 8px 25px rgba(191,116,133,.3);
+}
 
-    .card h3 {
-      color: #364e63;
-      margin: 10px 0;
-    }
+header h1{
+font-size:3.3rem;
+font-weight:300;
+letter-spacing:4px;
+margin-bottom:12px;
+text-transform:uppercase;
+}
 
-    .precio {
-      color: #c5a46d;
-      font-weight: bold;
-      font-size: 1.3rem;
-    }
+header p{
+font-size:1.2rem;
+color:#fff3f5;
+}
 
-    /* --- RESPONSIVE SOLO PARA 780px — GRID AREAS UNO DEBAJO DE OTRO --- */
-    @media (max-width: 780px) {
-      .grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        grid-template-areas:
-          "producto1"
-          "producto2"
-          "producto3"
-          "producto4"
-          "producto5"
-          "producto6";
-        gap: 25px;
-         .card img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 15px;
-    }
-      }
-      /* no es necesario repetir, las clases ya existen */
-    }
-  </style>
+/* CONTENEDOR */
+
+.contenedor{
+max-width:1200px;
+margin:60px auto;
+padding:20px;
+}
+
+h2{
+text-align:center;
+font-size:2rem;
+color:#bf7485;
+margin-bottom:45px;
+}
+
+/* GRID */
+
+.grid{
+
+display:grid;
+
+grid-template-columns:
+repeat(3,1fr);
+
+gap:35px;
+
+}
+
+/* CARD */
+
+.card{
+
+background:white;
+
+border-radius:25px;
+
+overflow:hidden;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.10);
+
+transition:.35s;
+
+text-align:center;
+
+padding-bottom:20px;
+
+}
+
+.card:hover{
+
+transform:
+translateY(-10px);
+
+box-shadow:
+0 20px 40px rgba(191,116,133,.18);
+
+}
+
+.card img{
+
+width:100%;
+
+height:250px;
+
+object-fit:cover;
+
+transition:.4s;
+
+}
+
+.card:hover img{
+
+transform:scale(1.04);
+
+}
+
+.card h3{
+
+color:#9e5567;
+
+font-size:22px;
+
+margin-top:18px;
+
+}
+
+.precio{
+
+color:#c96f84;
+
+font-size:1.5rem;
+
+font-weight:bold;
+
+margin:14px 0;
+
+}
+
+/* CONTROLES */
+
+.controles{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+margin:18px 0;
+
+}
+
+.btn-cantidad{
+
+width:42px;
+
+height:42px;
+
+border:none;
+
+border-radius:50%;
+
+background:#d89aa7;
+
+color:white;
+
+font-size:20px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.btn-cantidad:hover{
+
+background:#bf7485;
+
+transform:scale(1.08);
+
+}
+
+.cantidad{
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#9e5567;
+
+min-width:30px;
+
+}
+
+/* BOTON */
+
+.btn-carrito{
+
+display:block;
+
+width:82%;
+
+margin:auto;
+
+padding:14px;
+
+border:none;
+
+border-radius:14px;
+
+background:
+
+linear-gradient(
+135deg,
+#c96f84,
+#bf7485
+);
+
+color:white;
+
+font-size:15px;
+
+font-weight:700;
+
+cursor:pointer;
+
+transition:.3s;
+
+text-decoration:none;
+
+}
+
+.btn-carrito:hover{
+
+transform:translateY(-3px);
+
+background:
+
+linear-gradient(
+135deg,
+#b45d72,
+#9e5567
+);
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.grid{
+
+grid-template-columns:
+repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:780px){
+
+.grid{
+
+grid-template-columns:1fr;
+
+}
+
+.card img{
+
+height:320px;
+
+}
+
+header h1{
+
+font-size:2.5rem;
+
+}
+
+}
+
+</style>
 </head>
+
 <body>
- <?php include 'submenu.php'; ?>
-  <header>
-    <h1 style="font-weight: 300; letter-spacing: 1px; font-size: 2.5rem;">PRODUCTOS FACILES</h1>
-    <p>Suavidad e iluminación</p>
-  </header>
 
-  <section class="contenedor">
-    <h2>Nuestros Productos</h2>
+<?php include 'submenu.php'; ?>
 
-    <div class="grid" id="productos"></div>
-  </section>
+<header>
 
-  <script>
-    const productos = [
-      { nombre: "Serum revitalizante", precio: "Bs 40", img: " ./imagenes/crema.jpg" },
-      { nombre: "Crema nutritiva", precio: "Bs 30", img: " ./imagenes/cremademanos.jpg " },
-      { nombre: "Aceite facial", precio: "Bs 27", img: "./imagenes/cremanaranja.jpg" },
-      { nombre: "Loción iluminadora", precio: "Bs 40", img: " ./imagenes/cremarosa.jpg" },
-      { nombre: "Mascarilla de escencias", precio: "Bs 52", img: "./imagenes/naranja.jpg " },
-      { nombre: "Mascarilla detox", precio: "Bs 38", img: " ./imagenes/pepino.jpg" },
-    ];
+<h1>PRODUCTOS FACIALES</h1>
 
-    const contenedor = document.getElementById("productos");
+<p>Cuidado suave para cada detalle de tu piel</p>
 
-    productos.forEach((p, i) => {
-      const card = document.createElement("div");
-      card.className = `card producto${i+1}`;
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.nombre}" />
-        <h3>${p.nombre}</h3>
-        <p class="precio">${p.precio}</p>
-      `;
-      contenedor.appendChild(card);
-    });
-  </script>
+</header>
+
+<section class="contenedor">
+
+<h2>Nuestra colección</h2>
+
+<div class="grid" id="productos"></div>
+
+</section>
+
+<script>
+
+const productos=[
+
+{
+nombre:"Serum revitalizante",
+precio:"Bs 40",
+img:"./imagenes/crema.jpg"
+},
+
+{
+nombre:"Crema nutritiva",
+precio:"Bs 30",
+img:"./imagenes/cremademanos.jpg"
+},
+
+{
+nombre:"Aceite facial",
+precio:"Bs 27",
+img:"./imagenes/cremanaranja.jpg"
+},
+
+{
+nombre:"Loción iluminadora",
+precio:"Bs 40",
+img:"./imagenes/cremarosa.jpg"
+},
+
+{
+nombre:"Mascarilla de escencias",
+precio:"Bs 52",
+img:"./imagenes/naranja.jpg"
+},
+
+{
+nombre:"Mascarilla detox",
+precio:"Bs 38",
+img:"./imagenes/pepino.jpg"
+}
+
+];
+
+const contenedor=
+document.getElementById("productos");
+
+productos.forEach((p)=>{
+
+const card=
+document.createElement("div");
+
+card.className=
+"card";
+
+card.innerHTML=`
+
+<img src="${p.img}">
+
+<h3>${p.nombre}</h3>
+
+<p class="precio">
+${p.precio}
+</p>
+
+<div class="controles">
+
+<button class="btn-cantidad menos">
+−
+</button>
+
+<span class="cantidad">
+1
+</span>
+
+<button class="btn-cantidad mas">
++
+</button>
+
+</div>
+
+<a href="./CRUD-CARRITO-PEDIDO/formpedido.php" class="btn-carrito">
+Agregar al carrito
+</a>
+
+`;
+
+contenedor.appendChild(card);
+
+});
+
+/* CONTADOR */
+
+document.addEventListener("click",(e)=>{
+
+if(e.target.classList.contains("mas")){
+
+let n=
+e.target
+.previousElementSibling;
+
+n.innerText=
+parseInt(
+n.innerText
+)+1;
+
+}
+
+if(
+e.target.classList.contains("menos")
+){
+
+let n=
+e.target
+.nextElementSibling;
+
+if(
+parseInt(n.innerText)>1
+){
+
+n.innerText=
+parseInt(
+n.innerText
+)-1;
+
+}
+
+}
+
+});
+
+</script>
+
 <?php include 'submenpiepag.php'; ?>
 
 </body>

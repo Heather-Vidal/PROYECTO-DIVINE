@@ -252,10 +252,12 @@ body{
     <a class="btn" href="readtodopedido.php?idPedido=<?php echo $idpedido ?>">
         Finalizar compra
     </a>
+    
 </div>
 
 </div>
-
+ 
+ 
 </body>
 </html>
 

@@ -221,6 +221,7 @@ echo "<div class='vacio'>No hay pedidos registrados</div>";
 </div>
 
 </div>
+ 
 
 </body>
 </html>
