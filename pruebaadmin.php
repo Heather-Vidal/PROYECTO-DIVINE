@@ -447,7 +447,6 @@ footer p:hover{
 
 <body>
 
-<?php include 'submenu.php'; ?>
 
 <div class="contenedor">
 
