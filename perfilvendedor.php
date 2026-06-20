@@ -446,12 +446,7 @@ font-weight:700;
 color:#65452c;
 
 }
-.footer{
-text-align:center;
-padding:40px;
-color:#806047;
 
-}
 .profile-stats a{
 background:#f8ead8;
 padding:15px;
@@ -785,7 +780,7 @@ Aplicar promoción al producto
 
 
 
-<h3>⚡Ultimos Movimientos</h3>
+<h3>Ultimos Movimientos</h3>
 
 
 
@@ -819,12 +814,9 @@ Hace 12 min · Nueva reseña de cliente
 
 </div>
 </div>
-<div class="footer">
-
-© 2026 Beauty Glow Executive Center • Luxury Edition ✨
 
 </div>
-</div>
+ <?php include 'submenpiepag.php'; ?>
 </body>
 </html>
 
