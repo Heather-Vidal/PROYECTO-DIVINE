@@ -339,6 +339,54 @@ font-size:2.6rem;
 
 }
 
+/* =========================
+   ✨ ANIMACIÓN PRODUCTOS CAPILARES
+========================= */
+
+.card {
+  opacity: 0;
+  animation: aparecer 0.8s ease forwards;
+}
+
+/* animación base */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ESCALONADO (solo CSS puro) */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(5) { animation-delay: 0.5s; }
+.card:nth-child(6) { animation-delay: 0.6s; }
+
+/* hover premium */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 45px rgba(191,116,133,.25);
+}
+
+/* imagen suave */
+.card img {
+  transition: transform 0.4s ease;
+}
+
+.card:hover img {
+  transform: scale(1.06);
+}
+
 </style>
 </head>
 

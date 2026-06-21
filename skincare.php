@@ -295,6 +295,59 @@ font-size:2.5rem;
 
 }
 
+/* =========================
+   ✨ ENTRADA PRODUCTOS (KEYFRAMES)
+========================= */
+
+.card {
+  animation: aparecerProducto 0.8s ease forwards;
+  opacity: 0; /* estado inicial obligatorio */
+}
+
+/* animación principal */
+@keyframes aparecerProducto {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* delays escalonados SOLO con CSS */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(5) { animation-delay: 0.5s; }
+.card:nth-child(6) { animation-delay: 0.6s; }
+.card:nth-child(7) { animation-delay: 0.7s; }
+.card:nth-child(8) { animation-delay: 0.8s; }
+.card:nth-child(9) { animation-delay: 0.9s; }
+.card:nth-child(10) { animation-delay: 1s; }
+.card:nth-child(11) { animation-delay: 1.1s; }
+.card:nth-child(12) { animation-delay: 1.2s; }
+
+/* hover premium */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 18px 35px rgba(191,116,133,.18);
+}
+
+/* botón suave */
+.btn-carrito {
+  transition: 0.3s ease;
+}
+
+.btn-carrito:hover {
+  transform: scale(1.03);
+}
 </style>
 </head>
 
