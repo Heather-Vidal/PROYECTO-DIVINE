@@ -446,12 +446,7 @@ font-weight:700;
 color:#65452c;
 
 }
-.footer{
-text-align:center;
-padding:40px;
-color:#806047;
 
-}
 .profile-stats a{
 background:#f8ead8;
 padding:15px;
@@ -524,6 +519,156 @@ grid-template-columns:1fr;
 
     box-shadow:0 12px 25px rgba(90,60,30,.30);
 }
+ 
+ 
+@media (max-width:1024px){
+
+    .container{
+        padding:20px;
+    }
+
+    .grid-top{
+        grid-template-columns:1fr;
+    }
+
+    .grid-middle{
+        grid-template-columns:1fr;
+    }
+
+    .profile-card{
+        max-width:600px;
+        margin:auto;
+    }
+
+    .hero h1{
+        font-size:34px;
+    }
+
+    .metrics{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .button-card{
+        min-width:auto;
+        height:180px;
+    }
+
+}
+ @media (max-width:768px){
+
+    .container{
+        padding:15px;
+    }
+
+    .hero{
+        padding:25px 15px;
+    }
+
+    .hero h1{
+        font-size:28px;
+    }
+
+    .hero p{
+        font-size:14px;
+    }
+
+    /* FOTO UN POCO MÁS GRANDE */
+    .profile-header img{
+        width:140px;
+        height:140px;
+    }
+
+    /* 🔥 PERFIL MÁS ANCHO EN CELULAR */
+    .profile-card{
+        width:95%;
+        max-width:100%;
+        padding:30px 20px;
+        margin:0 auto;
+        border-radius:20px;
+    }
+
+    .profile-header{
+        padding:0 10px;
+    }
+
+    .profile-stats{
+        grid-template-columns:1fr;
+    }
+
+    .metrics{
+        grid-template-columns:1fr;
+    }
+
+    .metrics a:nth-child(3){
+        width:100%;
+        margin-top:0;
+    }
+
+    .button-card{
+        width:100%;
+        min-width:0;
+        height:170px;
+    }
+
+    .registro,
+    .historial,
+    .actualizar{
+        width:80px;
+        height:80px;
+    }
+
+    .card,
+    .ai-card{
+        padding:20px;
+    }
+
+    .logout-btn{
+        padding:12px;
+        font-size:14px;
+    }
+
+}
+.profile-card{
+    position:relative;
+    overflow:hidden;
+}
+
+/* Efecto brillo elegante */
+.profile-card::before{
+    content:'';
+    position:absolute;
+
+    top:0;
+    left:-180%;
+
+    width:70%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+
+    transform:skewX(-25deg);
+
+    animation:shineCard 6s infinite;
+    pointer-events:none;
+}
+
+@keyframes shineCard{
+
+    0%{
+        left:-180%;
+    }
+
+    100%{
+        left:220%;
+    }
+
+}
+
 </style>
 </head>
 <body>
@@ -581,7 +726,7 @@ grid-template-columns:1fr;
 
 </div>
 
-
+<p>CONTACTO: <?php echo $_SESSION['celular']?>  </p>
 
 
 
@@ -785,7 +930,7 @@ Aplicar promoción al producto
 
 
 
-<h3>⚡Ultimos Movimientos</h3>
+<h3>Ultimos Movimientos</h3>
 
 
 
@@ -819,12 +964,9 @@ Hace 12 min · Nueva reseña de cliente
 
 </div>
 </div>
-<div class="footer">
-
-© 2026 Beauty Glow Executive Center • Luxury Edition ✨
 
 </div>
-</div>
+ <?php include 'submenpiepag.php'; ?>
 </body>
 </html>
 

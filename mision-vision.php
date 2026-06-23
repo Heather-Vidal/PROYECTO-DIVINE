@@ -261,7 +261,80 @@ body{
 }
 
 }
+/* =========================
+   ✨ ANIMACIONES ABOUT DIVINE
+========================= */
 
+/* estado inicial */
+.animar {
+  opacity: 0;
+  transform: translateY(35px);
+}
+
+/* estado activo */
+.animar.activo {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 0.8s ease;
+}
+
+/* delays */
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+.d4 { transition-delay: 0.4s; }
+.d5 { transition-delay: 0.5s; }
+.d6 { transition-delay: 0.6s; }
+
+/* HERO entrada suave */
+.hero {
+  animation: heroIn 1s ease-out;
+}
+
+@keyframes heroIn {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* cajas info hover más fino */
+.caja-info {
+  transition: 0.3s ease;
+}
+
+.caja-info:hover {
+  transform: translateY(-10px);
+}
+
+/* objetivos hover */
+.bloque-objetivos li {
+  transition: 0.3s ease;
+}
+
+.bloque-objetivos li:hover {
+  transform: translateY(-6px);
+}
+
+/* footer entrada suave */
+.footer-divine {
+  animation: footerIn 1.2s ease-out;
+}
+
+@keyframes footerIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>
 
 </head>

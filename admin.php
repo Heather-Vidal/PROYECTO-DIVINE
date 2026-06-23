@@ -306,24 +306,7 @@ nav a:hover{
 
 /* FOOTER */
 
-footer{
-    margin-top:30px;
-    background:var(--rosa-oscuro);
-    color:white;
-    display:flex;
-    justify-content:center;
-    gap:30px;
-    padding:20px;
-}
 
-footer p{
-    cursor:pointer;
-    transition:.3s;
-}
-
-footer p:hover{
-    color:#ffd9e5;
-}
 .botones-perfil{
 
 margin-top:30px;
@@ -386,7 +369,221 @@ transform:translateY(-3px);
         gap:10px;
     }
 }
+/* =========================
+   TABLETS
+========================= */
+@media screen and (max-width: 1024px){
 
+    .contenedor{
+        flex-direction: column;
+        padding: 25px;
+        gap: 25px;
+    }
+
+    .sidebar{
+        width: 100%;
+    }
+
+    .perfil{
+        padding: 30px;
+    }
+
+    .perfil img{
+        width: 120px;
+        height: 120px;
+    }
+
+    .panel{
+        width: 100%;
+    }
+
+    .modulos{
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .bienvenida h1{
+        font-size: 1.8rem;
+    }
+
+    .mensaje{
+        padding: 30px;
+    }
+}
+
+
+/* =========================
+   CELULARES
+========================= */
+@media screen and (max-width: 767px){
+
+    body::before,
+    body::after{
+        display:none;
+    }
+
+    .contenedor{
+        padding:15px;
+        gap:20px;
+    }
+
+    .sidebar{
+        width:100%;
+    }
+
+    .perfil{
+        padding:25px 20px;
+        border-radius:25px;
+    }
+
+    .perfil img{
+        width:100px;
+        height:100px;
+    }
+
+    .perfil h2{
+        font-size:1.2rem;
+    }
+
+    .cargo{
+        font-size:.9rem;
+        padding:8px 15px;
+    }
+
+    .info{
+        font-size:.9rem;
+        line-height:1.8;
+    }
+
+    .bienvenida{
+        padding:20px;
+        border-radius:20px;
+    }
+
+    .bienvenida h1{
+        font-size:1.5rem;
+    }
+
+    .bienvenida p{
+        font-size:.95rem;
+    }
+
+    .modulos{
+        grid-template-columns:1fr;
+        gap:18px;
+    }
+
+    .modulo{
+        padding:20px;
+        border-radius:20px;
+    }
+
+    .modulo h3{
+        font-size:1.05rem;
+        text-align:center;
+    }
+
+    .links{
+        justify-content:center;
+    }
+
+    .links a{
+        width:100%;
+        text-align:center;
+        padding:12px;
+    }
+
+    .mensaje{
+        padding:25px 20px;
+        border-radius:20px;
+        text-align:center;
+    }
+
+    .mensaje h2{
+        font-size:1.3rem;
+    }
+
+    .mensaje p{
+        font-size:.95rem;
+    }
+
+    .botones-perfil{
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .btn-cerrar{
+        width:100%;
+        text-align:center;
+    }
+
+    nav{
+        display:none;
+    }
+}
+
+
+/* =========================
+   CELULARES PEQUEÑOS
+========================= */
+@media screen and (max-width:480px){
+
+    .perfil img{
+        width:85px;
+        height:85px;
+    }
+
+    .perfil h2{
+        font-size:1.1rem;
+    }
+
+    .bienvenida h1{
+        font-size:1.3rem;
+    }
+
+    .modulo h3{
+        font-size:1rem;
+    }
+
+    .mensaje h2{
+        font-size:1.15rem;
+    }
+
+}
+.perfil{
+    position: relative;
+    overflow: hidden;
+}
+
+/* Brillo animado */
+.perfil::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-150%;
+    width:70%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.35),
+        transparent
+    );
+
+    transform:skewX(-25deg);
+
+    animation: brillo 5s infinite;
+}
+
+@keyframes brillo{
+    0%{
+        left:-150%;
+    }
+
+    100%{
+        left:200%;
+    }
+}
 </style>
 </head>
 
@@ -496,13 +693,7 @@ Cerrar sesión
  
 </div>
  
-<footer>
-    <p>© 2026 Divine Beauty</p>
-    <p>Contacto</p>
-    <p>Instagram</p>
-</footer>
-
- 
+ <?php include 'submenpiepag.php'; ?>
 </body>
 </html>
 

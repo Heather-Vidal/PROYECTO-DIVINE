@@ -133,7 +133,65 @@ background:#b85f73;
 .hero h1{font-size:2.5rem;}
 .hero{height:400px;}
 }
+/* =========================
+   ✨ ANIMACIONES DIVINE STORE
+========================= */
 
+/* estado inicial */
+.animar {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* cuando se activa */
+.animar.activo {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 0.7s ease;
+}
+
+/* delays */
+.d1 { transition-delay: 0.05s; }
+.d2 { transition-delay: 0.1s; }
+.d3 { transition-delay: 0.15s; }
+.d4 { transition-delay: 0.2s; }
+.d5 { transition-delay: 0.25s; }
+.d6 { transition-delay: 0.3s; }
+
+/* HERO suave */
+.hero {
+  animation: heroIn 1s ease-out;
+}
+
+@keyframes heroIn {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* hover premium cards */
+.card {
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+
+/* botón */
+.btn-carrito {
+  transition: 0.3s ease;
+}
+
+.btn-carrito:hover {
+  transform: scale(1.03);
+}
 </style>
 </head>
 <?php include 'submenu.php'; ?>

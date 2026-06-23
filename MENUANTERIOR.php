@@ -5,31 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        /* 1. EL RESETEO SIEMPRE VA ARRIBA */
+        /* 1. RESETEO GLOBAL (Limpio de posiciones que rompen el layout) */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        body {
-            background-color: #fff; /* O el color de fondo que desees */
-        }
-
         header {
             background: transparent;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 40px; /* Un poco más de espacio a los lados */
-            width: 100%;
+            padding: 10px 40px;
+            width: 100%; 
         }
 
         a {
             font-family: "Lora", serif;
+            font-optical-sizing: auto;
             text-decoration: none;
-            color: #111;
+            color:inherit;
         }
 
         div.logo {
@@ -42,22 +38,14 @@
             display: block;
         }
 
-        /* Contenedor derecho para los iconos */
-        .iconos-derecha {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
         nav {
             display: flex;
-            align-items: center;
         }
 
         .menu {
             list-style: none;
             display: flex;
-            gap: 15px; 
+            align-items: center;
         }
 
         .menu li {
@@ -66,8 +54,8 @@
 
         .menu li a {
             display: block;
-            padding: 10px 15px;
-            font-size: 18px;
+            padding: 15px 20px;
+            font-size: 20px;
             transition: 0.3s all;
             border-radius: 10px;
         }
@@ -77,32 +65,57 @@
             transform: translateY(3px);
         }
 
+        /* Contenedor de iconos de la derecha */
+        .iconos-derecha {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        /* 2. SUBMENÚ (Heredado y corregido con z-index correcto) */
         .submenu {
             display: none;
             position: absolute;
             top: 100%;
             left: 0;
+            min-width: 200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.2);
+            z-index: 9999;
+            padding: 10px 0;
             list-style: none;
-            min-width: 180px;
-            background-color: #ffffff; 
-            box-shadow: 0px 4px 6px rgba(0,0,0,0.1); 
-            z-index: 1000;
+        }
+
+        .submenu li {
+            width: 100%;
         }
 
         .submenu li a {
-            padding: 10px 15px;
+            display: block;
+           color:inherit;
+            padding: 12px 20px;
+            font-size: 18px; /* Un toque más pequeño para jerarquía visual */
         }
 
-        .menu li:hover .submenu {
+        .submenu li a:hover {
+            transform: none; /* Evita que el texto del submenú se mueva de lado */
+        }
+
+        .menu li:hover > .submenu {
             display: block;
         }
+        .menu a,
+.logo a,
+.iconos-derecha a {
+    color: inherit;
+}
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">
-            <a href="pagintrof.php">
+            <a href="pagintrof.php"> 
                 <img src="./imagenes/DIVINE-removebg-preview.png" alt="Logo">
             </a>
         </div>
@@ -111,17 +124,16 @@
             <ul class="menu">
                 <li><a href="totu.php">Inicio</a></li>
                 <li>
-                    <a href="#">Productos</a>
+                    <a href="produccomp.php">Productos</a>
                     <ul class="submenu">
                         <li><a href="skincare.php">Skin Care</a></li>
                         <li><a href="mascarillas.php">Mascarillas</a></li>
                     </ul>
                 </li>
-                <li><a href="nosotros.php">Nosotros</a></li>
+                <li><a href="mision-vision.php">Historia</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
-            
             </ul>
         </nav>
 
@@ -129,14 +141,14 @@
             <a href="#">
                 <img src="./imagenes/lupa-removebg-preview.png" alt="Buscar" width="25">
             </a>
-            <a href="#">
+            <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
                 <img src="./imagenes/carrito.png" alt="Carrito" width="25">
             </a>
-            <a href="formcliente.php">
+            <a href="./SESIONES/loginformcliente.php">
                 <img src="./imagenes/persona.png" alt="Perfil" width="25">
             </a>
-        </div>
+        </div> 
     </header>
- <?php include 'submenpiepag.php'; ?>
+
 </body>
 </html>

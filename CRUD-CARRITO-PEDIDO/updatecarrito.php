@@ -1,24 +1,22 @@
- <?php
+<?php
 
-$servidor = "localhost";
-$usuario = "root";
-$contraseña = "";
-$nombreBD = "DIVINE";
+$servidor="localhost";
+$usuario="root";
+$contraseña="";
+$nombreBD="DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
-
-$idPedido = $_GET['idPedido'] ?? null;
+$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Eliminar Pedido - DIVINE</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Carrito Actualizado - DIVINE</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
 
@@ -30,6 +28,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
+  color: #2b2b2b;
 }
 
 .contenedor {
@@ -41,23 +40,19 @@ body {
   max-width: 700px;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-areas:
-    "encabezado"
-    "contenido"
-    "botones";
   gap: 30px;
   text-align: center;
 }
 
-/* HEADER */
+/* TITULO */
 .encabezado {
   font-size: 36px;
   font-weight: 700;
   color: #c96f84;
   letter-spacing: 2px;
   text-transform: uppercase;
-  padding-bottom: 10px;
   border-bottom: 3px solid #c96f84;
+  padding-bottom: 10px;
 }
 
 /* CONTENIDO */
@@ -74,26 +69,26 @@ body {
   border-radius: 12px;
   padding: 18px;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .exito {
-  background: #c96f84;
+  background-color: #c96f84;
   color: white;
   box-shadow: 0 6px 18px rgba(201,111,132,0.6);
 }
 
 .error {
-  background: #b84a63;
+  background-color: #b84a63;
   color: white;
   box-shadow: 0 6px 18px rgba(184,74,99,0.6);
 }
 
-/* BOTÓN */
+/* BOTONES */
 .botones {
-  grid-area: botones;
   display: flex;
   justify-content: center;
+  gap: 25px;
 }
 
 .boton {
@@ -113,11 +108,7 @@ body {
   transform: scale(1.05);
 }
 
-/* RESPONSIVE */
 @media (max-width: 600px) {
-  .contenedor {
-    padding: 25px;
-  }
   .botones {
     flex-direction: column;
     gap: 15px;
@@ -125,49 +116,42 @@ body {
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="contenedor">
 
-<div class="encabezado">Eliminar Pedido</div>
+<div class="encabezado">DIVINE</div>
 
 <div class="contenido">
 
 <?php
 
 if ($conn->connect_error) {
-    echo "<div class='mensaje error'>❌ ERROR DE CONEXIÓN CON BD</div>";
-    exit();
+    echo '<div class="mensaje error">❌ ERROR DE CONEXIÓN CON BD</div>';
+    exit;
 }
 
-if (!$idPedido) {
-    echo "<div class='mensaje error'>❌ NO LLEGÓ EL ID DEL PEDIDO</div>";
-    exit();
-}
+/* DATOS DEL FORM */
+$idPedido = $_POST['idPedido'];
+$codigo = $_POST['codigo'];
+$cantidad = $_POST['cantidad'];
 
-/* 1. BORRAR CARRITO */
-$sqlCarrito = "DELETE FROM CARRITO WHERE PEDIDOS_ID = '$idPedido'";
+/* UPDATE */
+$sql = "UPDATE CARRITO 
+        SET cantidad='$cantidad',
+            costototal = (costototal / cantidad) * '$cantidad'
+        WHERE PEDIDOS_ID='$idPedido'
+        AND PRODUCTO_codigo='$codigo'";
 
-if ($conn->query($sqlCarrito) === TRUE) {
+if ($conn->query($sql) === TRUE) {
 
-    /* 2. BORRAR PEDIDO */
-    $sqlPedido = "DELETE FROM PEDIDOS WHERE ID = '$idPedido'";
-
-    if ($conn->query($sqlPedido) === TRUE) {
-
-        echo "<div class='mensaje exito'>✔ PEDIDO ELIMINADO EXITOSAMENTE</div>";
-
-    } else {
-
-        echo "<div class='mensaje error'>⚠ ERROR AL ELIMINAR PEDIDO</div>";
-    }
+    echo '<div class="mensaje exito">✔ CARRITO ACTUALIZADO EXITOSAMENTE</div>';
 
 } else {
 
-    echo "<div class='mensaje error'>⚠ ERROR AL BORRAR CARRITO</div>";
+    echo '<div class="mensaje error">⚠ ERROR AL ACTUALIZAR EL CARRITO</div>';
 }
 
 $conn->close();
@@ -177,7 +161,11 @@ $conn->close();
 </div>
 
 <div class="botones">
-<a href="readtodopedido.php" class="boton">⬅ Volver a pedidos</a>
+
+<a href="readcarrito.php?idPedido=<?php echo $idPedido ?>" class="boton">⬅ Volver al carrito</a>
+
+<a href="formcarrito.php?idPedido=<?php echo $idPedido ?>" class="boton">Seguir comprando ➡</a>
+
 </div>
 
 </div>

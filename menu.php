@@ -7,6 +7,7 @@
     justify-content: space-between;
     position: relative;
     height: 100px;
+   }
 
 a{
     font-family: "Lora", serif;

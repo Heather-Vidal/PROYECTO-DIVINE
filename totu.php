@@ -336,7 +336,7 @@ footer{
                 </li>
                 <li><a href="submenuppopu.php">Historia</a>
                 </li>
-                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="mision-vision.php">Nosotros</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
                 <li><a href="#consulta">Consulta Personal</a></li>
