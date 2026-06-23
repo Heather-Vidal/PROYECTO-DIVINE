@@ -578,7 +578,7 @@ grid-template-columns:1fr;
         height:140px;
     }
 
-    /* 🔥 PERFIL MÁS ANCHO EN CELULAR */
+    /*  PERFIL MÁS ANCHO EN CELULAR */
     .profile-card{
         width:95%;
         max-width:100%;

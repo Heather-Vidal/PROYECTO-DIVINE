@@ -63,6 +63,30 @@
     border-top:1px solid rgba(255,255,255,.2);
 }
 
+@media (max-width: 992px) {
+    .footer-contenido {
+        gap: 20px; 
+    }
+    .footer-divine {
+        padding: 50px 5%; 
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-contenido {
+        grid-template-columns: 1fr; 
+        gap: 30px;
+    }
+
+    .footer-divine {
+        padding: 40px 20px; 
+        margin-top: 40px;
+    }
+
+    .footer-box {
+        text-align: center; 
+    }
+}
 
 
 </style>
