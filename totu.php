@@ -334,7 +334,7 @@ footer{
                         <li><a href="mascarillas.php">Mascarillas</a></li>
                     </ul>
                 </li>
-                <li><a href="submenuppopu.php">Historia</a>
+                <li><a href="mision-vision.php">Historia</a>
                 </li>
                 <li><a href="mision-vision.php">Nosotros</a></li>
                 <li><a href="#ofertas">Ofertas</a></li>

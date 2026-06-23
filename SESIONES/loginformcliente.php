@@ -266,14 +266,14 @@ flex-direction:column;
 <button
 type="button"
 class="btn-crear"
- 
-onclick="window.location.href='../totu.php'">
+ click="window.location.href='../totu.php'">
 
 ⬅ Volver a Inicio
 </button>
 
 <button
 type="button"
+on
 class="btn-crear"
 onclick="window.location.href='../CRUD-cliente/formcliente.php'">
 
