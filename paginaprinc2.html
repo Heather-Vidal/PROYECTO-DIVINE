@@ -398,3 +398,31 @@
   </script>
 </body>
 </html>
+
+button:hover {
+  background-color: green;
+  transform: scale(1.2);
+
+  .caja {
+  width: 100px;
+  height: 100px;
+  background-color: red;
+  position: relative;
+  animation: mover 3s infinite;
+}
+
+@keyframes mover {
+  0% {
+    left: 0;
+    background-color: red;
+  }
+  50% {
+    left: 200px;
+    background-color: orange;
+  }
+  100% {
+    left: 0;
+    background-color: red;
+  }
+}
+<?php echo $_SESSION['nombre']?>
