@@ -683,7 +683,7 @@ grid-template-columns:1fr;
 
 <div class="hero">
 
-<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?></h1>  
+<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?> - <?php echo $_SESSION['celular']?></h1>  
 
 
 <p>Perfil personal -  DIVINE</p>
