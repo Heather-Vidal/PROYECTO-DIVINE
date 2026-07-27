@@ -27,6 +27,7 @@ $resultado=$conn-> query($sql);
 
 <style>
 body {
+  background-image:url('../fondurusu.png');
   font-family: 'Playfair Display', serif;
   background: #f5e9d8;
   display: flex;
