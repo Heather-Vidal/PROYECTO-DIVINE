@@ -1,4 +1,4 @@
- -- MySQL Workbench Forward Engineering
+-- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS `DIVINE`.`PEDIDOS` (
   `fecha` DATE NULL,
   `estado` VARCHAR(45) NULL,
   `nombrevendedor` VARCHAR(45) NULL,
+  `telefono` INT NULL,
+  `direccion` VARCHAR(45) NULL,
   PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
@@ -65,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `DIVINE`.`CARRITO` (
   `costototal` DOUBLE NULL,
   PRIMARY KEY (`PRODUCTO_codigo`, `PEDIDOS_ID`),
   INDEX `fk_PRODUCTO_has_PEDIDOS_PEDIDOS1_idx` (`PEDIDOS_ID` ASC)  ,
-  INDEX `fk_PRODUCTO_has_PEDIDOS_PRODUCTO_idx` (`PRODUCTO_codigo` ASC)  ,
+  INDEX `fk_PRODUCTO_has_PEDIDOS_PRODUCTO_idx` (`PRODUCTO_codigo` ASC)    ,
   CONSTRAINT `fk_PRODUCTO_has_PEDIDOS_PRODUCTO`
     FOREIGN KEY (`PRODUCTO_codigo`)
     REFERENCES `DIVINE`.`PRODUCTO` (`codigo`)
@@ -83,14 +85,12 @@ ENGINE = InnoDB;
 -- Table `DIVINE`.`VENTAS`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `DIVINE`.`VENTAS` (
-  `pedido_id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `estado` VARCHAR(45) NULL,
   `metodo` VARCHAR(45) NULL,
   `costototal` DOUBLE NULL,
-  `direccion` VARCHAR(45) NULL,
-  `telefono` INT NULL,
   `PEDIDOS_ID` INT NOT NULL,
-  PRIMARY KEY (`pedido_id`),
+  PRIMARY KEY (`id`),
   INDEX `fk_VENTAS_PEDIDOS1_idx` (`PEDIDOS_ID` ASC)  ,
   CONSTRAINT `fk_VENTAS_PEDIDOS1`
     FOREIGN KEY (`PEDIDOS_ID`)
