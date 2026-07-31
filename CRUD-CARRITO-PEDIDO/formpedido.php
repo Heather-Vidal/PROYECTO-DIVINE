@@ -133,12 +133,20 @@ input[type="submit"]:hover{
         <label>Nombre:</label>
         <input type="text" name="nombre">
 
-        <label>Fecha:</label>
-        <input type="date" name="fecha">
+        
 
         <input type="hidden" name="estado" value="En Proceso">
 
-        <label>Nombre Vendedor:</label>
+     
+
+         <label>Telefono:</label>
+        <input type="text" name="telefono"   >
+
+         <label>direccion:</label>
+        <input type="text" name="direccion"    >
+         <label>Fecha:</label>
+        <input type="date" name="fecha">
+         <label>Nombre Vendedor:</label>
         <input type="text" name="nombrevendedor" value="<?php echo $vendedor?>" readonly>
 
         <input type="submit" value="Nuevo Pedido">
