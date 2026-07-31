@@ -7,7 +7,7 @@
   <style>
     body {
       display: grid;
-      grid-template-rows: 100vh 50vh;
+      grid-template-rows: 100vh;
       grid-template-columns: 50%;
       grid-template-areas: 
         "dos tres";
@@ -43,7 +43,7 @@
     /* Estilos para el link central */
     #link {
       position: absolute;
-      top: 35%; /* dejo igual que tu código original */
+      top: 50%; /* dejo igual que tu código original */
       left: 50%;
       transform: translate(-50%, -50%);
       text-decoration: none;
@@ -98,7 +98,7 @@
   }
   #hola h1{
      position: absolute;
-     top: 50px;
+     top: 30px;
      left: 50px;
   }
   #a {
@@ -110,7 +110,6 @@
     
   }
   #link {
-   top: 50%;              /* Lo pongo realmente al centro vertical */
     left: 50%;
     transform: translate(-50%, -50%);
   }
