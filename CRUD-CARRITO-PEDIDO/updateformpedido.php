@@ -22,6 +22,8 @@ if($resultado->num_rows > 0){
 
     $nombre = $fila['nombre'];
     $fecha = $fila['fecha'];
+     $telefono = $fila['telefono'];
+     $direccion = $fila['direccion'];
     $estado = $fila['estado'];
     $vendedor = $fila['nombrevendedor'];
 
@@ -163,12 +165,17 @@ margin-bottom:10px;
 
 <label>Nombre:</label>
 <input type="text" name="nombre" value="<?= $nombre ?>" required>
+<label>Telefono:</label>
+<input type="text" name="telefono" value="<?= $telefono ?>" required>
 
-<label>Fecha:</label>
-<input type="date" name="fecha" value="<?= $fecha ?>" required>
+<label>Dirección:</label>
+<input type="text" name="direccion" value="<?= $direccion ?>" required>
 
 <label>Estado:</label>
 <input type="text" name="estado" value="<?= $estado ?>" required>
+
+<label>Fecha:</label>
+<input type="date" name="fecha" value="<?= $fecha ?>" required>
 
 <label>Nombre Vendedor:</label>
 <input type="text" name="nombrevendedor" value="<?= $vendedor ?>" readonly>

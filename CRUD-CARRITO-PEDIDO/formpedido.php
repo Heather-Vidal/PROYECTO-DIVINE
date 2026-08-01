@@ -67,6 +67,7 @@ label{
 }
 
 input[type="text"],
+input[type="number"],
 input[type="date"]{
     width:100%;
     padding:12px 15px;
@@ -79,6 +80,7 @@ input[type="date"]{
 }
 
 input[type="text"]:focus,
+input[type="number"]:focus,
 input[type="date"]:focus{
     border-color:#c96f84;
     box-shadow:0 0 10px rgba(201,111,132,.2);
@@ -140,7 +142,7 @@ input[type="submit"]:hover{
      
 
          <label>Telefono:</label>
-        <input type="text" name="telefono"   >
+        <input type="number" name="telefono"   >
 
          <label>direccion:</label>
         <input type="text" name="direccion"    >
@@ -177,9 +179,21 @@ $(document).ready(function () {
       nombrevendedor: {
         required: true,
         minlength: 3
-      }
+      },
+
+      telefono: {
+        required: true,
+        minlength: 7,
+        maxlength: 12
+      },
+       direccion: {
+        required: true,
+        minlength: 5,
+        maxlength: 40
+      } 
 
     },
+      
 
     messages: {
 
@@ -200,6 +214,14 @@ $(document).ready(function () {
       nombrevendedor: {
         required: "Debe existir un vendedor",
         minlength: "Nombre demasiado corto"
+      },
+       telefono: {
+        required: "ingrese su numero de telefono",
+        minlength: " ingrese mínimo 7 digitos"
+      },
+       direccion: {
+        required: "ingrese su dirección por favor",
+    
       }
 
     }

@@ -194,6 +194,8 @@ echo "<div class='id'>PEDIDO #".$idPedido."</div>";
 echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
 echo "<p><span>Fecha:</span> ".$fila['fecha']."</p>";
 echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
+echo "<p><span>Telefono:</span> ".$fila['telefono']."</p>";
+echo "<p><span>Dirección:</span> ".$fila['direccion']."</p>";
 echo "<p><span>Vendedor:</span> ".$fila['nombrevendedor']."</p>";
 
 echo "</div>";
