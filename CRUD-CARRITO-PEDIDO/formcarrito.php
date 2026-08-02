@@ -960,7 +960,7 @@ body {
 
 <?php
 
-include 'submenuespecial.php';
+include '../submenuespecial.php';
  
 ?>
 
@@ -1377,43 +1377,10 @@ echo htmlspecialchars(
     <div class="botones">
 
 
-        <a
-
-            class="final"
-
-            href="formpedido.php"
-
-        >
-
-            Generar nuevo pedido
-
-        </a>
-
-
-
-        <a
-
-            class="final"
-
-            href="readcarrito.php?idPedido=<?php
-
-            echo $id_pedido;
-
-            ?>"
-
-        >
-
-            Ver productos agregados
-
-        </a>
-
-
+       
+        <a class="final" href="readtodopedido.php?idPedido=<?php echo $id_pedido;?>"  >Finalizar compra</a>
     </div>
-
-
 </section>
-
-
 
 <!-- ==================================================
      ANIMACIÓN DE PRODUCTOS

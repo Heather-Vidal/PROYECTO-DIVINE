@@ -774,7 +774,7 @@ body{
 
 <div class="header">
 
-
+```
 <div class="header-pequeno">
     Gestión de compra
 </div>
@@ -784,7 +784,7 @@ body{
 </h1>
 
 <div class="header-linea"></div>
-
+```
 
 </div>
 
@@ -794,7 +794,7 @@ body{
 
 <div class="container">
 
-
+```
 <div class="encabezado">
 
     <div class="encabezado-pequeno">
@@ -808,7 +808,7 @@ body{
     <div class="linea-decorativa"></div>
 
 </div>
-
+```
 
 <?php
 

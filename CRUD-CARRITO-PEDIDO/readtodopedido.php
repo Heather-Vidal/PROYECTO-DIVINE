@@ -741,7 +741,7 @@ if($resultado && $resultado->num_rows > 0){
         <div class="botones">
 
 
-            <a href="readcarrito.php?idPedido=<?php echo $idPedido; ?>">
+            <a href="readunopedido.php?idPedido=<?php echo $idPedido; ?>">
 
                 <button type="button">
                     Ver
