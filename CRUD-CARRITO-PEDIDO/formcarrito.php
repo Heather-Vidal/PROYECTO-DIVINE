@@ -958,15 +958,28 @@ body {
 
 <body>
 
-<?php include '../submenuespecial.php'; ?>
+<?php
+
+include 'submenuespecial.php';
+ 
+?>
+
+
+<script src="./AJAX/buscar.js"></script>
+
+
+
+
+    <div id="productos">        </div>
+
 <!-- ==================================================
 
      HERO
 ================================================== -->
 
 
-  <div id="productos">             </div>
-  <script src= buscar.js></script>
+ 
+ 
 
 <section class="hero">
 

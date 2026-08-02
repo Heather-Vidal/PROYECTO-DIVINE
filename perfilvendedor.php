@@ -794,7 +794,7 @@ Registrar producto
 
 </a>
 
-<a href="objetivos.html" class="metric button-card">
+<a href="./CRUD-CARRITO-PEDIDO/readtodopedido.php" class="metric button-card">
 
 <div class="historial">
 
