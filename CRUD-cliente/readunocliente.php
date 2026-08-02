@@ -174,6 +174,14 @@ while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
 
   $CI=$fila['CI'];
+
+
+$estado = $fila['estado'];
+
+
+
+
+
 }
 ?>
     </div>
@@ -184,20 +192,13 @@ while($fila=$resultado->fetch_assoc()){
       <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">Eliminar</a>
 
 
-
-
-
-            <a class="boton" href="./BLOQUEOS-usuario/bloquear.php?CI=<?php echo $CI; ?>">Bloquear</a>
-
-
-
-
-
-
-
-
-
-
+    <?php
+    if ($estado == 'ACTIVO') {
+        echo '<a class="boton" href="../BLOQUEOS-usuario/bloquear.php?CI=' . $CI . '">Bloquear</a>';
+    } else {
+        echo '<a class="boton" href="../BLOQUEOS-usuario/desbloquear.php?CI=' . $CI . '">Desbloquear</a>';
+    }
+    ?>
 
     </div>
 

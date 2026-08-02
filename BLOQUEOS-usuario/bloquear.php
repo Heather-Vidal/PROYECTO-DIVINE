@@ -24,7 +24,7 @@ if (mysqli_query($conexion, $sql)) {
     </p>
 
     <div style='text-align:center; margin-top:20px;'>
-        <a href='./CRUD-cliente/readunocliente.php'>Volver a vendedores</a>
+        <a href='./CRUD-cliente/readunocliente.php'>Volver a atras</a>
     </div>
     ";
 

@@ -328,11 +328,7 @@ nav{
 
     <div class="iconos-derecha">
 
-        <a href="#">
-            <img
-            src="./imagenes/lupa-removebg-preview.png"
-            alt="Buscar">
-        </a>
+        
 
         <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
             <img
