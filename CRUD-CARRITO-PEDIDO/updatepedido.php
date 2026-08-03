@@ -141,13 +141,17 @@ if ($conn->connect_error) {
 $idPedido = $_POST['idPedido'];
 $nombre = $_POST['nombre'];
 $fecha = $_POST['fecha'];
+$telefono = $_POST['telefono'];
+$direccion = $_POST['direccion'];
 $estado = $_POST['estado'];
 $nombrevendedor = $_POST['nombrevendedor'];
 
 $sql = "UPDATE PEDIDOS SET
         nombre='$nombre',
         fecha='$fecha',
-        estado='$estado',
+        estado='$estado',  
+         telefono='$telefono',
+           direccion='$direccion',
         nombrevendedor='$nombrevendedor'
         WHERE ID='$idPedido'";
 

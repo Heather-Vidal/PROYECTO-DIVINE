@@ -192,11 +192,12 @@ input[type="submit"]:hover {
   <option value="cliente">cliente</option>
   <option value="vendedor">vendedor</option>
   <option value="administrador">administrador</option>
+
+  <input type="hidden" name="estado" value="ACTIVO">
 </select>
  
 
-    <label for="estado"> Estado: </label>
-    <input type="text" name="estado"  >
+    
   </div>
 
   <input type="submit" value="Registrar">
