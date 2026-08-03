@@ -178,8 +178,8 @@ $conn->close();
     </div>
 
     <div class="botones">
-      <a href="../totu.php" class="boton">⬅ Volver al inicio</a>
-      <a href="readtodocliente.php" class="boton">Ver clientes ➡</a>
+      <a href="../SESIONES/loginformcliente.php" class="boton">⬅ Iniciar Sesión</a>
+       
     </div>
 
   </div>
