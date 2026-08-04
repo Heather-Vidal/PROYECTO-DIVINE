@@ -22,7 +22,7 @@
 body{
     background:
     linear-gradient(rgba(0,0,0,.30),rgba(0,0,0,.30)),
-    url("https://i.pinimg.com/736x/a7/f1/75/a7f1754c6dd1026573f44ed41b290a42.jpg");
+    url("https://i.pinimg.com/736x/b0/c0/79/b0c07926edeca5c51deb5337f2735d36.jpg");
 
     background-position:center;
     background-repeat:no-repeat;
