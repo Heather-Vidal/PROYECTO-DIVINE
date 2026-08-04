@@ -3,29 +3,18 @@ session_start();
 if($_SESSION['nombre'] == null){
     header("Location: loginformcliente.php");
 }
-
-
-
- 
- 
-
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 $inicial = strtoupper(substr($nombreUsuario, 0, 1));
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Beauty Glow Executive Center</title>
- 
 <link href="https://fonts.cdnfonts.com/css/bestigia" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
 :root{
 --cream:#faf6f0;
 --ivory:#fffaf3;
@@ -54,9 +43,9 @@ body{
 background:
 linear-gradient(
 135deg,
-#f3e3d0,
-#fff9ef,
-#e8d1b3
+#ffb9f3,
+#6e3d6c,
+#9e779c
 );
 min-height:100vh;
 color:var(--coffee);
@@ -72,8 +61,9 @@ margin:auto;
 background:
 linear-gradient(
 135deg,
-#fffaf3,
-#efd8b8
+#ffb9f3,
+#6e3d6c,
+#9e779c
 );
 
 border-radius:35px;
@@ -107,10 +97,11 @@ margin-bottom:25px;
 background:
 linear-gradient(
 145deg,
-#fffaf3,
-#ead5b8
+#ffb9f3,
+#6e3d6c,
+#9e779c
 );
-border:1px solid #d4b37d;
+border:1px solid #9c5c9c;
 box-shadow:var(--shadow);
 }
 
@@ -128,7 +119,7 @@ width:170px;
 height:170px;
 border-radius:50%;
 object-fit:cover;
-border:6px solid #c9a267;
+border:6px solid #b66aac;
 }
 
 .profile-header h2{
@@ -173,8 +164,8 @@ width:98%;
 background:
 linear-gradient(
 90deg,
-#c69b5d,
-#98703d
+#c27fc2,
+#c695cc
 );
 }
 
@@ -261,8 +252,8 @@ width:80%;
 background:
 linear-gradient(
 90deg,
-#c69b5d,
-#98703d
+#c27fc2,
+#c695cc
 );
 
 
@@ -712,7 +703,7 @@ grid-template-columns:1fr;
 <div class="profile-header">
  <?php echo $inicial; ?>
 
-<img src="https://i.pravatar.cc/500?img=47">
+<img src="">
 
 
 <h2> <?php echo $_SESSION['nombre']?> </h2>
@@ -829,152 +820,9 @@ Actualizar pedido
 <p>
 Historial
 </p>
-
 </a>
 </div>
-
-</div>
-
-<div class="grid-middle">
-
-<div class="card">
-
-
-<h3>╰┈➤ Objetivo del Mes</h3>
-
-
-<p>Ventas alcanzadas</p>
-
-
-<h2>8,000 bs / 10,000 bs</h2>
-
-
-
-<div class="goal-bar">
-
-<div class="goal-fill"></div>
-
-</div>
-
-<p style="margin-top:15px;">
-
-80% completado
-
-</p>
-
-
-
-</div>
-
-
-<div class="card">
-
-
-<h3>♛ Logros Desbloqueados</h3>
-
-
-
-<div class="live-item">
-
-✔ 100 ventas completadas
-
-</div>
-
-<div class="live-item">
-
-✔ Inventario perfecto
-
-</div>
-
-<div class="live-item">
-
-✔ 50% pedidos realizados
-
-</div>
-
-<div class="live-item">
-
-✭Próximo: 500 ventas mensuales
-
-</div>
-
-</div>
-</div>
-
-<!-- RESUMEN IA AHORA ABAJO -->
-
-<div class="ai-card">
-
-<h2>🤖 Resumen del Día</h2>
-<div class="ai-box">
-    
-✿ 12 pedidos pendientes<br>
-
-✿ 3 reseñas sin responder<br>
-
-✿ 4 productos con stock bajo<br>
-
- 
-
-</div>
-
-<div class="ai-recommendation">
-
-
-<strong>Recomendación IA:</strong><br>
-
-
-Aplicar promoción al producto
-"Glow Serum Premium" para incrementar ventas esta semana.
-
-
-</div>
-
-
-
-</div>
-
-<div class="card" style="margin-bottom:25px;">
-
-
-
-<h3>Ultimos Movimientos</h3>
-
-
-
-<div class="live-item">
-
-Hace 2 min · María compró Glow Serum Premium
-
-</div>
-
-
-
-<div class="live-item">
-
-Hace 5 min · Nuevo usuario registrado
-
-</div>
-
-
-
-<div class="live-item">
-
-Hace 8 min · Pedido #458 entregado
-
-</div>
-
-
-
-<div class="live-item">
-
-Hace 12 min · Nueva reseña de cliente
-
-</div>
-</div>
-
 </div>
  <?php include 'submenpiepag.php'; ?>
 </body>
 </html>
- 
