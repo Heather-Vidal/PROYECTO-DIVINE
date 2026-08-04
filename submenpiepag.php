@@ -22,6 +22,7 @@
     margin-bottom:50px;
 }
 
+
 .redes a{
     text-decoration:none;
     color:white;
@@ -34,7 +35,30 @@
     color:#ffe7ed;
     transform:translateY(-5px);
 }
+.logo-facebook{
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
 
+.logo-facebook:hover{
+    transform: scale(1.2);
+}
+.logo-instagram{
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
+
+.logo-instagram:hover{
+    transform: scale(1.2);
+}
+.logo-whatsapp{
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
+
+.logo-whatsapp:hover{
+    transform: scale(1.2);
+}
 .footer-contenido{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -45,6 +69,12 @@
     background:rgba(255,255,255,.12);
     padding:25px;
     border-radius:20px;
+    transition: transform 0.4s ease;
+    cursor: pointer;
+}
+
+.footer-box:hover{
+    transform: scale(1.2);
 }
 
 .footer-box h3{
@@ -94,10 +124,10 @@
     <footer class="footer-divine">
 
     <div class="redes">
-        <img src="./imagenes/face.png" width="50" height="50" alt="Facebook">
-        <img src="./imagenes/watsi.png" width="50" height="50" alt="WhatsApp">
-        <img src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
-    </div>
+    <img class="logo-facebook" src="./imagenes/face.png" width="50" height="50" alt="Facebook">
+    <img class="logo-whatsapp" src="./imagenes/watsi.png" width="50" height="50" alt="WhatsApp">
+    <img class="logo-instagram" src="./imagenes/instagram.png" width="50" height="50" alt="Instagram">
+</div>
 
     <div class="footer-contenido">
 

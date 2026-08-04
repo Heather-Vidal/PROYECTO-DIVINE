@@ -44,11 +44,12 @@ font-weight:300;
 letter-spacing:4px;
 margin-bottom:12px;
 text-transform:uppercase;
+color:#bf7485;
 }
 
 header p{
 font-size:1.2rem;
-color:#fff3f5;
+color:#bf7485;
 }
 
 /* CONTENEDOR */
@@ -415,12 +416,9 @@ img:"./imagenes/pepino.jpg"
 
 const contenedor=
 document.getElementById("productos");
-
 productos.forEach((p)=>{
-
 const card=
 document.createElement("div");
-
 card.className=
 "card";
 
