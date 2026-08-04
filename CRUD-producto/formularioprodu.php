@@ -164,6 +164,7 @@ input[type="submit"]:hover {
   <div class="grupo-campos">
     <label for="nombre">Nombre:</label>
     <input type="text" name="nombre"  >
+    |
 
     <label for="descripcion">Descripción:</label>
     <input type="text" name="descripcion"  >
