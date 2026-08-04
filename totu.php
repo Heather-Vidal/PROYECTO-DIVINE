@@ -307,9 +307,12 @@ footer{
       animation: bajarPantalla 1s ease forwards;
     }
     @keyframes bajarPantalla {
+
       from { top: 0; }
       to { top: 100%; }
     }
+ 
+    
     
 </style>
 </head>

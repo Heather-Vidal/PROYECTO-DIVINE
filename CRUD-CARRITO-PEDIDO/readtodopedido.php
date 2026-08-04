@@ -1,4 +1,4 @@
- <?php
+<?php
 
 $servidor = "localhost";
 $usuario = "root";
@@ -8,7 +8,7 @@ $nombreBD = "DIVINE";
 $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 if ($conn->connect_error) {
-    die("OCURRIÓ UN ERROR SORRY UnU");
+    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS");
 }
 
 $sql = "SELECT * FROM PEDIDOS";
@@ -17,151 +17,614 @@ $resultado = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pedidos DIVINE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DIVINE | Pedidos</title>
 
 <style>
 
-body{
-margin:0;
-font-family:'Segoe UI', sans-serif;
-background: linear-gradient(135deg,#f7dfe7,#d6b0bf);
+:root{
+    --rosa:#b86f80;
+    --rosa-claro:#d9a6b2;
+    --rosa-palido:#f7e9ec;
+    --crema:#fffaf8;
+    --texto:#57494c;
+    --gris:#817679;
+    --borde:#e3c5cd;
+    --vino:#8f5362;
+    --vino-oscuro:#713d4d;
 }
 
-/* HEADER */
-.header{
-text-align:center;
-padding:50px 20px;
-background: linear-gradient(135deg,#8f3f55,#c96f84);
-color:white;
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
+
+/* RESET */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
+
+
+/* BODY */
+
+body{
+    min-height:100vh;
+    font-family:'Segoe UI',sans-serif;
+    color:var(--texto);
+
+    background:
+    linear-gradient(
+        rgba(255,250,248,.78),
+        rgba(247,233,236,.90)
+    ),
+    url("../imagenes/fondote.png");
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+}
+
+
+/* ==================================================
+   ENCABEZADO
+================================================== */
+
+.header{
+    text-align:center;
+    padding:45px 20px 35px;
+
+    background:
+    linear-gradient(
+        rgba(184,111,128,.88),
+        rgba(143,83,98,.94)
+    );
+
+    color:white;
+
+    box-shadow:
+    0 10px 35px rgba(100,70,80,.20);
+}
+
+.header-pequeno{
+    font-size:.78rem;
+    text-transform:uppercase;
+    letter-spacing:5px;
+    margin-bottom:15px;
+    opacity:.9;
+}
+
 
 .header h1{
-font-size:2.8rem;
-letter-spacing:2px;
+    font-family:Georgia,serif;
+    font-size:clamp(2.4rem,5vw,4rem);
+    font-weight:400;
+    letter-spacing:5px;
 }
 
-/* CONTENEDOR */
+
+.header-linea{
+    width:55px;
+    height:2px;
+    background:white;
+    margin:22px auto 0;
+    opacity:.75;
+}
+
+
+/* ==================================================
+   CONTENEDOR
+================================================== */
+
 .contenedor{
-max-width:900px;
-margin:40px auto;
-padding:20px;
+    width:90%;
+    max-width:1100px;
+    margin:60px auto;
 }
 
-/* LISTA */
+
+/* ==================================================
+   TÍTULO LISTA
+================================================== */
+
+.titulo-lista{
+    text-align:center;
+    margin-bottom:38px;
+}
+
+
+.titulo-lista p{
+    color:var(--rosa);
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:3px;
+    margin-bottom:10px;
+}
+
+
+.titulo-lista h2{
+    font-family:Georgia,serif;
+    font-size:2rem;
+    font-weight:400;
+    color:var(--texto);
+}
+
+
+/* ==================================================
+   LISTA
+================================================== */
+
 .lista{
-display:flex;
-flex-direction:column;
-gap:15px;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
 }
 
-/* CARD PEDIDO */
+
+/* ==================================================
+   TARJETA PEDIDO
+================================================== */
+
 .item{
-background:white;
-border-radius:20px;
-padding:18px 20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-box-shadow:0 8px 22px rgba(0,0,0,0.08);
-border-left:6px solid #c96f84;
-transition:0.25s;
+    background:rgba(250,243,244,.94);
+
+    border:1px solid rgba(184,111,128,.25);
+
+    border-radius:24px;
+
+    padding:30px 32px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:35px;
+
+    box-shadow:
+    0 12px 35px rgba(100,70,80,.13),
+
+    inset 0 1px 0 rgba(255,255,255,.8);
+
+    transition:
+    transform .35s ease,
+    box-shadow .35s ease,
+    background .35s ease;
+
+    animation:aparecer .6s ease;
 }
+
 
 .item:hover{
-transform:translateY(-4px);
+    transform:translateY(-6px);
+
+    background:rgba(248,236,239,.98);
+
+    box-shadow:
+    0 20px 45px rgba(100,70,80,.18);
 }
 
-/* INFO */
+
+/* ==================================================
+   INFORMACIÓN
+================================================== */
+
 .info{
-flex:1;
+    flex:1;
+    min-width:0;
 }
+
+
+/* ==================================================
+   NÚMERO DE PEDIDO DESTACADO
+================================================== */
 
 .id{
-font-size:18px;
-font-weight:800;
-color:#8f3f55;
-margin-bottom:5px;
+    display:inline-flex;
+
+    align-items:center;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--vino),
+        var(--rosa)
+    );
+
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:14px;
+
+    font-size:1.05rem;
+
+    font-weight:700;
+
+    letter-spacing:1.5px;
+
+    margin-bottom:22px;
+
+    box-shadow:
+    0 7px 18px rgba(143,83,98,.25);
+
+    border:1px solid rgba(255,255,255,.35);
+
+    transition:
+    transform .3s ease,
+    box-shadow .3s ease;
 }
+
+
+.item:hover .id{
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 10px 22px rgba(143,83,98,.32);
+}
+
+
+/* ==================================================
+   DATOS
+================================================== */
+
+.datos{
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,minmax(180px,1fr));
+
+    gap:14px 25px;
+}
+
+
+/* ==================================================
+   CAJAS DE INFORMACIÓN
+================================================== */
 
 .info p{
-margin:4px 0;
-font-size:14px;
-color:#555;
+    margin:0;
+
+    background:rgba(255,250,251,.72);
+
+    border:1px solid rgba(184,111,128,.15);
+
+    border-radius:12px;
+
+    padding:10px 14px;
+
+    color:var(--gris);
+
+    font-size:.92rem;
+
+    line-height:1.5;
+
+    box-shadow:
+    0 3px 10px rgba(100,70,80,.04);
+
+    transition:
+    background .3s ease,
+    transform .3s ease;
 }
+
+
+.info p:hover{
+    background:rgba(255,255,255,.9);
+
+    transform:translateX(3px);
+}
+
 
 .info span{
-font-weight:bold;
-color:#8f3f55;
+    color:var(--vino-oscuro);
+
+    font-weight:700;
 }
 
-/* BOTONES */
+
+/* ==================================================
+   ESTADO DESTACADO
+================================================== */
+
+.estado{
+    display:inline-flex;
+
+    align-items:center;
+
+    margin-top:22px;
+
+    padding:11px 20px;
+
+    border-radius:14px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #fff0f3,
+        #f5dce2
+    );
+
+    color:var(--vino-oscuro);
+
+    font-size:.88rem;
+
+    font-weight:700;
+
+    text-transform:capitalize;
+
+    letter-spacing:.3px;
+
+    border:1px solid rgba(184,111,128,.3);
+
+    box-shadow:
+    0 5px 15px rgba(184,111,128,.12);
+
+    transition:
+    transform .3s ease,
+    box-shadow .3s ease;
+}
+
+
+.estado:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 8px 20px rgba(184,111,128,.20);
+}
+
+
+/* ==================================================
+   BOTONES
+================================================== */
+
 .botones{
-display:flex;
-flex-direction:column;
-gap:8px;
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    min-width:125px;
 }
 
-.botones a button{
-border:none;
-padding:9px 14px;
-border-radius:10px;
-cursor:pointer;
-font-weight:600;
-transition:0.2s;
-color:white;
+
+.botones a{
+    text-decoration:none;
 }
 
-/* VER */
-.botones a:nth-child(1) button{
-background:#8f3f55;
+
+.botones button{
+    width:100%;
+
+    min-width:120px;
+
+    padding:12px 18px;
+
+    border:none;
+
+    border-radius:11px;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:.85rem;
+
+    font-weight:600;
+
+    transition:
+    transform .25s ease,
+    box-shadow .25s ease;
 }
 
-/* EDITAR */
-.botones a:nth-child(2) button{
-background:#c96f84;
-}
-
-/* ELIMINAR */
-.botones a:nth-child(3) button{
-background:#ff4d6d;
-}
 
 .botones button:hover{
-transform:scale(1.05);
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 7px 17px rgba(100,70,80,.20);
 }
 
-/* VACÍO */
+
+/* VER */
+
+.botones a:nth-child(1) button{
+    background:var(--vino);
+}
+
+
+/* EDITAR */
+
+.botones a:nth-child(2) button{
+    background:var(--rosa);
+}
+
+
+/* ELIMINAR */
+
+.botones a:nth-child(3) button{
+    background:#b87986;
+}
+
+
+/* ==================================================
+   SIN PEDIDOS
+================================================== */
+
 .vacio{
-text-align:center;
-color:#8f3f55;
-font-weight:600;
-margin-top:40px;
+    background:rgba(250,243,244,.94);
+
+    border:1px solid var(--borde);
+
+    border-radius:22px;
+
+    padding:70px 30px;
+
+    text-align:center;
+
+    color:var(--gris);
+
+    box-shadow:
+    0 12px 35px rgba(100,70,80,.10);
 }
 
-/* BACK */
+
+/* ==================================================
+   VOLVER
+================================================== */
+
 .volver{
-text-align:center;
-margin-top:40px;
+    text-align:center;
+
+    margin-top:45px;
+
+    padding-bottom:30px;
 }
+
 
 .volver a{
-text-decoration:none;
-background:#8f3f55;
-color:white;
-padding:12px 20px;
-border-radius:12px;
-display:inline-block;
-transition:0.3s;
+    display:inline-block;
+
+    text-decoration:none;
+
+    color:white;
+
+    background:var(--vino);
+
+    padding:14px 32px;
+
+    border-radius:30px;
+
+    font-size:.9rem;
+
+    font-weight:600;
+
+    letter-spacing:.3px;
+
+    box-shadow:
+    0 7px 20px rgba(100,70,80,.18);
+
+    transition:
+    background .3s ease,
+    transform .3s ease,
+    box-shadow .3s ease;
 }
 
+
 .volver a:hover{
-background:#c96f84;
-transform:scale(1.05);
+    background:var(--rosa);
+
+    transform:translateY(-3px);
+
+    box-shadow:
+    0 10px 25px rgba(100,70,80,.25);
+}
+
+
+/* ==================================================
+   ANIMACIÓN
+================================================== */
+
+@keyframes aparecer{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media(max-width:768px){
+
+    .header{
+        padding:50px 20px 40px;
+    }
+
+
+    .header h1{
+        font-size:2.5rem;
+        letter-spacing:3px;
+    }
+
+
+    .contenedor{
+        width:92%;
+        margin:40px auto;
+    }
+
+
+    .item{
+        flex-direction:column;
+        align-items:stretch;
+        padding:25px 20px;
+    }
+
+
+    .id{
+        font-size:1rem;
+        padding:11px 18px;
+    }
+
+
+    .datos{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+
+    .botones{
+        display:grid;
+
+        grid-template-columns:
+        repeat(3,1fr);
+
+        gap:8px;
+
+        min-width:0;
+
+        margin-top:10px;
+    }
+
+
+    .botones button{
+        min-width:0;
+        padding:10px 5px;
+        font-size:.78rem;
+    }
+
+}
+
+
+@media(max-width:450px){
+
+    .botones{
+        grid-template-columns:1fr;
+    }
+
+
+    .botones button{
+        width:100%;
+    }
+
+
+    .titulo-lista h2{
+        font-size:1.7rem;
+    }
+
 }
 
 </style>
@@ -171,59 +634,189 @@ transform:scale(1.05);
 <body>
 
 <div class="header">
-<h1>LISTA DE PEDIDOS</h1>
+
+
+<div class="header-pequeno">
+    Administración de pedidos
+</div>
+
+<h1>
+    PEDIDOS DIVINE
+</h1>
+
+<div class="header-linea"></div>
+
+
 </div>
 
 <div class="contenedor">
 
+
+<div class="titulo-lista">
+
+    <p>
+        Gestión de pedidos
+    </p>
+
+    <h2>
+        Lista de pedidos registrados
+    </h2>
+
+</div>
+
+
 <div class="lista">
 
 <?php
+
 if($resultado && $resultado->num_rows > 0){
 
-while($fila = $resultado->fetch_assoc()){
+    while($fila = $resultado->fetch_assoc()){
 
-$idPedido = $fila['ID'];
+        $idPedido = $fila['ID'];
 
-echo "<div class='item'>";
-
-echo "<div class='info'>";
-
-echo "<div class='id'>PEDIDO #".$idPedido."</div>";
-
-echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-echo "<p><span>Fecha:</span> ".$fila['fecha']."</p>";
-echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
-echo "<p><span>Vendedor:</span> ".$fila['nombrevendedor']."</p>";
-
-echo "</div>";
-
-echo "<div class='botones'>";
-
-echo "<a href='readcarrito.php?idPedido=$idPedido'><button>Ver</button></a>";
-echo "<a href='updateformpedido.php?idPedido=$idPedido'><button>Editar</button></a>";
-echo "<a href='deletepedido.php?idPedido=$idPedido'><button>Eliminar</button></a>";
-
-echo "</div>";
-
-echo "</div>";
-}
-
-}else{
-echo "<div class='vacio'>No hay pedidos registrados</div>";
-}
 ?>
 
+```
+    <div class="item">
+
+
+        <div class="info">
+
+
+            <div class="id">
+
+                PEDIDO #<?php echo $idPedido; ?>
+
+            </div>
+
+
+            <div class="datos">
+
+
+                <p>
+                    <span>Nombre:</span>
+                    <?php echo htmlspecialchars($fila['nombre']); ?>
+                </p>
+
+
+                <p>
+                    <span>Fecha:</span>
+                    <?php echo htmlspecialchars($fila['fecha']); ?>
+                </p>
+
+
+                <p>
+                    <span>Teléfono:</span>
+                    <?php echo htmlspecialchars($fila['telefono']); ?>
+                </p>
+
+
+                <p>
+                    <span>Dirección:</span>
+                    <?php echo htmlspecialchars($fila['direccion']); ?>
+                </p>
+
+
+                <p>
+                    <span>Vendedor:</span>
+                    <?php echo htmlspecialchars($fila['nombrevendedor']); ?>
+                </p>
+
+
+            </div>
+
+
+            <div class="estado">
+
+                Estado:
+                <?php echo htmlspecialchars($fila['estado']); ?>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="botones">
+
+
+            <a href="readunopedido.php?idPedido=<?php echo $idPedido; ?>">
+
+                <button type="button">
+                    Ver
+                </button>
+
+            </a>
+
+
+            <a href="updateformpedido.php?idPedido=<?php echo $idPedido; ?>">
+
+                <button type="button">
+                    Editar
+                </button>
+
+            </a>
+
+
+            <a href="deletepedido.php?idPedido=<?php echo $idPedido; ?>">
+
+                <button type="button">
+                    Eliminar
+                </button>
+
+            </a>
+
+
+        </div>
+
+
+    </div>
+```
+
+<?php
+
+    }
+
+}else{
+
+?>
+
+```
+    <div class="vacio">
+
+        No hay pedidos registrados en este momento.
+
+    </div>
+```
+
+<?php
+
+}
+
+?>
+
+```
 </div>
+
 
 <div class="volver">
-<a href="../perfilvendedor.php">⬅ Volver al perfil</a>
-</div>
+
+    <a href="../perfilvendedor.php">
+        Volver al perfil
+    </a>
 
 </div>
- 
+```
+
+</div>
 
 </body>
+
 </html>
 
-<?php $conn->close(); ?>
+<?php
+
+$conn->close();
+
+?>

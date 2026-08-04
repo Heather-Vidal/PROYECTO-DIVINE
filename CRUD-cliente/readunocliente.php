@@ -49,7 +49,7 @@ body {
   grid-gap: 30px;
 }
 .imagen {
-  background: url("./imagenes/persona.png") center / contain no-repeat;
+  background: url("../imagenes/persona.png") center / contain no-repeat;
   border-radius: 20px;
   min-height: 200px;  
 }
@@ -174,6 +174,14 @@ while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
 
   $CI=$fila['CI'];
+
+
+$estado = $fila['estado'];
+
+
+
+
+
 }
 ?>
     </div>
@@ -182,12 +190,24 @@ while($fila=$resultado->fetch_assoc()){
     <div class="botones">
       <a class="boton" href="updateformcliente.php?CI=<?php echo $CI; ?>">Editar</a>
       <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">Eliminar</a>
+
+
+    <?php
+    if ($estado == 'ACTIVO') {
+        echo '<a class="boton" href="../BLOQUEOS-usuario/bloquear.php?CI=' . $CI . '">Bloquear</a>';
+    } else {
+        echo '<a class="boton" href="../BLOQUEOS-usuario/desbloquear.php?CI=' . $CI . '">Desbloquear</a>';
+    }
+    ?>
+
     </div>
 
     <!-- NAVEGACIÓN GLOBAL -->
     <div class="navegacion">
       <a class="boton2" href="readtodocliente.php">Ver clientes</a>
-      <a class="boton2" href="../totu.php">⬅ Volver al inicio</a>
+    
+<button class="boton2" type="button" onclick="history.back()">⬅ Volver atrás</button>
+
     </div>
 
   </div>

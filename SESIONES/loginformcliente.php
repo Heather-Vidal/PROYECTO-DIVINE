@@ -24,8 +24,7 @@ body{
     display:flex;
     justify-content:center;
     align-items:center;
-
-    background-image:url('../fondoo.png');
+  background-image:url('../fondoo.png');
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -175,47 +174,30 @@ flex-wrap:wrap;
 }
 
 .btn-crear{
-
 background:rgb(182, 45, 109);
-
 color:white;
-
 padding:12px 25px;
-
 border:none;
-
 border-radius:8px;
-
 cursor:pointer;
-
 font-size:16px;
-
 transition:.3s;
-
 }
 
 .btn-crear:hover{
-
 background:rgb(231, 143, 184);
-
 }
 
 label.error{
-
 color:red;
-
 font-size:13px;
-
 opacity:.7;
-
 }
 
 @media(max-width:768px){
 
 form{
-
 grid-template-columns:1fr;
-
 grid-template-areas:
 "imagen"
 "titulo"
@@ -226,13 +208,10 @@ grid-template-areas:
 }
 
 .imagen{
-
 min-height:180px;
-
 }
 
 .botones-extra{
-
 flex-direction:column;
 
 }

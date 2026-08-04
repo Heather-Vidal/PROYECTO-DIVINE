@@ -10,21 +10,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap&quot; rel="stylesheet">
 
 <style>
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #e9e5dd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 0;
-  margin: 0;
-  background-image:url('../imagenes/fondote.png');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-
+body{
+    font-family:'Inter',sans-serif;
+    background: url("../imagenes/fondo.jpg") no-repeat center center fixed;
+    background-size: cover;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    margin:0;
 }
+
 
 /* ==== FORMULARIO ==== */
 form {
@@ -44,6 +40,8 @@ form {
     "campos campos"
     "boton boton";
   grid-gap: 30px;
+   background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
 }
 
 /* Imagen */
@@ -192,11 +190,12 @@ input[type="submit"]:hover {
   <option value="cliente">cliente</option>
   <option value="vendedor">vendedor</option>
   <option value="administrador">administrador</option>
+
+  <input type="hidden" name="estado" value="ACTIVO">
 </select>
  
 
-    <label for="estado"> Estado: </label>
-    <input type="text" name="estado"  >
+    
   </div>
 
   <input type="submit" value="Registrar">

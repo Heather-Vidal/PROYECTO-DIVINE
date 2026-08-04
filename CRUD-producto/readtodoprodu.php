@@ -211,7 +211,7 @@ while($fila=$resultado->fetch_assoc()){
   echo "<p><span>Código:</span> ".$fila['codigo']."</p>";
   $codigo=$fila['codigo'];
   echo "<div class='botones'>";
-  echo "<a href='readunoprodu.php?codigo=$codigo'><button>Mostrar</button></a>";
+  echo "<a href='readunoprodu.php?codigo=$codigo'><button>Detalles</button></a>";
   echo "<a href='updateformprodu.php?codigo=$codigo'><button>Editar</button></a>";
   echo "<a href='deleteprodu.php?codigo=$codigo'><button>Eliminar</button></a>";
   echo "</div>";
@@ -221,8 +221,8 @@ while($fila=$resultado->fetch_assoc()){
     </div>
   <div class="volver">
 
-  <a href="../totu.php">
-    ⬅ Volver al inicio
+  <a href="../admin.php">
+    ⬅ Volver al perfil
   </a>
 
   <a href="formularioprodu.php">

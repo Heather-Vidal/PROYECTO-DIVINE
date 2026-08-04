@@ -11,147 +11,131 @@
 
  
 <style>
-body {
-  font-family: 'Inter', sans-serif;
-  background: #e9e5dd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
 }
 
-form {
-  background: #f5e9d8;
-  padding: 50px;
-  border-radius: 25px;
-  border: 2px solid #c5a46d;
-  box-shadow: 0 15px 40px rgba(8, 8, 8, 0.15);
-  max-width: 800px;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 30px;
-  grid-template-areas:
-    "imagen titulo"
-    "imagen leyenda"
-    "imagen campos"
-    "imagen boton";
-  transition: transform 0.35s ease;
-}
+body{
+    background:
+    linear-gradient(rgba(0,0,0,.30),rgba(0,0,0,.30)),
+    url("https://i.pinimg.com/736x/a7/f1/75/a7f1754c6dd1026573f44ed41b290a42.jpg");
 
+    background-position:center;
+    background-repeat:no-repeat;
+    background-size:cover;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    min-height:100vh;
+    margin:0;
+}
+/* FORMULARIO */
+form{
+    width:650px;       /* CAMBIA EL ANCHO DE LA CAJA */
+    padding:40px;      /* CAMBIA EL ESPACIO INTERNO */
+    min-height:300px;  /* CAMBIA LA ALTURA DE LA CAJA */
+
+    background:rgba(255,255,255,0.5);
+    backdrop-filter:blur(8px);
+
+    border-radius:15px;
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+    display:flex;
+    flex-direction:column;
+}
 
 /* IMAGEN */
-.imagen {
-  grid-area: imagen;
-  background: url("../imagenes/aceitecapilar.jpg") center center / cover no-repeat;
-  border-radius: 20px;
-  min-height: 420px;
-  filter: brightness(0.9) saturate(1.1);
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
-  transition: transform 0.4s ease, filter 0.4s ease;
+.imagen{
+    width:100%;
+    height:200px;
+    background:url("https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg") center center/cover no-repeat;
+    border-radius:20px;
+    margin-bottom:25px;
 }
 
- 
-
 /* TITULO */
-h2 {
-  grid-area: titulo;
-  margin: 0 0 8px;
-  font-size: 36px;
-  color: #364e63;
-  font-family: "Playfair Display", serif;
-  letter-spacing: 1px;
-   border-bottom: 3px solid #c5a46d;
-  padding-bottom: 8px;
-  width: fit-content;
+h2{
+    text-align:center;
+    color:#bf7485;
+    margin-bottom:15px;
+    font-size:28px;
+    font-family:'Playfair Display',serif;
 }
 
 /* LEYENDA */
-legend {
-  grid-area: leyenda;
-  font-weight: bold;
-  color: #c5a46d;
-  font-size: 18px;
-  font-family: "Playfair Display", serif;
+legend{
+    text-align:center;
+    color:#bf7485;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:20px;
+    font-family:'Playfair Display',serif;
 }
 
 /* CAMPOS */
-.grupo-campos {
-  grid-area: campos;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.grupo-campos{
+    display:flex;
+    flex-direction:column;
 }
- .error {
-    opacity: 0.4;
-    color: #77630a;
-    font-size:15px;
- 
-}
-label {
-  color: #364e63;
-  font-size: 15px;
-  font-weight: 600;
+
+label{
+    color:#666;
+    font-weight:600;
+    margin-bottom:8px;
 }
 
 input[type="text"],
-input[type="number"] {
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #c5a46d;
-  background: #ffffff;
-  font-size: 15px;
-  outline: none;
-  transition: 0.35s ease, box-shadow 0.35s ease;
+input[type="number"]{
+    width:100%;
+    padding:12px 15px;
+    border:2px solid #f0d6dc;
+    border-radius:15px;
+    outline:none;
+    margin-bottom:18px;
+    transition:.3s;
+    font-size:15px;
 }
 
 input[type="text"]:focus,
-input[type="number"]:focus {
-  border-color: #364e63;
-  box-shadow: 0 0 12px rgba(54,78,99,0.55), 0 0 6px rgba(197,164,109,0.35);
+input[type="number"]:focus{
+    border-color:#c96f84;
+    box-shadow:0 0 10px rgba(201,111,132,.25);
 }
 
-/* BOTON */
-input[type="submit"] {
-  grid-area: boton;
-  margin-top: 15px;
-  padding: 16px;
-  background: #364e63;
-  color: #f5e9d8;
-  border: 2px solid #364e63;
-  border-radius: 14px;
-  font-size: 19px;
-  font-family: "Playfair Display", serif;
-  cursor: pointer;
-  transition: 0.35s ease, transform 0.25s ease;
-  font-weight: 700;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+/* BOTÓN */
+input[type="submit"]{
+    width:100%;
+    background:#c96f84;
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:50px;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 8px 20px rgba(201,111,132,.35);
 }
 
-input[type="submit"]:hover {
-  background: #c5a46d;
-  color: #364e63;
-  border-color: #c5a46d;
-  transform: scale(1.05);
-  box-shadow: 0 15px 30px rgba(77,103,127,0.35);
+input[type="submit"]:hover{
+    background:#b45d72;
+    transform:translateY(-3px);
 }
-@media (max-width: 768px) {
-  form {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "imagen"
-      "titulo"
-      "leyenda"
-      "campos"
-      "boton";
-    padding: 25px;
-  }
 
-  .imagen { min-height: 230px; }
-  h2, legend { text-align: center; }
-  input[type="submit"] { width: 100%; }
+/* ERRORES */
+.error{
+    color:#d85a5a;
+    font-size:14px;
+    font-family:'Playfair Display',serif;
 }
+
 </style>
 </head>
 <body>

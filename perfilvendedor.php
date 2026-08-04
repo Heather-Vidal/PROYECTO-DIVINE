@@ -3,6 +3,14 @@ session_start();
 if($_SESSION['nombre'] == null){
     header("Location: loginformcliente.php");
 }
+
+
+
+ 
+ 
+
+$nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
+$inicial = strtoupper(substr($nombreUsuario, 0, 1));
 ?>
 
 
@@ -683,7 +691,7 @@ grid-template-columns:1fr;
 
 <div class="hero">
 
-<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?></h1>  
+<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?> - <?php echo $_SESSION['celular']?></h1>  
 
 
 <p>Perfil personal -  DIVINE</p>
@@ -691,7 +699,7 @@ grid-template-columns:1fr;
 </div>
 
 
-
+ 
 
 
 <div class="grid-top">
@@ -702,7 +710,7 @@ grid-template-columns:1fr;
 
 
 <div class="profile-header">
-
+ <?php echo $inicial; ?>
 
 <img src="https://i.pravatar.cc/500?img=47">
 
@@ -794,7 +802,7 @@ Registrar producto
 
 </a>
 
-<a href="objetivos.html" class="metric button-card">
+<a href="./CRUD-CARRITO-PEDIDO/readtodopedido.php" class="metric button-card">
 
 <div class="historial">
 
