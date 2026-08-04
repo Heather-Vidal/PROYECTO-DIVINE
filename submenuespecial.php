@@ -14,27 +14,14 @@ content="width=device-width, initial-scale=1.0"
 
 
 <style>
-
-/* ==================================================
-   RESET
-================================================== */
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
-
-
 body{
     overflow-x:hidden;
 }
-
-
-/* ==================================================
-   HEADER
-================================================== */
-
 header{
 
     background:transparent;
@@ -50,80 +37,35 @@ header{
     width:100%;
 
     position:relative;
-
 }
-
-
 a{
-
     text-decoration:none;
-
     color:inherit;
-
     font-family:"Lora",serif;
-
 }
-
-
-/* ==================================================
-   LOGO
-================================================== */
-
 .logo{
-
     display:flex;
-
     align-items:center;
-
 }
-
-
 .logo img{
-
     width:160px;
-
     display:block;
-
 }
-
-
-/* ==================================================
-   MENÚ
-================================================== */
-
 nav{
-
     display:flex;
-
 }
-
-
 .menu{
-
     display:flex;
-
     list-style:none;
-
     align-items:center;
-
 }
-
-
 .menu li{
-
     position:relative;
-
 }
-
-
 .menu li a{
-
     display:block;
-
     padding:15px 20px;
-
     font-size:20px;
-
     transition:.3s;
 
     border-radius:10px;
