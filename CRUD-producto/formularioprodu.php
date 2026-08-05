@@ -140,7 +140,7 @@ input[type="submit"]:hover{
 </head>
 <body>
 
-<form id="formprodu" action="createprodu.php" method="POST">
+<form id="formprodu" action="createprodu.php" method="POST"enctype="multipart/form-data">
   <div class="imagen"></div>
   <h2>REGISTRO DE PRODUCTOS DIVINE</h2>
   <legend>PRODUCTO:</legend>
@@ -164,6 +164,9 @@ input[type="submit"]:hover{
 
      <label for="codigo">Código:</label>
     <input type="number" name="codigo"  >
+
+            <input type="file" name="fileToUpload">
+
   </div>
 
   <input type="submit" value="Enviar">
