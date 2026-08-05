@@ -16,124 +16,147 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <!-- TIPOGRAFÍA -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #e9e5dd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #5e3045;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.contenedor {
-  position: relative;
-  background: rgba(255, 212, 234, 0.9);
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  width: 90%;
-  max-width: 650px;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "encabezado"
-    "contenido"
-    "botones";
-  gap: 25px;
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f8eef0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    color:#333;
+    padding:30px;
 }
 
-.encabezado {
-  grid-area: encabezado;
-  margin: 0;
-  font-size: 32px;
-  color: #8b4f6b;
-  font-family: "Playfair Display", serif;
-  letter-spacing: 1px;
-  border-bottom: 3px solid #fc63af;
-  padding-bottom: 10px;
-  text-align: center;
-}
-
-.contenido {
-  grid-area: contenido;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.icono {
-  width: 180px;
-  margin-bottom: 20px;
-}
-
-.mensaje {
-  width: 100%;
-  max-width: 450px;
-  padding: 16px;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: bold;
-  margin-top: 10px;
-  box-sizing: border-box;
-}
-
-.exito {
-  background: #c56d99;
-  color: #fff;
-  box-shadow: 0 5px 12px rgba(197,109,153,.4);
-}
-
-.error {
-  background: #b53737;
-  color: #fff;
-  box-shadow: 0 5px 12px rgba(181,55,55,.4);
-}
-
-.botones {
-  grid-area: botones;
-  display: flex;
-  justify-content: center;
-}
-
-.boton {
-  text-decoration: none;
-  padding: 14px 35px;
-  background: #63364b;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  transition: .3s;
-  box-shadow: 0 5px 12px rgba(0,0,0,.25);
-}
-
-.boton:hover {
-  background: #c56d99;
-  transform: scale(1.03);
-}
-
-@media (max-width:768px){
-
-  .contenedor{
-    padding:25px;
-  }
-
-  .icono{
-    width:140px;
-  }
-
-  .encabezado{
-    font-size:28px;
-  }
-
-  .boton{
+.contenedor{
     width:100%;
+    max-width:700px;
+    background:#ffffff;
+    border-radius:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    overflow:hidden;
+    animation:entrada .8s ease;
+}
+
+.encabezado{
+    grid-area:encabezado;
+    background:linear-gradient(135deg,#ebbcc6,#c7909d);
+    color:#fff;
     text-align:center;
-  }
+    font-size:38px;
+    font-family:"Playfair Display",serif;
+    letter-spacing:4px;
+    padding:30px;
+}
+
+.contenido{
+    grid-area:contenido;
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+.icono{
+    width:150px;
+    margin-bottom:25px;
+    transition:.4s;
+}
+
+.icono:hover{
+    transform:scale(1.08);
+}
+
+.mensaje{
+    width:100%;
+    max-width:480px;
+    padding:20px;
+    border-radius:18px;
+    font-size:18px;
+    font-weight:bold;
+    margin-top:15px;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.exito{
+    background:#d89aa7;
+    color:#fff;
+}
+
+.error{
+    background:#d9534f;
+    color:#fff;
+}
+
+.botones{
+    grid-area:botones;
+    padding:35px;
+    display:flex;
+    justify-content:center;
+    background:#fff7f9;
+}
+
+.boton{
+    text-decoration:none;
+    background:#c96f84;
+    color:#fff;
+    padding:15px 40px;
+    border-radius:50px;
+    font-weight:bold;
+    font-size:17px;
+    transition:.35s;
+    box-shadow:0 8px 20px rgba(201,111,132,.35);
+}
+
+.boton:hover{
+    background:#b45d72;
+    transform:translateY(-4px);
+}
+
+@keyframes entrada{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@media(max-width:700px){
+
+    .contenedor{
+        width:95%;
+    }
+
+    .encabezado{
+        font-size:30px;
+        padding:25px;
+    }
+
+    .contenido{
+        padding:30px 20px;
+    }
+
+    .icono{
+        width:120px;
+    }
+
+    .botones{
+        padding:25px;
+    }
+
+    .boton{
+        width:100%;
+        text-align:center;
+    }
 }
 </style>
 </head>
