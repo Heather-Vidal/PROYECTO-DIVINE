@@ -21,7 +21,6 @@ $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
     box-sizing:border-box;
     font-family:'Segoe UI',sans-serif;
 }
-
 body{
     background:#f8eef0;
     display:flex;
@@ -31,7 +30,6 @@ body{
     color:#333;
     padding:30px;
 }
-
 .contenedor{
     width:100%;
     max-width:700px;
@@ -41,32 +39,28 @@ body{
     overflow:hidden;
     animation:entrada .8s ease;
 }
-
 .encabezado{
     background:linear-gradient(135deg,#ebbcc6,#c7909d);
     color:white;
     text-align:center;
+    text-transform: uppercase;
     font-size:38px;
     font-family:Georgia,serif;
     letter-spacing:5px;
     padding:30px;
 }
-
 .contenido{
     padding:45px;
     text-align:center;
 }
-
 .icono{
     width:140px;
     margin-bottom:25px;
     transition:.4s;
 }
-
 .icono:hover{
     transform:scale(1.08);
 }
-
 .mensaje{
     padding:20px;
     border-radius:18px;
@@ -75,17 +69,14 @@ body{
     margin-top:15px;
     box-shadow:0 8px 18px rgba(0,0,0,.08);
 }
-
 .exito{
     background:#d89aa7;
     color:white;
 }
-
 .error{
     background:#d9534f;
     color:white;
 }
-
 .botones{
     padding:35px;
     display:flex;
@@ -94,7 +85,6 @@ body{
     background:#fff7f9;
     flex-wrap:wrap;
 }
-
 .boton{
     text-decoration:none;
     background:#c96f84;
@@ -106,12 +96,10 @@ body{
     transition:.35s;
     box-shadow:0 8px 20px rgba(201,111,132,.35);
 }
-
 .boton:hover{
     background:#b45d72;
     transform:translateY(-4px);
 }
-
 @keyframes entrada{
     from{
         opacity:0;
@@ -122,37 +110,31 @@ body{
         transform:translateY(0);
     }
 }
-
 @media(max-width:700px){
-
 .contenedor{
     width:95%;
 }
-
 .encabezado{
     font-size:30px;
     padding:25px;
 }
-
 .contenido{
     padding:30px 20px;
 }
-
 .icono{
     width:110px;
 }
-
 .botones{
     padding:25px;
     flex-direction:column;
 }
-
 .boton{
     width:100%;
     text-align:center;
 }
 }
 </style>
+
 </head>
 
 <body>
