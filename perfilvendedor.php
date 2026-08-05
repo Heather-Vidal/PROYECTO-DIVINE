@@ -720,7 +720,7 @@ grid-template-columns:1fr;
  <?php echo $inicial; ?>
 
 <img src="https://i.pravatar.cc/500?img=47">
-<img src="">
+
 
 
 <h2> <?php echo $_SESSION['nombre']?> </h2>
