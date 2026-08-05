@@ -58,7 +58,6 @@ if($resultado->num_rows>0){
 
 <p><strong>Estado:</strong> <?php echo $estado; ?></p>
 
-
 <!-- BOTONES PARA CAMBIAR ROL -->
 
 <div class="botones">
@@ -66,61 +65,31 @@ if($resultado->num_rows>0){
 <?php
 if($rol != "administrador"){
 ?>
-    <a class="boton" href="admin.php?CI=<?php echo $CI; ?>">
-        Hacer Administrador
-    </a>
+<a class="boton" href="admin.php?CI=<?php echo $CI; ?>">
+    Hacer Administrador
+</a>
 <?php
 }
 ?>
-
 
 <?php
 if($rol != "vendedor"){
 ?>
-    <a class="boton" href="vendedor.php?CI=<?php echo $CI; ?>">
-        Hacer Vendedor
-    </a>
+<a class="boton" href="vendedor.php?CI=<?php echo $CI; ?>">
+    Hacer Vendedor
+</a>
 <?php
 }
 ?>
-
 
 <?php
 if($rol != "cliente"){
 ?>
-    <a class="boton" href="cliente.php?CI=<?php echo $CI; ?>">
-        Hacer Cliente
-    </a>
+<a class="boton" href="cliente.php?CI=<?php echo $CI; ?>">
+    Hacer Cliente
+</a>
 <?php
 }
-?>
-
-
-
-<?php
-
-if($estado=="ACTIVO"){
-
-?>
-
-<a class="boton" href="../BLOQUEOS-usuario/bloquear.php?CI=<?php echo $CI; ?>">
-    Bloquear
-</a>
-
-<?php
-
-}else{
-
-?>
-
-<a class="boton" href="../BLOQUEOS-usuario/desbloquear.php?CI=<?php echo $CI; ?>">
-    Desbloquear
-</a>
-
-<?php
-
-}
-
 ?>
 
 </div>
@@ -142,7 +111,6 @@ if($estado=="ACTIVO"){
 $conn->close();
 
 ?>
-
 
 <!-- NAVEGACIÓN -->
 

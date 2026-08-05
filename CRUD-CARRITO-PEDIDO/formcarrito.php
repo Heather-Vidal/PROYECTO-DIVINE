@@ -1378,7 +1378,7 @@ echo htmlspecialchars(
 
 
        
-        <a class="final" href="readtodopedido.php?idPedido=<?php echo $id_pedido;?>"  >Finalizar compra</a>
+        <a class="final" href="readunopedido.php?idPedido=<?php echo $id_pedido;?>"  >Finalizar compra</a>
     </div>
 </section>
 

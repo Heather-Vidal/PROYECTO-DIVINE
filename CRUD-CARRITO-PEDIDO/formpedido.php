@@ -137,7 +137,7 @@ input[type="submit"]:hover{
 
         
 
-        <input type="hidden" name="estado" value="En Proceso">
+        <input type="hidden" name="estado" value="Pendiente">
 
      
 
