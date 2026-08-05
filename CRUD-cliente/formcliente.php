@@ -7,130 +7,158 @@
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap&quot; rel="stylesheet">
 
 <style>
+
 body {
   font-family: 'Poppins', sans-serif;
   background: #e9e5dd;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  padding: 40px 0;
   margin: 0;
-  color: #5e3045;
+  background-image:url('../imagenes/fondote.png');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
 }
 
-.contenedor {
+/* ==== FORMULARIO ==== */
+form {
   position: relative;
   background: rgba(255, 212, 234, 0.9);
-  padding: 40px;
+  padding: 40px 40px 60px 40px;
   border-radius: 20px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  width: 90%;
-  max-width: 650px;
+  max-width: 600px;
+  width: 80%;
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-template-areas:
-    "encabezado"
-    "contenido"
-    "botones";
-  gap: 25px;
+    "titulo titulo"
+    "imagen imagen"
+    "leyenda leyenda"
+    "campos campos"
+    "boton boton";
+  grid-gap: 30px;
 }
 
-.encabezado {
-  grid-area: encabezado;
-  margin: 0;
+/* Imagen */
+.imagen {
+  grid-area: imagen;
+  background: url("../imagenes/persona.png") center / contain no-repeat;
+  border-radius: 15px;
+  height: 250px;
+}
+
+h2 {
+  grid-area: titulo;
+  margin: 0 0 5px;
   font-size: 32px;
   color: #8b4f6b;
   font-family: "Playfair Display", serif;
   letter-spacing: 1px;
   border-bottom: 3px solid #fc63af;
-  padding-bottom: 10px;
-  text-align: center;
+  padding-bottom: 8px;
+  width: fit-content;
 }
 
-.contenido {
-  grid-area: contenido;
+legend {
+  grid-area: leyenda;
+  font-weight: bold;
+  color: #8b4f6b;
+  font-size: 17px;
+  letter-spacing: 1px;
+  font-family: "Playfair Display", serif;
+}
+
+.grupo-campos {
+  grid-area: campos;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  gap: 18px;
 }
 
-.icono {
-  width: 180px;
-  margin-bottom: 20px;
+label {
+  color: #af5276;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-.mensaje {
-  width: 100%;
-  max-width: 450px;
-  padding: 16px;
-  border-radius: 10px;
-  font-size: 17px;
-  font-weight: bold;
+/* INPUTS + SELECT (AQUÍ ESTÁ LA MEJORA) */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  padding: 12px 14px;
+  border: 1px solid #cc99b3;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #ffffff;
+  transition: 0.3s;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+}
+
+/* EFECTO FOCUS */
+input:focus,
+select:focus {
+  border-color: #5e3045;
+  box-shadow: 0 0 8px rgba(255, 92, 206, 0.3);
+}
+
+/* BOTÓN */
+input[type="submit"] {
+  grid-area: boton;
   margin-top: 10px;
-  box-sizing: border-box;
-}
-
-.exito {
-  background: #c56d99;
-  color: #fff;
-  box-shadow: 0 5px 12px rgba(197,109,153,.4);
-}
-
-.error {
-  background: #b53737;
-  color: #fff;
-  box-shadow: 0 5px 12px rgba(181,55,55,.4);
-}
-
-.botones {
-  grid-area: botones;
-  display: flex;
-  justify-content: center;
-}
-
-.boton {
-  text-decoration: none;
-  padding: 14px 35px;
+  padding: 14px;
   background: #63364b;
-  color: #fff;
+  color: #ffffff;
+  border: none;
   border-radius: 10px;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: bold;
+  cursor: pointer;
   letter-spacing: 1px;
-  transition: .3s;
-  box-shadow: 0 5px 12px rgba(0,0,0,.25);
+  transition: 0.3s;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.25);
 }
 
-.boton:hover {
+input[type="submit"]:hover {
   background: #c56d99;
   transform: scale(1.03);
 }
 
-@media (max-width:768px){
-
-  .contenedor{
-    padding:25px;
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  form {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "imagen"
+      "titulo"
+      "leyenda"
+      "campos"
+      "boton";
+    padding: 25px;
   }
 
-  .icono{
-    width:140px;
+  .imagen {
+    min-height: 230px;
   }
 
-  .encabezado{
-    font-size:28px;
+  h2, legend {
+    text-align: center;
   }
 
-  .boton{
-    width:100%;
-    text-align:center;
+  input[type="submit"] {
+    width: 100%;
   }
 }
-</style>
 
+</style>
 </head>
 
 <body>
