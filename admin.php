@@ -1187,7 +1187,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="perfilvendedor.php">
+                <a href="./ROL-usuario/updaterol.php">
 
                     <img
                         src="./imagenes/roles.svg"
