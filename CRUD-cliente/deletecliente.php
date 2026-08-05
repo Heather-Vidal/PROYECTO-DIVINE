@@ -14,118 +14,125 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <title>Eliminar Cliente - DIVINE</title>
 
 <!-- TIPOGRAFÍA -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet"/>
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 body {
-  font-family: "Playfair Display", serif;
-  background-color: #f5e9d8;
+  font-family: 'Poppins', sans-serif;
+  background: #e9e5dd;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #2b2b2b;
+  color: #5e3045;
 }
 
 .contenedor {
-  background: #e9e5dd;
+  position: relative;
+  background: rgba(255, 212, 234, 0.9);
   padding: 40px;
-  border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
   width: 90%;
-  max-width: 700px;
+  max-width: 650px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
     "encabezado"
     "contenido"
     "botones";
-  gap: 30px;
-  text-align: center;
+  gap: 25px;
 }
 
 .encabezado {
   grid-area: encabezado;
-  font-size: 36px;
-  font-weight: 700;
-  color: #b53737;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  margin: 0;
+  font-size: 32px;
+  color: #8b4f6b;
+  font-family: "Playfair Display", serif;
+  letter-spacing: 1px;
+  border-bottom: 3px solid #fc63af;
   padding-bottom: 10px;
-  border-bottom: 3px solid #b53737;
+  text-align: center;
 }
 
 .contenido {
   grid-area: contenido;
-  background: #f5e9d8;
-  border-radius: 20px;
-  padding: 30px 25px;
-  box-shadow: 0 4px 10px rgba(54, 78, 99, 0.15);
-  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .icono {
-  width: 120px;
+  width: 180px;
   margin-bottom: 20px;
-  filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.3));
 }
 
 .mensaje {
-  border-radius: 12px;
-  padding: 20px;
-  font-weight: 600;
-  margin-bottom: 15px;
+  width: 100%;
+  max-width: 450px;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: bold;
+  margin-top: 10px;
+  box-sizing: border-box;
 }
 
 .exito {
-  background-color: #c5a46d;
-  color: white;
-  box-shadow: 0 4px 12px rgba(197, 164, 109, 0.7);
+  background: #c56d99;
+  color: #fff;
+  box-shadow: 0 5px 12px rgba(197,109,153,.4);
 }
 
 .error {
-  background-color: #b53737;
-  color: white;
-  box-shadow: 0 4px 12px rgba(181, 55, 55, 0.7);
+  background: #b53737;
+  color: #fff;
+  box-shadow: 0 5px 12px rgba(181,55,55,.4);
 }
 
 .botones {
   grid-area: botones;
   display: flex;
   justify-content: center;
-  gap: 25px;
 }
 
 .boton {
   text-decoration: none;
-  background: #364e63;
-  color: #c5a46d;
-  padding: 14px 38px;
-  border-radius: 30px;
-  font-weight: 700;
+  padding: 14px 35px;
+  background: #63364b;
+  color: #fff;
+  border-radius: 10px;
   font-size: 17px;
-  box-shadow: 0 4px 15px rgba(54, 78, 99, 0.6);
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: .3s;
+  box-shadow: 0 5px 12px rgba(0,0,0,.25);
 }
 
 .boton:hover {
-  background-color: #c5a46d;
-  color: #364e63;
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(197, 164, 109, 0.9);
+  background: #c56d99;
+  transform: scale(1.03);
 }
 
-@media (max-width: 600px) {
-  .contenedor {
-    padding: 25px;
+@media (max-width:768px){
+
+  .contenedor{
+    padding:25px;
   }
-  .botones {
-    flex-direction: column;
-    gap: 15px;
+
+  .icono{
+    width:140px;
+  }
+
+  .encabezado{
+    font-size:28px;
+  }
+
+  .boton{
+    width:100%;
+    text-align:center;
   }
 }
 </style>
