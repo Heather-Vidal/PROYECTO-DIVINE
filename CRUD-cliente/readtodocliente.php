@@ -31,7 +31,7 @@ $resultado=$conn->query($sql);
 
 body {
   font-family: 'Playfair Display', serif;
-  background: #f5e9d8;
+  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -44,7 +44,7 @@ body {
 /* CONTENEDOR */
 
 .contenedor {
-  background: #e9e5dd;
+  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   padding: 40px;
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.25);
@@ -85,7 +85,7 @@ body {
 
   text-align: left;
 
-  color: #364e63;
+  color: #ff5c84;
 
   font-size: 32px;
 
@@ -121,7 +121,7 @@ body {
 /* TARJETA DE CLIENTE */
 
 .item {
-  background: #f5e9d8;
+  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
 
   padding: 20px;
 
@@ -134,7 +134,7 @@ body {
 
 
 .item:hover {
-  background: #e0d5b0;
+  background: #ce7399;
 
   transform: translateY(-5px);
 }
@@ -164,15 +164,14 @@ body {
   display: flex;
 
   gap: 10px;
-
   flex-wrap: wrap;
 }
 
 
 .boton {
-  background: #364e63;
+  background: #be245f;
 
-  color: #c5a46d;
+  color: #ffffff;
 
   border: none;
 
@@ -223,9 +222,9 @@ body {
 /* BOTÓN VOLVER */
 
 .boton-volver {
-  background: #364e63;
+  background: #911e57;
 
-  color: #c5a46d;
+  color: #c56da0;
 
   border: none;
 
