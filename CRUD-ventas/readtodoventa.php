@@ -1,5 +1,16 @@
 <?php
 
+session_start();
+
+
+// ==========================================
+// DATOS DE SESIÓN
+// ==========================================
+
+$nombreUsuario = $_SESSION['nombre'] ?? '';
+$rol = $_SESSION['rol'] ?? '';
+
+
 // ==========================================
 // CONEXIÓN A LA BASE DE DATOS
 // ==========================================
@@ -9,12 +20,14 @@ $usuario = "root";
 $contrasena = "";
 $bd = "DIVINE";
 
+
 $conn = new mysqli(
     $servidor,
     $usuario,
     $contrasena,
     $bd
 );
+
 
 if ($conn->connect_error) {
 
@@ -30,22 +43,55 @@ if ($conn->connect_error) {
 // CONSULTAR VENTAS
 // ==========================================
 
-$sql = "
-    SELECT
-        VENTAS.id,
-        VENTAS.estado,
-        VENTAS.metodo,
-        VENTAS.costototal,
-        VENTAS.PEDIDOS_ID,
-        PEDIDOS.nombre
+if ($rol == "vendedor") {
 
-    FROM VENTAS
 
-    INNER JOIN PEDIDOS
-        ON VENTAS.PEDIDOS_ID = PEDIDOS.ID
+    // ======================================
+    // VENDEDOR
+    // SOLO SUS VENTAS
+    // ======================================
 
-    ORDER BY VENTAS.id DESC
-";
+    $sql = "
+        SELECT
+            VENTAS.*,
+            PEDIDOS.nombre,
+            PEDIDOS.nombrevendedor
+
+        FROM VENTAS
+
+        INNER JOIN PEDIDOS
+            ON VENTAS.PEDIDOS_ID = PEDIDOS.ID
+
+        WHERE PEDIDOS.nombrevendedor = '$nombreUsuario'
+
+        ORDER BY VENTAS.id DESC
+    ";
+
+
+} else {
+
+
+    // ======================================
+    // ADMINISTRADOR
+    // TODAS LAS VENTAS
+    // ======================================
+
+    $sql = "
+        SELECT
+            VENTAS.*,
+            PEDIDOS.nombre,
+            PEDIDOS.nombrevendedor
+
+        FROM VENTAS
+
+        INNER JOIN PEDIDOS
+            ON VENTAS.PEDIDOS_ID = PEDIDOS.ID
+
+        ORDER BY VENTAS.id DESC
+    ";
+
+}
+
 
 $resultado = $conn->query($sql);
 
@@ -59,7 +105,17 @@ if (!$resultado) {
 
 }
 
+
+// ==========================================
+// MENSAJES
+// ==========================================
+
+$mensaje = $_GET['mensaje'] ?? '';
+
+$error = $_GET['error'] ?? '';
+
 ?>
+
 
 <!DOCTYPE html>
 
@@ -78,6 +134,7 @@ if (!$resultado) {
 
 
 <style>
+
 
 /* ==========================================
    CONFIGURACIÓN GENERAL
@@ -101,10 +158,12 @@ body{
     min-height:100vh;
 
     background:
+
     linear-gradient(
         rgba(0,0,0,.25),
         rgba(0,0,0,.25)
     ),
+
     url('../imagenes/fondote.png');
 
     background-position:center;
@@ -128,7 +187,7 @@ body{
 
     width:95%;
 
-    max-width:1250px;
+    max-width:1400px;
 
     margin:auto;
 
@@ -269,7 +328,7 @@ table{
 
     width:100%;
 
-    min-width:850px;
+    min-width:1100px;
 
     border-collapse:collapse;
 
@@ -403,6 +462,42 @@ td{
 
 
 /* ==========================================
+   VENDEDOR
+   ========================================== */
+
+.vendedor{
+
+    color:#bf7485;
+
+    font-weight:700;
+
+    white-space:nowrap;
+
+}
+
+
+.vendedor .yo{
+
+    display:inline-block;
+
+    margin-left:5px;
+
+    padding:4px 8px;
+
+    border-radius:20px;
+
+    background:#fdf0f3;
+
+    color:#b45d72;
+
+    font-size:11px;
+
+    font-weight:700;
+
+}
+
+
+/* ==========================================
    ESTADO
    ========================================== */
 
@@ -475,7 +570,7 @@ td{
 
 
 /* ==========================================
-   BOTONES
+   ACCIONES
    ========================================== */
 
 .acciones{
@@ -487,6 +582,8 @@ td{
     align-items:center;
 
     gap:8px;
+
+    flex-wrap:wrap;
 
 }
 
@@ -513,8 +610,43 @@ td{
 
     border:none;
 
+    white-space:nowrap;
+
 }
 
+
+/* ==========================================
+   BOTÓN DETALLES
+   VISIBLE PARA TODOS
+   ========================================== */
+
+.btn-detalles{
+
+    background:#eee6f8;
+
+    color:#765b96;
+
+}
+
+
+.btn-detalles:hover{
+
+    background:#765b96;
+
+    color:white;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 6px 15px rgba(118,91,150,.25);
+
+}
+
+
+/* ==========================================
+   BOTÓN MODIFICAR
+   SOLO ADMINISTRADOR
+   ========================================== */
 
 .btn-editar{
 
@@ -538,6 +670,11 @@ td{
 
 }
 
+
+/* ==========================================
+   BOTÓN ELIMINAR
+   SOLO ADMINISTRADOR
+   ========================================== */
 
 .btn-eliminar{
 
@@ -654,6 +791,218 @@ td{
 
 
 /* ==========================================
+   MENSAJE DE ÉXITO
+   ========================================== */
+
+.mensaje-exito{
+
+    position:fixed;
+
+    top:30px;
+
+    right:30px;
+
+    z-index:9999;
+
+    min-width:340px;
+
+    max-width:450px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px 20px;
+
+    background:rgba(255,255,255,.96);
+
+    backdrop-filter:blur(12px);
+
+    border-radius:20px;
+
+    border-left:5px solid #c96f84;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.15);
+
+    animation:mensajeEntrada .4s ease;
+
+}
+
+
+/* ==========================================
+   MENSAJE DE ERROR
+   ========================================== */
+
+.mensaje-error{
+
+    position:fixed;
+
+    top:30px;
+
+    right:30px;
+
+    z-index:9999;
+
+    min-width:340px;
+
+    max-width:450px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px 20px;
+
+    background:rgba(255,255,255,.96);
+
+    backdrop-filter:blur(12px);
+
+    border-radius:20px;
+
+    border-left:5px solid #d85a5a;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.15);
+
+    animation:mensajeEntrada .4s ease;
+
+}
+
+
+/* ==========================================
+   ICONO MENSAJE
+   ========================================== */
+
+.mensaje-icono{
+
+    min-width:45px;
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#f8dce2;
+
+    color:#bf7485;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+
+/* ==========================================
+   TEXTO MENSAJE
+   ========================================== */
+
+.mensaje-exito strong,
+.mensaje-error strong{
+
+    display:block;
+
+    color:#bf7485;
+
+    font-size:16px;
+
+    margin-bottom:3px;
+
+}
+
+
+.mensaje-exito p,
+.mensaje-error p{
+
+    margin:0;
+
+    color:#777;
+
+    font-size:13px;
+
+}
+
+
+/* ==========================================
+   BOTÓN CERRAR MENSAJE
+   ========================================== */
+
+.mensaje-exito button,
+.mensaje-error button{
+
+    margin-left:auto;
+
+    border:none;
+
+    background:transparent;
+
+    color:#999;
+
+    font-size:23px;
+
+    cursor:pointer;
+
+    line-height:1;
+
+    transition:.2s;
+
+}
+
+
+.mensaje-exito button:hover{
+
+    color:#bf7485;
+
+}
+
+
+.mensaje-error button:hover{
+
+    color:#d85a5a;
+
+}
+
+
+/* ==========================================
+   ANIMACIÓN MENSAJE
+   ========================================== */
+
+@keyframes mensajeEntrada{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateX(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateX(0);
+
+    }
+
+}
+
+
+/* ==========================================
    RESPONSIVE
    ========================================== */
 
@@ -707,6 +1056,34 @@ td{
 
     }
 
+
+    .acciones{
+
+        flex-direction:column;
+
+    }
+
+
+    .btn{
+
+        width:100%;
+
+    }
+
+
+    .mensaje-exito,
+    .mensaje-error{
+
+        top:20px;
+
+        right:15px;
+
+        left:15px;
+
+        min-width:auto;
+
+    }
+
 }
 
 </style>
@@ -715,6 +1092,102 @@ td{
 
 
 <body>
+
+
+<!-- ==========================================
+     MENSAJE DE ÉXITO
+     ========================================== -->
+
+<?php if ($mensaje != "") { ?>
+
+    <div class="mensaje-exito">
+
+        <div class="mensaje-icono">
+
+            ✓
+
+        </div>
+
+        <div>
+
+            <strong>
+
+                ¡Listo!
+
+            </strong>
+
+            <p>
+
+                <?php
+
+                echo htmlspecialchars($mensaje);
+
+                ?>
+
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            onclick="this.parentElement.remove();"
+        >
+
+            ×
+
+        </button>
+
+    </div>
+
+<?php } ?>
+
+
+<!-- ==========================================
+     MENSAJE DE ERROR
+     ========================================== -->
+
+<?php if ($error != "") { ?>
+
+    <div class="mensaje-error">
+
+        <div class="mensaje-icono">
+
+            !
+
+        </div>
+
+        <div>
+
+            <strong>
+
+                Ocurrió un problema
+
+            </strong>
+
+            <p>
+
+                <?php
+
+                echo htmlspecialchars($error);
+
+                ?>
+
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            onclick="this.parentElement.remove();"
+        >
+
+            ×
+
+        </button>
+
+    </div>
+
+<?php } ?>
 
 
 <div class="contenedor">
@@ -731,18 +1204,25 @@ td{
 
 
             <div class="icono">
+
                 🧾
+
             </div>
 
 
             <div>
 
                 <h1>
+
                     Ventas
+
                 </h1>
 
+
                 <div class="subtitulo">
+
                     Registro de ventas realizadas
+
                 </div>
 
             </div>
@@ -754,7 +1234,9 @@ td{
         <div class="contador">
 
             <?php
+
             echo $resultado->num_rows;
+
             ?>
 
             ventas
@@ -763,7 +1245,6 @@ td{
 
 
     </div>
-
 
 
     <!-- ==========================================
@@ -783,33 +1264,62 @@ td{
 
                 <tr>
 
+
                     <th>
+
                         Venta
+
                     </th>
 
+
                     <th>
+
                         Pedido
+
                     </th>
 
+
                     <th>
+
                         Cliente
+
                     </th>
 
+
                     <th>
+
+                        Vendedor
+
+                    </th>
+
+
+                    <th>
+
                         Estado
+
                     </th>
 
+
                     <th>
+
                         Método
+
                     </th>
 
+
                     <th>
+
                         Total
+
                     </th>
 
+
                     <th>
+
                         Acciones
+
                     </th>
+
 
                 </tr>
 
@@ -825,20 +1335,28 @@ td{
                 <tr>
 
 
-                    <!-- ID VENTA -->
+                    <!-- ======================================
+                         ID VENTA
+                         ====================================== -->
 
                     <td class="id-venta">
 
-                        #<?php
+                        #
+
+                        <?php
+
                         echo htmlspecialchars(
                             $fila['id']
                         );
+
                         ?>
 
                     </td>
 
 
-                    <!-- ID PEDIDO -->
+                    <!-- ======================================
+                         ID PEDIDO
+                         ====================================== -->
 
                     <td>
 
@@ -847,9 +1365,11 @@ td{
                             Pedido #
 
                             <?php
+
                             echo htmlspecialchars(
                                 $fila['PEDIDOS_ID']
                             );
+
                             ?>
 
                         </span>
@@ -857,29 +1377,72 @@ td{
                     </td>
 
 
-                    <!-- CLIENTE -->
+                    <!-- ======================================
+                         CLIENTE
+                         ====================================== -->
 
                     <td class="cliente">
 
                         <?php
+
                         echo htmlspecialchars(
                             $fila['nombre']
                         );
+
                         ?>
 
                     </td>
 
 
-                    <!-- ESTADO -->
+                    <!-- ======================================
+                         VENDEDOR
+                         ====================================== -->
+
+                    <td class="vendedor">
+
+                        <?php
+
+                        echo htmlspecialchars(
+                            $fila['nombrevendedor']
+                        );
+
+
+                        if (
+                            $fila['nombrevendedor']
+                            == $nombreUsuario
+                        ) {
+
+                        ?>
+
+                            <span class="yo">
+
+                                (yo)
+
+                            </span>
+
+                        <?php
+
+                        }
+
+                        ?>
+
+                    </td>
+
+
+                    <!-- ======================================
+                         ESTADO
+                         ====================================== -->
 
                     <td>
 
                         <span class="estado">
 
                             <?php
+
                             echo htmlspecialchars(
                                 $fila['estado']
                             );
+
                             ?>
 
                         </span>
@@ -887,20 +1450,26 @@ td{
                     </td>
 
 
-                    <!-- MÉTODO -->
+                    <!-- ======================================
+                         MÉTODO
+                         ====================================== -->
 
                     <td class="metodo">
 
                         <?php
+
                         echo htmlspecialchars(
                             $fila['metodo']
                         );
+
                         ?>
 
                     </td>
 
 
-                    <!-- TOTAL -->
+                    <!-- ======================================
+                         TOTAL
+                         ====================================== -->
 
                     <td class="total">
 
@@ -918,32 +1487,65 @@ td{
                     </td>
 
 
-                    <!-- ACCIONES -->
+                    <!-- ======================================
+                         ACCIONES
+                         ====================================== -->
 
                     <td>
 
                         <div class="acciones">
 
 
+                            <!-- ==================================
+                                 DETALLES
+                                 VISIBLE PARA ADMIN Y VENDEDOR
+                                 ================================== -->
+
                             <a
-                                href="updateformventa.php?id=<?php echo $fila['id']; ?>"
-                                class="btn btn-editar"
+                                href="readunoventa.php?id=<?php echo $fila['id']; ?>"
+                                class="btn btn-detalles"
                             >
 
-                                ✏️ Modificar
+                                🔎 Detalles
 
                             </a>
 
 
-                            <a
-                                href="deleteventa.php?id=<?php echo $fila['id']; ?>"
-                                class="btn btn-eliminar"
-                                onclick="return confirm('¿Está seguro de eliminar esta venta?');"
-                            >
+                            <!-- ==================================
+                                 MODIFICAR / ELIMINAR
+                                 SOLO ADMINISTRADOR
+                                 ================================== -->
 
-                                🗑️ Eliminar
+                            <?php if ($rol == "administrador") { ?>
 
-                            </a>
+
+                                <a
+                                    href="updateformventa.php?id=<?php echo $fila['id']; ?>"
+                                    class="btn btn-editar"
+                                >
+
+                                    ✏️ Modificar
+
+                                </a>
+
+
+                                <a
+                                    href="deleteventa.php?id=<?php echo $fila['id']; ?>"
+                                    class="btn btn-eliminar"
+
+                                    onclick="
+                                        return confirm(
+                                            '¿Está seguro de eliminar esta venta?'
+                                        );
+                                    "
+                                >
+
+                                    🗑️ Eliminar
+
+                                </a>
+
+
+                            <?php } ?>
 
 
                         </div>
@@ -970,17 +1572,23 @@ td{
 
 
             <div class="sin-ventas-icono">
+
                 🧾
+
             </div>
 
 
             <h2>
+
                 No hay ventas todavía
+
             </h2>
 
 
             <p>
+
                 Cuando registres una venta aparecerá aquí.
+
             </p>
 
 

@@ -6,7 +6,24 @@ if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
     exit();
 }
 ?>
+<?php
 
+ 
+
+
+// ==========================================
+// VALIDACIÓN DE ROL
+// SOLO ADMINISTRADORES PUEDEN ENTRAR
+// ==========================================
+
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "administrador") {
+
+    header("Location: ./SESIONES/loginformcliente.php");
+    exit();
+
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 
