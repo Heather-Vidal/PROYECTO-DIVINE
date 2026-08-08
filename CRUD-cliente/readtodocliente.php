@@ -37,7 +37,7 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #2b2b2b;
+  color: #ff0099;
 }
 
 
@@ -47,7 +47,7 @@ body {
   background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   padding: 40px;
   border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 25px rgba(255, 0, 149, 0.54);
   width: 90%;
   max-width: 1000px;
 
@@ -97,7 +97,7 @@ body {
 
   align-self: end;
 
-  border-bottom: 3px solid #c5a46d;
+  border-bottom: 3px solid #cc438a;
 
   padding-bottom: 6px;
 
@@ -127,14 +127,14 @@ body {
 
   border-radius: 20px;
 
-  box-shadow: 0 4px 10px rgba(54,78,99,0.25);
+  box-shadow: 0 4px 10px rgba(255, 0, 128, 0.44);
 
   transition: 0.3s ease;
 }
 
 
 .item:hover {
-  background: #ce7399;
+  background: #ec9aca;
 
   transform: translateY(-5px);
 }
@@ -143,7 +143,7 @@ body {
 .item p {
   margin: 6px 0;
 
-  color: #2b2b2b;
+  color: #ff4f92;
 
   font-size: 16px;
 }
@@ -152,7 +152,7 @@ body {
 .item span {
   font-weight: bold;
 
-  color: #364e63;
+  color: #ff48a3;
 }
 
 
@@ -169,7 +169,7 @@ body {
 
 
 .boton {
-  background: #be245f;
+  background: #e873a0;
 
   color: #ffffff;
 
@@ -193,18 +193,18 @@ body {
 
   transition: 0.3s ease;
 
-  box-shadow: 0 3px 8px rgba(54,78,99,0.3);
+  box-shadow: 0 3px 8px rgba(255, 1, 166, 0.3);
 }
 
 
 .boton:hover {
-  background: #c5a46d;
+  background: #ed1da0;
 
-  color: #364e63;
+  color: #db0099;
 
   transform: scale(1.05);
 
-  box-shadow: 0 6px 15px rgba(197,164,109,0.8);
+  box-shadow: 0 6px 15px rgba(255, 77, 175, 0.8);
 }
 
 
@@ -222,9 +222,9 @@ body {
 /* BOTÓN VOLVER */
 
 .boton-volver {
-  background: #911e57;
+  background: #fa8bc2;
 
-  color: #c56da0;
+  color: #f8f4f6;
 
   border: none;
 
@@ -240,20 +240,20 @@ body {
 
   cursor: pointer;
 
-  box-shadow: 0 4px 15px rgba(54,78,99,0.6);
+  box-shadow: 0 4px 15px rgba(255, 55, 152, 0.6);
 
   transition: 0.3s ease;
 }
 
 
 .boton-volver:hover {
-  background: #c5a46d;
+  background: #e629a7;
 
-  color: #364e63;
+  color: #ffffff;
 
   transform: scale(1.06);
 
-  box-shadow: 0 6px 18px rgba(197,164,109,0.8);
+  box-shadow: 0 6px 18px rgba(244, 0, 150, 0.8);
 }
 
 
