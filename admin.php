@@ -1229,7 +1229,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="#">
+                <a href="interfazventas-pedido.php">
 
                     <img
                         src="./imagenes/ventas.svg"

@@ -15,7 +15,11 @@ $sql = "SELECT * FROM PEDIDOS";
 $resultado = $conn->query($sql);
 
 ?>
+<?php
 
+$mensaje = $_GET['mensaje'] ?? null;
+
+?>
 <!DOCTYPE html>
 
 <html lang="es">
@@ -626,12 +630,160 @@ body{
     }
 
 }
+.modal-mensaje {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+
+.mensaje-contenido {
+    width: 400px;
+    max-width: 90%;
+
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+
+    animation: aparecer 0.3s ease;
+}
+
+
+.icono-exito {
+    width: 65px;
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #dff5df;
+
+    color: #3c9b3c;
+
+    font-size: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+}
+
+
+.mensaje-contenido h2 {
+    margin-bottom: 10px;
+}
+
+
+.mensaje-contenido p {
+    font-size: 17px;
+    margin-bottom: 25px;
+}
+
+
+.mensaje-contenido button {
+    padding: 10px 30px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+}
+
+
+@keyframes aparecer {
+
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+}
+.mensaje-contenido button {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.mensaje-contenido button:hover {
+    background-color: #b77f8a;
+    color: black;
+    transform: scale(1.05);
+}
 
 </style>
 
 </head>
 
 <body>
+
+<?php if ($mensaje): ?>
+
+<div class="modal-mensaje">
+
+    <div class="mensaje-contenido">
+
+        <div class="icono-exito">
+            ✓
+        </div>
+
+        <h2>¡Pedido actualizado!</h2>
+
+        <p>
+            <?php echo htmlspecialchars($mensaje); ?>
+        </p>
+
+        <button onclick="cerrarMensaje()">
+            Aceptar
+        </button>
+
+    </div>
+
+</div>
+
+<?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="header">
 
@@ -733,6 +885,27 @@ if($resultado && $resultado->num_rows > 0){
                 <?php echo htmlspecialchars($fila['estado']); ?>
 
             </div>
+            <br> <br>
+
+
+
+<div class="botones">
+
+    <a href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=En%20proceso">
+        <button type="button">Aceptar</button>
+    </a>
+
+    <a href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Rechazado">
+        <button type="button">Rechazar</button>
+    </a>
+
+</div>
+
+
+
+
+
+
 
 
         </div>
@@ -810,7 +983,15 @@ if($resultado && $resultado->num_rows > 0){
 ```
 
 </div>
+<script>
 
+function cerrarMensaje() {
+
+    document.querySelector(".modal-mensaje").style.display = "none";
+
+}
+
+</script>
 </body>
 
 </html>
