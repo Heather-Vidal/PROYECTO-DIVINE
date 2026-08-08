@@ -152,7 +152,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 
    //Define a que carpeta irá el archivo
-    $target_dir = "../USUARIO-img/";
+    $target_dir = "../PRODUCTO-img/";
     //recuperar el tipo de archivo (extension)
     $imageFileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"],PATHINFO_EXTENSION));
     //Define el nombre del archivo P-[codigo del producto]
@@ -180,7 +180,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     } else {
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
             echo "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " se subió.";
-            header("Location: readtodoproducto.php");
+            header("Location: readtodoprodu.php");
     echo "Producto registrado correctamente";
         } else {
             echo "No se pudo subir tu archivo.";
