@@ -1,18 +1,31 @@
+
 <?php
 session_start();
 if($_SESSION['nombre'] == null){
     header("Location: loginformcliente.php");
 }
 
-
-
- 
- 
-
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 $inicial = strtoupper(substr($nombreUsuario, 0, 1));
 ?>
+<?php
 
+ 
+
+
+// ==========================================
+// VALIDACIÓN DE ROL
+// SOLO ADMINISTRADORES PUEDEN ENTRAR
+// ==========================================
+
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "vendedor") {
+
+    header("Location: ./SESIONES/loginformcliente.php");
+    exit();
+
+}
+
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -478,7 +491,12 @@ pointer-events:none;
 </div>
 
 <div class="profile-stats">
+<<<<<<< Updated upstream
 <a href="ventas.php" class="stat-card">
+=======
+
+<a href="./CRUD-ventas/readtodoventa.php" class="stat-card">
+>>>>>>> Stashed changes
 <strong>356</strong>
 Ventas
 </a>
