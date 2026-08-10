@@ -1,4 +1,4 @@
- <?php
+<?php
 
 $servidor = "localhost";
 $usuario = "root";
@@ -112,11 +112,13 @@ $total = $res['total'] ?? 0;
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
-<title>DIVINE | Seleccionar productos</title>
+<title>
+    DIVINE | Seleccionar productos
+</title>
 
 
 <style>
@@ -183,15 +185,10 @@ body {
     background:
 
     linear-gradient(
-
         to right,
-
         rgba(255,250,248,.88),
-
         rgba(255,250,248,.35),
-
         rgba(255,250,248,.05)
-
     ),
 
     url("../imagenes/fondote.png");
@@ -361,8 +358,7 @@ body {
     font-size: 1.2rem;
 
     box-shadow:
-
-    0 8px 25px rgba(100,70,80,.08);
+        0 8px 25px rgba(100,70,80,.08);
 
 }
 
@@ -385,14 +381,10 @@ body {
     display: grid;
 
     grid-template-columns:
-
-    repeat(
-
-        auto-fit,
-
-        minmax(280px, 1fr)
-
-    );
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
 
     gap: 35px;
 
@@ -414,14 +406,11 @@ body {
     border: 1px solid var(--borde);
 
     box-shadow:
-
-    0 8px 30px rgba(100,70,80,.06);
+        0 8px 30px rgba(100,70,80,.06);
 
     transition:
-
-    transform .45s ease,
-
-    box-shadow .45s ease;
+        transform .45s ease,
+        box-shadow .45s ease;
 
 }
 
@@ -429,12 +418,10 @@ body {
 .card:hover {
 
     transform:
-
-    translateY(-8px);
+        translateY(-8px);
 
     box-shadow:
-
-    0 20px 45px rgba(100,70,80,.13);
+        0 20px 45px rgba(100,70,80,.13);
 
 }
 
@@ -465,19 +452,16 @@ body {
     object-fit: cover;
 
     transition:
-
-    transform .7s ease;
+        transform .7s ease;
 
 }
 
 
 .card:hover
-
 .imagen img {
 
     transform:
-
-    scale(1.06);
+        scale(1.06);
 
 }
 
@@ -521,7 +505,7 @@ body {
 
 
 /* ==================================================
-   NOMBRE DEL PRODUCTO
+   NOMBRE
 ================================================== */
 
 .nombre-producto {
@@ -578,9 +562,73 @@ body {
 
     color: var(--rosa);
 
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 
     font-weight: 600;
+
+}
+
+
+/* ==================================================
+   STOCK
+================================================== */
+
+.stock {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: .82rem;
+
+    color: #9a8b8f;
+
+    letter-spacing: .3px;
+
+}
+
+
+.stock strong {
+
+    color: var(--rosa);
+
+    font-weight: 600;
+
+}
+
+
+/* ==================================================
+   ÚLTIMAS UNIDADES
+================================================== */
+
+.stock.ultimas {
+
+    color: #a57c55;
+
+}
+
+
+.stock.ultimas strong {
+
+    color: #a57c55;
+
+}
+
+
+/* ==================================================
+   AGOTADO
+================================================== */
+
+.stock.agotado {
+
+    color: #999;
+
+}
+
+
+.stock.agotado strong {
+
+    color: #999;
 
 }
 
@@ -632,6 +680,17 @@ body {
     background: #a65f70;
 
     transform: scale(1.08);
+
+}
+
+
+.cantidad button:disabled {
+
+    background: #d8cdd0;
+
+    cursor: not-allowed;
+
+    transform: none;
 
 }
 
@@ -701,12 +760,9 @@ body {
     cursor: pointer;
 
     transition:
-
-    background .3s ease,
-
-    color .3s ease,
-
-    transform .3s ease;
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease;
 
 }
 
@@ -718,8 +774,37 @@ body {
     color: var(--rosa);
 
     transform:
+        translateY(-2px);
 
-    translateY(-2px);
+}
+
+
+/* ==================================================
+   BOTÓN AGOTADO
+================================================== */
+
+.btn-agotado {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    cursor: not-allowed;
+
+}
+
+
+.btn-agotado:hover {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    transform: none;
 
 }
 
@@ -772,12 +857,9 @@ body {
     border: 1px solid var(--rosa);
 
     transition:
-
-    background .3s ease,
-
-    color .3s ease,
-
-    transform .3s ease;
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease;
 
 }
 
@@ -789,8 +871,30 @@ body {
     color: var(--rosa);
 
     transform:
+        translateY(-2px);
 
-    translateY(-2px);
+}
+
+
+/* ==================================================
+   SIN PRODUCTOS
+================================================== */
+
+.sin-productos {
+
+    grid-column: 1 / -1;
+
+    padding: 80px 30px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 18px;
+
+    color: var(--gris);
 
 }
 
@@ -804,8 +908,7 @@ body {
     opacity: 0;
 
     transform:
-
-    translateY(25px);
+        translateY(25px);
 
 }
 
@@ -815,14 +918,11 @@ body {
     opacity: 1;
 
     transform:
-
-    translateY(0);
+        translateY(0);
 
     transition:
-
-    opacity .7s ease,
-
-    transform .7s ease;
+        opacity .7s ease,
+        transform .7s ease;
 
 }
 
@@ -838,8 +938,7 @@ body {
         opacity: 0;
 
         transform:
-
-        scale(1.02);
+            scale(1.02);
 
     }
 
@@ -848,8 +947,7 @@ body {
         opacity: 1;
 
         transform:
-
-        scale(1);
+            scale(1);
 
     }
 
@@ -862,18 +960,15 @@ body {
 
 @media(max-width: 768px) {
 
-
     .hero {
 
         min-height: 500px;
 
         padding:
-
-        50px 30px;
+            50px 30px;
 
         background-position:
-
-        65% center;
+            65% center;
 
     }
 
@@ -897,8 +992,7 @@ body {
     .section {
 
         padding:
-
-        65px 20px;
+            65px 20px;
 
     }
 
@@ -906,8 +1000,7 @@ body {
     .titulo {
 
         font-size:
-
-        2rem;
+            2rem;
 
     }
 
@@ -915,12 +1008,10 @@ body {
     .grid {
 
         grid-template-columns:
-
-        1fr;
+            1fr;
 
         gap:
-
-        25px;
+            25px;
 
     }
 
@@ -928,15 +1019,15 @@ body {
     .imagen {
 
         height:
-
-        280px;
+            280px;
 
     }
 
 
     .botones {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
     }
 
@@ -958,45 +1049,61 @@ body {
 
 <body>
 
+
 <?php
 
-include '../submenuespecial.php';
- 
+include 'submenucarrito.php';
+
 ?>
 
 
-<script src="./AJAX/buscar.js"></script>
+<script>
+
+const idPedido = <?php echo $id_pedido; ?>;
+
+</script>
+
+
+<script src="../AJAX/scriptventanacarrito.js"></script>
+
+<script src="../AJAX/buscar.js"></script>
 
 
 
+<div id="productos"></div>
 
-    <div id="productos">        </div>
+
 
 <!-- ==================================================
-
      HERO
 ================================================== -->
 
-
- 
- 
-
 <section class="hero">
+
 
     <div class="hero-content">
 
+
         <div class="hero-linea"></div>
 
+
         <h1>
+
             DIVINE
+
         </h1>
 
+
         <p>
+
             Selecciona tus productos favoritos
             y comienza a crear tu pedido.
+
         </p>
 
+
     </div>
+
 
 </section>
 
@@ -1011,11 +1118,13 @@ include '../submenuespecial.php';
 
     <div class="encabezado">
 
+
         <div class="encabezado-pequeno">
 
             Tu pedido
 
         </div>
+
 
         <h2 class="titulo">
 
@@ -1023,7 +1132,9 @@ include '../submenuespecial.php';
 
         </h2>
 
+
         <div class="linea-decorativa"></div>
+
 
     </div>
 
@@ -1039,7 +1150,8 @@ include '../submenuespecial.php';
 
         <strong>
 
-            Bs. <?php echo $total; ?>
+            Bs.
+            <?php echo $total; ?>
 
         </strong>
 
@@ -1056,10 +1168,18 @@ include '../submenuespecial.php';
 
 <?php
 
+
 if ($resultado->num_rows > 0) {
 
 
     while ($fila = $resultado->fetch_assoc()) {
+
+
+        /*
+         * OBTENER STOCK DEL PRODUCTO
+         */
+
+        $stock = (int)$fila["stock"];
 
 
 ?>
@@ -1072,7 +1192,9 @@ if ($resultado->num_rows > 0) {
         <div class="card animar">
 
 
-            <!-- IMAGEN -->
+            <!-- ==================================================
+                 IMAGEN
+            ================================================== -->
 
             <div class="imagen">
 
@@ -1093,9 +1215,7 @@ if (
                     src="<?php
 
                     echo htmlspecialchars(
-
                         $fila["imagen"]
-
                     );
 
                     ?>"
@@ -1103,9 +1223,7 @@ if (
                     alt="<?php
 
                     echo htmlspecialchars(
-
                         $fila["nombre"]
-
                     );
 
                     ?>"
@@ -1138,7 +1256,9 @@ if (
 
 
 
-            <!-- INFORMACIÓN -->
+            <!-- ==================================================
+                 INFORMACIÓN
+            ================================================== -->
 
             <div class="info">
 
@@ -1152,9 +1272,7 @@ if (
 echo htmlspecialchars(
 
     strtoupper(
-
         $fila["nombre"]
-
     )
 
 );
@@ -1172,9 +1290,7 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
-
     $fila["descripcion"]
-
 );
 
 ?>
@@ -1192,9 +1308,7 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
-
     $fila["precio"]
-
 );
 
 ?>
@@ -1203,7 +1317,113 @@ echo htmlspecialchars(
 
 
 
-                <!-- FORMULARIO -->
+                <!-- ==================================================
+                     STOCK
+                ================================================== -->
+
+<?php
+
+if ($stock <= 0) {
+
+?>
+
+
+                <div class="stock agotado">
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+} elseif ($stock <= 5) {
+
+?>
+
+
+                <div class="stock ultimas">
+
+                    Últimas unidades:
+
+                    <strong>
+
+<?php
+
+echo $stock;
+
+?>
+
+                    </strong>
+
+                    disponibles
+
+                </div>
+
+
+<?php
+
+} else {
+
+?>
+
+
+                <div class="stock">
+
+                    Stock disponible:
+
+                    <strong>
+
+<?php
+
+echo $stock;
+
+?>
+
+                    </strong>
+
+                    unidades
+
+                </div>
+
+
+<?php
+
+}
+
+?>
+
+
+
+                <!-- ==================================================
+                     FORMULARIO
+                ================================================== -->
+
+<?php
+
+/*
+ * SI EL PRODUCTO ESTÁ AGOTADO
+ * NO MOSTRAMOS EL FORMULARIO.
+ */
+
+if ($stock <= 0) {
+
+?>
+
+
+                <div class="btn btn-agotado">
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+} else {
+
+?>
+
 
                 <form
 
@@ -1214,7 +1434,9 @@ echo htmlspecialchars(
                 >
 
 
-                    <!-- CÓDIGO DEL PRODUCTO -->
+                    <!-- ==================================================
+                         CÓDIGO DEL PRODUCTO
+                    ================================================== -->
 
                     <input
 
@@ -1232,7 +1454,9 @@ echo htmlspecialchars(
 
 
 
-                    <!-- ID DEL PEDIDO -->
+                    <!-- ==================================================
+                         ID DEL PEDIDO
+                    ================================================== -->
 
                     <input
 
@@ -1250,7 +1474,9 @@ echo htmlspecialchars(
 
 
 
-                    <!-- PRECIO -->
+                    <!-- ==================================================
+                         PRECIO
+                    ================================================== -->
 
                     <input
 
@@ -1268,7 +1494,9 @@ echo htmlspecialchars(
 
 
 
-                    <!-- CANTIDAD -->
+                    <!-- ==================================================
+                         CANTIDAD
+                    ================================================== -->
 
                     <div class="cantidad">
 
@@ -1277,13 +1505,20 @@ echo htmlspecialchars(
 
                             type="button"
 
-                            onclick="this.nextElementSibling.stepDown()"
+                            onclick="
+                                cambiarCantidad(
+                                    this,
+                                    -1,
+                                    <?php echo $stock; ?>
+                                )
+                            "
 
                         >
 
                             −
 
                         </button>
+
 
 
                         <input
@@ -1296,14 +1531,25 @@ echo htmlspecialchars(
 
                             min="0"
 
+                            max="<?php echo $stock; ?>"
+
+                            required
+
                         >
+
 
 
                         <button
 
                             type="button"
 
-                            onclick="this.previousElementSibling.stepUp()"
+                            onclick="
+                                cambiarCantidad(
+                                    this,
+                                    1,
+                                    <?php echo $stock; ?>
+                                )
+                            "
 
                         >
 
@@ -1316,7 +1562,9 @@ echo htmlspecialchars(
 
 
 
-                    <!-- AGREGAR -->
+                    <!-- ==================================================
+                         AGREGAR
+                    ================================================== -->
 
                     <button
 
@@ -1334,6 +1582,13 @@ echo htmlspecialchars(
                 </form>
 
 
+<?php
+
+}
+
+?>
+
+
             </div>
 
 
@@ -1341,6 +1596,7 @@ echo htmlspecialchars(
 
 
 <?php
+
 
     }
 
@@ -1377,10 +1633,29 @@ echo htmlspecialchars(
     <div class="botones">
 
 
-       
-        <a class="final" href="readtodopedido.php?idPedido=<?php echo $id_pedido;?>"  >Finalizar compra</a>
+        <a
+
+            class="final"
+
+            href="readunopedido.php?idPedido=<?php
+
+            echo $id_pedido;
+
+            ?>"
+
+        >
+
+            Finalizar compra
+
+        </a>
+
+
     </div>
+
+
 </section>
+
+
 
 <!-- ==================================================
      ANIMACIÓN DE PRODUCTOS
@@ -1391,65 +1666,56 @@ echo htmlspecialchars(
 
 const elementos =
 
-document.querySelectorAll(
-
-    '.animar'
-
-);
+    document.querySelectorAll(
+        '.animar'
+    );
 
 
 const observador =
 
-new IntersectionObserver(
+    new IntersectionObserver(
 
-    (entradas) => {
-
-
-        entradas.forEach(
-
-            (entrada) => {
+        (entradas) => {
 
 
-                if (
+            entradas.forEach(
 
-                    entrada.isIntersecting
-
-                ) {
+                (entrada) => {
 
 
-                    entrada
+                    if (
+                        entrada.isIntersecting
+                    ) {
 
-                    .target
 
-                    .classList
+                        entrada
 
-                    .add(
+                            .target
 
-                        'activo'
+                            .classList
 
-                    );
+                            .add(
+                                'activo'
+                            );
 
+
+                    }
 
                 }
 
-
-            }
-
-        );
+            );
 
 
-    },
+        },
 
+        {
 
-    {
+            threshold:
+                0.12
 
-        threshold:
+        }
 
-        0.12
-
-    }
-
-);
+    );
 
 
 elementos.forEach(
@@ -1458,15 +1724,102 @@ elementos.forEach(
 
 
         observador.observe(
-
             elemento
-
         );
 
 
     }
 
 );
+
+
+</script>
+
+
+
+<!-- ==================================================
+     CONTROL DE CANTIDAD SEGÚN STOCK
+================================================== -->
+
+<script>
+
+
+function cambiarCantidad(
+    boton,
+    cambio,
+    stock
+) {
+
+
+    const contenedor =
+        boton.parentElement;
+
+
+    const input =
+        contenedor.querySelector(
+            'input[name="cantidad"]'
+        );
+
+
+    let cantidad =
+        parseInt(input.value) || 0;
+
+
+    cantidad =
+        cantidad + cambio;
+
+
+    /*
+     * NO PERMITIR MENOS DE 0
+     */
+
+    if (cantidad < 0) {
+
+        cantidad = 0;
+
+    }
+
+
+    /*
+     * NO PERMITIR SUPERAR EL STOCK
+     */
+
+    if (cantidad > stock) {
+
+        cantidad = stock;
+
+    }
+
+
+    input.value = cantidad;
+
+
+    /*
+     * CONTROLAR BOTONES
+     */
+
+    const botones =
+        contenedor.querySelectorAll(
+            'button'
+        );
+
+
+    /*
+     * BOTÓN MENOS
+     */
+
+    botones[0].disabled =
+        cantidad <= 0;
+
+
+    /*
+     * BOTÓN MÁS
+     */
+
+    botones[1].disabled =
+        cantidad >= stock;
+
+}
 
 
 </script>
@@ -1483,9 +1836,7 @@ elementos.forEach(
 if (
 
     window.location.href.includes(
-
         "idPedido"
-
     )
 
 ) {
@@ -1493,11 +1844,9 @@ if (
 
     const scroll =
 
-    sessionStorage.getItem(
-
-        "scrollY"
-
-    );
+        sessionStorage.getItem(
+            "scrollY"
+        );
 
 
     if (scroll) {

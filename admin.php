@@ -6,7 +6,24 @@ if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
     exit();
 }
 ?>
+<?php
 
+ 
+
+
+// ==========================================
+// VALIDACIÓN DE ROL
+// SOLO ADMINISTRADORES PUEDEN ENTRAR
+// ==========================================
+
+if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "administrador") {
+
+    header("Location: ./SESIONES/loginformcliente.php");
+    exit();
+
+}
+
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -1187,7 +1204,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="perfilvendedor.php">
+                <a href="./ROL-usuario/updaterol.php">
 
                     <img
                         src="./imagenes/roles.svg"
@@ -1229,7 +1246,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="#">
+                <a href="interfazventas-pedido.php">
 
                     <img
                         src="./imagenes/ventas.svg"

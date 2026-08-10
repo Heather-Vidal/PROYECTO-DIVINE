@@ -31,23 +31,23 @@ $resultado=$conn->query($sql);
 
 body {
   font-family: 'Playfair Display', serif;
-  background: #f5e9d8;
+  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #2b2b2b;
+  color: #ff0099;
 }
 
 
 /* CONTENEDOR */
 
 .contenedor {
-  background: #e9e5dd;
+  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   padding: 40px;
   border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  box-shadow: 0 10px 25px rgba(255, 0, 149, 0.54);
   width: 90%;
   max-width: 1000px;
 
@@ -68,12 +68,9 @@ body {
 
 .imagen {
   grid-area: imagen;
-
-  background: url("https://i.pinimg.com/1200x/8a/80/67/8a80676d930e8249245bebd93d768ea1.jpg")
+  background: url("../imagenes/pelito.jpg")
   center center / cover no-repeat;
-
   border-radius: 20px;
-
   min-height: 400px;
 }
 
@@ -82,25 +79,15 @@ body {
 
 .titulo {
   grid-area: titulo;
-
   text-align: left;
-
-  color: #364e63;
-
+  color: #ff50a5;
   font-size: 32px;
-
   font-weight: 700;
-
   letter-spacing: 1px;
-
   margin: 0;
-
   align-self: end;
-
-  border-bottom: 3px solid #c5a46d;
-
+  border-bottom: 3px solid #cc438a;
   padding-bottom: 6px;
-
   width: fit-content;
 }
 
@@ -121,38 +108,30 @@ body {
 /* TARJETA DE CLIENTE */
 
 .item {
-  background: #f5e9d8;
-
+  background: #3f1d23;
   padding: 20px;
-
   border-radius: 20px;
-
-  box-shadow: 0 4px 10px rgba(54,78,99,0.25);
-
+  box-shadow: 0 4px 10px rgba(96, 31, 31, 0.44);
   transition: 0.3s ease;
 }
 
 
 .item:hover {
-  background: #e0d5b0;
-
+  background: #f1dee9;
   transform: translateY(-5px);
 }
 
 
 .item p {
   margin: 6px 0;
-
-  color: #2b2b2b;
-
+  color: #ff4f92;
   font-size: 16px;
 }
 
 
 .item span {
   font-weight: bold;
-
-  color: #364e63;
+  color: #ff48a3;
 }
 
 
@@ -160,52 +139,37 @@ body {
 
 .botones {
   margin-top: 15px;
-
   display: flex;
-
   gap: 10px;
-
   flex-wrap: wrap;
 }
 
 
 .boton {
-  background: #364e63;
-
-  color: #c5a46d;
-
+  background: #e873a0;
+  color: #ffffff;
   border: none;
-
   border-radius: 25px;
-
   padding: 10px 22px;
-
   cursor: pointer;
-
   font-family: 'Playfair Display', serif;
-
   font-weight: 600;
-
   font-size: 15px;
-
   text-decoration: none;
-
   display: inline-block;
-
   transition: 0.3s ease;
-
-  box-shadow: 0 3px 8px rgba(54,78,99,0.3);
+   box-shadow: 0 3px 8px rgba(255, 1, 166, 0.3);
 }
 
 
 .boton:hover {
-  background: #c5a46d;
+  background: #ed1da0;
 
-  color: #364e63;
+  color: #fcfcfc;
 
   transform: scale(1.05);
 
-  box-shadow: 0 6px 15px rgba(197,164,109,0.8);
+  box-shadow: 0 6px 15px rgba(255, 77, 175, 0.8);
 }
 
 
@@ -223,9 +187,9 @@ body {
 /* BOTÓN VOLVER */
 
 .boton-volver {
-  background: #364e63;
+  background: #593145;
 
-  color: #c5a46d;
+  color: #ff0884;
 
   border: none;
 
@@ -241,20 +205,20 @@ body {
 
   cursor: pointer;
 
-  box-shadow: 0 4px 15px rgba(54,78,99,0.6);
+  box-shadow: 0 4px 15px rgba(69, 20, 36, 0.6);
 
   transition: 0.3s ease;
 }
 
 
 .boton-volver:hover {
-  background: #c5a46d;
+  background: #ff8bd8;
 
-  color: #364e63;
+  color: #ffffff;
 
   transform: scale(1.06);
 
-  box-shadow: 0 6px 18px rgba(197,164,109,0.8);
+  box-shadow: 0 6px 18px rgba(124, 73, 105, 0.8);
 }
 
 

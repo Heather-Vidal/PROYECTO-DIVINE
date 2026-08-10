@@ -1,19 +1,93 @@
 <?php
+
+// ==========================================================
+// SESIÓN
+// ==========================================================
+
 session_start();
-if($_SESSION['nombre'] == null){
+
+
+// ==========================================================
+// VALIDAR QUE EL USUARIO ESTÉ LOGUEADO
+// ==========================================================
+
+if ($_SESSION['nombre'] == null) {
+
     header("Location: loginformcliente.php");
+
+    exit();
+
 }
+
+
+// ==========================================================
+// DATOS DEL USUARIO
+// ==========================================================
+
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
-$inicial = strtoupper(substr($nombreUsuario, 0, 1));
+
+$inicial = strtoupper(
+    substr($nombreUsuario, 0, 1)
+);
+
+
+// ==========================================================
+// VALIDACIÓN DE ROL
+// ==========================================================
+// ESTA ES LA VALIDACIÓN QUE TIENE LA VERSIÓN FUNCIONAL
+// CAFÉ.
+//
+// ==========================================================
+
+if (
+    !isset($_SESSION['rol'])
+    ||
+    $_SESSION['rol'] != "vendedor"
+) {
+
+    header(
+        "Location: ./SESIONES/loginformcliente.php"
+    );
+
+    exit();
+
+}
+
 ?>
+
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beauty Glow Executive Center</title>
-<link href="https://fonts.cdnfonts.com/css/bestigia" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Beauty Glow Executive Center
+</title>
+
+
+<!-- =====================================================
+     FUENTES
+     ===================================================== -->
+
+<link
+    href="https://fonts.cdnfonts.com/css/bestigia"
+    rel="stylesheet"
+>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+>
+
+
 <style>
 :root{
 --cream:#faf6f0;
@@ -634,105 +708,620 @@ grid-template-columns:1fr;
 }
 
 </style>
+
 </head>
+
+
 <body>
+
+
+<!-- =======================================================
+     SUBMENÚ FUNCIONAL DE LA VERSIÓN CAFÉ
+     ======================================================= -->
+
 <?php include 'submenu.php'; ?>
+
+
 <div class="container">
+
+
 <main class="bodycito">
-    <section class="bodycito_sec1">
+
+
+<section class="bodycito_sec1">
+
+
+<!-- =======================================================
+     HERO
+     ======================================================= -->
+
 <div class="hero">
-<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?> - <?php echo $_SESSION['celular']?></h1>  
-<p>Perfil personal -  DIVINE</p>
+
+
+    <h1 class="fuente">
+
+        Hola!!
+
+        <?php
+
+        echo htmlspecialchars(
+            $_SESSION['nombre']
+        );
+
+        ?>
+
+        -
+
+        <?php
+
+        echo htmlspecialchars(
+            $_SESSION['celular']
+        );
+
+        ?>
+
+    </h1>
+
+
+    <p>
+
+        Perfil personal - DIVINE
+
+    </p>
+
+
 </div>
+
+
+
+<!-- =======================================================
+     PARTE SUPERIOR
+     ======================================================= -->
+
 <div class="grid-top">
+
+
+<!-- =======================================================
+     PERFIL
+     ======================================================= -->
+
 <div class="profile-card">
+
+
 <div class="profile-header">
- <?php echo $inicial; ?>
-<img src="">
-<h2> <?php echo $_SESSION['nombre']?> </h2>
-<div class="badge">
- <?php echo $_SESSION['rol']?> - DIVINE
+
+
+    <div>
+
+        <?php
+
+        echo htmlspecialchars(
+            $inicial
+        );
+
+        ?>
+
+    </div>
+
+
+    <img
+        src="https://i.pravatar.cc/500?img=47"
+        alt="Perfil"
+    >
+
+
+    <h2>
+
+        <?php
+
+        echo htmlspecialchars(
+            $_SESSION['nombre']
+        );
+
+        ?>
+
+    </h2>
+
+
+    <div class="badge">
+
+        <?php
+
+        echo htmlspecialchars(
+            $_SESSION['rol']
+        );
+
+        ?>
+
+        - DIVINE
+
+    </div>
+
+
 </div>
-</div>
+
+
+<!-- =======================================================
+     ESTADO
+     ======================================================= -->
+
 <div class="quote">
-" <?php echo $_SESSION['estado']?>  "
+
+    "
+
+    <?php
+
+    echo htmlspecialchars(
+        $_SESSION['estado']
+    );
+
+    ?>
+
+    "
+
 </div>
-<p>CONTACTO: <?php echo $_SESSION['celular']?>  </p>
+
+
+<!-- =======================================================
+     CONTACTO
+     ======================================================= -->
+
+<p>
+
+    CONTACTO:
+
+    <?php
+
+    echo htmlspecialchars(
+        $_SESSION['celular']
+    );
+
+    ?>
+
+</p>
+
+
+<!-- =======================================================
+     PROGRESO
+     ======================================================= -->
+
 <div class="progress">
-<p>Desempeño General 97%</p>
-<div class="progress-bar">
-<div class="progress-fill"></div>
+
+
+    <p>
+
+        Desempeño General 97%
+
+    </p>
+
+
+    <div class="progress-bar">
+
+        <div class="progress-fill"></div>
+
+    </div>
+
+
 </div>
-</div>
+
+
+<!-- =======================================================
+     ESTADÍSTICAS
+     ======================================================= -->
+
 <div class="profile-stats">
-<a href="ventas.php" class="stat-card">
-<strong>356</strong>
-Ventas
-</a>
-<a href=" ./CRUD-CARRITO-PEDIDO/readtodopedido.php" class="stat-card">
-<strong>24</strong>
-Pedidos
-</a>
-<a href="stock.php" class="stat-card">
-<strong>98%</strong>
-Stock
-</a>
-</div>
-<div class="logout-box">
-    <a href="./SESIONES/logincerrarcliente.php" class="logout-btn">
-        Cerrar Sesión
+
+
+    <!-- ================================================
+         VENTAS
+         ================================================ -->
+
+    <a
+        href="./CRUD-ventas/readtodoventa.php"
+        class="stat-card"
+    >
+
+        <strong>
+
+            356
+
+        </strong>
+
+        Ventas
+
     </a>
-</div>
+
+
+    <!-- ================================================
+         PEDIDOS
+         ================================================ -->
+
+    <a
+        href="./CRUD-CARRITO-PEDIDO/readtodopedido.php"
+        class="stat-card"
+    >
+
+        <strong>
+
+            24
+
+        </strong>
+
+        Pedidos
+
+    </a>
+
+
+    <!-- ================================================
+         STOCK
+         ================================================ -->
+
+    <a
+        href="stock.php"
+        class="stat-card"
+    >
+
+        <strong>
+
+            98%
+
+        </strong>
+
+        Stock
+
+    </a>
+
 
 </div>
 
+
+<!-- =======================================================
+     CERRAR SESIÓN
+     ======================================================= -->
+
+<div class="logout-box">
+
+
+    <a
+        href="./SESIONES/logincerrarcliente.php"
+        class="logout-btn"
+    >
+
+        Cerrar Sesión
+
+    </a>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     BOTONES FUNCIONALES
+     ======================================================= -->
 
 <div class="metrics">
 
-<a href="./CRUD-producto/formularioprodu.php" class="metric button-card">
 
-<div class="registro">
+    <!-- =================================================
+         REGISTRAR PRODUCTO
+         ================================================= -->
 
-<img src="./imagenes/registro.svg">
+    <a
+        href="./CRUD-producto/formularioprodu.php"
+        class="metric button-card"
+    >
+
+
+        <div class="registro">
+
+
+            <img
+                src="./imagenes/registro.svg"
+                alt="Registrar producto"
+            >
+
+
+        </div>
+
+
+        <p>
+
+            Registrar producto
+
+        </p>
+
+
+    </a>
+
+
+
+    <!-- =================================================
+         ACTUALIZAR PEDIDO
+         ================================================= -->
+
+    <a
+        href="./CRUD-CARRITO-PEDIDO/readtodopedido.php"
+        class="metric button-card"
+    >
+
+
+        <div class="historial">
+
+
+            <img
+                src="./imagenes/pedido.svg"
+                alt="Actualizar pedido"
+            >
+
+
+        </div>
+
+
+        <p>
+
+            Actualizar pedido
+
+        </p>
+
+
+    </a>
+
+
+
+    <!-- =================================================
+         HISTORIAL
+         ================================================= -->
+
+    <a
+        href="satisfaccion.html"
+        class="metric button-card"
+    >
+
+
+        <div class="actualizar">
+
+
+            <img
+                src="./imagenes/historial2.svg"
+                alt="Historial"
+            >
+
+
+        </div>
+
+
+        <p>
+
+            Historial
+
+        </p>
+
+
+    </a>
+
 
 </div>
 
-<p>
-Registrar producto
-</p>
-
-</a>
-
-<a href="./CRUD-CARRITO-PEDIDO/readtodopedido.php" class="metric button-card">
-
-<div class="historial">
-
-<img src="./imagenes/pedido.svg">
-
-</div>
-<p>
-Actualizar pedido
-</p>
-
-</a>
-
-
-
-
-<a href="satisfaccion.html" class="metric button-card">
-
-<div class="actualizar">
-
-<img src="./imagenes/historial2.svg">
 
 </div>
 
-<p>
-Historial
-</p>
-</a>
+
+
+<!-- =======================================================
+     OBJETIVOS + LOGROS
+     ======================================================= -->
+
+<div class="grid-middle">
+
+
+<!-- =======================================================
+     OBJETIVO DEL MES
+     ======================================================= -->
+
+<div class="card">
+
+
+    <h3>
+
+        ╰┈➤ Objetivo del Mes
+
+    </h3>
+
+
+    <p>
+
+        Ventas alcanzadas
+
+    </p>
+
+
+    <h2>
+
+        8,000 bs / 10,000 bs
+
+    </h2>
+
+
+    <div class="goal-bar">
+
+
+        <div class="goal-fill"></div>
+
+
+    </div>
+
+
+    <p
+        style="
+            margin-top:15px;
+            font-weight:600;
+            color:var(--pink-dark);
+        "
+    >
+
+        80% completado
+
+    </p>
+
+
 </div>
+
+
+
+<!-- =======================================================
+     LOGROS
+     ======================================================= -->
+
+<div class="card">
+
+
+    <h3>
+
+        ♛ Logros Desbloqueados
+
+    </h3>
+
+
+    <div class="live-item">
+
+        ✔ 100 ventas completadas
+
+    </div>
+
+
+    <div class="live-item">
+
+        ✔ Inventario perfecto
+
+    </div>
+
+
+    <div class="live-item">
+
+        ✔ 50% pedidos realizados
+
+    </div>
+
+
+    <div class="live-item">
+
+        ✭ Próximo: 500 ventas mensuales
+
+    </div>
+
+
 </div>
- <?php include 'submenpiepag.php'; ?>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     RESUMEN DEL DÍA
+     ======================================================= -->
+
+<div class="ai-card">
+
+
+    <h2>
+
+        Resumen del Día
+
+    </h2>
+
+
+    <div class="ai-box">
+
+        ✿ 12 pedidos pendientes
+
+        <br>
+
+        ✿ 3 reseñas sin responder
+
+        <br>
+
+        ✿ 4 productos con stock bajo
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =======================================================
+     ÚLTIMOS MOVIMIENTOS
+     ======================================================= -->
+
+<div
+    class="card"
+    style="
+        margin-top:25px;
+        margin-bottom:25px;
+    "
+>
+
+
+    <h3>
+
+        Últimos Movimientos
+
+    </h3>
+
+
+    <div class="live-item">
+
+        Hace 2 min · María compró Glow Serum Premium
+
+    </div>
+
+
+    <div class="live-item">
+
+        Hace 5 min · Nuevo usuario registrado
+
+    </div>
+
+
+    <div class="live-item">
+
+        Hace 8 min · Pedido #458 entregado
+
+    </div>
+
+
+    <div class="live-item">
+
+        Hace 12 min · Nueva reseña de cliente
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+</div>
+
+
+<!-- =======================================================
+     SUBMENÚ INFERIOR FUNCIONAL
+     ======================================================= -->
+
+<?php include 'submenpiepag.php'; ?>
+
+
 </body>
+
 </html>

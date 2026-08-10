@@ -217,13 +217,17 @@ while($fila=$resultado->fetch_assoc()){
   echo "</div>";
   echo "</div>";
 }
+
+
+ 
 ?>
+
+
+
     </div>
   <div class="volver">
 
-  <a href="../admin.php">
-    ⬅ Volver al perfil
-  </a>
+ <a href="javascript:history.back()">← Volver atrás</a>
 
   <a href="formularioprodu.php">
     ＋ Registrar producto
@@ -231,15 +235,14 @@ while($fila=$resultado->fetch_assoc()){
 
 </div>
   </div>
+ 
+  
 </body>
 </html>
-
-
-
-
-
-
+ 
 <?php
 }
 $conn->close();
 ?>
+
+
