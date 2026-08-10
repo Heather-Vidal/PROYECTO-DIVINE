@@ -184,9 +184,6 @@ if($CI && $nombre && $direccion && $celular && $rol && $estado){
 
 
 
-
-
-
     if ($conn->query($sql) === TRUE){
         echo '<div class="mensaje exito">✔ USUARIO REGISTRADO CORRECTAMENTE</div>';
     } else {
