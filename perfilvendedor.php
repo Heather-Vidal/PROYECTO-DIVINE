@@ -476,7 +476,7 @@ pointer-events:none;
 
 <div class="profile-header">
 <?php echo $inicial; ?>
-<img src="https://i.pravatar.cc/500?img=47" alt="Perfil">
+<img src="vende.jpeg" alt="Perfil">
 
 <h2> <?php echo $_SESSION['nombre']?> </h2>
 
