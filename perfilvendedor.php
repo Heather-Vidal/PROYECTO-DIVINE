@@ -620,9 +620,6 @@ Hace 12 min · Nueva reseña de cliente
     </section>
 </main>
 </div>
-
-</body>
-</html>
 <?php include 'submenpiepag.php'; ?>
 
 
