@@ -18,110 +18,151 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 <style>
   body {
-    font-family: "Playfair Display", serif;
-    background-color: #f5e9d8;
+    font-family: 'Poppins', sans-serif;
+    background: #e9e5dd;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    color: #2b2b2b;
+    padding: 40px 0;
+    color: #63364b;
+
+    background-image: url('../imagenes/fondote.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
   .contenedor {
-    background: #e9e5dd;
+    background: rgba(255, 212, 234, 0.92);
     padding: 40px;
-    border-radius: 25px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     width: 90%;
     max-width: 700px;
+
     display: grid;
     grid-template-columns: 1fr;
     grid-template-areas:
       "encabezado"
       "contenido"
       "botones";
+
     gap: 30px;
     text-align: center;
   }
 
   .encabezado {
     grid-area: encabezado;
+    font-family: "Playfair Display", serif;
     font-size: 36px;
     font-weight: 700;
-    color: #364e63;
+    color: #8b4f6b;
     letter-spacing: 2px;
     text-transform: uppercase;
-    border-bottom: 3px solid #c5a46d;
+
+    border-bottom: 3px solid #fc63af;
     padding-bottom: 10px;
+
+    width: fit-content;
+    margin: 0 auto;
   }
 
   .contenido {
     grid-area: contenido;
-    background: #f5e9d8;
-    border-radius: 20px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 15px;
     padding: 30px 25px;
-    box-shadow: 0 4px 10px rgba(54, 78, 99, 0.2);
-    font-size: 18px;
-    color: #2b2b2b;
+
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #63364b;
   }
 
   .mensaje {
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 20px;
     font-weight: 600;
     margin-bottom: 15px;
+
+    font-family: 'Poppins', sans-serif;
   }
 
   .exito {
-    background-color: #c5a46d;
-    color: white;
-    box-shadow: 0 4px 12px rgba(197, 164, 109, 0.7);
+    background-color: #c56d99;
+    color: #ffffff;
+    box-shadow: 0 5px 12px rgba(197, 109, 153, 0.45);
   }
 
   .error {
-    background-color: #b53737;
-    color: white;
-    box-shadow: 0 4px 12px rgba(181, 55, 55, 0.7);
+    background-color: #8b4f6b;
+    color: #ffffff;
+    box-shadow: 0 5px 12px rgba(139, 79, 107, 0.45);
   }
 
   .botones {
     grid-area: botones;
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 20px;
   }
 
   .boton {
     text-decoration: none;
-    background: #364e63;
-    color: #c5a46d;
-    padding: 14px 38px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 17px;
-    box-shadow: 0 4px 15px rgba(54, 78, 99, 0.6);
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.25s ease;
+
+    background: #63364b;
+    color: #ffffff;
+
+    padding: 14px 30px;
+    border-radius: 10px;
+
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.25);
+
+    transition: 0.3s;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
   .boton:hover {
-    background-color: #c5a46d;
-    color: #364e63;
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(197, 164, 109, 0.9);
+    background-color: #c56d99;
+    color: #ffffff;
+
+    transform: scale(1.03);
+
+    box-shadow: 0 6px 15px rgba(197, 109, 153, 0.5);
   }
 
   @media (max-width: 600px) {
+
     .contenedor {
       padding: 25px;
+      width: 80%;
     }
+
+    .encabezado {
+      font-size: 30px;
+    }
+
     .botones {
       flex-direction: column;
       gap: 15px;
     }
+
+    .boton {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
   }
 </style>
 </head>
