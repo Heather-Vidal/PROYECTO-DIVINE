@@ -12,14 +12,13 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Guardar Producto - DIVINE</title>
-
 <!-- Tipografía -->
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
   body {
     font-family: "Playfair Display", serif;
-    background-color: #f5e9d8;
+    background-color: #eed5ec;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,7 +48,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
     grid-area: encabezado;
     font-size: 36px;
     font-weight: 700;
-    color: #364e63;
+    color: #493148;
     letter-spacing: 2px;
     text-transform: uppercase;
     border-bottom: 3px solid #c5a46d;
@@ -149,8 +148,6 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
        VALUES('$nombre', '$descripcion','$precio','$costo','$stock','$codigo')";
 
 
-
-
    //Define a que carpeta irá el archivo
     $target_dir = "../PRODUCTO-img/";
     //recuperar el tipo de archivo (extension)
@@ -187,21 +184,6 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
         }
     }
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       if ($conn->query($sql) === TRUE) {
           echo '<div class="mensaje exito"> ✔ PRODUCTO GUARDADO EXITOSAMENTE</div>';
       } else {
