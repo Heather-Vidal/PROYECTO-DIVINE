@@ -476,7 +476,7 @@ pointer-events:none;
 
 <div class="profile-header">
 <?php echo $inicial; ?>
-<img src="../imagenes/vendee.png" alt="Perfil">
+<img src="./imagenes/vendee.png" alt="Perfil">
 
 <h2> <?php echo $_SESSION['nombre']?> </h2>
 
