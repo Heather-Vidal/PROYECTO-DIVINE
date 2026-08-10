@@ -68,12 +68,9 @@ body {
 
 .imagen {
   grid-area: imagen;
-
-  background: url("https://i.pinimg.com/1200x/8a/80/67/8a80676d930e8249245bebd93d768ea1.jpg")
+  background: url("../imagenes/pelito.jpg")
   center center / cover no-repeat;
-
   border-radius: 20px;
-
   min-height: 400px;
 }
 
@@ -82,25 +79,15 @@ body {
 
 .titulo {
   grid-area: titulo;
-
   text-align: left;
-
-  color: #ff5c84;
-
+  color: #ff50a5;
   font-size: 32px;
-
   font-weight: 700;
-
   letter-spacing: 1px;
-
   margin: 0;
-
   align-self: end;
-
   border-bottom: 3px solid #cc438a;
-
   padding-bottom: 6px;
-
   width: fit-content;
 }
 
@@ -121,37 +108,29 @@ body {
 /* TARJETA DE CLIENTE */
 
 .item {
-  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
-
+  background: #3f1d23;
   padding: 20px;
-
   border-radius: 20px;
-
-  box-shadow: 0 4px 10px rgba(255, 0, 128, 0.44);
-
+  box-shadow: 0 4px 10px rgba(96, 31, 31, 0.44);
   transition: 0.3s ease;
 }
 
 
 .item:hover {
-  background: #ec9aca;
-
+  background: #f1dee9;
   transform: translateY(-5px);
 }
 
 
 .item p {
   margin: 6px 0;
-
   color: #ff4f92;
-
   font-size: 16px;
 }
 
 
 .item span {
   font-weight: bold;
-
   color: #ff48a3;
 }
 
@@ -160,9 +139,7 @@ body {
 
 .botones {
   margin-top: 15px;
-
   display: flex;
-
   gap: 10px;
   flex-wrap: wrap;
 }
@@ -170,37 +147,25 @@ body {
 
 .boton {
   background: #e873a0;
-
   color: #ffffff;
-
   border: none;
-
   border-radius: 25px;
-
   padding: 10px 22px;
-
   cursor: pointer;
-
   font-family: 'Playfair Display', serif;
-
   font-weight: 600;
-
   font-size: 15px;
-
   text-decoration: none;
-
   display: inline-block;
-
   transition: 0.3s ease;
-
-  box-shadow: 0 3px 8px rgba(255, 1, 166, 0.3);
+   box-shadow: 0 3px 8px rgba(255, 1, 166, 0.3);
 }
 
 
 .boton:hover {
   background: #ed1da0;
 
-  color: #db0099;
+  color: #fcfcfc;
 
   transform: scale(1.05);
 
@@ -222,9 +187,9 @@ body {
 /* BOTÓN VOLVER */
 
 .boton-volver {
-  background: #fa8bc2;
+  background: #593145;
 
-  color: #f8f4f6;
+  color: #ff0884;
 
   border: none;
 
@@ -240,20 +205,20 @@ body {
 
   cursor: pointer;
 
-  box-shadow: 0 4px 15px rgba(255, 55, 152, 0.6);
+  box-shadow: 0 4px 15px rgba(69, 20, 36, 0.6);
 
   transition: 0.3s ease;
 }
 
 
 .boton-volver:hover {
-  background: #e629a7;
+  background: #ff8bd8;
 
   color: #ffffff;
 
   transform: scale(1.06);
 
-  box-shadow: 0 6px 18px rgba(244, 0, 150, 0.8);
+  box-shadow: 0 6px 18px rgba(124, 73, 105, 0.8);
 }
 
 
