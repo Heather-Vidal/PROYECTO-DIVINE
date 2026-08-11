@@ -242,14 +242,16 @@ flex-direction:column;
 
 <div class="botones-extra">
 
+ 
+
 <button
 type="button"
+on
 class="btn-crear"
- click="window.location.href='../totu.php'">
+onclick="window.location.href='../totu.php'">
 
 ⬅ Volver a Inicio
 </button>
-
 <button
 type="button"
 on

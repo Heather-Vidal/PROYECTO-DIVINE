@@ -185,18 +185,10 @@ input[type="submit"]:hover {
  <label for="celular"> Teléfono: </label>
     <input type="number" name="celular"  >
  
+  <input type="hidden" name="rol" value="vendedor">
 
-    <label for="rol"> Rol: </label>
-<select name="rol"  >
-  <option value="">Seleccione un rol</option>
-  <option value="cliente">cliente</option>
-  <option value="vendedor">vendedor</option>
-  <option value="administrador">administrador</option>
-</select>
- 
+ <input type="hidden" name="estado" value="ACTIVO">
 
-    <label for="estado"> Estado: </label>
-    <input type="text" name="estado"  >
   </div>
 
   <input type="submit" value="Registrar">
