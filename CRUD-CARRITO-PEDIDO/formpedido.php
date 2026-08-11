@@ -204,12 +204,7 @@ input[type="submit"]:hover{
         value="Pendiente"
     >
 
-    <label>Teléfono:</label>
-    <input
-        type="number"
-        name="telefono"
-        required
-    >
+        <input type="hidden" name="estado" value="Pendiente">
 
     <label>Dirección:</label>
     <input
