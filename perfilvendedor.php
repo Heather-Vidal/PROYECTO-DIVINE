@@ -531,43 +531,6 @@ Stock
 </div>
 <p>Historial</p>
 </a>
-
-</div>
-
-</div>
-
-<div class="grid-middle">
-
-<div class="card">
-<h3>╰┈➤ Objetivo del Mes</h3>
-<p>Ventas alcanzadas</p>
-<h2>8,000 bs / 10,000 bs</h2>
-
-<div class="goal-bar">
-<div class="goal-fill"></div>
-</div>
-
-<p style="margin-top:15px; font-weight:600; color:var(--pink-dark);">
-80% completado
-</p>
-</div>
-
-<div class="card">
-<h3>♛ Logros Desbloqueados</h3>
-
-<div class="live-item">
-✔ 100 ventas completadas
-</div>
-
-<div class="live-item">
-✔ Inventario perfecto
-</div>
-<div class="live-item">
-✔ 50% pedidos realizados
-</div>
-<div class="live-item">
-✭ Próximo: 500 ventas mensuales
-</div>
 </div>
 </div>
 <div class="ai-card">
