@@ -53,7 +53,7 @@ body {
 
 .imagen {
   grid-area: imagen;
-  background: url("../imagenes/aceitecapilar.jpg") center center / cover no-repeat;
+  background: url("../imagenes/coqui.png") center center / cover no-repeat;
   border-radius: 20px;
   min-height: 400px;
   box-shadow: inset 0 0 0 1px rgba(226, 194, 201, 0.4);
