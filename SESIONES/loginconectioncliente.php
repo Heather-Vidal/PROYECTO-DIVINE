@@ -32,10 +32,7 @@ if($fila['estado'] == "BLOQUEADO"){
     session_destroy();
 
     echo "
-    <h2 style='color:red;text-align:center;margin-top:50px;'>
-        Tu cuenta se encuentra bloqueada.
-    </h2>
-
+    
             <style>
 
                 /* AQUÍ VA EL ESTILO DE CUENTA BLOQUEADA */
