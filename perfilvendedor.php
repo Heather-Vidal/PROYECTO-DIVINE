@@ -1,38 +1,24 @@
 <?php
-
 session_start();
-
-
 if ($_SESSION['nombre'] == null) {
-
     header("Location: loginformcliente.php");
-
     exit();
-
 }
-
-
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 
 $inicial = strtoupper(
     substr($nombreUsuario, 0, 1)
 );
-
-
 if (
     !isset($_SESSION['rol'])
     ||
     $_SESSION['rol'] != "vendedor"
 ) {
-
     header(
         "Location: ./SESIONES/loginformcliente.php"
     );
-
     exit();
-
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -576,18 +562,14 @@ Stock
 <div class="live-item">
 ✔ Inventario perfecto
 </div>
-
 <div class="live-item">
 ✔ 50% pedidos realizados
 </div>
-
 <div class="live-item">
 ✭ Próximo: 500 ventas mensuales
 </div>
 </div>
-
 </div>
-
 <div class="ai-card">
 <h2>Resumen del Día</h2>
 <div class="ai-box">
@@ -596,33 +578,24 @@ Stock
 ✿ 4 productos con stock bajo<br>
 </div>
 </div>
-
 <div class="card" style="margin-top:25px; margin-bottom:25px;">
 <h3>Últimos Movimientos</h3>
-
 <div class="live-item">
 Hace 2 min · María compró Glow Serum Premium
 </div>
-
 <div class="live-item">
 Hace 5 min · Nuevo usuario registrado
 </div>
-
 <div class="live-item">
 Hace 8 min · Pedido #458 entregado
 </div>
-
 <div class="live-item">
 Hace 12 min · Nueva reseña de cliente
 </div>
 </div>
-
     </section>
 </main>
 </div>
 <?php include 'submenpiepag.php'; ?>
-
-
 </body>
-
 </html>
