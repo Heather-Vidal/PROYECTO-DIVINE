@@ -1,18 +1,25 @@
 <?php
 session_start();
-if($_SESSION['nombre'] == null){
+if ($_SESSION['nombre'] == null) {
     header("Location: loginformcliente.php");
+    exit();
 }
-
-
-
- 
- 
-
 $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
-$inicial = strtoupper(substr($nombreUsuario, 0, 1));
-?>
 
+$inicial = strtoupper(
+    substr($nombreUsuario, 0, 1)
+);
+if (
+    !isset($_SESSION['rol'])
+    ||
+    $_SESSION['rol'] != "vendedor"
+) {
+    header(
+        "Location: ./SESIONES/loginformcliente.php"
+    );
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -27,40 +34,34 @@ $inicial = strtoupper(substr($nombreUsuario, 0, 1));
 <style>
 
 :root{
---cream:#faf6f0;
---ivory:#fffaf3;
---champagne:#d8c3a5;
---gold:#b89968;
---coffee:#6d5745;
---soft:#f4e8d8;
---shadow:0 15px 35px rgba(90,60,30,.18);
+--pink-soft: #fdf0f4;
+--pink-light: #fbe3eb;
+--pink-medium: #f2a6bf;
+--pink-accent: #e06d92;
+--pink-dark: #8c3b58;
+--rose-gold: #d4989d;
+--berry: #5c1d33;
+--white: #ffffff;
+--shadow: 0 12px 30px rgba(180, 100, 130, 0.12);
 }
 
 *{
-
 margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:'Poppins',sans-serif;
-
 }
+
 .fuente {
-        font-family: 'Bestigia', sans-serif;                                     
-  font-weight: 400px;
+  font-family: 'Bestigia', sans-serif;                                     
+  font-weight: 400;
   font-style: normal;
 }
 
 body{
-background:
-linear-gradient(
-135deg,
-#f3e3d0,
-#fff9ef,
-#e8d1b3
-
-);
+background: linear-gradient(135deg, #fdf0f4 0%, #fae1ea 50%, #f7d5e1 100%);
 min-height:100vh;
-color:var(--coffee);
+color:var(--berry);
 }
 
 .container{
@@ -70,26 +71,25 @@ margin:auto;
 }
 
 .hero{
-background:
-linear-gradient(
-135deg,
-#fffaf3,
-#efd8b8
-);
-
+background: linear-gradient(135deg, #e06d92 0%, #be4b73 100%);
 border-radius:35px;
 padding:35px;
-box-shadow:var(--shadow);
+box-shadow: 0 15px 35px rgba(188, 75, 115, 0.25);
 margin-bottom:25px;
 text-align:center;
+color: var(--white);
 }
 
 .hero h1{
 font-size:42px;
-color:#63452c;
+color: var(--white);
+text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+
 .hero p{
-color:#8b6848;
+color: #fce7ef;
+font-weight: 500;
+margin-top: 5px;
 }
 
 .grid-top{
@@ -103,24 +103,16 @@ margin-bottom:25px;
 .ai-card,
 .card,
 .metric{
-
-
-background:
-linear-gradient(
-145deg,
-#fffaf3,
-#ead5b8
-);
-border:1px solid #d4b37d;
-border:1px solid #b9b8b9;
-box-shadow:var(--shadow);
+background: linear-gradient(145deg, #ffffff 0%, #fdf3f6 100%);
+border: 1px solid #f3c2d4;
+box-shadow: var(--shadow);
 }
 
 .profile-card{
 border-radius:30px;
 padding:30px;
-
 }
+
 .profile-header{
 text-align:center;
 }
@@ -130,42 +122,55 @@ width:170px;
 height:170px;
 border-radius:50%;
 object-fit:cover;
-border:6px solid #c9a267;
-border:6px solid #d6b6d2;
+border: 5px solid #f2a6bf;
+box-shadow: 0 8px 20px rgba(224, 109, 146, 0.25);
 }
 
 .profile-header h2{
 margin-top:15px;
+color: var(--berry);
 }
 
 .badge{
 display:inline-block;
 margin-top:10px;
-padding:8px 16px;
-background:#dfc39a;
+padding:8px 18px;
+background: #fbe3eb;
+border: 1px solid #f2a6bf;
 border-radius:25px;
 font-size:13px;
 font-weight:600;
-color:#5d422b;
+color: var(--pink-dark);
 }
 
 .quote{
 margin-top:20px;
 padding:15px;
-background:#f7ead8;
-border-radius:15px;
+background: #fdf0f4;
+border-left: 4px solid var(--pink-accent);
+border-radius:12px;
 font-style:italic;
+color: var(--pink-dark);
+}
+
+.profile-card p {
+margin-top: 15px;
+font-weight: 500;
+color: var(--berry);
 }
 
 .progress{
 margin-top:20px;
-
 }
 
+.progress p {
+font-size: 14px;
+margin-bottom: 6px;
+}
 
 .progress-bar{
 height:12px;
-background:#dec7a7;
+background:#f7d5e1;
 border-radius:20px;
 overflow:hidden;
 }
@@ -173,17 +178,8 @@ overflow:hidden;
 .progress-fill{
 height:100%;
 width:98%;
-background:
-linear-gradient(
-90deg,
-#c69b5d,
-#98703d
-#94835f,
-#c695cc
-);
+background: linear-gradient(90deg, #f2a6bf 0%, #e06d92 100%);
 }
-
-
 
 .profile-stats{
 display:grid;
@@ -192,14 +188,23 @@ gap:10px;
 margin-top:20px;
 }
 
-
-
-
-.profile-stats div{
-background:#f8ead8;
+.profile-stats a{
+background:#fce8f0;
 padding:15px;
-border-radius:15px;
+border-radius:18px;
 text-align:center;
+text-decoration:none;
+color:var(--berry);
+display:block;
+border: 1px solid #f7d5e1;
+transition:.3s;
+}
+
+.profile-stats a:hover{
+transform:translateY(-5px);
+background: #f2a6bf;
+color: var(--white);
+box-shadow: 0 8px 20px rgba(224, 109, 146, 0.3);
 }
 
 .profile-stats strong{
@@ -212,27 +217,20 @@ border-radius:30px;
 padding:30px;
 }
 
-
 .ai-card h2{
 margin-bottom:20px;
-color:#65452c;
+color:var(--berry);
 }
 
 .ai-box{
-background:#f8ead8;
+background:#fdf0f4;
+border: 1px solid #f7d5e1;
 padding:25px;
 border-radius:20px;
 line-height:2;
+color: var(--pink-dark);
+font-weight: 500;
 }
-
-.ai-recommendation{
-margin-top:20px;
-padding:20px;
-background:#fff0dc;
-border-left:5px solid var(--gold);
-border-radius:15px;
-}
-
 
 .grid-middle{
 display:grid;
@@ -246,151 +244,50 @@ border-radius:30px;
 padding:25px;
 }
 
-
 .card h3{
-color:#65452c;
+color:var(--berry);
+margin-bottom: 12px;
 }
 
+.card h2 {
+color: var(--pink-dark);
+margin: 8px 0;
+}
 
 .goal-bar{
 height:18px;
-background:#dec7a7;
+background:#f7d5e1;
 border-radius:20px;
 overflow:hidden;
+margin-top: 10px;
 }
-
 
 .goal-fill{
 height:100%;
 width:80%;
-background:
-linear-gradient(
-90deg,
-#c69b5d,
-#98703d
-#c27fc2,
-#c695cc
-);
-
-
+background: linear-gradient(90deg, #f2a6bf, #be4b73);
 }
 
 .live-item{
-padding:12px;
+padding:12px 16px;
 margin-bottom:10px;
-background:#f8ead8;
-border-radius:12px;
-
+background:#fdf0f4;
+border: 1px solid #fae1ea;
+border-radius:14px;
+color: var(--pink-dark);
+font-size: 14.5px;
 }
 
-/* BOTONES */
+/* BOTONES METRICAS */
 
 .metrics{
-
 display:grid;
-
 grid-template-columns:1fr 1fr;
-
-gap:12px; /* antes 20 */
-
+column-gap:12px;
+row-gap:6px;
 width:100%;
-
-margin-bottom:18px;
-
-align-items:start;
-
-}
-
-
-
-/* cajas un poco menos rectangulares */
-
-.button-card{
-
-height:175px; /* antes 205 */
-
-min-width:0;
-
-padding:18px;
-
-}
-
-
-
-/* historial abajo centrado pero más cerca */
-
-.metrics{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-column-gap:12px; /* espacio horizontal */
-
-row-gap:6px; /* espacio vertical ↓↓↓ */
-
-width:100%;
-
 margin-bottom:15px;
-
 align-items:start;
-
-}
-
-
-
-/* cajas menos largas */
-
-.button-card{
-
-height:170px;
-
-padding:15px;
-
-min-width:0;
-
-}
-
-
-
-/* HISTORIAL */
-
-.metrics a:nth-child(3){
-
-grid-column:1 / 3;
-
-width:42%;
-
-justify-self:center;
-
-/* acercarlo a las de arriba */
-margin-top:-50px;
-
-}
-
-
-
-/* cajas más largas */
-.button-card{
-
-height:205px;
-
-min-width:300px;
-
-}
-
-
-
-/* HISTORIAL ABAJO CENTRADO */
-
-.metrics a:nth-child(3){
-
-grid-column:1 / 3;
-
-width:52%;
-
-justify-self:center;
-
 }
 
 .button-card{
@@ -407,8 +304,14 @@ transition:.3s;
 
 .button-card:hover{
 transform:translateY(-8px);
-box-shadow:
-0 20px 45px rgba(90,60,30,.28);
+box-shadow: 0 15px 30px rgba(188, 75, 115, 0.2);
+border-color: var(--pink-accent);
+}
+
+.metrics a:nth-child(3){
+grid-column:1 / 3;
+width:52%;
+justify-self:center;
 }
 
 .metric{
@@ -416,272 +319,126 @@ padding:20px;
 text-align:center;
 }
 
- 
 /* IMAGENES DE BOTONES */
 
 .registro,
 .historial,
 .actualizar{
-
-width:100px;
-height:100px;
-
+width:90px;
+height:90px;
 display:flex;
 justify-content:center;
 align-items:center;
-
 margin:auto;
-
+background: #fbe3eb;
+border-radius: 50%;
+padding: 15px;
+transition: .3s;
 }
 
 .registro img,
 .historial img,
 .actualizar img{
-
 width:100%;
 height:100%;
-
 object-fit:contain;
-
-/* si quieres redondas cambia 18px por 50% */
-border-radius:18px;
-
 transition:.3s;
+}
 
+.button-card:hover .registro,
+.button-card:hover .historial,
+.button-card:hover .actualizar {
+background: var(--pink-accent);
 }
 
 .button-card:hover img{
-
-transform:scale(1.08);
-
+transform:scale(1.1);
+filter: brightness(0) invert(1);
 }
+
 .metric p{
 margin-top:12px;
 font-weight:700;
-color:#65452c;
-
+color:var(--berry);
 }
 
-.profile-stats a{
-background:#f8ead8;
-padding:15px;
-border-radius:15px;
-text-align:center;
-text-decoration:none;
-color:inherit;
-display:block;
-transition:.3s;
-}
-
-.profile-stats a:hover{
-transform:translateY(-6px);
-box-shadow:0 15px 30px rgba(90,60,30,.25);
-}
-
-.profile-stats strong{
-font-size:24px;
-display:block;
-}
-
-@media(max-width:1000px){
-
-.grid-top{
-grid-template-columns:1fr;
-}
-
-.grid-middle{
-grid-template-columns:1fr;
-}
-
-.metrics{
-grid-template-columns:1fr;
-}
-}
 .logout-box{
-    margin-top:20px;
-    text-align:center;
+margin-top:20px;
+text-align:center;
 }
 
 .logout-btn{
-    display:block;
-    width:100%;
-    padding:14px;
-
-    background:linear-gradient(
-        135deg,
-        #b89968,
-        #8b6848
-    );
-
-    color:white;
-    text-decoration:none;
-    font-weight:600;
-
-    border-radius:15px;
-
-    transition:.3s;
-    box-shadow:0 8px 20px rgba(90,60,30,.20);
+display:block;
+width:100%;
+padding:14px;
+background:linear-gradient(135deg, #e06d92, #be4b73);
+color:white;
+text-decoration:none;
+font-weight:600;
+border-radius:18px;
+transition:.3s;
+box-shadow:0 8px 20px rgba(190, 75, 115, 0.25);
 }
 
 .logout-btn:hover{
-    transform:translateY(-3px);
-
-    background:linear-gradient(
-        135deg,
-        #c9a267,
-        #9c7343
-    );
-
-    box-shadow:0 12px 25px rgba(90,60,30,.30);
+transform:translateY(-3px);
+background:linear-gradient(135deg, #be4b73, #8c3b58);
+box-shadow:0 12px 25px rgba(140, 59, 88, 0.35);
 }
- 
- 
-@media (max-width:1024px){
 
-    .container{
-        padding:20px;
-    }
-
-    .grid-top{
-        grid-template-columns:1fr;
-    }
-
-    .grid-middle{
-        grid-template-columns:1fr;
-    }
-
-    .profile-card{
-        max-width:600px;
-        margin:auto;
-    }
-
-    .hero h1{
-        font-size:34px;
-    }
-
-    .metrics{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .button-card{
-        min-width:auto;
-        height:180px;
-    }
-
-}
- @media (max-width:768px){
-
-    .container{
-        padding:15px;
-    }
-
-    .hero{
-        padding:25px 15px;
-    }
-
-    .hero h1{
-        font-size:28px;
-    }
-
-    .hero p{
-        font-size:14px;
-    }
-
-    /* FOTO UN POCO MÁS GRANDE */
-    .profile-header img{
-        width:140px;
-        height:140px;
-    }
-
-    /*  PERFIL MÁS ANCHO EN CELULAR */
-    .profile-card{
-        width:95%;
-        max-width:100%;
-        padding:30px 20px;
-        margin:0 auto;
-        border-radius:20px;
-    }
-
-    .profile-header{
-        padding:0 10px;
-    }
-
-    .profile-stats{
-        grid-template-columns:1fr;
-    }
-
-    .metrics{
-        grid-template-columns:1fr;
-    }
-
-    .metrics a:nth-child(3){
-        width:100%;
-        margin-top:0;
-    }
-
-    .button-card{
-        width:100%;
-        min-width:0;
-        height:170px;
-    }
-
-    .registro,
-    .historial,
-    .actualizar{
-        width:80px;
-        height:80px;
-    }
-
-    .card,
-    .ai-card{
-        padding:20px;
-    }
-
-    .logout-btn{
-        padding:12px;
-        font-size:14px;
-    }
-
-}
 .profile-card{
-    position:relative;
-    overflow:hidden;
+position:relative;
+overflow:hidden;
 }
 
 /* Efecto brillo elegante */
 .profile-card::before{
-    content:'';
-    position:absolute;
-
-    top:0;
-    left:-180%;
-
-    width:70%;
-    height:100%;
-
-    background:linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,.45),
-        transparent
-    );
-
-    transform:skewX(-25deg);
-
-    animation:shineCard 6s infinite;
-    pointer-events:none;
+content:'';
+position:absolute;
+top:0;
+left:-180%;
+width:70%;
+height:100%;
+background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+);
+transform:skewX(-25deg);
+animation:shineCard 6s infinite;
+pointer-events:none;
 }
 
 @keyframes shineCard{
+0%{ left:-180%; }
+100%{ left:220%; }
+}
 
-    0%{
-        left:-180%;
-    }
+/* RESPONSIVE */
 
-    100%{
-        left:220%;
-    }
+@media(max-width:1024px){
+.container{ padding:20px; }
+.grid-top, .grid-middle{ grid-template-columns:1fr; }
+.profile-card{ max-width:600px; margin:auto; }
+.hero h1{ font-size:34px; }
+.metrics{ grid-template-columns:1fr 1fr; }
+.button-card{ min-width:auto; height:180px; }
+}
 
+@media (max-width:768px){
+.container{ padding:15px; }
+.hero{ padding:25px 15px; }
+.hero h1{ font-size:28px; }
+.hero p{ font-size:14px; }
+.profile-header img{ width:140px; height:140px; }
+.profile-card{ width:100%; padding:30px 20px; border-radius:20px; }
+.profile-stats{ grid-template-columns:1fr; }
+.metrics{ grid-template-columns:1fr; }
+.metrics a:nth-child(3){ width:100%; margin-top:0; }
+.button-card{ width:100%; height:170px; }
+.registro, .historial, .actualizar{ width:75px; height:75px; }
+.card, .ai-card{ padding:20px; }
 }
 
 </style>
@@ -691,83 +448,43 @@ grid-template-columns:1fr;
 <?php include 'submenu.php'; ?>
 <div class="container">
 <main class="bodycito">
- 
+
     <section class="bodycito_sec1">
 
-
-
 <div class="hero">
-
-<h1  class="fuente">Hola!! <?php echo $_SESSION['nombre']?> - <?php echo $_SESSION['celular']?></h1>  
-
-
-<p>Perfil personal -  DIVINE</p>
-
+<h1 class="fuente">Bienvenido <?php echo $_SESSION['nombre']?> - <?php echo $_SESSION['celular']?></h1>  
+<p>Perfil personal - DIVINE</p>
 </div>
-
-
- 
-
 
 <div class="grid-top">
 
-
-
 <div class="profile-card">
 
-
 <div class="profile-header">
- <?php echo $inicial; ?>
-
-<img src="https://i.pravatar.cc/500?img=47">
-
-
+<?php echo $inicial; ?>
+<img src="./imagenes/vendee.png" alt="Perfil">
 
 <h2> <?php echo $_SESSION['nombre']?> </h2>
-
 
 <div class="badge">
  <?php echo $_SESSION['rol']?> - DIVINE
 </div>
-
-
 </div>
-
-
-
 
 <div class="quote">
-
-" <?php echo $_SESSION['estado']?>  "
-
+" <?php echo $_SESSION['estado']?> "
 </div>
 
-<p>CONTACTO: <?php echo $_SESSION['celular']?>  </p>
-
-
+<p>CONTACTO: <?php echo $_SESSION['celular']?> </p>
 
 <div class="progress">
-
-
 <p>Desempeño General 97%</p>
-
-
 <div class="progress-bar">
-
 <div class="progress-fill"></div>
-
 </div>
-
-
 </div>
-
-
-
-
-
 
 <div class="profile-stats">
-
 <a href="ventas.php" class="stat-card">
 <strong>356</strong>
 Ventas
@@ -782,7 +499,6 @@ Pedidos
 <strong>98%</strong>
 Stock
 </a>
-
 </div>
 
 <div class="logout-box">
@@ -793,52 +509,29 @@ Stock
 
 </div>
 
-
 <div class="metrics">
 
 <a href="./CRUD-producto/formularioprodu.php" class="metric button-card">
-
 <div class="registro">
-
-<img src="./imagenes/registro.svg">
-
+<img src="./imagenes/registro.svg" alt="Registrar">
 </div>
-
-<p>
-Registrar producto
-</p>
-
+<p>Registrar producto</p>
 </a>
 
 <a href="./CRUD-CARRITO-PEDIDO/readtodopedido.php" class="metric button-card">
-
 <div class="historial">
-
-<img src="./imagenes/pedido.svg">
-
+<img src="./imagenes/pedido.svg" alt="Pedido">
 </div>
-<p>
-Actualizar pedido
-</p>
-
+<p>Actualizar pedido</p>
 </a>
-
-
-
 
 <a href="satisfaccion.html" class="metric button-card">
-
 <div class="actualizar">
-
-<img src="./imagenes/historial2.svg">
-
+<img src="./imagenes/historial2.svg" alt="Historial">
 </div>
-
-<p>
-Historial
-</p>
-
+<p>Historial</p>
 </a>
+
 </div>
 
 </div>
@@ -846,129 +539,63 @@ Historial
 <div class="grid-middle">
 
 <div class="card">
-
-
 <h3>╰┈➤ Objetivo del Mes</h3>
-
-
 <p>Ventas alcanzadas</p>
-
-
 <h2>8,000 bs / 10,000 bs</h2>
 
-
-
 <div class="goal-bar">
-
 <div class="goal-fill"></div>
-
 </div>
 
-<p style="margin-top:15px;">
-
+<p style="margin-top:15px; font-weight:600; color:var(--pink-dark);">
 80% completado
-
 </p>
-
-
-
 </div>
-
 
 <div class="card">
-
-
 <h3>♛ Logros Desbloqueados</h3>
 
-
-
 <div class="live-item">
-
 ✔ 100 ventas completadas
-
 </div>
 
 <div class="live-item">
-
 ✔ Inventario perfecto
-
 </div>
-
 <div class="live-item">
-
 ✔ 50% pedidos realizados
-
 </div>
-
 <div class="live-item">
-
-✭Próximo: 500 ventas mensuales
-
-</div>
-
+✭ Próximo: 500 ventas mensuales
 </div>
 </div>
-
+</div>
 <div class="ai-card">
-
 <h2>Resumen del Día</h2>
 <div class="ai-box">
-    
 ✿ 12 pedidos pendientes<br>
-
 ✿ 3 reseñas sin responder<br>
-
 ✿ 4 productos con stock bajo<br>
-
- 
-
 </div>
-
-
-
-
 </div>
-
-<div class="card" style="margin-bottom:25px;">
-
-
-
-<h3>Ultimos Movimientos</h3>
-
-
-
+<div class="card" style="margin-top:25px; margin-bottom:25px;">
+<h3>Últimos Movimientos</h3>
 <div class="live-item">
-
 Hace 2 min · María compró Glow Serum Premium
-
 </div>
-
-
-
 <div class="live-item">
-
 Hace 5 min · Nuevo usuario registrado
-
 </div>
-
-
-
 <div class="live-item">
-
 Hace 8 min · Pedido #458 entregado
-
 </div>
-
-
-
 <div class="live-item">
-
 Hace 12 min · Nueva reseña de cliente
-
 </div>
 </div>
-
+    </section>
+</main>
 </div>
- <?php include 'submenpiepag.php'; ?>
+<?php include 'submenpiepag.php'; ?>
 </body>
 </html>

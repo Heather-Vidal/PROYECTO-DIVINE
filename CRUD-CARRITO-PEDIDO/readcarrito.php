@@ -957,7 +957,7 @@ if(!$hayProductos){
 </a>
 
 
-<a class="btn" href="readtodopedido.php?idPedido=<?php echo $idpedido ?>">
+<a class="btn" href="./CRUD-CARRITO-PEDIDO/readunopedido.php echo $idpedido ?>">
 
     Finalizar compra
 

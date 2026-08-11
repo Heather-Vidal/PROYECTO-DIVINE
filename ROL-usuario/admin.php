@@ -3,7 +3,7 @@
 $conexion = mysqli_connect("localhost", "root", "", "DIVINE");
 
 if (!$conexion) {
-    die("Error de conexión");
+    die("error de conexion");
 }
 
 $CI = $_GET['CI'];

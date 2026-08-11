@@ -23,30 +23,30 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 }
 
 body{
+    background: #F8DDE6;
     font-family:'Poppins',sans-serif;
-    background:#f8eef0;
     display:flex;
     justify-content:center;
     align-items:center;
     min-height:100vh;
-    color:#333;
+    color: #D96B8A;
     padding:30px;
 }
 
 .contenedor{
     width:100%;
     max-width:700px;
-    background:#ffffff;
+    background: #EFA9BC;
     border-radius:30px;
-    box-shadow:0 20px 40px rgba(0,0,0,.12);
+    box-shadow:0 20px 40px rgba(255, 148, 207, 0.69);
     overflow:hidden;
     animation:entrada .8s ease;
 }
 
 .encabezado{
     grid-area:encabezado;
-    background:linear-gradient(135deg,#ebbcc6,#c7909d);
-    color:#fff;
+    background: #ee72a1;
+    color: #FFFFFF;
     text-align:center;
     font-size:38px;
     font-family:"Playfair Display",serif;
@@ -81,17 +81,17 @@ body{
     font-size:18px;
     font-weight:bold;
     margin-top:15px;
-    box-shadow:0 8px 18px rgba(0,0,0,.08);
+    box-shadow:0 8px 18px rgba(255, 171, 220, 0.85);
 }
 
 .exito{
-    background:#d89aa7;
-    color:#fff;
+    background: #D96B8A;
+    color: #fff;
 }
 
 .error{
-    background:#d9534f;
-    color:#fff;
+    background: #D96B8A;
+    color: #fff;
 }
 
 .botones{
@@ -99,23 +99,23 @@ body{
     padding:35px;
     display:flex;
     justify-content:center;
-    background:#fff7f9;
+    background: #ff6d96;
 }
 
 .boton{
     text-decoration:none;
-    background:#c96f84;
+    background: #f35171;
     color:#fff;
     padding:15px 40px;
     border-radius:50px;
     font-weight:bold;
     font-size:17px;
     transition:.35s;
-    box-shadow:0 8px 20px rgba(201,111,132,.35);
+    box-shadow:0 8px 20px rgba(255, 156, 225, 0.84);
 }
 
 .boton:hover{
-    background:#b45d72;
+    background: #ffaec7;
     transform:translateY(-4px);
 }
 
