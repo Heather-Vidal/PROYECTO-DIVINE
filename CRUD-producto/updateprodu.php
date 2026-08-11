@@ -425,329 +425,368 @@ if (!$conn->connect_error) {
     rel="stylesheet"
 />
 
-
 <style>
 
-/* =====================================================
-   CUERPO
-   ===================================================== */
+/* =========================
+   ESTILO GENERAL DIVINE
+========================= */
 
-body {
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    font-family:
-        "Playfair Display",
-        serif;
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:#f8eef0;
+    color:#333;
 
-    background-color:
-        #f5e9d8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-    display:
-        flex;
-
-    justify-content:
-        center;
-
-    align-items:
-        center;
-
-    min-height:
-        100vh;
-
-    margin:
-        0;
-
-    color:
-        #2b2b2b;
-
+    min-height:100vh;
+    padding:40px 20px;
 }
 
 
-/* =====================================================
-   CONTENEDOR
-   ===================================================== */
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
 
-.contenedor {
+.contenedor{
+    width:85%;
+    max-width:750px;
 
-    background:
-        #e9e5dd;
+    background:white;
 
-    padding:
-        40px;
+    padding:50px;
 
-    border-radius:
-        25px;
+    border-radius:30px;
 
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.15);
+    box-shadow:0 20px 40px rgba(0,0,0,.10);
 
-    width:
-        90%;
+    display:grid;
 
-    max-width:
-        700px;
-
-    display:
-        grid;
-
-    grid-template-columns:
-        1fr;
+    grid-template-columns:1fr;
 
     grid-template-areas:
-
         "encabezado"
-
         "contenido"
-
         "botones";
 
-    gap:
-        30px;
+    gap:30px;
 
-    text-align:
-        center;
+    text-align:center;
 
+    animation:contenedorEntrada 1s ease-out;
 }
 
 
-/* =====================================================
+/* =========================
    ENCABEZADO
-   ===================================================== */
+========================= */
 
-.encabezado {
+.encabezado{
+    grid-area:encabezado;
 
-    grid-area:
-        encabezado;
+    font-family:Georgia,serif;
 
-    font-size:
-        36px;
+    font-size:45px;
 
-    font-weight:
-        700;
+    font-weight:bold;
 
-    color:
-        #364e63;
+    color:#bf7485;
 
-    letter-spacing:
-        2px;
+    letter-spacing:6px;
 
-    text-transform:
-        uppercase;
+    text-transform:uppercase;
 
-    border-bottom:
-        3px solid #c5a46d;
+    padding-bottom:20px;
 
-    padding-bottom:
-        10px;
-
+    border-bottom:3px solid #d89aa7;
 }
 
 
-/* =====================================================
+/* =========================
    CONTENIDO
-   ===================================================== */
+========================= */
 
-.contenido {
+.contenido{
+    grid-area:contenido;
 
-    grid-area:
-        contenido;
+    background:#f8eef0;
 
-    background:
-        #f5e9d8;
+    padding:35px 30px;
 
-    border-radius:
-        20px;
+    border-radius:25px;
 
-    padding:
-        30px 25px;
+    border-left:8px solid #d89aa7;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+    font-size:18px;
+
+    line-height:1.8;
+
+    color:#666;
+
+    animation:contenidoEntrada .8s ease-out;
+}
+
+
+/* =========================
+   MENSAJES
+========================= */
+
+.mensaje{
+    padding:25px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+    font-size:18px;
+
+    line-height:1.7;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+    animation:mensajeEntrada .7s ease-out;
+}
+
+
+/* =========================
+   MENSAJE DE ÉXITO
+========================= */
+
+.exito{
+    background:linear-gradient(
+        135deg,
+        #ebbcc6,
+        #c7909d
+    );
+
+    color:white;
 
     box-shadow:
-        0 4px 10px
-        rgba(54,78,99,0.2);
-
-    font-size:
-        18px;
-
-    color:
-        #2b2b2b;
-
+        0 8px 20px
+        rgba(201,111,132,.35);
 }
 
 
-/* =====================================================
-   MENSAJE
-   ===================================================== */
+/* =========================
+   MENSAJE DE ERROR
+========================= */
 
-.mensaje {
+.error{
+    background:#b45d72;
 
-    border-radius:
-        12px;
-
-    padding:
-        20px;
-
-    font-weight:
-        600;
-
-    margin-bottom:
-        15px;
-
-}
-
-
-/* =====================================================
-   ÉXITO
-   ===================================================== */
-
-.exito {
-
-    background-color:
-        #c5a46d;
-
-    color:
-        white;
+    color:white;
 
     box-shadow:
-        0 4px 12px
-        rgba(197,164,109,0.7);
-
+        0 8px 20px
+        rgba(180,93,114,.35);
 }
 
 
-/* =====================================================
-   ERROR
-   ===================================================== */
-
-.error {
-
-    background-color:
-        #b53737;
-
-    color:
-        white;
-
-    box-shadow:
-        0 4px 12px
-        rgba(181,55,55,0.7);
-
-}
-
-
-/* =====================================================
+/* =========================
    BOTONES
-   ===================================================== */
+========================= */
 
-.botones {
+.botones{
+    grid-area:botones;
 
-    grid-area:
-        botones;
+    display:flex;
 
-    display:
-        flex;
+    justify-content:center;
 
-    justify-content:
-        center;
+    align-items:center;
 
-    gap:
-        25px;
+    gap:20px;
 
+    flex-wrap:wrap;
 }
 
 
-/* =====================================================
-   BOTÓN
-   ===================================================== */
+/* =========================
+   BOTÓN DIVINE
+========================= */
 
-.boton {
+.boton{
+    display:inline-flex;
 
-    text-decoration:
-        none;
+    align-items:center;
 
-    background:
-        #364e63;
+    justify-content:center;
 
-    color:
-        #c5a46d;
+    background:#c96f84;
 
-    padding:
-        14px 38px;
+    color:white;
 
-    border-radius:
-        30px;
+    padding:15px 35px;
 
-    font-weight:
-        700;
+    border-radius:50px;
 
-    font-size:
-        17px;
+    text-decoration:none;
+
+    font-weight:bold;
+
+    font-size:17px;
 
     box-shadow:
-        0 4px 15px
-        rgba(54,78,99,0.6);
+        0 8px 20px
+        rgba(201,111,132,.35);
 
-    transition:
-        background-color 0.3s ease,
-        color 0.3s ease,
-        transform 0.25s ease;
-
-    display:
-        inline-flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
+    transition:.4s;
 }
 
 
-.boton:hover {
+/* =========================
+   HOVER BOTÓN
+========================= */
 
-    background-color:
-        #c5a46d;
+.boton:hover{
+    background:#b45d72;
 
-    color:
-        #364e63;
-
-    transform:
-        scale(1.05);
+    transform:translateY(-3px);
 
     box-shadow:
-        0 6px 20px
-        rgba(197,164,109,0.9);
-
+        0 12px 25px
+        rgba(180,93,114,.40);
 }
 
 
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
+/* =========================
+   ANIMACIONES
+========================= */
 
-@media (max-width:600px) {
+@keyframes contenedorEntrada{
 
-    .contenedor {
-
-        padding:
-            25px;
-
+    from{
+        opacity:0;
+        transform:scale(1.04);
     }
 
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
 
-    .botones {
+}
 
-        flex-direction:
-            column;
 
-        gap:
-            15px;
+@keyframes contenidoEntrada{
 
+    from{
+        opacity:0;
+        transform:translateY(35px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+
+@keyframes mensajeEntrada{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+
+/* =========================
+   EFECTO SUAVE DEL CONTENEDOR
+========================= */
+
+.contenedor{
+    transition:.4s ease;
+}
+
+.contenedor:hover{
+    box-shadow:
+        0 25px 50px
+        rgba(0,0,0,.13);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+    .contenedor{
+        width:90%;
+        padding:40px 30px;
+    }
+
+}
+
+
+@media(max-width:600px){
+
+    body{
+        padding:20px 15px;
+    }
+
+    .contenedor{
+        width:100%;
+
+        padding:30px 20px;
+
+        border-radius:25px;
+
+        gap:25px;
+    }
+
+    .encabezado{
+        font-size:30px;
+
+        letter-spacing:3px;
+
+        padding-bottom:15px;
+    }
+
+    .contenido{
+        padding:25px 20px;
+
+        font-size:16px;
+    }
+
+    .mensaje{
+        padding:20px 15px;
+
+        font-size:16px;
+    }
+
+    .botones{
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .boton{
+        width:100%;
+
+        padding:14px 20px;
     }
 
 }
 
 </style>
-
 </head>
 
 

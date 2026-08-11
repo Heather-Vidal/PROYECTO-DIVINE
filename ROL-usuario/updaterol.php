@@ -1,3 +1,4 @@
+```php
 <?php
 
 // ==================================================
@@ -569,6 +570,7 @@ h1{
 
 @media(max-width:850px){
 
+
     .datos{
 
         grid-template-columns:
@@ -898,7 +900,7 @@ if ($resultado->num_rows > 0) {
 
 
     <!-- ==================================================
-         BOTONES
+         ACCIONES
          ================================================== -->
 
     <div class="acciones-titulo">
@@ -908,32 +910,17 @@ if ($resultado->num_rows > 0) {
     </div>
 
 
+
     <div class="botones">
 
-
         <?php
 
-        if ($rol != "administrador") {
+        // ==================================================
+        // SI ES ADMINISTRADOR → HACER VENDEDOR
+        // SI NO → HACER ADMINISTRADOR
+        // ==================================================
 
-        ?>
-
-            <a
-                class="boton boton-admin"
-                href="admin.php?CI=<?php echo urlencode($CI); ?>"
-            >
-
-                ✦
-
-                Hacer Administrador
-
-            </a>
-
-        <?php
-
-        }
-
-
-        if ($rol != "vendedor") {
+        if ($rol == "administrador") {
 
         ?>
 
@@ -950,10 +937,26 @@ if ($resultado->num_rows > 0) {
 
         <?php
 
-        }
+        } else {
 
         ?>
 
+            <a
+                class="boton boton-admin"
+                href="admin.php?CI=<?php echo urlencode($CI); ?>"
+            >
+
+                ✦
+                
+                Hacer Administrador
+
+            </a>
+
+        <?php
+
+        }
+
+        ?>
 
     </div>
 
@@ -968,6 +971,7 @@ if ($resultado->num_rows > 0) {
 } else {
 
 ?>
+
 
 
 <!-- ==================================================
@@ -1038,3 +1042,4 @@ if ($resultado->num_rows > 0) {
 $conn->close();
 
 ?>
+  
