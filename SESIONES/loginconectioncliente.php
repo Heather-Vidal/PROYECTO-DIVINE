@@ -59,18 +59,31 @@ if($_SESSION['rol'] == "vendedor"){
     header("Location: ../perfilvendedor.php");
     exit();
 
-}elseif($_SESSION['rol'] == "administrador"){
+}
+
+
+elseif($_SESSION['rol'] == "administrador"){
 
     header("Location: ../admin.php");
     exit();
 
-}else{
+}
+
+
+else{
 
     echo "Este rol no existe.";
 
 }
 
+<<<<<<< Updated upstream
 }else{
+=======
+  
+
+
+else{
+>>>>>>> Stashed changes
 
     // Destruir completamente cualquier sesión
     session_unset();
@@ -78,6 +91,7 @@ if($_SESSION['rol'] == "vendedor"){
 
    
 }
+
 
 mysqli_close($conexion);
 ?>
