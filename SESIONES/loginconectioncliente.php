@@ -240,7 +240,7 @@ if($fila['estado'] == "BLOQUEADO"){
         ";
 
         exit();
-    }
+    
 
 }
 
