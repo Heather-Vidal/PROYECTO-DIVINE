@@ -20,24 +20,25 @@ $resultado=$conn-> query($sql);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Productos DIVINE</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+
 <style>
 body {
-  font-family: 'Playfair Display', serif; /* Tipografía elegante */
-  background: #f5e9d8;
+  font-family: 'Poppins', sans-serif;
+  background: #f8eff1; /* Fondo rosa empolvado claro */
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #2b2b2b;
+  color: #4a3f43;
 }
 
 .contenedor {
-  background: #e9e5dd;
+  background: #ffffff; /* Blanco estilo tarjeta */
   padding: 40px;
   border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(166, 91, 113, 0.12);
   width: 90%;
   max-width: 1000px;
   display: grid;
@@ -52,21 +53,23 @@ body {
 
 .imagen {
   grid-area: imagen;
-  background: url("../imagenes/aceitecapilar.jpg") center center / cover no-repeat;
+  background: url("../imagenes/coqui.png") center center / cover no-repeat;
   border-radius: 20px;
   min-height: 400px;
+  box-shadow: inset 0 0 0 1px rgba(226, 194, 201, 0.4);
 }
 
 .titulo {
   grid-area: titulo;
+  font-family: 'Playfair Display', serif;
   text-align: left;
-  color: #364e63;
+  color: #a65b71; /* Tono rosa vino principal */
   font-size: 28px;
   font-weight: 700;
   margin: 0;
   letter-spacing: 1px;
   align-self: end;
-   border-bottom: 3px solid #c5a46d;
+  border-bottom: 3px solid #c87588; /* Detalle rosa medio */
   padding-bottom: 8px;
   width: fit-content;
 }
@@ -79,100 +82,84 @@ body {
 }
 
 .item {
-  background: #f5e9d8;
+  background: #faf6f7; /* Rosa suave interior */
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(54,78,99,0.2);
+  border: 1px solid #e2c2c9;
+  box-shadow: 0 4px 12px rgba(166, 91, 113, 0.08);
   transition: all 0.3s ease;
 }
 
 .item:hover {
-  background: #e0d5b0;
-  transform: translateY(-6px);
+  background: #f8eff1;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(166, 91, 113, 0.15);
 }
+
 .item p {
   margin: 6px 0;
-  color: #2b2b2b;
-  font-size: 16px;
+  color: #5a4e53;
+  font-size: 15px;
 }
 
 .item span {
-  font-weight: bold;
-  color: #364e63;
+  font-weight: 600;
+  color: #a65b71; /* Resaltado de etiquetas en rosa vino */
 }
 
 .botones {
-  margin-top: 10px;
+  margin-top: 15px;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .botones button {
-  background: #364e63;
-  color: #c5a46d;
+  background: #c87588; /* Tono rosa del botón "Descubrir Productos" */
+  color: #ffffff;
   border: none;
   border-radius: 25px;
-  padding: 10px 20px;
+  padding: 8px 18px;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 500;
+  font-size: 14px;
   transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(200, 117, 136, 0.25);
 }
 
 .botones button:hover {
-  background: #c5a46d;
-  color: #364e63;
-  transform: scale(1.05);
+  background: #a65b71;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(166, 91, 113, 0.35);
 }
 
-.volver{
+.volver {
   grid-column: span 2;
-
-  display:flex;
-
-  justify-content:center;
-
-  gap:15px;
-
-  flex-wrap:wrap;
-
-  margin-top:25px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 25px;
 }
 
-.volver a{
-
-  text-decoration:none;
-
-  background:#364e63;
-
-  color:#c5a46d;
-
-  padding:14px 38px;
-
-  border-radius:30px;
-
-  font-weight:700;
-
-  font-size:17px;
-
-  box-shadow:0 4px 15px rgba(54,78,99,0.6);
-
-  transition:
-  background-color .3s,
-  color .3s,
-  transform .25s;
-
+.volver a {
+  text-decoration: none;
+  background: #a65b71; /* Tono vino para botones de navegación */
+  color: #ffffff;
+  padding: 12px 32px;
+  border-radius: 30px;
+  font-weight: 500;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(166, 91, 113, 0.3);
+  transition: all 0.3s ease;
 }
 
-.volver a:hover{
-
-  background:#c5a46d;
-
-  color:#364e63;
-
-  transform:scale(1.05);
-
+.volver a:hover {
+  background: #c87588;
+  transform: scale(1.03);
+  box-shadow: 0 6px 20px rgba(200, 117, 136, 0.4);
 }
+
 @media (max-width: 768px) {
   .contenedor {
     grid-template-columns: 1fr;
@@ -190,56 +177,52 @@ body {
 
   .titulo {
     text-align: center;
+    margin: 0 auto;
+  }
+
+  .volver {
+    grid-column: span 1;
   }
 }
 </style>
 </head>
 <body>
+
   <div class="contenedor">
     <div class="imagen"></div>
     <h2 class="titulo">LISTA DE PRODUCTOS DIVINE</h2>
+    
     <div class="lista">
 <?php
 if($resultado->num_rows > 0){
-while($fila=$resultado->fetch_assoc()){
-  echo "<div class='item'>";
-  echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>Descripcion:</span> ".$fila['descripcion']."</p>";
-  echo "<p><span>Precio:</span> ".$fila['precio']."</p>";
-  echo "<p><span>Costo:</span> ".$fila['costo']."</p>";
-  echo "<p><span>Stock:</span> ".$fila['stock']."</p>";
-  echo "<p><span>Código:</span> ".$fila['codigo']."</p>";
-  $codigo=$fila['codigo'];
-  echo "<div class='botones'>";
-  echo "<a href='readunoprodu.php?codigo=$codigo'><button>Detalles</button></a>";
-  echo "<a href='updateformprodu.php?codigo=$codigo'><button>Editar</button></a>";
-  echo "<a href='deleteprodu.php?codigo=$codigo'><button>Eliminar</button></a>";
-  echo "</div>";
-  echo "</div>";
-}
-
-
- 
+  while($fila=$resultado->fetch_assoc()){
+    echo "<div class='item'>";
+    echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
+    echo "<p><span>Descripcion:</span> ".$fila['descripcion']."</p>";
+    echo "<p><span>Precio:</span> ".$fila['precio']."</p>";
+    echo "<p><span>Costo:</span> ".$fila['costo']."</p>";
+    echo "<p><span>Stock:</span> ".$fila['stock']."</p>";
+    echo "<p><span>Código:</span> ".$fila['codigo']."</p>";
+    $codigo=$fila['codigo'];
+    echo "<div class='botones'>";
+    echo "<a href='readunoprodu.php?codigo=$codigo'><button>Detalles</button></a>";
+    echo "<a href='updateformprodu.php?codigo=$codigo'><button>Editar</button></a>";
+    echo "<a href='deleteprodu.php?codigo=$codigo'><button>Eliminar</button></a>";
+    echo "</div>";
+    echo "</div>";
+  }
 ?>
-
-
-
     </div>
-  <div class="volver">
 
- <a href="javascript:history.back()">← Volver atrás</a>
+    <div class="volver">
+      <a href="javascript:history.back()">← Volver atrás</a>
+      <a href="formularioprodu.php">＋ Registrar producto</a>
+    </div>
 
-  <a href="formularioprodu.php">
-    ＋ Registrar producto
-  </a>
-
-</div>
   </div>
- 
-  
+
 </body>
 </html>
- 
 <?php
 }
 $conn->close();
