@@ -10,12 +10,11 @@ if(!$conexion){
     die("Error de conexión");
 }
 
-
 $nombre = $_POST['nombre'];
 $CI = $_POST['CI'];
 
-$sql = "SELECT * FROM CLIENTE 
-        WHERE nombre='$nombre' 
+$sql = "SELECT * FROM CLIENTE
+        WHERE nombre='$nombre'
         AND CI='$CI'";
 
 $resultado = mysqli_query($conexion,$sql);
@@ -26,28 +25,16 @@ if(mysqli_num_rows($resultado) > 0){
 
     // Crear la nueva sesión
 
-
-
-
-
-
-
-
-
-
 // Comprobar si el usuario está bloqueado
 if($fila['estado'] == "BLOQUEADO"){
 
     session_unset();
     session_destroy();
-   echo "
-        <!DOCTYPE html>
-        <html lang='es'>
-        <head>
-            <meta charset='UTF-8'>
-            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
 
-            <title>Cuenta bloqueada</title>
+    echo "
+    <h2 style='color:red;text-align:center;margin-top:50px;'>
+        Tu cuenta se encuentra bloqueada.
+    </h2>
 
             <style>
 
@@ -242,6 +229,7 @@ if($fila['estado'] == "BLOQUEADO"){
         exit();
     
 
+    exit();
 }
 
 // Crear la nueva sesión
@@ -257,18 +245,22 @@ if($_SESSION['rol'] == "vendedor"){
     header("Location: ../perfilvendedor.php");
     exit();
 
-}elseif($_SESSION['rol'] == "administrador"){
+}
+
+
+elseif($_SESSION['rol'] == "administrador"){
 
     header("Location: ../admin.php");
     exit();
 
-}else{
+}
+
+
+else{
 
     echo "Este rol no existe.";
 
 }
-
-
 
 }else{
 
@@ -276,8 +268,9 @@ if($_SESSION['rol'] == "vendedor"){
     session_unset();
     session_destroy();
 
-    
+   
 }
+
 
 mysqli_close($conexion);
 ?>
@@ -285,13 +278,11 @@ mysqli_close($conexion);
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
 
-
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
-
 
 body{
 
@@ -322,7 +313,6 @@ body::before{
 
 }
 
-
 body::after{
 
     content:"";
@@ -337,7 +327,6 @@ body::after{
     animation:mover 10s infinite alternate-reverse;
 
 }
-
 
 .card{
 
@@ -357,10 +346,7 @@ body::after{
 
 }
 
-
-
 /* icono */
-
 
 .icono{
 
@@ -372,11 +358,9 @@ body::after{
     justify-content:center;
     border-radius:50%;
 
-
     background:
 
     linear-gradient(135deg,#d9a6b5,#c47b92);
-
 
     color:white;
     font-size:45px;
@@ -417,12 +401,9 @@ p{
 
     width:100%;
 
-
     padding:16px;
 
-
     border-radius:50px;
-
 
     text-decoration:none;
     color:white;
@@ -444,7 +425,6 @@ p{
     0 20px 35px rgba(169,97,124,.45);
 }
 @keyframes aparecer{
-
 
 from{
 opacity:0;
@@ -493,3 +473,36 @@ font-size:32px;
 }
 
 </style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<div class="card">
+
+    <div class="icono">
+        🔒
+    </div>
+
+    <h2>
+       sesion cerrada
+    </h2>
+
+    <div class="error">
+        usuario o contraseña incorrecta.
+    </div>
+
+    <p>
+      vuelvelo a intentar.
+    </p>
+
+    <a href="loginformcliente.php" class="boton">
+        Iniciar sesión nuevamente
+    </a>
+
+</div>
+</body>
+</html>
