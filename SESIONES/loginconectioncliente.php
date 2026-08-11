@@ -321,17 +321,17 @@ font-size:32px;
 
 
     <h2>
-        Cuenta bloqueada
+       sesion cerrada 
     </h2>
 
 
     <div class="error">
-        Tu cuenta se encuentra bloqueada.
+        usuario o contraseña incorrecta.
     </div>
 
 
     <p>
-        Comunícate con el administrador para recuperar el acceso.
+      vuelvelo a intentar.
     </p>
 
 

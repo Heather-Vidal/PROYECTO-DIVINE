@@ -260,7 +260,7 @@ font-size:24px;
 
 <option value="" disabled>Selecciona el estado del pedido</option> 
 
-<option value="proceso" <?= ($estado == 'proceso') ? 'selected' : '' ?>>Pendiente</option>
+<option value="pendiente" <?= ($estado == 'pendiente') ? 'selected' : '' ?>>Pendiente</option>
 
 <option value="proceso" <?= ($estado == 'proceso') ? 'selected' : '' ?>>En proceso</option>
 

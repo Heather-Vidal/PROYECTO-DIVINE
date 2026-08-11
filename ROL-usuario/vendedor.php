@@ -3,7 +3,7 @@
 $conexion = mysqli_connect("localhost", "root", "", "DIVINE");
 
 if (!$conexion) {
-    die("error de conexion");
+    die("Error de conexión");
 }
 
 $CI = $_GET['CI'];
@@ -16,15 +16,15 @@ if (mysqli_query($conexion, $sql)) {
 
     echo "
     <h2 style='color:green; text-align:center; margin-top:50px;'>
-        rol actualizado correctamente
+        Rol actualizado correctamente
     </h2>
 
     <p style='text-align:center;'>
-        el usuario con ci $CI ahora es vendedor.
+        El usuario con CI $CI ahora es <strong>Vendedor</strong>.
     </p>
 
     <div style='text-align:center; margin-top:20px;'>
-        <a href='readtodocliente.php'>volver a administrar roles</a>
+        <a href='readroles.php'>Volver</a>
     </div>
     ";
 
@@ -32,7 +32,7 @@ if (mysqli_query($conexion, $sql)) {
 
     echo "
     <h2 style='color:red; text-align:center; margin-top:50px;'>
-        error al actualizar el rol
+        Error al actualizar el rol.
     </h2>
     ";
 
