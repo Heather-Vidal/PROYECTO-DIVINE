@@ -48,23 +48,14 @@ body{
 header{
 
     background:transparent;
-
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
-
     padding:10px 40px;
-
     width:100%;
-
     position:fixed;
-
     top:0;
-
     left:0;
-
     z-index:10000;
 
 }
