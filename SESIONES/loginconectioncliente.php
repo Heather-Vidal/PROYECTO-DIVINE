@@ -76,14 +76,7 @@ else{
 
 }
 
-<<<<<<< Updated upstream
 }else{
-=======
-  
-
-
-else{
->>>>>>> Stashed changes
 
     // Destruir completamente cualquier sesión
     session_unset();
