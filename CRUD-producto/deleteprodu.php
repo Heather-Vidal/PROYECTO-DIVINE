@@ -17,109 +17,249 @@ $conn= new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet"/>
 
 <style>
-body {
-  font-family: "Playfair Display", serif;
-  background-color: #f5e9d8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #2b2b2b;
+
+/* =========================
+   ESTILO DIVINE
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.contenedor {
-  background: #e9e5dd;
-  padding: 40px;
-  border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  width: 90%;
-  max-width: 700px;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "encabezado"
-    "contenido"
-    "botones";
-  gap: 30px;
-  text-align: center;
+body{
+    font-family:'Segoe UI', sans-serif;
+    background:#f8eef0;
+    color:#333;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:30px;
 }
 
-.encabezado {
-  grid-area: encabezado;
-  font-size: 36px;
-  font-weight: 700;
-  color: #6b2f2f;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding-bottom: 10px;
-  border-bottom: 3px solid #b53737;
+/* CONTENEDOR */
+
+.contenedor{
+    background:white;
+    padding:50px;
+    border-radius:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,.10);
+    width:90%;
+    max-width:700px;
+
+    display:grid;
+    grid-template-columns:1fr;
+
+    grid-template-areas:
+        "encabezado"
+        "contenido"
+        "botones";
+
+    gap:30px;
+    text-align:center;
+
+    animation:entrada 1s ease-out;
 }
 
-.contenido {
-  grid-area: contenido;
-  background: #f5e9d8;
-  border-radius: 20px;
-  padding: 30px 25px;
-  box-shadow: 0 4px 10px rgba(54, 78, 99, 0.15);
-  font-size: 18px;
+/* ENCABEZADO */
+
+.encabezado{
+    grid-area:encabezado;
+
+    font-family:Georgia, serif;
+    font-size:40px;
+    font-weight:700;
+
+    color:#bf7485;
+    letter-spacing:4px;
+    text-transform:uppercase;
+
+    padding-bottom:18px;
+
+    border-bottom:3px solid #d89aa7;
 }
 
-.mensaje {
-  border-radius: 12px;
-  padding: 20px;
-  font-weight: 600;
-  margin-bottom: 10px;
+/* CONTENIDO */
+
+.contenido{
+    grid-area:contenido;
+
+    background:#f8eef0;
+
+    border-radius:25px;
+    padding:35px 30px;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+    font-size:18px;
+
+    border-left:8px solid #d89aa7;
+
+    animation:contenidoEntrada .8s ease-out;
 }
 
-.exito {
-  background: #b53737;
-  color: white;
-  box-shadow: 0 4px 12px rgba(181, 55, 55, 0.7);
+/* MENSAJES */
+
+.mensaje{
+    border-radius:20px;
+    padding:25px;
+
+    font-weight:600;
+    font-size:18px;
+
+    margin-bottom:10px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.10);
+
+    animation:mensajeEntrada .8s ease-out;
 }
 
-.error {
-  background: #6b0000;
-  color: white;
-  box-shadow: 0 4px 12px rgba(70,0,0,0.6);
+/* ÉXITO */
+
+.exito{
+    background:linear-gradient(
+        135deg,
+        #ebbcc6,
+        #c7909d
+    );
+
+    color:white;
+
+    box-shadow:0 8px 20px rgba(201,111,132,.35);
 }
 
-.botones {
-  grid-area: botones;
-  display: flex;
-  justify-content: center;
+/* ERROR */
+
+.error{
+    background:#b45d72;
+
+    color:white;
+
+    box-shadow:0 8px 20px rgba(180,93,114,.35);
 }
 
-.boton {
-  text-decoration: none;
-  background: #364e63;
-  color: #c5a46d;
-  padding: 14px 38px;
-  border-radius: 30px;
-  font-weight: 700;
-  font-size: 17px;
-  box-shadow: 0 4px 15px rgba(54, 78, 99, 0.6);
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.25s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* BOTONES */
+
+.botones{
+    grid-area:botones;
+
+    display:flex;
+    justify-content:center;
 }
 
-.boton:hover {
-  background-color: #c5a46d;
-  color: #364e63;
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(197, 164, 109, 0.9);
+.boton{
+    text-decoration:none;
+
+    background:#c96f84;
+    color:white;
+
+    padding:15px 35px;
+
+    border-radius:50px;
+
+    font-weight:bold;
+    font-size:17px;
+
+    box-shadow:0 8px 20px rgba(201,111,132,.35);
+
+    transition:.4s;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 
-@media (max-width: 600px) {
-  .contenedor {
-    padding: 25px;
-  }
-  .botones {
-    flex-direction: column;
-    gap: 15px;
-  }
+.boton:hover{
+    background:#b45d72;
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(180,93,114,.40);
+}
+
+/* ANIMACIONES */
+
+@keyframes entrada{
+
+    from{
+        opacity:0;
+        transform:scale(.95) translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+
+}
+
+@keyframes contenidoEntrada{
+
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+@keyframes mensajeEntrada{
+
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* RESPONSIVE */
+
+@media (max-width:600px){
+
+    body{
+        padding:20px;
+    }
+
+    .contenedor{
+        width:100%;
+        padding:30px 20px;
+    }
+
+    .encabezado{
+        font-size:28px;
+        letter-spacing:2px;
+    }
+
+    .contenido{
+        padding:25px 20px;
+        font-size:16px;
+    }
+
+    .mensaje{
+        padding:20px 15px;
+        font-size:16px;
+    }
+
+    .botones{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .boton{
+        width:100%;
+    }
+
 }
 </style>
 </head>
