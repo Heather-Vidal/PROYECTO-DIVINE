@@ -103,6 +103,24 @@ $total = $res['total'] ?? 0;
 
 ?>
 
+
+<?php
+
+$productoEliminado = false;
+
+if (isset($_GET['eliminado']) && $_GET['eliminado'] == '1') {
+    $productoEliminado = true;
+}
+
+?>
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 
 <html lang="es">
@@ -1014,7 +1032,110 @@ body {
     }
 
 }
+<style>
 
+.fondo-mensaje {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(80, 30, 50, 0.35);
+    z-index: 999;
+}
+
+.mensaje-exito {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 380px;
+    padding: 35px;
+
+    background: #fff8fa;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+
+    border: 2px solid #e7a6b8;
+}
+
+.icono-exito {
+
+    width: 65px;
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #e8a7b9;
+
+    color: white;
+
+    font-size: 40px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mensaje-exito h2 {
+
+    margin: 10px 0;
+
+    color: #8d4058;
+
+    font-size: 25px;
+
+}
+
+.mensaje-exito p {
+
+    color: #6f555d;
+
+    font-size: 16px;
+
+    margin-bottom: 25px;
+
+}
+
+.mensaje-exito button {
+
+    border: none;
+
+    background: #c97991;
+
+    color: white;
+
+    padding: 12px 35px;
+
+    border-radius: 25px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+.mensaje-exito button:hover {
+
+    background: #a95670;
+
+    transform: scale(1.05);
+
+}
+
+</style>
 </style>
 
 </head>
@@ -1839,7 +1960,38 @@ window.addEventListener(
 
 </script>
 
+<?php if ($productoEliminado): ?>
 
+<div class="mensaje-exito">
+
+    <div class="icono-exito">
+        ✓
+    </div>
+
+    <h2>¡Producto eliminado!</h2>
+
+    <p>
+        El producto fue eliminado exitosamente.
+    </p>
+
+    <button onclick="cerrarMensaje()">
+        Aceptar
+    </button>
+
+</div>
+
+<div class="fondo-mensaje"></div>
+
+<script>
+
+function cerrarMensaje() {
+    document.querySelector(".mensaje-exito").style.display = "none";
+    document.querySelector(".fondo-mensaje").style.display = "none";
+}
+
+</script>
+
+<?php endif; ?>
 </body>
 
 </html>

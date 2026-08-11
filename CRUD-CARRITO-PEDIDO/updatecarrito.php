@@ -162,7 +162,7 @@ $conn->close();
 
 <div class="botones">
 
-<a href="readcarrito.php?idPedido=<?php echo $idPedido ?>" class="boton">⬅ Volver al carrito</a>
+ 
 
 <a href="formcarrito.php?idPedido=<?php echo $idPedido ?>" class="boton">Seguir comprando ➡</a>
 

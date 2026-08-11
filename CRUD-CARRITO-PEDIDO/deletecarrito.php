@@ -17,9 +17,24 @@ $sql = "DELETE FROM CARRITO
         WHERE PEDIDOS_ID = '$idPedido'
         AND PRODUCTO_codigo = '$codigo'";
 
-$conn->query($sql);
+ if ($conn->query($sql)) {
 
-header("Location: readcarrito.php?idPedido=".$idPedido);
+ header("Location:  formcarrito.php?idPedido=".$idPedido."&eliminado=1");
+exit();
+
+} else {
+
+    echo "Error al eliminar: " . $conn->error;
+
+}
+
+
+
+
+ 
 exit();
 
 ?>
+
+
+ 
