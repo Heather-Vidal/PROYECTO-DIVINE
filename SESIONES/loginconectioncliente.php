@@ -41,17 +41,37 @@ if($fila['estado'] == "BLOQUEADO"){
     session_unset();
     session_destroy();
 
-    echo "
-    <h2 style='color:red;text-align:center;margin-top:50px;'>
-        Tu cuenta se encuentra bloqueada.
-    </h2>
+  echo "
 
-    <div style='text-align:center;margin-top:20px;'>
-        <a href='loginformcliente.php'>
-            Volver al inicio de sesión
-        </a>
-    </div>
-    ";
+<div class='bloqueado-card'>
+
+```
+<div class='bloqueado-icono'>
+    🔒
+</div>
+
+<h2 class='bloqueado-titulo'>
+    Cuenta bloqueada
+</h2>
+
+<div class='bloqueado-error'>
+    Tu cuenta se encuentra bloqueada.
+</div>
+
+<p class='bloqueado-texto'>
+    Por motivos de seguridad, no puedes iniciar sesión en este momento.
+    Si crees que esto es un error, comunícate con el administrador.
+</p>
+
+<a href='loginformcliente.php' class='bloqueado-boton'>
+    Volver al inicio de sesión
+</a>
+```
+
+</div>
+
+";
+
 
     exit();
 }
@@ -341,5 +361,185 @@ font-size:32px;
 
 
 </div>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+.bloqueado-card{
+
+width:440px;
+padding:45px;
+text-align:center;
+border-radius:35px;
+
+background:rgba(255,255,255,.75);
+
+backdrop-filter:blur(20px);
+
+box-shadow:
+0 25px 60px rgba(130,90,100,.25);
+
+border:1px solid rgba(255,255,255,.8);
+
+animation:aparecer 1s ease;
+
+position:relative;
+z-index:2;
+
+}
+
+/* ICONO DE BLOQUEO */
+
+.bloqueado-icono{
+
+width:95px;
+height:95px;
+
+margin:auto;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+border-radius:50%;
+
+background:
+linear-gradient(135deg,#d9a6b5,#c47b92);
+
+color:white;
+
+font-size:45px;
+
+box-shadow:
+0 15px 30px rgba(196,123,146,.35);
+
+margin-bottom:25px;
+
+animation:flotar 3s infinite;
+
+}
+
+/* TITULO */
+
+.bloqueado-titulo{
+
+font-family:'Playfair Display',serif;
+
+font-size:38px;
+
+color:#9b596c;
+
+margin-bottom:18px;
+
+}
+
+/* MENSAJE */
+
+.bloqueado-error{
+
+background:#fff1f4;
+
+color:#ad526d;
+
+padding:18px;
+
+border-radius:20px;
+
+border:1px solid #efd0d8;
+
+font-weight:600;
+
+margin-bottom:30px;
+
+line-height:1.6;
+
+}
+
+/* TEXTO */
+
+.bloqueado-texto{
+
+color:#777;
+
+font-size:15px;
+
+line-height:1.8;
+
+margin-bottom:25px;
+
+}
+
+/* BOTON */
+
+.bloqueado-boton{
+
+display:block;
+
+width:100%;
+
+padding:16px;
+
+border-radius:50px;
+
+text-decoration:none;
+
+color:white;
+
+font-weight:600;
+
+font-size:16px;
+
+background:
+linear-gradient(135deg,#c98ca0,#a9617c);
+
+box-shadow:
+0 12px 25px rgba(169,97,124,.35);
+
+transition:.4s;
+
+}
+
+/* EFECTO DEL BOTON */
+
+.bloqueado-boton{
+
+transform:translateY(-5px);
+
+background:
+linear-gradient(135deg,#a9617c,#8c4d66);
+
+box-shadow:
+0 20px 35px rgba(169,97,124,.45);
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:500px){
+
+.bloqueado-card{
+
+    width:90%;
+
+    padding:35px 25px;
+
+}
+
+.bloqueado-titulo{
+
+    font-size:32px;
+
+}
+
+}
+</style>
+<body>
+    
 </body>
 </html>
