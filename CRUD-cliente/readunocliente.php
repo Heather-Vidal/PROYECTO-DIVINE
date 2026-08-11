@@ -28,17 +28,17 @@ if($resultado->num_rows > 0){
 <style>
 body {
   font-family: "Playfair Display", serif;
-  background: #f5e9d8;
+   background-image:url('../imagenes/dudu.png');
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #2b2b2b;
+  color: #ffffff;
 }
 
 .contenedor {
-  background: #e9e5dd;
+  background: #ff8b8bc9;
   padding: 40px;
   border-radius: 25px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.3);
@@ -56,40 +56,40 @@ body {
 
 .titulo {
   text-align: center;
-  color: #364e63;
+  color: #4b3441;
   font-size: 30px;
   font-weight: 700;
   margin: 0;
   letter-spacing: 2px;
 
-  border-bottom: 3px solid #c5a46d;
+  border-bottom: 3px solid #a01c1c;
   width: fit-content;
   margin: 0 auto;
   padding-bottom: 6px;
 }
 .item {
-  background: #f5e9d8;
+  background: #97383896;
   padding: 25px;
   border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(54,78,99,0.2);
+  box-shadow: 0 4px 10px rgba(211, 0, 0, 0.37);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Hover */
 .item:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 22px rgba(54,78,99,0.4);
+  box-shadow: 0 12px 22px rgba(255, 0, 0, 0.38);
 }
 
 .item p {
   margin: 10px 0;
   font-size: 17px;
-  color: #2b2b2b;
+  color: #462b33;
 }
 
 .item span {
   font-weight: 700;
-  color: #364e63;
+  color: #351c25;
 }
 
 /* Botones tipo PRODUCTO */
@@ -103,8 +103,8 @@ body {
 }
 
 .boton {
-  background: #364e63;
-  color: #c5a46d;
+  background: #97383896;;
+  color: #571731;
   padding: 10px 22px;
   border-radius: 28px;
   font-size: 16px;
@@ -114,10 +114,10 @@ body {
 }
 
 .boton:hover {
-  background: #c5a46d;
-  color: #364e63;
+  background: #9b5c61;
+  color: #422b35;
   transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(197,164,109,0.7);
+  box-shadow: 0 5px 20px rgba(207, 64, 64, 0.7);
 }
 
 .navegacion {
@@ -129,8 +129,8 @@ body {
 }
 
 .boton2 {
-  background: #364e63;
-  color: #c5a46d;
+  background: #97383896;;
+  color: #493039;
   padding: 12px 28px;
   border-radius: 28px;
   font-size: 17px;
@@ -140,10 +140,10 @@ body {
 }
 
 .boton2:hover {
-  background: #c5a46d;
-  color: #364e63;
+  background: #773838;
+  color: #2b1515;
   transform: scale(1.04);
-  box-shadow: 0 5px 20px rgba(197,164,109,0.7);
+  box-shadow: 0 5px 20px rgba(27, 15, 16, 0.7);
 }
 
 @media (max-width: 768px) {

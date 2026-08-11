@@ -1,3 +1,4 @@
+```php
 <?php
 
 // ==================================================
@@ -569,6 +570,7 @@ h1{
 
 @media(max-width:850px){
 
+
     .datos{
 
         grid-template-columns:
@@ -687,39 +689,277 @@ if ($resultado->num_rows > 0) {
 ?>
 
 
-<!-- BOTONES PARA CAMBIAR ROL -->
 
-<div class="botones">
+<!-- ==================================================
+     CLIENTE
+     ================================================== -->
 
-<?php
-if($rol != "administrador"){
-?>
-<a class="boton" href="admin.php?CI=<?php echo $CI; ?>">
-    Hacer Administrador
-</a>
-<?php
-}
-?>
+<div class="cliente">
 
-<?php
-if($rol != "vendedor"){
-?>
-<a class="boton" href="vendedor.php?CI=<?php echo $CI; ?>">
-    Hacer Vendedor
-</a>
-<?php
-}
-?>
 
-<?php
-if($rol != "cliente"){
-?>
-<a class="boton" href="cliente.php?CI=<?php echo $CI; ?>">
-    Hacer Cliente
-</a>
-<?php
-}
-?>
+    <!-- CABECERA -->
+
+    <div class="cliente-cabecera">
+
+
+        <div class="icono-cliente">
+
+            ♡
+
+        </div>
+
+
+        <div>
+
+            <h2>
+
+                Información del cliente
+
+            </h2>
+
+
+            <span>
+
+                Datos registrados en DIVINE
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- DATOS -->
+
+    <div class="datos">
+
+
+        <div class="dato">
+
+            <strong>
+
+                CI
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $fila['CI']
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+
+        <div class="dato">
+
+            <strong>
+
+                Nombre
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $fila['nombre']
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+
+        <div class="dato">
+
+            <strong>
+
+                Dirección
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $fila['direccion']
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+
+        <div class="dato">
+
+            <strong>
+
+                Celular
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $fila['celular']
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ==================================================
+         ROL / ESTADO
+         ================================================== -->
+
+    <div class="estado-contenedor">
+
+
+        <div class="estado">
+
+            <strong>
+
+                Rol actual
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $rol
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+
+        <div class="estado">
+
+            <strong>
+
+                Estado
+
+            </strong>
+
+
+            <span>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $estado
+                );
+
+                ?>
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ==================================================
+         ACCIONES
+         ================================================== -->
+
+    <div class="acciones-titulo">
+
+        Cambiar rol del cliente
+
+    </div>
+
+
+
+    <div class="botones">
+
+        <?php
+
+        // ==================================================
+        // SI ES ADMINISTRADOR → HACER VENDEDOR
+        // SI NO → HACER ADMINISTRADOR
+        // ==================================================
+
+        if ($rol == "administrador") {
+
+        ?>
+
+            <a
+                class="boton boton-vendedor"
+                href="vendedor.php?CI=<?php echo urlencode($CI); ?>"
+            >
+
+                ♡
+
+                Hacer Vendedor
+
+            </a>
+
+        <?php
+
+        } else {
+
+        ?>
+
+            <a
+                class="boton boton-admin"
+                href="admin.php?CI=<?php echo urlencode($CI); ?>"
+            >
+
+                ✦
+                
+                Hacer Administrador
+
+            </a>
+
+        <?php
+
+        }
+
+        ?>
+
+    </div>
+
 
 </div>
 
@@ -732,7 +972,11 @@ if($rol != "cliente"){
 
 ?>
 
-<!-- NAVEGACIÓN -->
+
+
+<!-- ==================================================
+     NO HAY CLIENTES
+     ================================================== -->
 
 <div class="sin-clientes">
 
@@ -798,3 +1042,4 @@ if($rol != "cliente"){
 $conn->close();
 
 ?>
+  

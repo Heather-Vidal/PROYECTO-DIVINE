@@ -9,7 +9,7 @@ if (!$conexion) {
 $CI = $_GET['CI'];
 
 $sql = "UPDATE CLIENTE
-        SET rol = 'Administrador'
+        SET rol = 'administrador'
         WHERE CI = '$CI'";
 
 if (mysqli_query($conexion, $sql)) {

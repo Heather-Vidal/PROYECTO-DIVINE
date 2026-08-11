@@ -128,21 +128,13 @@ $total = $res['total'] ?? 0;
 ================================================== */
 
 :root {
-
     --rosa: #b86f80;
-
     --rosa-claro: #d9a6b2;
-
     --rosa-palido: #f7e9ec;
-
     --crema: #fffaf8;
-
     --texto: #4d4143;
-
     --gris: #817679;
-
     --borde: #ead7dc;
-
 }
 
 
@@ -151,26 +143,17 @@ $total = $res['total'] ?? 0;
 ================================================== */
 
 * {
-
     margin: 0;
-
     padding: 0;
-
     box-sizing: border-box;
-
 }
 
 
 body {
-
     background: var(--crema);
-
     color: var(--texto);
-
     font-family: 'Segoe UI', sans-serif;
-
     min-height: 100vh;
-
 }
 
 
@@ -181,9 +164,7 @@ body {
 .hero {
 
     min-height: 520px;
-
     background:
-
     linear-gradient(
         to right,
         rgba(255,250,248,.88),
@@ -218,11 +199,8 @@ body {
 .hero-linea {
 
     width: 60px;
-
     height: 2px;
-
     background: var(--rosa);
-
     margin-bottom: 25px;
 
 }
@@ -231,15 +209,10 @@ body {
 .hero h1 {
 
     font-family: Georgia, serif;
-
     font-size: clamp(3.5rem, 7vw, 6rem);
-
     font-weight: 400;
-
     letter-spacing: 12px;
-
     color: var(--rosa);
-
     line-height: 1;
 
 }
@@ -1371,20 +1344,13 @@ echo $stock;
                 <div class="stock">
 
                     Stock disponible:
-
-                    <strong>
-
+                     <strong>
 <?php
-
 echo $stock;
-
 ?>
-
-                    </strong>
-
-                    unidades
-
-                </div>
+  </strong>
+   unidades
+</div>
 
 
 <?php
@@ -1676,20 +1642,12 @@ const observador =
     new IntersectionObserver(
 
         (entradas) => {
-
-
             entradas.forEach(
-
                 (entrada) => {
-
-
                     if (
                         entrada.isIntersecting
                     ) {
-
-
                         entrada
-
                             .target
 
                             .classList
@@ -1697,19 +1655,11 @@ const observador =
                             .add(
                                 'activo'
                             );
-
-
                     }
-
                 }
-
             );
-
-
         },
-
         {
-
             threshold:
                 0.12
 

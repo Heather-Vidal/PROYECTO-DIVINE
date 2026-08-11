@@ -31,13 +31,13 @@ $resultado=$conn->query($sql);
 
 body {
   font-family: 'Playfair Display', serif;
-  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
+  background: url("../imagenes/fondu.jpg") center center / cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  color: #ff0099;
+  color: #8f4973;
 }
 
 
@@ -47,7 +47,7 @@ body {
   background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
   padding: 40px;
   border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(255, 0, 149, 0.54);
+  box-shadow: 0 10px 25px rgba(124, 81, 106, 0.54);
   width: 90%;
   max-width: 1000px;
 
