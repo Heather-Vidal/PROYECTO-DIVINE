@@ -1,9 +1,29 @@
 <?php
-$conn = new mysqli("localhost","root","","DIVINE");
+
+// =====================================================
+// CONEXIÓN A LA BASE DE DATOS
+// =====================================================
+
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
+
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
 
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
+
+
+// =====================================================
+// RECIBIR ID DEL PEDIDO
+// =====================================================
 
 $idpedido = $_GET['idPedido'] ?? null;
 
@@ -11,10 +31,16 @@ if (!$idpedido) {
     die("No llegó el id del pedido");
 }
 
-$sql = "SELECT CARRITO.PRODUCTO_codigo,
-               PRODUCTO.nombre,
-               CARRITO.cantidad,
-               CARRITO.costototal
+
+// =====================================================
+// CONSULTAR PRODUCTOS
+// =====================================================
+
+$sql = "SELECT
+            CARRITO.PRODUCTO_codigo,
+            PRODUCTO.nombre,
+            CARRITO.cantidad,
+            CARRITO.costototal
         FROM CARRITO
         INNER JOIN PRODUCTO
         ON CARRITO.PRODUCTO_codigo = PRODUCTO.codigo
@@ -23,6 +49,7 @@ $sql = "SELECT CARRITO.PRODUCTO_codigo,
 $resultado = $conn->query($sql);
 
 $totalGeneral = 0;
+
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +64,7 @@ $totalGeneral = 0;
 
 <title>DIVINE | Mi Carrito</title>
 
+
 <style>
 
 /* ==================================================
@@ -44,15 +72,20 @@ $totalGeneral = 0;
 ================================================== */
 
 :root{
+
     --rosa:#b86f80;
     --rosa-claro:#d9a6b2;
     --rosa-palido:#f7e9ec;
     --crema:#fffaf8;
+
     --texto:#57494c;
     --gris:#817679;
+
     --borde:#dcb9c3;
+
     --vino:#8f5362;
     --vino-oscuro:#713d4d;
+
 }
 
 
@@ -61,9 +94,12 @@ $totalGeneral = 0;
 ================================================== */
 
 *{
+
     margin:0;
     padding:0;
+
     box-sizing:border-box;
+
 }
 
 
@@ -72,20 +108,28 @@ $totalGeneral = 0;
 ================================================== */
 
 body{
+
     min-height:100vh;
+
     font-family:'Segoe UI',sans-serif;
+
     color:var(--texto);
 
     background:
+
     linear-gradient(
-        rgba(247,233,236,.62),
-        rgba(232,205,213,.72)
+        rgba(247,233,236,.68),
+        rgba(232,205,213,.78)
     ),
+
     url("../imagenes/fondote.png");
 
     background-size:cover;
+
     background-position:center;
+
     background-attachment:fixed;
+
 }
 
 
@@ -94,47 +138,68 @@ body{
 ================================================== */
 
 .header{
+
     text-align:center;
+
     padding:45px 20px 35px;
 
     background:
+
     linear-gradient(
-        rgba(184,111,128,.88),
-        rgba(143,83,98,.94)
+        135deg,
+        rgba(184,111,128,.94),
+        rgba(143,83,98,.97)
     );
 
     color:white;
 
     box-shadow:
+
     0 10px 35px rgba(100,70,80,.20);
 
-    animation:aparecerHeader .7s ease;
 }
 
 
 .header-pequeno{
-    font-size:.78rem;
+
+    font-size:.75rem;
+
     text-transform:uppercase;
+
     letter-spacing:5px;
+
     margin-bottom:12px;
+
     opacity:.9;
+
 }
 
 
 .header h1{
+
     font-family:Georgia,serif;
+
     font-size:clamp(2.4rem,5vw,4rem);
+
     font-weight:400;
+
     letter-spacing:5px;
+
 }
 
 
 .header-linea{
+
     width:55px;
+
     height:2px;
+
     background:white;
+
     margin:20px auto 0;
+
     opacity:.75;
+
 }
 
 
@@ -143,10 +208,13 @@ body{
 ================================================== */
 
 .container{
-    width:90%;
-    max-width:1000px;
-    margin:60px auto;
-    padding-bottom:40px;
+
+    width:92%;
+
+    max-width:1100px;
+
+    margin:55px auto 70px;
+
 }
 
 
@@ -155,89 +223,168 @@ body{
 ================================================== */
 
 .encabezado{
+
     text-align:center;
+
     margin-bottom:40px;
+
 }
 
 
 .encabezado-pequeno{
+
     color:var(--rosa);
-    font-size:.8rem;
+
+    font-size:.78rem;
+
     text-transform:uppercase;
-    letter-spacing:3px;
+
+    letter-spacing:4px;
+
     margin-bottom:10px;
+
 }
 
 
 .encabezado h2{
+
     font-family:Georgia,serif;
-    font-size:2.1rem;
+
+    font-size:2.2rem;
+
     font-weight:400;
+
     color:var(--texto);
+
 }
 
 
 .linea-decorativa{
-    width:45px;
+
+    width:50px;
+
     height:2px;
+
     background:var(--rosa-claro);
-    margin:20px auto 0;
+
+    margin:18px auto 0;
+
 }
 
 
 /* ==================================================
-   PRODUCTO
+   TARJETA DEL PRODUCTO
 ================================================== */
 
 .item{
+
     width:100%;
-    max-width:800px;
-    margin:0 auto 22px;
 
-    padding:25px 28px;
+    max-width:950px;
 
-    border-radius:22px;
+    min-height:250px;
 
-    display:flex;
+    margin:0 auto 25px;
+
+    padding:25px;
+
+    display:grid;
+
+    grid-template-columns:210px 1fr 150px;
+
     align-items:center;
-    justify-content:space-between;
 
     gap:30px;
 
+    border-radius:28px;
+
     background:
+
     linear-gradient(
         135deg,
-        rgba(250,243,244,.93),
-        rgba(244,224,230,.93)
+        rgba(255,250,251,.96),
+        rgba(244,224,230,.96)
     );
 
-    border:1px solid rgba(184,111,128,.30);
+    border:1px solid rgba(184,111,128,.28);
 
     box-shadow:
-    0 10px 30px rgba(100,70,80,.12),
-    inset 0 1px 0 rgba(255,255,255,.75);
+
+    0 12px 35px rgba(100,70,80,.12),
+
+    inset 0 1px 0 rgba(255,255,255,.90);
 
     transition:
-    transform .3s ease,
-    box-shadow .3s ease,
-    background .3s ease;
 
-    animation:aparecer .6s ease;
+    transform .3s ease,
+    box-shadow .3s ease;
+
 }
 
 
 .item:hover{
+
     transform:translateY(-5px);
 
-    background:
-    linear-gradient(
-        135deg,
-        rgba(248,236,239,.97),
-        rgba(241,218,225,.97)
-    );
+    box-shadow:
+
+    0 20px 45px rgba(100,70,80,.18);
+
+}
+
+
+/* ==================================================
+   IMAGEN DEL PRODUCTO
+   AHORA OCUPA TODA LA CAJA
+================================================== */
+
+.imagen-producto{
+
+    width:210px;
+
+    height:210px;
+
+    padding:0;
+
+    margin:0;
+
+    border-radius:24px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#ffffff;
+
+    border:1px solid rgba(184,111,128,.25);
 
     box-shadow:
-    0 18px 40px rgba(100,70,80,.18);
+
+    0 8px 22px rgba(100,70,80,.10);
+
+    overflow:hidden;
+
+}
+
+
+/* ==================================================
+   IMAGEN OCUPANDO TODA LA CAJA
+================================================== */
+
+.imagen-producto img{
+
+    width:100%;
+
+    height:100%;
+
+    display:block;
+
+    object-fit:cover;
+
+    border-radius:23px;
+
 }
 
 
@@ -246,23 +393,31 @@ body{
 ================================================== */
 
 .info{
-    flex:1;
+
     min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
 }
 
 
 /* ==================================================
-   NOMBRE DEL PRODUCTO
+   NOMBRE
 ================================================== */
 
 .nombre{
-    display:inline-block;
+
+    display:block;
 
     color:var(--vino-oscuro);
 
     font-family:Georgia,serif;
 
-    font-size:1.35rem;
+    font-size:1.55rem;
 
     font-weight:700;
 
@@ -272,11 +427,29 @@ body{
 
     line-height:1.3;
 
-    margin-bottom:16px;
+    margin-bottom:25px;
 
-    padding-bottom:7px;
+    padding-bottom:12px;
 
-    border-bottom:2px solid rgba(184,111,128,.35);
+    border-bottom:2px solid rgba(184,111,128,.28);
+
+}
+
+
+/* ==================================================
+   DATOS
+================================================== */
+
+.detalle{
+
+    display:grid;
+
+    grid-template-columns:repeat(2, minmax(130px,1fr));
+
+    gap:16px;
+
+    width:100%;
+
 }
 
 
@@ -284,100 +457,130 @@ body{
    CAJAS DE DATOS
 ================================================== */
 
-.detalle{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-}
-
-
 .detalle-caja{
-    min-width:145px;
 
-    padding:11px 16px;
+    min-height:90px;
 
-    border-radius:13px;
+    padding:16px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
 
     background:
-    linear-gradient(
-        135deg,
-        rgba(255,250,251,.72),
-        rgba(247,230,234,.72)
-    );
 
-    border:1px solid rgba(184,111,128,.22);
+    rgba(255,255,255,.68);
+
+    border:1px solid rgba(184,111,128,.20);
 
     box-shadow:
-    0 4px 12px rgba(100,70,80,.06);
+
+    0 5px 15px rgba(100,70,80,.06);
 
     color:var(--gris);
 
-    font-size:.88rem;
+    font-size:.78rem;
 
-    transition:
-    transform .25s ease,
-    box-shadow .25s ease;
-}
+    text-transform:uppercase;
 
+    letter-spacing:1px;
 
-.detalle-caja:hover{
-    transform:translateY(-2px);
-
-    box-shadow:
-    0 7px 16px rgba(100,70,80,.10);
 }
 
 
 .detalle-caja strong{
+
+    display:block;
+
+    margin-top:7px;
+
     color:var(--vino-oscuro);
 
-    font-size:.95rem;
+    font-size:1.25rem;
 
     font-weight:700;
 
-    margin-left:3px;
+    letter-spacing:0;
+
 }
 
 
 /* ==================================================
-   BOTONES DE ACCIÓN
+   BOTONES
 ================================================== */
 
 .acciones-item{
+
     display:flex;
-    gap:10px;
-    align-items:center;
-    flex-shrink:0;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:13px;
+
 }
 
 
 .acciones-item a{
+
+    width:100%;
+
     text-decoration:none;
+
 }
 
 
 /* ==================================================
-   BOTÓN MODIFICAR
+   BOTONES GENERALES
 ================================================== */
 
-.btn-edit{
+.btn-edit,
+.btn-delete{
+
+    width:100%;
+
     border:none;
 
-    padding:12px 20px;
+    padding:13px 15px;
 
     border-radius:30px;
 
-    cursor:pointer;
-
     color:white;
 
-    font-size:.82rem;
+    cursor:pointer;
+
+    font-size:.78rem;
 
     font-weight:600;
 
-    letter-spacing:.3px;
+    letter-spacing:.4px;
+
+    transition:
+
+    transform .25s ease,
+    box-shadow .25s ease,
+    filter .25s ease;
+
+}
+
+
+/* ==================================================
+   MODIFICAR
+================================================== */
+
+.btn-edit{
 
     background:
+
     linear-gradient(
         135deg,
         #c58a73,
@@ -385,47 +588,33 @@ body{
     );
 
     box-shadow:
-    0 6px 16px rgba(169,108,89,.22);
 
-    transition:
-    transform .3s ease,
-    box-shadow .3s ease,
-    filter .3s ease;
+    0 7px 17px rgba(169,108,89,.20);
+
 }
 
 
 .btn-edit:hover{
+
     transform:translateY(-3px);
 
-    filter:brightness(1.08);
+    filter:brightness(1.07);
 
     box-shadow:
-    0 10px 22px rgba(169,108,89,.30);
+
+    0 11px 23px rgba(169,108,89,.30);
+
 }
 
 
 /* ==================================================
-   BOTÓN ELIMINAR
+   ELIMINAR
 ================================================== */
 
 .btn-delete{
-    border:none;
-
-    padding:12px 20px;
-
-    border-radius:30px;
-
-    cursor:pointer;
-
-    color:white;
-
-    font-size:.82rem;
-
-    font-weight:600;
-
-    letter-spacing:.3px;
 
     background:
+
     linear-gradient(
         135deg,
         #b87986,
@@ -433,22 +622,22 @@ body{
     );
 
     box-shadow:
-    0 6px 16px rgba(150,85,101,.22);
 
-    transition:
-    transform .3s ease,
-    box-shadow .3s ease,
-    filter .3s ease;
+    0 7px 17px rgba(150,85,101,.20);
+
 }
 
 
 .btn-delete:hover{
+
     transform:translateY(-3px);
 
-    filter:brightness(1.08);
+    filter:brightness(1.07);
 
     box-shadow:
-    0 10px 22px rgba(150,85,101,.30);
+
+    0 11px 23px rgba(150,85,101,.30);
+
 }
 
 
@@ -457,46 +646,41 @@ body{
 ================================================== */
 
 .total-box{
-    width:320px;
 
-    margin:45px auto 0;
+    width:350px;
 
-    padding:25px 30px;
+    max-width:100%;
 
-    border-radius:24px;
+    margin:50px auto 0;
+
+    padding:28px 35px;
+
+    border-radius:25px;
 
     text-align:center;
 
     background:
+
     linear-gradient(
         135deg,
-        rgba(250,243,244,.96),
-        rgba(244,224,230,.96)
+        rgba(255,250,251,.97),
+        rgba(244,224,230,.97)
     );
 
-    border:1px solid rgba(184,111,128,.35);
+    border:1px solid rgba(184,111,128,.30);
 
     box-shadow:
-    0 14px 35px rgba(100,70,80,.15);
 
-    transition:
-    transform .3s ease,
-    box-shadow .3s ease;
-}
+    0 14px 35px rgba(100,70,80,.13);
 
-
-.total-box:hover{
-    transform:translateY(-4px);
-
-    box-shadow:
-    0 18px 40px rgba(100,70,80,.20);
 }
 
 
 .total-title{
+
     color:var(--rosa);
 
-    font-size:.75rem;
+    font-size:.72rem;
 
     text-transform:uppercase;
 
@@ -505,17 +689,20 @@ body{
     font-weight:700;
 
     margin-bottom:10px;
+
 }
 
 
 .total-value{
+
     color:var(--vino-oscuro);
 
     font-family:Georgia,serif;
 
-    font-size:2.1rem;
+    font-size:2.2rem;
 
     font-weight:700;
+
 }
 
 
@@ -524,20 +711,25 @@ body{
 ================================================== */
 
 .actions{
+
     display:flex;
 
     justify-content:center;
 
-    gap:15px;
+    align-items:center;
 
-    margin-top:38px;
+    gap:18px;
+
+    margin-top:35px;
 
     flex-wrap:wrap;
+
 }
 
 
 .btn{
-    min-width:190px;
+
+    min-width:200px;
 
     padding:14px 25px;
 
@@ -550,6 +742,7 @@ body{
     color:white;
 
     background:
+
     linear-gradient(
         135deg,
         var(--vino),
@@ -558,27 +751,28 @@ body{
 
     font-weight:600;
 
-    font-size:.88rem;
-
-    letter-spacing:.2px;
+    font-size:.86rem;
 
     box-shadow:
+
     0 8px 20px rgba(100,70,80,.18);
 
     transition:
+
     transform .3s ease,
-    box-shadow .3s ease,
-    filter .3s ease;
+    box-shadow .3s ease;
+
 }
 
 
 .btn:hover{
+
     transform:translateY(-4px);
 
-    filter:brightness(1.08);
-
     box-shadow:
-    0 12px 27px rgba(100,70,80,.25);
+
+    0 13px 28px rgba(100,70,80,.25);
+
 }
 
 
@@ -587,177 +781,243 @@ body{
 ================================================== */
 
 .carrito-vacio{
-    max-width:800px;
 
-    margin:0 auto;
+    max-width:850px;
 
-    background:
-    rgba(250,243,244,.93);
+    margin:auto;
 
-    border:1px solid var(--borde);
-
-    border-radius:22px;
-
-    padding:65px 30px;
+    padding:70px 30px;
 
     text-align:center;
 
-    color:var(--gris);
+    border-radius:28px;
+
+    background:
+
+    rgba(255,250,251,.94);
+
+    border:1px solid var(--borde);
 
     box-shadow:
-    0 12px 35px rgba(100,70,80,.12);
+
+    0 15px 40px rgba(100,70,80,.12);
+
 }
 
 
 .carrito-vacio h3{
-    font-family:Georgia,serif;
 
     color:var(--vino-oscuro);
 
-    font-size:1.6rem;
+    font-family:Georgia,serif;
+
+    font-size:1.7rem;
 
     margin-bottom:10px;
+
 }
 
 
 .carrito-vacio p{
+
+    color:var(--gris);
+
     font-size:.9rem;
-}
-
-
-/* ==================================================
-   ANIMACIONES
-================================================== */
-
-@keyframes aparecer{
-
-    from{
-        opacity:0;
-        transform:translateY(20px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-
-}
-
-
-@keyframes aparecerHeader{
-
-    from{
-        opacity:0;
-        transform:translateY(-15px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
 
 }
 
 
 /* ==================================================
-   RESPONSIVE
+   TABLET
 ================================================== */
 
-@media(max-width:768px){
-
-    .header{
-        padding:40px 20px 30px;
-    }
-
-
-    .header h1{
-        font-size:2.5rem;
-        letter-spacing:3px;
-    }
-
-
-    .container{
-        width:92%;
-        margin:40px auto;
-    }
-
+@media(max-width:850px){
 
     .item{
-        flex-direction:column;
-        align-items:stretch;
-        padding:24px 20px;
+
+        grid-template-columns:180px 1fr;
+
+        gap:25px;
+
     }
 
 
-    .nombre{
-        display:block;
-        text-align:center;
+    .imagen-producto{
+
+        width:180px;
+
+        height:180px;
+
     }
 
 
-    .detalle{
-        justify-content:center;
-    }
+    .info{
 
-
-    .acciones-item{
-        justify-content:center;
         width:100%;
-        margin-top:5px;
-    }
 
-
-    .btn-edit,
-    .btn-delete{
-        padding:11px 15px;
-    }
-
-
-    .total-box{
-        width:90%;
-        max-width:320px;
-    }
-
-}
-
-
-@media(max-width:450px){
-
-    .detalle{
-        flex-direction:column;
-        align-items:stretch;
-    }
-
-
-    .detalle-caja{
-        text-align:center;
     }
 
 
     .acciones-item{
-        flex-direction:column;
+
+        grid-column:1 / -1;
+
+        flex-direction:row;
+
+        justify-content:center;
+
     }
 
 
     .acciones-item a{
-        width:100%;
+
+        max-width:180px;
+
+    }
+
+}
+
+
+/* ==================================================
+   CELULAR
+================================================== */
+
+@media(max-width:600px){
+
+    .container{
+
+        width:94%;
+
+        margin-top:35px;
+
     }
 
 
-    .btn-edit,
-    .btn-delete{
+    .item{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+
+        padding:22px 18px;
+
+        gap:22px;
+
+    }
+
+
+    .imagen-producto{
+
+        width:190px;
+
+        height:190px;
+
+    }
+
+
+    .info{
+
         width:100%;
+
+        align-items:center;
+
+    }
+
+
+    .nombre{
+
+        width:100%;
+
+        text-align:center;
+
+        font-size:1.3rem;
+
+    }
+
+
+    .detalle{
+
+        width:100%;
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+
+    .acciones-item{
+
+        width:100%;
+
+        flex-direction:row;
+
+    }
+
+
+    .acciones-item a{
+
+        max-width:none;
+
+    }
+
+}
+
+
+/* ==================================================
+   CELULAR PEQUEÑO
+================================================== */
+
+@media(max-width:400px){
+
+    .imagen-producto{
+
+        width:160px;
+
+        height:160px;
+
+    }
+
+
+    .detalle{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .acciones-item{
+
+        flex-direction:column;
+
+    }
+
+
+    .acciones-item a{
+
+        max-width:none;
+
+    }
+
+
+    .total-box{
+
+        width:100%;
+
     }
 
 
     .actions{
+
         flex-direction:column;
-        align-items:center;
+
     }
 
 
     .btn{
+
         width:100%;
+
     }
 
 }
@@ -766,7 +1026,9 @@ body{
 
 </head>
 
+
 <body>
+
 
 <!-- ==================================================
      HEADER
@@ -774,19 +1036,20 @@ body{
 
 <div class="header">
 
-```
-<div class="header-pequeno">
-    Gestión de compra
+    <div class="header-pequeno">
+        Gestión de compra
+    </div>
+
+
+    <h1>
+        MI CARRITO
+    </h1>
+
+
+    <div class="header-linea"></div>
+
 </div>
 
-<h1>
-    MI CARRITO
-</h1>
-
-<div class="header-linea"></div>
-```
-
-</div>
 
 <!-- ==================================================
      CONTENIDO
@@ -794,25 +1057,28 @@ body{
 
 <div class="container">
 
-```
-<div class="encabezado">
 
-    <div class="encabezado-pequeno">
-        Pedido seleccionado
+    <div class="encabezado">
+
+        <div class="encabezado-pequeno">
+            Pedido seleccionado
+        </div>
+
+
+        <h2>
+            Revisa tus productos
+        </h2>
+
+
+        <div class="linea-decorativa"></div>
+
     </div>
 
-    <h2>
-        Revisa tus productos
-    </h2>
-
-    <div class="linea-decorativa"></div>
-
-</div>
-```
 
 <?php
 
 $hayProductos = false;
+
 
 while($fila = $resultado->fetch_assoc()){
 
@@ -820,81 +1086,184 @@ while($fila = $resultado->fetch_assoc()){
 
     $totalGeneral += $fila['costototal'];
 
+
+    // =====================================================
+    // CÓDIGO DEL PRODUCTO
+    // =====================================================
+
+    $codigo = $fila['PRODUCTO_codigo'];
+
+
+    // =====================================================
+    // BUSCAR IMAGEN
+    // =====================================================
+
+    $nombreArchivo = "p-" . $codigo;
+
+    $directorio = "../PRODUCTO-img/";
+
+
+    $extensiones = [
+
+        "jpg",
+        "jpeg",
+        "png",
+        "gif"
+
+    ];
+
+
+    $imagenProducto = null;
+
+
+    foreach($extensiones as $extension){
+
+        $ruta =
+            $directorio .
+            $nombreArchivo .
+            "." .
+            $extension;
+
+
+        if(file_exists($ruta)){
+
+            $imagenProducto = $ruta;
+
+            break;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // IMAGEN DE RESPALDO
+    // =====================================================
+
+    if($imagenProducto === null){
+
+        $imagenProducto =
+            "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
+
+    }
+
 ?>
 
+
 <!-- ==================================================
-     PRODUCTO
+     TARJETA DEL PRODUCTO
 ================================================== -->
 
 <div class="item">
 
 
-<div class="info">
+    <!-- ==================================================
+         IMAGEN
+    ================================================== -->
 
+    <div class="imagen-producto">
 
-    <div class="nombre">
-
-        <?php echo strtoupper($fila['nombre']); ?>
-
-    </div>
-
-
-    <div class="detalle">
-
-
-        <div class="detalle-caja">
-
-            Cantidad:
-
-            <strong>
-                <?php echo $fila['cantidad']; ?>
-            </strong>
-
-        </div>
-
-
-        <div class="detalle-caja">
-
-            Total:
-
-            <strong>
-                Bs. <?php echo $fila['costototal']; ?>
-            </strong>
-
-        </div>
-
+        <img
+            src="<?php echo htmlspecialchars($imagenProducto); ?>"
+            alt="<?php echo htmlspecialchars($fila['nombre']); ?>"
+        >
 
     </div>
 
 
+    <!-- ==================================================
+         INFORMACIÓN
+    ================================================== -->
+
+    <div class="info">
+
+
+        <div class="nombre">
+
+            <?php echo strtoupper($fila['nombre']); ?>
+
+        </div>
+
+
+        <div class="detalle">
+
+
+            <div class="detalle-caja">
+
+                Cantidad
+
+                <strong>
+
+                    <?php echo $fila['cantidad']; ?>
+
+                </strong>
+
+            </div>
+
+
+            <div class="detalle-caja">
+
+                Total
+
+                <strong>
+
+                    Bs. <?php echo $fila['costototal']; ?>
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==================================================
+         ACCIONES
+    ================================================== -->
+
+    <div class="acciones-item">
+
+
+        <a
+            href="updateformcarrito.php?idPedido=<?php echo $idpedido; ?>&codigo=<?php echo $fila['PRODUCTO_codigo']; ?>&cantidad=<?php echo $fila['cantidad']; ?>"
+        >
+
+            <button
+                class="btn-edit"
+                type="button"
+            >
+
+                Modificar
+
+            </button>
+
+        </a>
+
+
+        <a
+            href="deletecarrito.php?idPedido=<?php echo $idpedido; ?>&codigo=<?php echo $fila['PRODUCTO_codigo']; ?>"
+        >
+
+            <button
+                class="btn-delete"
+                type="button"
+            >
+
+                Eliminar
+
+            </button>
+
+        </a>
+
+
+    </div>
+
+
 </div>
 
-
-<div class="acciones-item">
-
-
-    <a href="updateformcarrito.php?idPedido=<?php echo $idpedido ?>&codigo=<?php echo $fila['PRODUCTO_codigo'] ?>&cantidad=<?php echo $fila['cantidad'] ?>">
-
-        <button class="btn-edit" type="button">
-            Modificar
-        </button>
-
-    </a>
-
-
-    <a href="deletecarrito.php?idPedido=<?php echo $idpedido ?>&codigo=<?php echo $fila['PRODUCTO_codigo'] ?>">
-
-        <button class="btn-delete" type="button">
-            Eliminar
-        </button>
-
-    </a>
-
-
-</div>
-
-
-</div>
 
 <?php
 
@@ -905,25 +1274,30 @@ if(!$hayProductos){
 
 ?>
 
+
+<!-- ==================================================
+     CARRITO VACÍO
+================================================== -->
+
 <div class="carrito-vacio">
 
+    <h3>
+        Tu carrito está vacío
+    </h3>
 
-<h3>
-    Tu carrito está vacío
-</h3>
-
-<p>
-    Todavía no has agregado productos a este pedido.
-</p>
-
+    <p>
+        Todavía no has agregado productos a este pedido.
+    </p>
 
 </div>
+
 
 <?php
 
 }
 
 ?>
+
 
 <!-- ==================================================
      TOTAL
@@ -932,45 +1306,60 @@ if(!$hayProductos){
 <div class="total-box">
 
 
-<div class="total-title">
-    Total de la compra
-</div>
+    <div class="total-title">
 
-<div class="total-value">
-    Bs. <?php echo $totalGeneral; ?>
-</div>
+        Total de la compra
+
+    </div>
 
 
+    <div class="total-value">
+
+        Bs. <?php echo $totalGeneral; ?>
+
+    </div>
+
+
 </div>
+
 
 <!-- ==================================================
-     BOTONES
+     BOTONES FINALES
 ================================================== -->
 
 <div class="actions">
 
 
-<a class="btn" href="formcarrito.php?idPedido=<?php echo $idpedido ?>">
+    <a
+        class="btn"
+        href="formcarrito.php?idPedido=<?php echo $idpedido; ?>"
+    >
 
-    Seguir comprando
+        Seguir comprando
 
-</a>
+    </a>
 
 
-<a class="btn" href="./CRUD-CARRITO-PEDIDO/readunopedido.php echo $idpedido ?>">
+    <a
+        class="btn"
+        href="readunopedido.php?idPedido=<?php echo $idpedido; ?>"
+    >
 
-    Finalizar compra
+        Finalizar compra
 
-</a>
+    </a>
 
 
 </div>
 
+
 </div>
+
 
 </body>
 
 </html>
+
 
 <?php
 

@@ -101,24 +101,24 @@ $res = $resultadoTotal->fetch_assoc();
 
 $total = $res['total'] ?? 0;
 
-?>
 
-
-<?php
+/* ==========================================
+   MENSAJE PRODUCTO ELIMINADO
+========================================== */
 
 $productoEliminado = false;
 
-if (isset($_GET['eliminado']) && $_GET['eliminado'] == '1') {
+if (
+    isset($_GET['eliminado'])
+    &&
+    $_GET['eliminado'] == '1'
+) {
+
     $productoEliminado = true;
+
 }
 
 ?>
-
-
-
-
-
-
 
 
 <!DOCTYPE html>
@@ -146,13 +146,17 @@ if (isset($_GET['eliminado']) && $_GET['eliminado'] == '1') {
 ================================================== */
 
 :root {
+
     --rosa: #b86f80;
     --rosa-claro: #d9a6b2;
     --rosa-palido: #f7e9ec;
     --crema: #fffaf8;
+
     --texto: #4d4143;
     --gris: #817679;
+
     --borde: #ead7dc;
+
 }
 
 
@@ -161,17 +165,24 @@ if (isset($_GET['eliminado']) && $_GET['eliminado'] == '1') {
 ================================================== */
 
 * {
+
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
 }
 
 
 body {
+
     background: var(--crema);
+
     color: var(--texto);
+
     font-family: 'Segoe UI', sans-serif;
+
     min-height: 100vh;
+
 }
 
 
@@ -182,7 +193,9 @@ body {
 .hero {
 
     min-height: 520px;
+
     background:
+
     linear-gradient(
         to right,
         rgba(255,250,248,.88),
@@ -217,8 +230,11 @@ body {
 .hero-linea {
 
     width: 60px;
+
     height: 2px;
+
     background: var(--rosa);
+
     margin-bottom: 25px;
 
 }
@@ -227,10 +243,15 @@ body {
 .hero h1 {
 
     font-family: Georgia, serif;
+
     font-size: clamp(3.5rem, 7vw, 6rem);
+
     font-weight: 400;
+
     letter-spacing: 12px;
+
     color: var(--rosa);
+
     line-height: 1;
 
 }
@@ -349,6 +370,7 @@ body {
     font-size: 1.2rem;
 
     box-shadow:
+
         0 8px 25px rgba(100,70,80,.08);
 
 }
@@ -397,10 +419,13 @@ body {
     border: 1px solid var(--borde);
 
     box-shadow:
+
         0 8px 30px rgba(100,70,80,.06);
 
     transition:
+
         transform .45s ease,
+
         box-shadow .45s ease;
 
 }
@@ -409,9 +434,11 @@ body {
 .card:hover {
 
     transform:
+
         translateY(-8px);
 
     box-shadow:
+
         0 20px 45px rgba(100,70,80,.13);
 
 }
@@ -442,7 +469,10 @@ body {
 
     object-fit: cover;
 
+    display: block;
+
     transition:
+
         transform .7s ease;
 
 }
@@ -452,6 +482,7 @@ body {
 .imagen img {
 
     transform:
+
         scale(1.06);
 
 }
@@ -751,8 +782,11 @@ body {
     cursor: pointer;
 
     transition:
+
         background .3s ease,
+
         color .3s ease,
+
         transform .3s ease;
 
 }
@@ -765,6 +799,7 @@ body {
     color: var(--rosa);
 
     transform:
+
         translateY(-2px);
 
 }
@@ -848,8 +883,11 @@ body {
     border: 1px solid var(--rosa);
 
     transition:
+
         background .3s ease,
+
         color .3s ease,
+
         transform .3s ease;
 
 }
@@ -862,6 +900,7 @@ body {
     color: var(--rosa);
 
     transform:
+
         translateY(-2px);
 
 }
@@ -899,6 +938,7 @@ body {
     opacity: 0;
 
     transform:
+
         translateY(25px);
 
 }
@@ -909,10 +949,13 @@ body {
     opacity: 1;
 
     transform:
+
         translateY(0);
 
     transition:
+
         opacity .7s ease,
+
         transform .7s ease;
 
 }
@@ -929,6 +972,7 @@ body {
         opacity: 0;
 
         transform:
+
             scale(1.02);
 
     }
@@ -938,9 +982,145 @@ body {
         opacity: 1;
 
         transform:
+
             scale(1);
 
     }
+
+}
+
+
+/* ==================================================
+   MENSAJE PRODUCTO ELIMINADO
+================================================== */
+
+.fondo-mensaje {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: rgba(80, 30, 50, 0.35);
+
+    z-index: 999;
+
+}
+
+
+.mensaje-exito {
+
+    position: fixed;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 380px;
+
+    max-width: 90%;
+
+    padding: 35px;
+
+    background: #fff8fa;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 15px 40px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+
+    border: 2px solid #e7a6b8;
+
+}
+
+
+.icono-exito {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #e8a7b9;
+
+    color: white;
+
+    font-size: 40px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.mensaje-exito h2 {
+
+    margin: 10px 0;
+
+    color: #8d4058;
+
+    font-size: 25px;
+
+}
+
+
+.mensaje-exito p {
+
+    color: #6f555d;
+
+    font-size: 16px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.mensaje-exito button {
+
+    border: none;
+
+    background: #c97991;
+
+    color: white;
+
+    padding: 12px 35px;
+
+    border-radius: 25px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.mensaje-exito button:hover {
+
+    background: #a95670;
+
+    transform: scale(1.05);
 
 }
 
@@ -956,9 +1136,11 @@ body {
         min-height: 500px;
 
         padding:
+
             50px 30px;
 
         background-position:
+
             65% center;
 
     }
@@ -983,6 +1165,7 @@ body {
     .section {
 
         padding:
+
             65px 20px;
 
     }
@@ -991,6 +1174,7 @@ body {
     .titulo {
 
         font-size:
+
             2rem;
 
     }
@@ -999,9 +1183,11 @@ body {
     .grid {
 
         grid-template-columns:
+
             1fr;
 
         gap:
+
             25px;
 
     }
@@ -1010,6 +1196,7 @@ body {
     .imagen {
 
         height:
+
             280px;
 
     }
@@ -1018,6 +1205,7 @@ body {
     .botones {
 
         flex-direction:
+
             column;
 
     }
@@ -1032,110 +1220,7 @@ body {
     }
 
 }
-<style>
 
-.fondo-mensaje {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(80, 30, 50, 0.35);
-    z-index: 999;
-}
-
-.mensaje-exito {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 380px;
-    padding: 35px;
-
-    background: #fff8fa;
-
-    border-radius: 25px;
-
-    text-align: center;
-
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-
-    z-index: 1000;
-
-    border: 2px solid #e7a6b8;
-}
-
-.icono-exito {
-
-    width: 65px;
-    height: 65px;
-
-    margin: 0 auto 15px;
-
-    border-radius: 50%;
-
-    background: #e8a7b9;
-
-    color: white;
-
-    font-size: 40px;
-    font-weight: bold;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.mensaje-exito h2 {
-
-    margin: 10px 0;
-
-    color: #8d4058;
-
-    font-size: 25px;
-
-}
-
-.mensaje-exito p {
-
-    color: #6f555d;
-
-    font-size: 16px;
-
-    margin-bottom: 25px;
-
-}
-
-.mensaje-exito button {
-
-    border: none;
-
-    background: #c97991;
-
-    color: white;
-
-    padding: 12px 35px;
-
-    border-radius: 25px;
-
-    font-size: 16px;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-
-}
-
-.mensaje-exito button:hover {
-
-    background: #a95670;
-
-    transform: scale(1.05);
-
-}
-
-</style>
 </style>
 
 </head>
@@ -1163,9 +1248,7 @@ const idPedido = <?php echo $id_pedido; ?>;
 <script src="../AJAX/buscar.js"></script>
 
 
-
 <div id="productos"></div>
-
 
 
 <!-- ==================================================
@@ -1202,7 +1285,6 @@ const idPedido = <?php echo $id_pedido; ?>;
 </section>
 
 
-
 <!-- ==================================================
      PRODUCTOS
 ================================================== -->
@@ -1233,7 +1315,6 @@ const idPedido = <?php echo $id_pedido; ?>;
     </div>
 
 
-
     <!-- ==================================================
          TOTAL
     ================================================== -->
@@ -1252,7 +1333,6 @@ const idPedido = <?php echo $id_pedido; ?>;
     </div>
 
 
-
     <!-- ==================================================
          GRID DE PRODUCTOS
     ================================================== -->
@@ -1269,11 +1349,66 @@ if ($resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_assoc()) {
 
 
-        /*
-         * OBTENER STOCK DEL PRODUCTO
-         */
+        /* ==================================================
+           OBTENER STOCK
+        ================================================== */
 
         $stock = (int)$fila["stock"];
+
+
+        /* ==================================================
+           OBTENER CÓDIGO DEL PRODUCTO
+        ================================================== */
+
+        $codigo = $fila["codigo"];
+
+
+        /* ==================================================
+           BUSCAR IMAGEN DEL PRODUCTO
+           
+           FORMATO:
+           p-CODIGO.jpg
+           p-CODIGO.jpeg
+           p-CODIGO.png
+           p-CODIGO.gif
+        ================================================== */
+
+        $directorio = "../PRODUCTO-img/";
+
+        $nombreArchivo = "p-" . $codigo;
+
+        $extensiones = [
+
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+
+        ];
+
+        $imagenProducto = null;
+
+
+        foreach ($extensiones as $extension) {
+
+
+            $ruta =
+
+                $directorio .
+                $nombreArchivo .
+                "." .
+                $extension;
+
+
+            if (file_exists($ruta)) {
+
+                $imagenProducto = $ruta;
+
+                break;
+
+            }
+
+        }
 
 
 ?>
@@ -1295,11 +1430,7 @@ if ($resultado->num_rows > 0) {
 
 <?php
 
-if (
-    isset($fila["imagen"])
-    &&
-    $fila["imagen"] != ""
-) {
+if ($imagenProducto !== null) {
 
 ?>
 
@@ -1309,7 +1440,7 @@ if (
                     src="<?php
 
                     echo htmlspecialchars(
-                        $fila["imagen"]
+                        $imagenProducto
                     );
 
                     ?>"
@@ -1349,7 +1480,6 @@ if (
             </div>
 
 
-
             <!-- ==================================================
                  INFORMACIÓN
             ================================================== -->
@@ -1376,7 +1506,6 @@ echo htmlspecialchars(
                 </h3>
 
 
-
                 <!-- DESCRIPCIÓN -->
 
                 <p class="descripcion">
@@ -1390,7 +1519,6 @@ echo htmlspecialchars(
 ?>
 
                 </p>
-
 
 
                 <!-- PRECIO -->
@@ -1408,7 +1536,6 @@ echo htmlspecialchars(
 ?>
 
                 </div>
-
 
 
                 <!-- ==================================================
@@ -1465,13 +1592,20 @@ echo $stock;
                 <div class="stock">
 
                     Stock disponible:
-                     <strong>
+
+                    <strong>
+
 <?php
+
 echo $stock;
+
 ?>
-  </strong>
-   unidades
-</div>
+
+                    </strong>
+
+                    unidades
+
+                </div>
 
 
 <?php
@@ -1481,17 +1615,11 @@ echo $stock;
 ?>
 
 
-
                 <!-- ==================================================
                      FORMULARIO
                 ================================================== -->
 
 <?php
-
-/*
- * SI EL PRODUCTO ESTÁ AGOTADO
- * NO MOSTRAMOS EL FORMULARIO.
- */
 
 if ($stock <= 0) {
 
@@ -1533,12 +1661,13 @@ if ($stock <= 0) {
 
                         value="<?php
 
-                        echo $fila["codigo"];
+                        echo htmlspecialchars(
+                            $fila["codigo"]
+                        );
 
                         ?>"
 
                     >
-
 
 
                     <!-- ==================================================
@@ -1553,12 +1682,13 @@ if ($stock <= 0) {
 
                         value="<?php
 
-                        echo $id_pedido;
+                        echo htmlspecialchars(
+                            $id_pedido
+                        );
 
                         ?>"
 
                     >
-
 
 
                     <!-- ==================================================
@@ -1573,12 +1703,13 @@ if ($stock <= 0) {
 
                         value="<?php
 
-                        echo $fila["precio"];
+                        echo htmlspecialchars(
+                            $fila["precio"]
+                        );
 
                         ?>"
 
                     >
-
 
 
                     <!-- ==================================================
@@ -1607,7 +1738,6 @@ if ($stock <= 0) {
                         </button>
 
 
-
                         <input
 
                             type="number"
@@ -1623,7 +1753,6 @@ if ($stock <= 0) {
                             required
 
                         >
-
 
 
                         <button
@@ -1646,7 +1775,6 @@ if ($stock <= 0) {
 
 
                     </div>
-
 
 
                     <!-- ==================================================
@@ -1712,7 +1840,6 @@ if ($stock <= 0) {
     </div>
 
 
-
     <!-- ==================================================
          BOTONES FINALES
     ================================================== -->
@@ -1743,7 +1870,6 @@ if ($stock <= 0) {
 </section>
 
 
-
 <!-- ==================================================
      ANIMACIÓN DE PRODUCTOS
 ================================================== -->
@@ -1763,24 +1889,32 @@ const observador =
     new IntersectionObserver(
 
         (entradas) => {
+
             entradas.forEach(
+
                 (entrada) => {
+
                     if (
                         entrada.isIntersecting
                     ) {
+
                         entrada
                             .target
-
                             .classList
-
                             .add(
                                 'activo'
                             );
+
                     }
+
                 }
+
             );
+
         },
+
         {
+
             threshold:
                 0.12
 
@@ -1793,11 +1927,9 @@ elementos.forEach(
 
     (elemento) => {
 
-
         observador.observe(
             elemento
         );
-
 
     }
 
@@ -1805,7 +1937,6 @@ elementos.forEach(
 
 
 </script>
-
 
 
 <!-- ==================================================
@@ -1840,9 +1971,7 @@ function cambiarCantidad(
         cantidad + cambio;
 
 
-    /*
-     * NO PERMITIR MENOS DE 0
-     */
+    /* NO PERMITIR MENOS DE 0 */
 
     if (cantidad < 0) {
 
@@ -1851,9 +1980,7 @@ function cambiarCantidad(
     }
 
 
-    /*
-     * NO PERMITIR SUPERAR EL STOCK
-     */
+    /* NO SUPERAR EL STOCK */
 
     if (cantidad > stock) {
 
@@ -1865,9 +1992,7 @@ function cambiarCantidad(
     input.value = cantidad;
 
 
-    /*
-     * CONTROLAR BOTONES
-     */
+    /* CONTROLAR BOTONES */
 
     const botones =
         contenedor.querySelectorAll(
@@ -1875,17 +2000,13 @@ function cambiarCantidad(
         );
 
 
-    /*
-     * BOTÓN MENOS
-     */
+    /* BOTÓN MENOS */
 
     botones[0].disabled =
         cantidad <= 0;
 
 
-    /*
-     * BOTÓN MÁS
-     */
+    /* BOTÓN MÁS */
 
     botones[1].disabled =
         cantidad >= stock;
@@ -1894,7 +2015,6 @@ function cambiarCantidad(
 
 
 </script>
-
 
 
 <!-- ==================================================
@@ -1960,38 +2080,70 @@ window.addEventListener(
 
 </script>
 
+
+<!-- ==================================================
+     MENSAJE PRODUCTO ELIMINADO
+================================================== -->
+
 <?php if ($productoEliminado): ?>
+
 
 <div class="mensaje-exito">
 
     <div class="icono-exito">
+
         ✓
+
     </div>
 
-    <h2>¡Producto eliminado!</h2>
+
+    <h2>
+
+        ¡Producto eliminado!
+
+    </h2>
+
 
     <p>
+
         El producto fue eliminado exitosamente.
+
     </p>
 
+
     <button onclick="cerrarMensaje()">
+
         Aceptar
+
     </button>
 
 </div>
 
+
 <div class="fondo-mensaje"></div>
+
 
 <script>
 
 function cerrarMensaje() {
-    document.querySelector(".mensaje-exito").style.display = "none";
-    document.querySelector(".fondo-mensaje").style.display = "none";
+
+    document.querySelector(
+        ".mensaje-exito"
+    ).style.display = "none";
+
+
+    document.querySelector(
+        ".fondo-mensaje"
+    ).style.display = "none";
+
 }
 
 </script>
 
+
 <?php endif; ?>
+
+
 </body>
 
 </html>
