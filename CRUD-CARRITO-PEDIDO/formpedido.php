@@ -212,6 +212,14 @@ input[type="submit"]:hover{
         name="direccion"
         required
     >
+ 
+ <label>Telefono:</label>
+    <input
+        type="number"
+        name="telefono"
+        required
+    >
+
 
     <label>Fecha:</label>
     <input
