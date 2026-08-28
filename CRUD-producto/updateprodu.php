@@ -55,6 +55,11 @@ if (!$conn->connect_error) {
         $_POST['precio']
         ?? '';
 
+
+          $categoria =
+        $_POST['categoria']
+        ?? '';
+
     $costo =
         $_POST['costo']
         ?? '';
@@ -91,6 +96,7 @@ if (!$conn->connect_error) {
                 SET
                     nombre='$nombre',
                     descripcion='$descripcion',
+                      categoria='$categoria',
                     precio='$precio',
                     costo='$costo',
                     stock='$stock'

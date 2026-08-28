@@ -617,7 +617,48 @@ input[type="submit"]:hover {
     }
 
 }
+/* CONTENEDOR DE LOS CAMPOS */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #6b4b4b;
+    font-size: 15px;
+}
 
+/* INPUT DESCRIPCIÓN Y SELECT CATEGORÍA */
+input[name="descripcion"],
+select[name="categoria"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d8b8b8;
+    border-radius: 10px;
+    background-color: #fffafa;
+    color: #5a4141;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+/* EFECTO AL SELECCIONAR */
+input[name="descripcion"]:focus,
+select[name="categoria"]:focus {
+    border-color: #b76e79;
+    box-shadow: 0 0 6px rgba(183, 110, 121, 0.25);
+    background-color: #ffffff;
+}
+
+/* OPCIONES DEL SELECT */
+select[name="categoria"] {
+    cursor: pointer;
+}
+
+/* TEXTO DE LA OPCIÓN INICIAL */
+select[name="categoria"] option:first-child {
+    color: #999;
+}
 
 </style>
 
@@ -681,13 +722,58 @@ input[type="submit"]:hover {
             Descripción:
         </label>
 
-        <input
-            type="text"
-            name="descripcion"
-        >
+ 
 
 
-        <!-- =================================================
+
+
+  
+ 
+<input 
+    type="text" 
+    name="descripcion"
+    id="descripcion"
+>
+
+<select id="categoria"   name="categoria">
+ <option value="">
+        Seleccione una categoría
+    </option>
+
+    <option value="SkinCare">
+        SkinCare
+    </option>
+
+    <option value="SkinHair">
+        SkinHair
+    </option>
+
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- =================================================
              PRECIO
              ================================================= -->
 
