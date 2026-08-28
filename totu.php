@@ -813,6 +813,11 @@ footer{
                     Consulta Personal
                 </a>
             </li>
+             <li>
+                <a href="./sugerencias/comentarios.php">
+                    Sugerencias
+                </a>
+            </li>
 
         </ul>
 
@@ -903,9 +908,9 @@ footer{
         >
 
 
-        <a href="./CRUD-producto/formularioprodu.php">
+        <a href="produccomp.php">
 
-            Añadir Producto
+        DESCUBRE
 
         </a>
 
