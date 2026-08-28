@@ -180,13 +180,14 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
       $nombre = $_POST['nombre'];
       $descripcion = $_POST['descripcion'];
+         $categoria = $_POST['categoria'];
       $precio = $_POST['precio'];
       $costo = $_POST['costo'];
       $stock = $_POST['stock'];
       $codigo = $_POST['codigo'];
 
-      $sql = "INSERT INTO PRODUCTO (nombre,descripcion,precio,costo,stock,codigo)
-       VALUES('$nombre', '$descripcion','$precio','$costo','$stock','$codigo')";
+      $sql = "INSERT INTO PRODUCTO (nombre,descripcion,categoria,precio,costo,stock,codigo)
+       VALUES('$nombre', '$descripcion','$categoria','$precio','$costo','$stock','$codigo')";
 
 
    //Define a que carpeta irá el archivo

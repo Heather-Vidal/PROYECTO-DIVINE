@@ -686,6 +686,18 @@ input[type="submit"]:hover {
             name="descripcion"
         >
 
+ <label for="categoria">
+            Categoría:
+        </label>
+
+        <input
+            type="text"
+            name="categoria"
+        >
+       
+
+
+
 
         <!-- =================================================
              PRECIO
@@ -919,6 +931,14 @@ $(document).ready(function(){
             },
 
 
+             categoria:{
+
+                required:true
+
+            },
+
+
+
             precio:{
 
                 required:true,
@@ -973,6 +993,13 @@ $(document).ready(function(){
 
                 required:
                     "Ingrese la descripción"
+
+            },
+
+            categoria:{
+
+                required:
+                    "Ingrese la categoría"
 
             },
 
