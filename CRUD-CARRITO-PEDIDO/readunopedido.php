@@ -2403,7 +2403,6 @@ Bs. <?php echo number_format($producto['costototal'],2 ); ?>
     </button>
 
 
-
     <button type="button" class="btn btn-pdf"  onclick="window.print()">  Guardar como PDF  </button>
 
   </div>
