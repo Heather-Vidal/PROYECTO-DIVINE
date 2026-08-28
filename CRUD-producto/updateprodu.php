@@ -873,7 +873,7 @@ body{
             class="boton"
         >
 
-            ⬅ Volver al inicio
+            ⬅ Volver al perfil
 
         </a>
 
