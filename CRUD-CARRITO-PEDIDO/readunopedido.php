@@ -768,44 +768,27 @@ body{
 ================================================== */
 
 .estado{
-
     display:
     inline-flex;
-
-
     align-items:
     center;
-
-
     gap:
     8px;
-
-
     margin-top:
     25px;
-
-
     padding:
     11px
     20px;
-
-
     border-radius:
     30px;
-
-
     background:
     linear-gradient(
         135deg,
         #fff0f3,
         #f5dce2
     );
-
-
     color:
     var(--vino-oscuro);
-
-
     border:
     1px solid
     rgba(
@@ -814,164 +797,90 @@ body{
         128,
         .3
     );
-
-
     font-size:
     .85rem;
-
-
     font-weight:
     700;
-
-
     text-transform:
     capitalize;
 
 }
-
-
 .estado::before{
-
     content:
     "●";
-
-
     color:
     var(--rosa);
-
-
     font-size:
     .75rem;
-
 }
-
-
 /* ==================================================
    PRODUCTOS
 ================================================== */
-
 .seccion-productos{
-
     margin-top:
     40px;
-
 }
-
-
 .titulo-seccion{
-
     display:
     flex;
-
-
     align-items:
     center;
-
-
     gap:
     15px;
-
-
     margin-bottom:
     20px;
-
 }
-
-
 .titulo-seccion h3{
-
     font-family:
     Georgia,
     serif;
-
-
     font-size:
     1.5rem;
-
-
     font-weight:
     400;
-
-
     color:
     var(--vino-oscuro);
-
 }
-
-
 .titulo-seccion-linea{
-
     flex:
     1;
-
-
     height:
     1px;
-
-
     background:
     var(--borde);
-
 }
-
-
 /* ==================================================
    TABLA PRODUCTOS
 ================================================== */
-
 .tabla{
-
     width:
     100%;
-
-
     border-collapse:
     separate;
-
-
     border-spacing:
     0
     8px;
 
 }
-
-
 .tabla th{
-
     padding:
     10px
     15px;
-
-
     color:
     var(--rosa);
-
-
     font-size:
     .72rem;
-
-
     text-transform:
     uppercase;
-
-
     letter-spacing:
     2px;
-
-
     text-align:
     left;
-
 }
-
-
 .tabla td{
-
     padding:
     17px
     15px;
-
-
     background:
     rgba(
         255,
@@ -979,8 +888,6 @@ body{
         251,
         .85
     );
-
-
     border-top:
     1px solid
     rgba(
@@ -989,8 +896,6 @@ body{
         128,
         .12
     );
-
-
     border-bottom:
     1px solid
     rgba(
@@ -999,16 +904,10 @@ body{
         128,
         .12
     );
-
-
     font-size:
     .9rem;
-
 }
-
-
 .tabla td:first-child{
-
     border-left:
     1px solid
     rgba(
@@ -1017,19 +916,13 @@ body{
         128,
         .12
     );
-
-
     border-radius:
     12px
     0
     0
     12px;
-
 }
-
-
 .tabla td:last-child{
-
     border-right:
     1px solid
     rgba(
@@ -1038,16 +931,12 @@ body{
         128,
         .12
     );
-
-
     border-radius:
     0
     12px
     12px
     0;
-
 }
-
 
 .producto-nombre{
 
@@ -2408,13 +2297,9 @@ Bs. <?php echo number_format($producto['costototal'],2 ); ?>
   </div>
 
 </div>
-
 </body>
-
 </html>
 
 <?php
-
 $conn->close();
-
 ?>
