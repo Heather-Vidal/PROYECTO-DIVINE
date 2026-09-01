@@ -327,6 +327,12 @@ nav{
                     Sugerencias
                 </a>
             </li>
+
+            <li>
+                <a ../CONSULTAPEDIDO/ href="formreadpedido.php">
+                    Mis pedidos
+                </a>
+            </li>
         </ul>
 
     </nav>

@@ -1,4 +1,3 @@
-
 <?php
 $servidor="localhost";
 $usuario="root";
@@ -26,6 +25,8 @@ $resultado=$conn->query($sql);
 <title>Clientes DIVINE</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<!-- LIBRERÍA SWEETALERT2 NECESARIA PARA LAS ALERTAS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 
@@ -338,53 +339,66 @@ if($resultado->num_rows > 0){
           Editar
         </a>
 
-        <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">
-          Eliminar
-        </a>
-
-      </div>
-
-    </div>
-
 <?php
+        echo "
+                    <a
+                        href='#'
+                        onclick='confirmarEliminacion($CI)'
+                    >
 
-  }
+                        <button class='boton'>
 
-} else {
+                            Eliminar
 
-  echo "<p>No hay clientes registrados.</p>";
+                        </button>
 
-}
+                    </a>
 
+                    ";
 ?>
-
+      </div>
+    </div>
+<?php
+  }
+} else {
+  echo "<p>No hay clientes registrados.</p>";
+}
+?>
   </div>
-
-
   <!-- BOTÓN VOLVER -->
-
   <div class="volver">
-
     <button
       class="boton-volver"
       type="button"
       onclick="history.back()">
 
       ⬅ Volver atrás
-
     </button>
-
   </div>
-
-
 </div>
 
+<script>
+  function confirmarEliminacion(CI) {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#532e4e",
+        cancelButtonColor: "#2B140D",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location =
+                "eliminarusuario.php?CI=" + CI;
+        }
+    });
+}
+</script>
+
 </body>
-
 </html>
-
 <?php
-
 $conn->close();
-
 ?>

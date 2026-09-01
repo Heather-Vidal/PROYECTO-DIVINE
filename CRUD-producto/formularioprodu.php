@@ -5,14 +5,9 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-    Formulario Productos DIVINE
-</title>
+<title>Formulario Productos DIVINE</title>
 
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
@@ -27,7 +22,7 @@
 
 /* =====================================================
    CONFIGURACIÓN GENERAL
-   ===================================================== */
+===================================================== */
 
 * {
     margin: 0;
@@ -39,7 +34,7 @@
 
 /* =====================================================
    FONDO
-   ===================================================== */
+===================================================== */
 
 body {
 
@@ -71,7 +66,7 @@ body {
 
 /* =====================================================
    FORMULARIO
-   ===================================================== */
+===================================================== */
 
 form {
 
@@ -98,7 +93,7 @@ form {
 
 /* =====================================================
    IMAGEN DECORATIVA
-   ===================================================== */
+===================================================== */
 
 .imagen {
 
@@ -122,7 +117,7 @@ form {
 
 /* =====================================================
    TÍTULO
-   ===================================================== */
+===================================================== */
 
 h2 {
 
@@ -142,7 +137,7 @@ h2 {
 
 /* =====================================================
    LEYENDA
-   ===================================================== */
+===================================================== */
 
 legend {
 
@@ -164,7 +159,7 @@ legend {
 
 /* =====================================================
    CAMPOS
-   ===================================================== */
+===================================================== */
 
 .grupo-campos {
 
@@ -180,11 +175,14 @@ label {
     font-weight: 600;
 
     margin-bottom: 8px;
+
+    margin-top: 15px;
 }
 
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
 
     width: 100%;
 
@@ -207,7 +205,8 @@ input[type="number"] {
 
 
 input[type="text"]:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+select:focus {
 
     border-color: #c96f84;
 
@@ -219,7 +218,7 @@ input[type="number"]:focus {
 
 /* =====================================================
    CARGA DE IMAGEN
-   ===================================================== */
+===================================================== */
 
 .carga-imagen {
 
@@ -243,19 +242,11 @@ input[type="number"]:focus {
 }
 
 
-/* =====================================================
-   INPUT ORIGINAL OCULTO
-   ===================================================== */
-
 input[type="file"] {
 
     display: none;
 }
 
-
-/* =====================================================
-   CAJA PARA SELECCIONAR ARCHIVO
-   ===================================================== */
 
 .selector-archivo {
 
@@ -301,10 +292,6 @@ input[type="file"] {
 }
 
 
-/* =====================================================
-   ICONO
-   ===================================================== */
-
 .icono-archivo {
 
     font-size: 38px;
@@ -312,10 +299,6 @@ input[type="file"] {
     margin-bottom: 8px;
 }
 
-
-/* =====================================================
-   TEXTO PRINCIPAL
-   ===================================================== */
 
 .texto-archivo {
 
@@ -327,10 +310,6 @@ input[type="file"] {
 }
 
 
-/* =====================================================
-   TEXTO SECUNDARIO
-   ===================================================== */
-
 .texto-secundario {
 
     color: #999;
@@ -340,10 +319,6 @@ input[type="file"] {
     margin-top: 5px;
 }
 
-
-/* =====================================================
-   NOMBRE DEL ARCHIVO
-   ===================================================== */
 
 .nombre-archivo {
 
@@ -373,7 +348,7 @@ input[type="file"] {
 
 /* =====================================================
    BOTÓN ENVIAR
-   ===================================================== */
+===================================================== */
 
 input[type="submit"] {
 
@@ -412,8 +387,8 @@ input[type="submit"]:hover {
 
 
 /* =====================================================
-   BOTÓN VOLVER A LA PÁGINA PRINCIPAL
-   ===================================================== */
+   BOTÓN VOLVER
+===================================================== */
 
 .btn-volver {
 
@@ -457,7 +432,7 @@ input[type="submit"]:hover {
 
 /* =====================================================
    ERRORES
-   ===================================================== */
+===================================================== */
 
 .error {
 
@@ -473,7 +448,7 @@ input[type="submit"]:hover {
 
 /* =====================================================
    RESPONSIVE
-   ===================================================== */
+===================================================== */
 
 @media (max-width: 700px) {
 
@@ -503,48 +478,6 @@ input[type="submit"]:hover {
     }
 
 }
-/* CONTENEDOR DE LOS CAMPOS */
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 7px;
-    font-weight: 600;
-    color: #6b4b4b;
-    font-size: 15px;
-}
-
-/* INPUT DESCRIPCIÓN Y SELECT CATEGORÍA */
-input[name="descripcion"],
-select[name="categoria"] {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d8b8b8;
-    border-radius: 10px;
-    background-color: #fffafa;
-    color: #5a4141;
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
-    transition: 0.3s;
-}
-
-/* EFECTO AL SELECCIONAR */
-input[name="descripcion"]:focus,
-select[name="categoria"]:focus {
-    border-color: #b76e79;
-    box-shadow: 0 0 6px rgba(183, 110, 121, 0.25);
-    background-color: #ffffff;
-}
-
-/* OPCIONES DEL SELECT */
-select[name="categoria"] {
-    cursor: pointer;
-}
-
-/* TEXTO DE LA OPCIÓN INICIAL */
-select[name="categoria"] option:first-child {
-    color: #999;
-}
 
 </style>
 
@@ -562,16 +495,8 @@ select[name="categoria"] option:first-child {
 >
 
 
-    <!-- =================================================
-         IMAGEN DECORATIVA
-         ================================================= -->
-
     <div class="imagen"></div>
 
-
-    <!-- =================================================
-         TÍTULO
-         ================================================= -->
 
     <h2>
         REGISTRO DE PRODUCTOS DIVINE
@@ -586,10 +511,6 @@ select[name="categoria"] option:first-child {
     <div class="grupo-campos">
 
 
-        <!-- =================================================
-             NOMBRE
-             ================================================= -->
-
         <label for="nombre">
             Nombre:
         </label>
@@ -601,80 +522,40 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             DESCRIPCIÓN
-             ================================================= -->
-
         <label for="descripcion">
             Descripción:
         </label>
 
- 
+        <input
+            type="text"
+            name="descripcion"
+            id="descripcion"
+        >
 
- <label for="categoria">
+
+        <label for="categoria">
             Categoría:
         </label>
 
-        <input
-            type="text"
+        <select
+            id="categoria"
             name="categoria"
         >
-       
 
+            <option value="">
+                Seleccione una categoría
+            </option>
 
+            <option value="SkinCare">
+                SkinCare
+            </option>
 
+            <option value="SkinHair">
+                SkinHair
+            </option>
 
+        </select>
 
-
-  
- 
-<input 
-    type="text" 
-    name="descripcion"
-    id="descripcion"
->
-
-<select id="categoria"   name="categoria">
- <option value="">
-        Seleccione una categoría
-    </option>
-
-    <option value="SkinCare">
-        SkinCare
-    </option>
-
-    <option value="SkinHair">
-        SkinHair
-    </option>
-
-</select>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- <!-- =================================================
-             PRECIO
-             ================================================= -->
 
         <label for="precio">
             Precio:
@@ -687,10 +568,6 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             COSTO
-             ================================================= -->
-
         <label for="costo">
             Costo:
         </label>
@@ -701,10 +578,6 @@ select[name="categoria"] option:first-child {
             id="costo"
         >
 
-
-        <!-- =================================================
-             STOCK
-             ================================================= -->
 
         <label for="stock">
             Stock:
@@ -717,10 +590,6 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             CÓDIGO
-             ================================================= -->
-
         <label for="codigo">
             Código:
         </label>
@@ -731,10 +600,6 @@ select[name="categoria"] option:first-child {
             id="codigo"
         >
 
-
-        <!-- =================================================
-             CARGAR IMAGEN
-             ================================================= -->
 
         <div class="carga-imagen">
 
@@ -755,16 +620,13 @@ select[name="categoria"] option:first-child {
                     📷
                 </div>
 
-
                 <div class="texto-archivo">
                     Seleccionar imagen
                 </div>
 
-
                 <div class="texto-secundario">
                     Haz clic aquí para cargar una imagen
                 </div>
-
 
                 <div
                     class="nombre-archivo"
@@ -787,25 +649,17 @@ select[name="categoria"] option:first-child {
     </div>
 
 
-    <!-- =================================================
-         BOTÓN ENVIAR
-         ================================================= -->
-
     <input
         type="submit"
         value="Enviar"
     >
 
 
-    <!-- =================================================
-         BOTÓN VOLVER
-         ================================================= -->
-
     <a
         href="index.php"
         class="btn-volver"
     >
-        ← Volver a la página principal
+        ← Volver al perfil
     </a>
 
 
@@ -813,10 +667,6 @@ select[name="categoria"] option:first-child {
 
 
 <script>
-
-/* =====================================================
-   MOSTRAR NOMBRE DEL ARCHIVO
-   ===================================================== */
 
 document
     .getElementById("fileToUpload")
@@ -876,17 +726,15 @@ $(document).ready(function(){
 
             },
 
-            precio: {
+            categoria: {
 
-             categoria:{
-
-                required:true
+                required: true
 
             },
 
+            precio: {
 
-
-            precio:{
+                required: true,
 
                 number: true
 
@@ -935,15 +783,14 @@ $(document).ready(function(){
 
             },
 
-            categoria:{
+            categoria: {
 
                 required:
-                    "Ingrese la categoría"
+                    "Seleccione una categoría"
 
             },
 
-
-            precio:{
+            precio: {
 
                 required:
                     "Ingrese el precio",

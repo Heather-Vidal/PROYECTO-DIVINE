@@ -1,25 +1,105 @@
+ 
 <?php
+
+session_start();
+
+
+// ==================================================
+// DATOS DE SESIÓN
+// ==================================================
+
+$nombreUsuario = $_SESSION['nombre'] ?? '';
+$rol = $_SESSION['rol'] ?? '';
+
+
+// ==================================================
+// CONEXIÓN A LA BASE DE DATOS
+// ==================================================
 
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
+
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
+
 
 if ($conn->connect_error) {
-    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS");
+
+    die(
+        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS"
+    );
+
 }
 
-$sql = "SELECT * FROM PEDIDOS";
+
+// ==================================================
+// CONSULTAR PEDIDOS
+// ==================================================
+
+if ($rol == "vendedor") {
+
+
+    // ==================================================
+    // VENDEDOR
+    // SOLO SUS PROPIOS PEDIDOS
+    // ==================================================
+
+    $nombreSeguro = $conn->real_escape_string($nombreUsuario);
+
+    $sql = "
+        SELECT *
+        FROM PEDIDOS
+        WHERE nombrevendedor = '$nombreSeguro'
+        ORDER BY ID DESC
+    ";
+
+
+} else {
+
+
+    // ==================================================
+    // ADMINISTRADOR
+    // TODOS LOS PEDIDOS
+    // ==================================================
+
+    $sql = "
+        SELECT *
+        FROM PEDIDOS
+        ORDER BY ID DESC
+    ";
+
+}
+
+
 $resultado = $conn->query($sql);
 
-?>
-<?php
+
+if (!$resultado) {
+
+    die(
+        "ERROR EN LA CONSULTA: "
+        . $conn->error
+    );
+
+}
+
+
+// ==================================================
+// MENSAJE
+// ==================================================
 
 $mensaje = $_GET['mensaje'] ?? null;
 
 ?>
+
+
 <!DOCTYPE html>
 
 <html lang="es">
@@ -27,9 +107,14 @@ $mensaje = $_GET['mensaje'] ?? null;
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>DIVINE | Pedidos</title>
+
 
 <style>
 
@@ -94,6 +179,7 @@ body{
     box-shadow:
     0 10px 35px rgba(100,70,80,.20);
 }
+
 
 .header-pequeno{
     font-size:.78rem;
@@ -224,7 +310,7 @@ body{
 
 
 /* ==================================================
-   NÚMERO DE PEDIDO DESTACADO
+   NÚMERO DE PEDIDO
 ================================================== */
 
 .id{
@@ -331,7 +417,7 @@ body{
 
 
 /* ==================================================
-   ESTADO DESTACADO
+   ESTADO
 ================================================== */
 
 .estado{
@@ -630,121 +716,124 @@ body{
     }
 
 }
-.modal-mensaje {
-    position: fixed;
-    top: 0;
-    left: 0;
 
-    width: 100%;
-    height: 100%;
 
-    background: rgba(0, 0, 0, 0.45);
+/* ==================================================
+   MODAL MENSAJE
+================================================== */
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.modal-mensaje{
 
-    z-index: 9999;
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.45);
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:9999;
 }
 
 
-.mensaje-contenido {
-    width: 400px;
-    max-width: 90%;
+.mensaje-contenido{
 
-    background: white;
+    width:400px;
 
-    padding: 35px;
+    max-width:90%;
 
-    border-radius: 20px;
+    background:white;
 
-    text-align: center;
+    padding:35px;
 
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    border-radius:20px;
 
-    animation: aparecer 0.3s ease;
+    text-align:center;
+
+    box-shadow:
+    0 10px 40px rgba(0,0,0,0.25);
+
+    animation:aparecer 0.3s ease;
 }
 
 
-.icono-exito {
-    width: 65px;
-    height: 65px;
+.icono-exito{
 
-    margin: 0 auto 15px;
+    width:65px;
+    height:65px;
 
-    border-radius: 50%;
+    margin:0 auto 15px;
 
-    background: #dff5df;
+    border-radius:50%;
 
-    color: #3c9b3c;
+    background:#dff5df;
 
-    font-size: 40px;
+    color:#3c9b3c;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size:40px;
 
-    font-weight: bold;
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-weight:bold;
 }
 
 
-.mensaje-contenido h2 {
-    margin-bottom: 10px;
+.mensaje-contenido h2{
+    margin-bottom:10px;
 }
 
 
-.mensaje-contenido p {
-    font-size: 17px;
-    margin-bottom: 25px;
+.mensaje-contenido p{
+
+    font-size:17px;
+
+    margin-bottom:25px;
 }
 
 
-.mensaje-contenido button {
-    padding: 10px 30px;
+.mensaje-contenido button{
 
-    border: none;
+    padding:10px 30px;
 
-    border-radius: 10px;
+    border:none;
 
-    cursor: pointer;
+    border-radius:10px;
 
-    font-size: 16px;
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:0.3s ease;
 }
 
 
-@keyframes aparecer {
+.mensaje-contenido button:hover{
 
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
+    background-color:#b77f8a;
 
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    color:black;
 
-}
-.mensaje-contenido button {
-    padding: 10px 30px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s ease;
+    transform:scale(1.05);
 }
 
-.mensaje-contenido button:hover {
-    background-color: #b77f8a;
-    color: black;
-    transform: scale(1.05);
-}
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <?php if ($mensaje): ?>
 
@@ -759,7 +848,11 @@ body{
         <h2>¡Pedido actualizado!</h2>
 
         <p>
-            <?php echo htmlspecialchars($mensaje); ?>
+
+            <?php
+            echo htmlspecialchars($mensaje);
+            ?>
+
         </p>
 
         <button onclick="cerrarMensaje()">
@@ -774,50 +867,52 @@ body{
 
 
 
-
-
-
-
-
-
-
-
-
-
+<!-- ==================================================
+     ENCABEZADO
+================================================== -->
 
 <div class="header">
 
 
-<div class="header-pequeno">
-    Administración de pedidos
+    <div class="header-pequeno">
+
+        Administración de pedidos
+
+    </div>
+
+
+    <h1>
+
+        PEDIDOS DIVINE
+
+    </h1>
+
+
+    <div class="header-linea"></div>
+
+
 </div>
 
-<h1>
-    PEDIDOS DIVINE
-</h1>
-
-<div class="header-linea"></div>
-
-
-</div>
 
 <div class="contenedor">
 
 
-<div class="titulo-lista">
+    <div class="titulo-lista">
 
-    <p>
-        Gestión de pedidos
-    </p>
+        <p>
+            Gestión de pedidos
+        </p>
 
-    <h2>
-        Lista de pedidos registrados
-    </h2>
+        <h2>
+            Lista de pedidos registrados
+        </h2>
 
-</div>
+    </div>
 
 
-<div class="lista">
+
+    <div class="lista">
+
 
 <?php
 
@@ -829,123 +924,229 @@ if($resultado && $resultado->num_rows > 0){
 
 ?>
 
-```
-    <div class="item">
 
 
-        <div class="info">
+        <div class="item">
 
 
-            <div class="id">
+            <div class="info">
 
-                PEDIDO #<?php echo $idPedido; ?>
+
+                <div class="id">
+
+                    PEDIDO #<?php echo $idPedido; ?>
+
+                </div>
+
+
+
+                <div class="datos">
+
+
+                    <p>
+
+                        <span>Nombre:</span>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $fila['nombre']
+                        );
+                        ?>
+
+                    </p>
+
+
+                    <p>
+
+                        <span>Fecha:</span>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $fila['fecha']
+                        );
+                        ?>
+
+                    </p>
+
+
+                    <p>
+
+                        <span>Teléfono:</span>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $fila['telefono']
+                        );
+                        ?>
+
+                    </p>
+
+
+                    <p>
+
+                        <span>Dirección:</span>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $fila['direccion']
+                        );
+                        ?>
+
+                    </p>
+
+
+                    <p>
+
+                        <span>Vendedor:</span>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $fila['nombrevendedor']
+                        );
+                        ?>
+
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="estado">
+
+                    Estado:
+
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['estado']
+                    );
+                    ?>
+
+                </div>
+
+
+                <br>
+                <br>
+
+
+
+                <!-- ==================================================
+                     ACEPTAR / RECHAZAR
+                     DISPONIBLE PARA ADMINISTRADOR Y VENDEDOR
+                ================================================== -->
+
+                <div class="botones">
+
+
+                    <a
+                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=En%20proceso"
+                    >
+
+                        <button type="button">
+
+                            Aceptar
+
+                        </button>
+
+                    </a>
+
+
+                    <a
+                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Rechazado"
+                    >
+
+                        <button type="button">
+
+                            Rechazar
+
+                        </button>
+
+                    </a>
+
+
+                </div>
+
 
             </div>
 
 
-            <div class="datos">
+
+            <!-- ==================================================
+                 BOTONES DE ACCIONES
+            ================================================== -->
+
+            <div class="botones">
 
 
-                <p>
-                    <span>Nombre:</span>
-                    <?php echo htmlspecialchars($fila['nombre']); ?>
-                </p>
+                <!-- ==================================================
+                     VER
+                     ADMINISTRADOR Y VENDEDOR
+                ================================================== -->
+
+                <a
+                    href="readunopedido.php?idPedido=<?php echo $idPedido; ?>"
+                >
+
+                    <button type="button">
+
+                        Ver
+
+                    </button>
+
+                </a>
 
 
-                <p>
-                    <span>Fecha:</span>
-                    <?php echo htmlspecialchars($fila['fecha']); ?>
-                </p>
+
+                <!-- ==================================================
+                     EDITAR Y ELIMINAR
+                     SOLAMENTE ADMINISTRADOR
+                ================================================== -->
+
+                <?php if ($rol == "administrador") { ?>
 
 
-                <p>
-                    <span>Teléfono:</span>
-                    <?php echo htmlspecialchars($fila['telefono']); ?>
-                </p>
+                    <a
+                        href="updateformpedido.php?idPedido=<?php echo $idPedido; ?>"
+                    >
+
+                        <button type="button">
+
+                            Editar
+
+                        </button>
+
+                    </a>
 
 
-                <p>
-                    <span>Dirección:</span>
-                    <?php echo htmlspecialchars($fila['direccion']); ?>
-                </p>
+
+                    <a
+                        href="deletepedido.php?idPedido=<?php echo $idPedido; ?>"
+                    >
+
+                        <button
+                            type="button"
+                            onclick="
+                                return confirm(
+                                    '¿Está seguro de eliminar este pedido?'
+                                );
+                            "
+                        >
+
+                            Eliminar
+
+                        </button>
+
+                    </a>
 
 
-                <p>
-                    <span>Vendedor:</span>
-                    <?php echo htmlspecialchars($fila['nombrevendedor']); ?>
-                </p>
+                <?php } ?>
 
 
             </div>
-
-
-            <div class="estado">
-
-                Estado:
-                <?php echo htmlspecialchars($fila['estado']); ?>
-
-            </div>
-            <br> <br>
-
-
-
-<div class="botones">
-
-    <a href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=En%20proceso">
-        <button type="button">Aceptar</button>
-    </a>
-
-    <a href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Rechazado">
-        <button type="button">Rechazar</button>
-    </a>
-
-</div>
-
-
-
-
-
-
 
 
         </div>
 
-
-        <div class="botones">
-
-
-            <a href="readunopedido.php?idPedido=<?php echo $idPedido; ?>">
-
-                <button type="button">
-                    Ver
-                </button>
-
-            </a>
-
-
-            <a href="updateformpedido.php?idPedido=<?php echo $idPedido; ?>">
-
-                <button type="button">
-                    Editar
-                </button>
-
-            </a>
-
-
-            <a href="deletepedido.php?idPedido=<?php echo $idPedido; ?>">
-
-                <button type="button">
-                    Eliminar
-                </button>
-
-            </a>
-
-
-        </div>
-
-
-    </div>
-```
 
 <?php
 
@@ -955,13 +1156,13 @@ if($resultado && $resultado->num_rows > 0){
 
 ?>
 
-```
-    <div class="vacio">
 
-        No hay pedidos registrados en este momento.
+        <div class="vacio">
 
-    </div>
-```
+            No hay pedidos registrados en este momento.
+
+        </div>
+
 
 <?php
 
@@ -969,35 +1170,47 @@ if($resultado && $resultado->num_rows > 0){
 
 ?>
 
-```
+
+    </div>
+
+
+
+    <div class="volver">
+
+        <a href="../perfilvendedor.php">
+
+            Volver al perfil
+
+        </a>
+
+    </div>
+
+
 </div>
 
 
-<div class="volver">
 
-    <a href="../perfilvendedor.php">
-        Volver al perfil
-    </a>
-
-</div>
-```
-
-</div>
 <script>
 
 function cerrarMensaje() {
 
-    document.querySelector(".modal-mensaje").style.display = "none";
+    document.querySelector(
+        ".modal-mensaje"
+    ).style.display = "none";
 
 }
 
 </script>
+
+
 </body>
 
 </html>
+
 
 <?php
 
 $conn->close();
 
 ?>
+ 
