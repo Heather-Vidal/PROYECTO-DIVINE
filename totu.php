@@ -282,26 +282,17 @@ h1{
 
 
 .box{
+    align-items: center;
     width: 430px;
-    min-height: 170px;
-
+    height: 220px;
     position: relative;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
-
-    padding: 25px 25px 25px 150px;
-
+    padding: 20px;
     background: #dac0b9;
-
-    border-radius: 0 80px 0 80px;
-
+    border-radius: 15px;
     box-shadow: 15px 20px 0 #eee1db;
-
-    margin-top: 10px;
-
-    overflow: hidden;
 }
 
 .box h2{
@@ -822,6 +813,11 @@ footer{
                     Consulta Personal
                 </a>
             </li>
+             <li>
+                <a href="./sugerencias/comentarios.php">
+                    Sugerencias
+                </a>
+            </li>
 
         </ul>
 
@@ -912,9 +908,9 @@ footer{
         >
 
 
-        <a href="./CRUD-producto/formularioprodu.php">
+        <a href="produccomp.php">
 
-            Añadir Producto
+        DESCUBRE
 
         </a>
 

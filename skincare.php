@@ -1,506 +1,1216 @@
+
+<?php
+
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
+
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
+
+if ($conn->connect_error) {
+    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: " . $conn->connect_error);
+}
+
+
+/* CONSULTAR PRODUCTOS */
+
+ 
+$sql = "SELECT * FROM producto WHERE categoria='SkinCare'";
+$resultado = $conn->query($sql);
+
+?>
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Productos Faciales</title>
+<title>DIVINE | Beauty Store</title>
+
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
+/* ==================================================
+   VARIABLES
+================================================== */
 
-body{
-background:linear-gradient(135deg,#f8edf1,#ead7df);
-}
+:root {
 
-/* HEADER */
+    --rosa: #b86f80;
 
-header{
-background:
-linear-gradient(
-135deg,
-#bf7485,
-#d89aa7
-);
+    --rosa-claro: #d9a6b2;
 
-padding:80px 20px;
+    --rosa-palido: #f7e9ec;
 
-text-align:center;
+    --crema: #fffaf8;
 
-color:white;
+    --texto: #4d4143;
 
-box-shadow:0 8px 25px rgba(191,116,133,.3);
-}
+    --gris: #817679;
 
-header h1{
-font-size:3.3rem;
-font-weight:300;
-letter-spacing:4px;
-margin-bottom:12px;
-text-transform:uppercase;
-color:#bf7485;
-}
-
-header p{
-font-size:1.2rem;
-color:#bf7485;
-}
-
-/* CONTENEDOR */
-
-.contenedor{
-max-width:1200px;
-margin:60px auto;
-padding:20px;
-}
-
-h2{
-text-align:center;
-font-size:2rem;
-color:#bf7485;
-margin-bottom:45px;
-}
-
-/* GRID */
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(3,1fr);
-
-gap:35px;
+    --borde: #ead7dc;
 
 }
 
-/* CARD */
 
-.card{
+/* ==================================================
+   RESET
+================================================== */
 
-background:white;
+* {
 
-border-radius:25px;
+    margin: 0;
 
-overflow:hidden;
+    padding: 0;
 
-box-shadow:
-0 10px 25px rgba(0,0,0,.10);
-
-transition:.35s;
-
-text-align:center;
-
-padding-bottom:20px;
+    box-sizing: border-box;
 
 }
 
-.card:hover{
 
-transform:
-translateY(-10px);
+body {
 
-box-shadow:
-0 20px 40px rgba(191,116,133,.18);
+    background: var(--crema);
 
-}
+    color: var(--texto);
 
-.card img{
-
-width:100%;
-
-height:250px;
-
-object-fit:cover;
-
-transition:.4s;
+    font-family: 'Segoe UI', sans-serif;
 
 }
 
-.card:hover img{
 
-transform:scale(1.04);
+/* ==================================================
+   HERO
+================================================== */
 
-}
+.hero {
 
-.card h3{
+    min-height: 520px;
 
-color:#9e5567;
+    background:
 
-font-size:22px;
+    linear-gradient(
 
-margin-top:18px;
+        to right,
 
-}
+        rgba(255,250,248,.88),
 
-.precio{
+        rgba(255,250,248,.35),
 
-color:#c96f84;
+        rgba(255,250,248,.05)
 
-font-size:1.5rem;
+    ),
 
-font-weight:bold;
+    url("https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg");
 
-margin:14px 0;
+    background-size: cover;
 
-}
+    background-position: center;
 
-/* CONTROLES */
+    display: flex;
 
-.controles{
+    align-items: center;
 
-display:flex;
+    padding: 60px 8%;
 
-justify-content:center;
-
-align-items:center;
-
-gap:15px;
-
-margin:18px 0;
+    animation: aparecerHero 1s ease;
 
 }
 
-.btn-cantidad{
 
-width:42px;
+.hero-content {
 
-height:42px;
-
-border:none;
-
-border-radius:50%;
-
-background:#d89aa7;
-
-color:white;
-
-font-size:20px;
-
-cursor:pointer;
-
-transition:.3s;
+    max-width: 520px;
 
 }
 
-.btn-cantidad:hover{
 
-background:#bf7485;
+.hero-linea {
 
-transform:scale(1.08);
+    width: 60px;
 
-}
+    height: 2px;
 
-.cantidad{
+    background: var(--rosa);
 
-font-size:20px;
-
-font-weight:bold;
-
-color:#9e5567;
-
-min-width:30px;
+    margin-bottom: 25px;
 
 }
 
-/* BOTON */
 
-.btn-carrito{
+.hero h1 {
 
-display:block;
+    font-family: Georgia, serif;
 
-width:82%;
+    font-size: clamp(3.5rem, 7vw, 6rem);
 
-margin:auto;
+    font-weight: 400;
 
-padding:14px;
+    letter-spacing: 12px;
 
-border:none;
+    color: var(--rosa);
 
-border-radius:14px;
-
-background:
-
-linear-gradient(
-135deg,
-#c96f84,
-#bf7485
-);
-
-color:white;
-
-font-size:15px;
-
-font-weight:700;
-
-cursor:pointer;
-
-transition:.3s;
-
-text-decoration:none;
+    line-height: 1;
 
 }
 
-.btn-carrito:hover{
 
-transform:translateY(-3px);
+.hero p {
 
-background:
+    margin-top: 25px;
 
-linear-gradient(
-135deg,
-#b45d72,
-#9e5567
-);
+    font-size: 1.05rem;
 
-}
+    letter-spacing: 1px;
 
-/* RESPONSIVE */
+    color: #66595c;
 
-@media(max-width:900px){
+    line-height: 1.8;
 
-.grid{
-
-grid-template-columns:
-repeat(2,1fr);
+    max-width: 420px;
 
 }
 
-}
 
-@media(max-width:780px){
+/* ==================================================
+   SECCIÓN
+================================================== */
 
-.grid{
+.section {
 
-grid-template-columns:1fr;
+    max-width: 1450px;
 
-}
+    margin: auto;
 
-.card img{
-
-height:320px;
-
-}
-
-header h1{
-
-font-size:2.5rem;
+    padding: 90px 50px;
 
 }
 
+
+/* ==================================================
+   ENCABEZADO SECCIÓN
+================================================== */
+
+.encabezado {
+
+    text-align: center;
+
+    margin-bottom: 60px;
+
 }
 
-/* =========================
-   ✨ ENTRADA PRODUCTOS (KEYFRAMES)
-========================= */
+
+.encabezado-pequeno {
+
+    color: var(--rosa);
+
+    font-size: .8rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.titulo {
+
+    font-family: Georgia, serif;
+
+    font-size: 2.5rem;
+
+    font-weight: 400;
+
+    color: #57494c;
+
+}
+
+
+.linea-decorativa {
+
+    width: 45px;
+
+    height: 2px;
+
+    background: var(--rosa-claro);
+
+    margin: 22px auto 0;
+
+}
+
+
+/* ==================================================
+   GRID
+================================================== */
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns:
+
+    repeat(
+
+        auto-fit,
+
+        minmax(280px, 1fr)
+
+    );
+
+    gap: 35px;
+
+}
+
+
+/* ==================================================
+   TARJETA
+================================================== */
 
 .card {
-  animation: aparecerProducto 0.8s ease forwards;
-  opacity: 0; /* estado inicial obligatorio */
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--borde);
+
+    box-shadow:
+
+    0 8px 30px rgba(100,70,80,.06);
+
+    transition:
+
+    transform .45s ease,
+
+    box-shadow .45s ease;
+
 }
 
-/* animación principal */
-@keyframes aparecerProducto {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* delays escalonados SOLO con CSS */
-.card:nth-child(1) { animation-delay: 0.1s; }
-.card:nth-child(2) { animation-delay: 0.2s; }
-.card:nth-child(3) { animation-delay: 0.3s; }
-.card:nth-child(4) { animation-delay: 0.4s; }
-.card:nth-child(5) { animation-delay: 0.5s; }
-.card:nth-child(6) { animation-delay: 0.6s; }
-.card:nth-child(7) { animation-delay: 0.7s; }
-.card:nth-child(8) { animation-delay: 0.8s; }
-.card:nth-child(9) { animation-delay: 0.9s; }
-.card:nth-child(10) { animation-delay: 1s; }
-.card:nth-child(11) { animation-delay: 1.1s; }
-.card:nth-child(12) { animation-delay: 1.2s; }
-
-/* hover premium */
-.card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
 .card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 18px 35px rgba(191,116,133,.18);
+
+    transform:
+
+    translateY(-8px);
+
+    box-shadow:
+
+    0 20px 45px rgba(100,70,80,.13);
+
 }
 
-/* botón suave */
-.btn-carrito {
-  transition: 0.3s ease;
+
+/* ==================================================
+   IMAGEN
+================================================== */
+
+.imagen-producto {
+
+    height: 300px;
+
+    overflow: hidden;
+
+    background: var(--rosa-palido);
+
+    position: relative;
+
 }
+
+
+.imagen-producto img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    transition:
+
+    transform .7s ease;
+
+}
+
+
+.card:hover
+
+.imagen-producto img {
+
+    transform:
+
+    scale(1.06);
+
+}
+
+
+/* ==================================================
+   INFORMACIÓN
+================================================== */
+
+.info {
+
+    padding: 27px 25px 25px;
+
+}
+
+
+/* ==================================================
+   NOMBRE
+================================================== */
+.info h3 {
+
+    font-family: Georgia, serif;
+
+    font-size: 1.4rem;
+
+    font-weight: 700;
+
+    color: #57494c;
+
+    text-align: center;
+
+    margin-bottom: 14px;
+
+    line-height: 1.3;
+
+}
+
+
+/* ==================================================
+   DESCRIPCIÓN
+================================================== */
+
+.descripcion {
+
+    color: var(--gris);
+
+    font-size: .9rem;
+
+    line-height: 1.7;
+
+    min-height: 50px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ==================================================
+   PRECIO
+================================================== */
+
+.precio {
+
+    font-family: Georgia, serif;
+
+    font-size: 1.5rem;
+
+    color: var(--rosa);
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ==================================================
+   BOTÓN CARRITO
+================================================== */
+
+.btn-carrito {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 100%;
+
+    height: 48px;
+
+    border-radius: 8px;
+
+    background: var(--rosa);
+
+    color: white;
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+
+    text-decoration: none;
+
+    border: 1px solid var(--rosa);
+
+    transition:
+
+    background .3s ease,
+
+    color .3s ease,
+
+    transform .3s ease;
+
+}
+
 
 .btn-carrito:hover {
-  transform: scale(1.03);
-}
-</style>
-</head>
 
+    background: transparent;
+
+    color: var(--rosa);
+
+    transform:
+
+    translateY(-2px);
+
+}
+
+
+/* ==================================================
+   STOCK
+================================================== */
+
+.stock {
+
+    text-align: center;
+
+    margin-top: 14px;
+
+    font-size: .78rem;
+
+    color: #9a8b8f;
+
+    letter-spacing: .3px;
+
+}
+
+
+.stock strong {
+
+    color: var(--rosa);
+
+    font-weight: 600;
+
+}
+
+
+/* STOCK BAJO */
+
+.stock.ultimas {
+
+    color: #a57c55;
+
+}
+
+
+.stock.ultimas strong {
+
+    color: #a57c55;
+
+}
+
+
+/* AGOTADO */
+
+.stock.agotado {
+
+    color: #999;
+
+}
+
+
+/* ==================================================
+   BOTÓN AGOTADO
+================================================== */
+
+.btn-agotado {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    cursor: not-allowed;
+
+}
+
+
+.btn-agotado:hover {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    transform: none;
+
+}
+
+
+/* ==================================================
+   SIN PRODUCTOS
+================================================== */
+
+.sin-productos {
+
+    grid-column: 1 / -1;
+
+    padding: 80px 30px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 18px;
+
+    color: var(--gris);
+
+}
+
+
+/* ==================================================
+   ANIMACIONES
+================================================== */
+
+.animar {
+
+    opacity: 0;
+
+    transform:
+
+    translateY(25px);
+
+}
+
+
+.animar.activo {
+
+    opacity: 1;
+
+    transform:
+
+    translateY(0);
+
+    transition:
+
+    opacity .7s ease,
+
+    transform .7s ease;
+
+}
+
+
+/* ==================================================
+   HERO ANIMACIÓN
+================================================== */
+
+@keyframes aparecerHero {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+
+        scale(1.02);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+
+        scale(1);
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media(max-width: 768px) {
+
+
+    .hero {
+
+        min-height: 500px;
+
+        padding:
+
+        50px 30px;
+
+        background-position:
+
+        65% center;
+
+    }
+
+
+    .hero h1 {
+
+        font-size: 3.5rem;
+
+        letter-spacing: 8px;
+
+    }
+
+
+    .hero p {
+
+        font-size: .95rem;
+
+    }
+
+
+    .section {
+
+        padding:
+
+        65px 20px;
+
+    }
+
+
+    .titulo {
+
+        font-size:
+
+        2rem;
+
+    }
+
+
+    .grid {
+
+        grid-template-columns:
+
+        1fr;
+
+        gap:
+
+        25px;
+
+    }
+
+
+    .imagen-producto {
+
+        height:
+
+        280px;
+
+    }
+
+}
+
+</style>
+
+</head>
 <body>
 
-<?php include 'submenu.php'; ?>
+<?php
 
-<header>
+include 'submenuespecial.php';
+ 
+?>
 
-<h1>PRODUCTOS FACIALES</h1>
 
-<p>Cuidado suave para cada detalle de tu piel</p>
+<script src="./AJAX/buscar.js"></script>
 
-</header>
 
-<section class="contenedor">
 
-<h2>Nuestra colección</h2>
 
-<div class="grid" id="productos"></div>
+    <div id="productos">        </div>
+
+
+<!-- ==================================================
+     HERO
+================================================== -->
+
+<section class="hero">
+
+
+    <div class="hero-content">
+
+
+        <div class="hero-linea"></div>
+
+
+        <h1>
+
+            DIVINE
+
+        </h1>
+
+
+        <p>
+
+            Una selección especial de productos
+
+            para el cuidado, hidratación y
+
+            bienestar de tu piel.
+
+        </p>
+
+
+    </div>
+
 
 </section>
 
+
+
+<!-- ==================================================
+     PRODUCTOS
+================================================== -->
+
+<section class="section">
+
+
+    <div class="encabezado">
+
+
+        <div class="encabezado-pequeno">
+
+            Nuestra colección
+
+        </div>
+
+
+        <h2 class="titulo">
+
+            Productos seleccionados
+
+        </h2>
+
+
+        <div class="linea-decorativa"></div>
+
+
+    </div>
+
+
+
+    <div class="grid">
+
+
+<?php
+
+
+if ($resultado->num_rows > 0) {
+
+
+    while ($fila = $resultado->fetch_assoc()) {
+
+
+        $codigo = $fila['codigo'];
+
+        $stock = (int)$fila['stock'];
+
+
+?>
+
+
+        <!-- ==================================================
+             PRODUCTO
+        ================================================== -->
+
+        <div class="card animar">
+
+
+            <!-- IMAGEN -->
+
+            <div class="imagen-producto">
+
+
+                <img
+
+                    src="./imagenes/producto-predeterminado.jpg"
+
+                    alt="<?php
+
+                    echo htmlspecialchars(
+
+                        $fila['nombre']
+
+                    );
+
+                    ?>"
+
+                >
+
+
+            </div>
+
+
+
+            <!-- INFORMACIÓN -->
+
+            <div class="info">
+
+
+                <!-- NOMBRE -->
+
+                <h3>
+
+                    <?php
+
+                    echo htmlspecialchars(
+
+                        $fila['nombre']
+
+                    );
+
+                    ?>
+
+                </h3>
+
+
+
+                <!-- DESCRIPCIÓN -->
+
+                <p class="descripcion">
+
+                    <?php
+
+                    echo htmlspecialchars(
+
+                        $fila['descripcion']
+
+                    );
+
+                    ?>
+
+                </p>
+
+
+
+                <!-- PRECIO -->
+
+                <div class="precio">
+
+                    Bs
+
+                    <?php
+
+                    echo htmlspecialchars(
+
+                        $fila['precio']
+
+                    );
+
+                    ?>
+
+                </div>
+
+
+
+                <!-- BOTÓN -->
+
+<?php
+
+
+if ($stock <= 0) {
+
+
+?>
+
+
+                <div class="btn-carrito btn-agotado">
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+
+} else {
+
+
+?>
+
+
+                <a
+
+                    href="./CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php echo $codigo; ?>"
+
+                    class="btn-carrito"
+
+                >
+
+                    Agregar al carrito
+
+                </a>
+
+
+<?php
+
+
+}
+
+
+?>
+
+
+
+                <!-- STOCK -->
+
+<?php
+
+
+if ($stock <= 0) {
+
+
+?>
+
+
+                <div class="stock agotado">
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+
+} elseif ($stock <= 5) {
+
+
+?>
+
+
+                <div class="stock ultimas">
+
+                    Últimas unidades:
+
+                    <strong>
+
+                        <?php
+
+                        echo $stock ; 
+
+                        ?>
+
+                    </strong>
+
+unidades disponibles
+                </div>
+
+
+<?php
+
+
+} else {
+
+
+?>
+
+
+                <div class="stock">
+
+                    Stock disponible:
+
+                    <strong>
+
+                        <?php
+
+                        echo $stock;
+
+                        ?>
+
+                    </strong>
+
+                    unidades
+
+                </div>
+
+
+<?php
+
+
+}
+
+
+?>
+
+
+            </div>
+
+
+        </div>
+
+
+<?php
+
+
+    }
+
+
+} else {
+
+
+?>
+
+
+        <div class="sin-productos">
+
+            No hay productos disponibles
+
+            en este momento.
+
+        </div>
+
+
+<?php
+
+
+}
+
+
+?>
+
+
+    </div>
+
+
+</section>
+
+
+
+<?php
+
+include 'submenpiepag.php';
+
+?>
+
+
+
 <script>
 
-const productos=[
 
-{
-nombre:"Serum revitalizante",
-precio:"Bs 40",
-img:"./imagenes/crema.jpg"
-},
+/* ==================================================
+   ANIMACIÓN DE PRODUCTOS
+================================================== */
 
-{
-nombre:"Crema nutritiva",
-precio:"Bs 30",
-img:"./imagenes/cremademanos.jpg"
-},
 
-{
-nombre:"Aceite facial",
-precio:"Bs 27",
-img:"./imagenes/cremanaranja.jpg"
-},
+const elementos =
 
-{
-nombre:"Loción iluminadora",
-precio:"Bs 40",
-img:"./imagenes/cremarosa.jpg"
-},
+document.querySelectorAll(
 
-{
-nombre:"Mascarilla de escencias",
-precio:"Bs 52",
-img:"./imagenes/naranja.jpg"
-},
+    '.animar'
 
-{
-nombre:"Mascarilla detox",
-precio:"Bs 38",
-img:"./imagenes/pepino.jpg"
-}
+);
 
-];
 
-const contenedor=
-document.getElementById("productos");
-productos.forEach((p)=>{
-const card=
-document.createElement("div");
-card.className=
-"card";
+const observador =
 
-card.innerHTML=`
+new IntersectionObserver(
 
-<img src="${p.img}">
+    (entradas) => {
 
-<h3>${p.nombre}</h3>
 
-<p class="precio">
-${p.precio}
-</p>
+        entradas.forEach(
 
-<div class="controles">
+            (entrada) => {
 
-<button class="btn-cantidad menos">
-−
-</button>
 
-<span class="cantidad">
-1
-</span>
+                if (
 
-<button class="btn-cantidad mas">
-+
-</button>
+                    entrada.isIntersecting
 
-</div>
+                ) {
 
-<a href="./CRUD-CARRITO-PEDIDO/formpedido.php" class="btn-carrito">
-Agregar al carrito
-</a>
 
-`;
+                    entrada
 
-contenedor.appendChild(card);
+                    .target
 
-});
+                    .classList
 
-/* CONTADOR */
+                    .add(
 
-document.addEventListener("click",(e)=>{
+                        'activo'
 
-if(e.target.classList.contains("mas")){
+                    );
 
-let n=
-e.target
-.previousElementSibling;
 
-n.innerText=
-parseInt(
-n.innerText
-)+1;
+                }
 
-}
 
-if(
-e.target.classList.contains("menos")
-){
+            }
 
-let n=
-e.target
-.nextElementSibling;
+        );
 
-if(
-parseInt(n.innerText)>1
-){
 
-n.innerText=
-parseInt(
-n.innerText
-)-1;
+    },
 
-}
 
-}
+    {
 
-});
+        threshold:
+
+        0.12
+
+    }
+
+);
+
+
+elementos.forEach(
+
+    (elemento) => {
+
+
+        observador.observe(
+
+            elemento
+
+        );
+
+
+    }
+
+);
 
 </script>
 
-<?php include 'submenpiepag.php'; ?>
 
 </body>
+
 </html>
+
+
+<?php
+
+$conn->close();
+
+?>
