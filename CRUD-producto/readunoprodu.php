@@ -568,6 +568,29 @@ while(
     ";
 
 
+
+
+    
+    echo "
+
+        <p>
+
+            <span>
+                Categoría:
+            </span>
+
+            "
+            . htmlspecialchars(
+                $fila['categoria']
+            )
+            . "
+
+        </p>
+
+
+    ";
+
+
     echo "
 
         <p>

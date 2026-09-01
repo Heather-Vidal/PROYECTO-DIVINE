@@ -14,40 +14,26 @@
     Formulario Productos DIVINE
 </title>
 
-
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
-
 
 <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap"
     rel="stylesheet"
 >
 
-
 <style>
-
 
 /* =====================================================
    CONFIGURACIÓN GENERAL
    ===================================================== */
 
 * {
-
-    margin:
-        0;
-
-    padding:
-        0;
-
-    box-sizing:
-        border-box;
-
-    font-family:
-        'Segoe UI',
-        sans-serif;
-
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
 }
 
 
@@ -68,33 +54,18 @@ body {
             "https://i.pinimg.com/736x/b0/c0/79/b0c07926edeca5c51deb5337f2735d36.jpg"
         );
 
-    background-position:
-        center;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 
-    background-repeat:
-        no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    background-size:
-        cover;
+    min-height: 100vh;
 
-    display:
-        flex;
-
-    justify-content:
-        center;
-
-    align-items:
-        center;
-
-    min-height:
-        100vh;
-
-    margin:
-        0;
-
-    padding:
-        30px;
-
+    margin: 0;
+    padding: 30px;
 }
 
 
@@ -104,34 +75,24 @@ body {
 
 form {
 
-    width:
-        650px;
+    width: 650px;
 
-    padding:
-        40px;
+    padding: 40px;
 
-    min-height:
-        300px;
+    min-height: 300px;
 
-    background:
-        rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.5);
 
-    backdrop-filter:
-        blur(8px);
+    backdrop-filter: blur(8px);
 
-    border-radius:
-        15px;
+    border-radius: 15px;
 
     box-shadow:
         0 15px 35px
         rgba(0,0,0,.15);
 
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -141,11 +102,8 @@ form {
 
 .imagen {
 
-    width:
-        100%;
-
-    height:
-        200px;
+    width: 100%;
+    height: 200px;
 
     background:
 
@@ -156,12 +114,9 @@ form {
         center center / cover
         no-repeat;
 
-    border-radius:
-        20px;
+    border-radius: 20px;
 
-    margin-bottom:
-        25px;
-
+    margin-bottom: 25px;
 }
 
 
@@ -171,22 +126,17 @@ form {
 
 h2 {
 
-    text-align:
-        center;
+    text-align: center;
 
-    color:
-        #bf7485;
+    color: #bf7485;
 
-    margin-bottom:
-        15px;
+    margin-bottom: 15px;
 
-    font-size:
-        28px;
+    font-size: 28px;
 
     font-family:
         'Playfair Display',
         serif;
-
 }
 
 
@@ -196,25 +146,19 @@ h2 {
 
 legend {
 
-    text-align:
-        center;
+    text-align: center;
 
-    color:
-        #bf7485;
+    color: #bf7485;
 
-    font-size:
-        20px;
+    font-size: 20px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
     font-family:
         'Playfair Display',
         serif;
-
 }
 
 
@@ -224,72 +168,52 @@ legend {
 
 .grupo-campos {
 
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
+    display: flex;
+    flex-direction: column;
 }
 
 
 label {
 
-    color:
-        #666;
+    color: #666;
 
-    font-weight:
-        600;
+    font-weight: 600;
 
-    margin-bottom:
-        8px;
-
+    margin-bottom: 8px;
 }
 
 
 input[type="text"],
 input[type="number"] {
 
-    width:
-        100%;
+    width: 100%;
 
-    padding:
-        12px 15px;
+    padding: 12px 15px;
 
-    border:
-        2px solid #f0d6dc;
+    border: 2px solid #f0d6dc;
 
-    border-radius:
-        15px;
+    border-radius: 15px;
 
-    outline:
-        none;
+    outline: none;
 
-    margin-bottom:
-        18px;
+    margin-bottom: 18px;
 
-    transition:
-        .3s;
+    transition: .3s;
 
-    font-size:
-        15px;
+    font-size: 15px;
 
-    background:
-        rgba(255,255,255,.85);
-
+    background: rgba(255,255,255,.85);
 }
 
 
 input[type="text"]:focus,
 input[type="number"]:focus {
 
-    border-color:
-        #c96f84;
+    border-color: #c96f84;
 
     box-shadow:
         0 0 10px
         rgba(201,111,132,.25);
-
 }
 
 
@@ -299,34 +223,23 @@ input[type="number"]:focus {
 
 .carga-imagen {
 
-    width:
-        100%;
+    width: 100%;
 
-    margin-top:
-        5px;
+    margin-top: 5px;
 
-    margin-bottom:
-        22px;
-
+    margin-bottom: 22px;
 }
 
 
-/* TÍTULO DEL CAMPO */
-
 .carga-imagen-titulo {
 
-    display:
-        block;
+    display: block;
 
-    color:
-        #666;
+    color: #666;
 
-    font-weight:
-        600;
+    font-weight: 600;
 
-    margin-bottom:
-        10px;
-
+    margin-bottom: 10px;
 }
 
 
@@ -336,9 +249,7 @@ input[type="number"]:focus {
 
 input[type="file"] {
 
-    display:
-        none;
-
+    display: none;
 }
 
 
@@ -348,65 +259,45 @@ input[type="file"] {
 
 .selector-archivo {
 
-    width:
-        100%;
+    width: 100%;
 
-    min-height:
-        135px;
+    min-height: 135px;
 
-    border:
-        2px dashed #d98ca0;
+    border: 2px dashed #d98ca0;
 
-    border-radius:
-        20px;
+    border-radius: 20px;
 
-    background:
-        rgba(255,245,248,.75);
+    background: rgba(255,245,248,.75);
 
-    display:
-        flex;
+    display: flex;
 
-    flex-direction:
-        column;
+    flex-direction: column;
 
-    justify-content:
-        center;
+    justify-content: center;
 
-    align-items:
-        center;
+    align-items: center;
 
-    text-align:
-        center;
+    text-align: center;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
-    padding:
-        20px;
+    padding: 20px;
 
-    transition:
-        all .3s ease;
-
+    transition: all .3s ease;
 }
 
 
-/* HOVER */
-
 .selector-archivo:hover {
 
-    border-color:
-        #bf5e78;
+    border-color: #bf5e78;
 
-    background:
-        rgba(255,235,241,.95);
+    background: rgba(255,235,241,.95);
 
-    transform:
-        translateY(-2px);
+    transform: translateY(-2px);
 
     box-shadow:
         0 8px 20px
         rgba(191,94,120,.18);
-
 }
 
 
@@ -416,12 +307,9 @@ input[type="file"] {
 
 .icono-archivo {
 
-    font-size:
-        38px;
+    font-size: 38px;
 
-    margin-bottom:
-        8px;
-
+    margin-bottom: 8px;
 }
 
 
@@ -431,15 +319,11 @@ input[type="file"] {
 
 .texto-archivo {
 
-    color:
-        #bf7485;
+    color: #bf7485;
 
-    font-size:
-        17px;
+    font-size: 17px;
 
-    font-weight:
-        bold;
-
+    font-weight: bold;
 }
 
 
@@ -449,15 +333,11 @@ input[type="file"] {
 
 .texto-secundario {
 
-    color:
-        #999;
+    color: #999;
 
-    font-size:
-        13px;
+    font-size: 13px;
 
-    margin-top:
-        5px;
-
+    margin-top: 5px;
 }
 
 
@@ -467,39 +347,27 @@ input[type="file"] {
 
 .nombre-archivo {
 
-    display:
-        none;
+    display: none;
 
-    margin-top:
-        12px;
+    margin-top: 12px;
 
-    padding:
-        7px 14px;
+    padding: 7px 14px;
 
-    border-radius:
-        20px;
+    border-radius: 20px;
 
-    background:
-        #d98ca0;
+    background: #d98ca0;
 
-    color:
-        white;
+    color: white;
 
-    font-size:
-        13px;
+    font-size: 13px;
 
-    max-width:
-        90%;
+    max-width: 90%;
 
-    overflow:
-        hidden;
+    overflow: hidden;
 
-    text-overflow:
-        ellipsis;
+    text-overflow: ellipsis;
 
-    white-space:
-        nowrap;
-
+    white-space: nowrap;
 }
 
 
@@ -509,51 +377,81 @@ input[type="file"] {
 
 input[type="submit"] {
 
-    width:
-        100%;
+    width: 100%;
 
-    background:
-        #c96f84;
+    background: #c96f84;
 
-    color:
-        white;
+    color: white;
 
-    border:
-        none;
+    border: none;
 
-    padding:
-        15px;
+    padding: 15px;
 
-    border-radius:
-        50px;
+    border-radius: 50px;
 
-    font-size:
-        17px;
+    font-size: 17px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
-    transition:
-        .3s;
+    transition: .3s;
 
     box-shadow:
         0 8px 20px
         rgba(201,111,132,.35);
-
 }
 
 
 input[type="submit"]:hover {
 
-    background:
-        #b45d72;
+    background: #b45d72;
 
-    transform:
-        translateY(-3px);
+    transform: translateY(-3px);
+}
 
+
+/* =====================================================
+   BOTÓN VOLVER A LA PÁGINA PRINCIPAL
+   ===================================================== */
+
+.btn-volver {
+
+    width: 100%;
+
+    background: #e0a5b3;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 15px;
+
+    border-radius: 50px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+    margin-top: 15px;
+
+    box-shadow:
+        0 8px 20px
+        rgba(201,111,132,.25);
+}
+
+
+.btn-volver:hover {
+
+    background: #c96f84;
+
+    transform: translateY(-3px);
 }
 
 
@@ -563,16 +461,13 @@ input[type="submit"]:hover {
 
 .error {
 
-    color:
-        #d85a5a;
+    color: #d85a5a;
 
-    font-size:
-        14px;
+    font-size: 14px;
 
     font-family:
         'Playfair Display',
         serif;
-
 }
 
 
@@ -584,40 +479,72 @@ input[type="submit"]:hover {
 
     body {
 
-        padding:
-            15px;
-
+        padding: 15px;
     }
 
 
     form {
 
-        width:
-            100%;
+        width: 100%;
 
-        padding:
-            25px;
-
+        padding: 25px;
     }
 
 
     .imagen {
 
-        height:
-            160px;
-
+        height: 160px;
     }
 
 
     h2 {
 
-        font-size:
-            23px;
-
+        font-size: 23px;
     }
 
 }
+/* CONTENEDOR DE LOS CAMPOS */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #6b4b4b;
+    font-size: 15px;
+}
 
+/* INPUT DESCRIPCIÓN Y SELECT CATEGORÍA */
+input[name="descripcion"],
+select[name="categoria"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d8b8b8;
+    border-radius: 10px;
+    background-color: #fffafa;
+    color: #5a4141;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+/* EFECTO AL SELECCIONAR */
+input[name="descripcion"]:focus,
+select[name="categoria"]:focus {
+    border-color: #b76e79;
+    box-shadow: 0 0 6px rgba(183, 110, 121, 0.25);
+    background-color: #ffffff;
+}
+
+/* OPCIONES DEL SELECT */
+select[name="categoria"] {
+    cursor: pointer;
+}
+
+/* TEXTO DE LA OPCIÓN INICIAL */
+select[name="categoria"] option:first-child {
+    color: #999;
+}
 
 </style>
 
@@ -670,6 +597,7 @@ input[type="submit"]:hover {
         <input
             type="text"
             name="nombre"
+            id="nombre"
         >
 
 
@@ -681,10 +609,7 @@ input[type="submit"]:hover {
             Descripción:
         </label>
 
-        <input
-            type="text"
-            name="descripcion"
-        >
+ 
 
  <label for="categoria">
             Categoría:
@@ -699,7 +624,55 @@ input[type="submit"]:hover {
 
 
 
-        <!-- =================================================
+
+
+  
+ 
+<input 
+    type="text" 
+    name="descripcion"
+    id="descripcion"
+>
+
+<select id="categoria"   name="categoria">
+ <option value="">
+        Seleccione una categoría
+    </option>
+
+    <option value="SkinCare">
+        SkinCare
+    </option>
+
+    <option value="SkinHair">
+        SkinHair
+    </option>
+
+</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <!-- =================================================
              PRECIO
              ================================================= -->
 
@@ -710,6 +683,7 @@ input[type="submit"]:hover {
         <input
             type="number"
             name="precio"
+            id="precio"
         >
 
 
@@ -724,6 +698,7 @@ input[type="submit"]:hover {
         <input
             type="number"
             name="costo"
+            id="costo"
         >
 
 
@@ -738,6 +713,7 @@ input[type="submit"]:hover {
         <input
             type="number"
             name="stock"
+            id="stock"
         >
 
 
@@ -752,6 +728,7 @@ input[type="submit"]:hover {
         <input
             type="number"
             name="codigo"
+            id="codigo"
         >
 
 
@@ -761,46 +738,31 @@ input[type="submit"]:hover {
 
         <div class="carga-imagen">
 
-
             <label
                 class="carga-imagen-titulo"
                 for="fileToUpload"
             >
-
                 Imagen del producto:
-
             </label>
 
-
-            <!--
-                ESTE LABEL ES EL BOTÓN BONITO.
-                AL HACER CLIC ABRE EL INPUT FILE.
-            -->
 
             <label
                 for="fileToUpload"
                 class="selector-archivo"
             >
 
-
                 <div class="icono-archivo">
-
                     📷
-
                 </div>
 
 
                 <div class="texto-archivo">
-
                     Seleccionar imagen
-
                 </div>
 
 
                 <div class="texto-secundario">
-
                     Haz clic aquí para cargar una imagen
-
                 </div>
 
 
@@ -808,19 +770,10 @@ input[type="submit"]:hover {
                     class="nombre-archivo"
                     id="nombreArchivo"
                 >
-
                 </div>
-
 
             </label>
 
-
-            <!--
-                ESTE SIGUE SIENDO EL INPUT REAL.
-                NO CAMBIAMOS SU NAME.
-                CREATEPRODU.PHP SEGUIRÁ RECIBIENDO:
-                $_FILES["fileToUpload"]
-            -->
 
             <input
                 type="file"
@@ -829,9 +782,7 @@ input[type="submit"]:hover {
                 accept="image/*"
             >
 
-
         </div>
-
 
     </div>
 
@@ -846,11 +797,22 @@ input[type="submit"]:hover {
     >
 
 
+    <!-- =================================================
+         BOTÓN VOLVER
+         ================================================= -->
+
+    <a
+        href="index.php"
+        class="btn-volver"
+    >
+        ← Volver a la página principal
+    </a>
+
+
 </form>
 
 
 <script>
-
 
 /* =====================================================
    MOSTRAR NOMBRE DEL ARCHIVO
@@ -862,74 +824,59 @@ document
         "change",
         function () {
 
-
             const archivo =
                 this.files[0];
-
 
             const nombre =
                 document.getElementById(
                     "nombreArchivo"
                 );
 
-
             if (archivo) {
-
 
                 nombre.textContent =
                     "✓ " + archivo.name;
 
-
                 nombre.style.display =
                     "inline-block";
 
-
             } else {
-
 
                 nombre.textContent =
                     "";
 
-
                 nombre.style.display =
                     "none";
 
-
             }
-
 
         }
     );
-
 
 </script>
 
 
 <script>
 
-
 $(document).ready(function(){
-
 
     $("#formprodu").validate({
 
+        rules: {
 
-        rules:{
+            nombre: {
 
-
-            nombre:{
-
-                required:true
+                required: true
 
             },
 
+            descripcion: {
 
-            descripcion:{
-
-                required:true
+                required: true
 
             },
 
+            precio: {
 
              categoria:{
 
@@ -941,55 +888,47 @@ $(document).ready(function(){
 
             precio:{
 
-                required:true,
-
-                number:true
+                number: true
 
             },
 
+            costo: {
 
-            costo:{
+                required: true,
 
-                required:true,
-
-                number:true
-
-            },
-
-
-            stock:{
-
-                required:true,
-
-                number:true
+                number: true
 
             },
 
+            stock: {
 
-            codigo:{
+                required: true,
 
-                required:true,
+                number: true
 
-                number:true
+            },
+
+            codigo: {
+
+                required: true,
+
+                number: true
 
             }
-
 
         },
 
 
-        messages:{
+        messages: {
 
-
-            nombre:{
+            nombre: {
 
                 required:
                     "Ingrese el nombre del producto"
 
             },
 
-
-            descripcion:{
+            descripcion: {
 
                 required:
                     "Ingrese la descripción"
@@ -1014,8 +953,7 @@ $(document).ready(function(){
 
             },
 
-
-            costo:{
+            costo: {
 
                 required:
                     "Ingrese el costo",
@@ -1025,8 +963,7 @@ $(document).ready(function(){
 
             },
 
-
-            stock:{
+            stock: {
 
                 required:
                     "Ingrese el stock",
@@ -1036,8 +973,7 @@ $(document).ready(function(){
 
             },
 
-
-            codigo:{
+            codigo: {
 
                 required:
                     "Ingrese el código",
@@ -1047,15 +983,11 @@ $(document).ready(function(){
 
             }
 
-
         }
-
 
     });
 
-
 });
-
 
 </script>
 

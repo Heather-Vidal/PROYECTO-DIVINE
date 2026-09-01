@@ -321,7 +321,12 @@ nav{
                     Consulta Personal
                 </a>
             </li>
-
+                  
+            <li>
+                <a href="sugerencias.php">
+                    Sugerencias
+                </a>
+            </li>
         </ul>
 
     </nav>
