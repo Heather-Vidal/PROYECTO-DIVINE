@@ -1,83 +1,128 @@
 <?php
+
 $servidor = "localhost";
 $usuario = "root";
 $contrasena = "";
 $bd = "DIVINE";
+
 $conn = new mysqli(
     $servidor,
     $usuario,
     $contrasena,
     $bd
 );
+
+
+// ==========================================
+// FUNCIÓN PARA MOSTRAR ERRORES COMO ALERTA
+// ==========================================
+
+function alertaError($mensaje) {
+
+    echo "
+    <script>
+
+        alert(" . json_encode($mensaje) . ");
+
+        history.back();
+
+    </script>
+    ";
+
+    exit();
+
+}
+
+
 // ==========================================
 // VERIFICAR CONEXIÓN
 // ==========================================
+
 if ($conn->connect_error) {
 
-    die(
-        "<script>
-            alert('Error de conexión: " . addslashes($conn->connect_error) . "');
-            history.back();
-        </script>"
+    alertaError(
+        "❌ Error de conexión: "
+        . $conn->connect_error
     );
+
 }
+
+
 // ==========================================
 // RECIBIR DATOS DE LA VENTA
 // ==========================================
+
 $PEDIDOS_ID = $_POST["PEDIDOS_ID"];
 $estado = $_POST["estado"];
 $metodo = $_POST["metodo"];
 $costototal = $_POST["costototal"];
+
+
 // ==========================================
 // BUSCAR LOS PRODUCTOS DEL PEDIDO
 // ==========================================
+
 $sqlCarrito = "
     SELECT PRODUCTO_codigo, cantidad
     FROM CARRITO
     WHERE PEDIDOS_ID = '$PEDIDOS_ID'
 ";
+
 $resultadoCarrito = $conn->query($sqlCarrito);
+
+
 // ==========================================
 // VERIFICAR CONSULTA
 // ==========================================
+
 if (!$resultadoCarrito) {
 
-    die(
-        "<script>
-            alert('Error al buscar los productos: " . addslashes($conn->error) . "');
-            history.back();
-        </script>"
+    alertaError(
+        "❌ Error al buscar los productos: "
+        . $conn->error
     );
 
 }
+
+
 // ==========================================
 // VERIFICAR QUE EL PEDIDO TENGA PRODUCTOS
 // ==========================================
+
 if ($resultadoCarrito->num_rows == 0) {
-    die(
-        "<script>
-            alert('❌ Este pedido no tiene productos.');
-            history.back();
-        </script>"
+
+    alertaError(
+        "❌ Este pedido no tiene productos."
     );
+
 }
+
+
 // ==========================================
 // VERIFICAR EL STOCK
 // ==========================================
+
 $hayStock = true;
+
 $mensajeError = "";
+
 
 while ($producto = $resultadoCarrito->fetch_assoc()) {
 
     // Código del producto
+
     $codigo = $producto["PRODUCTO_codigo"];
 
+
     // Cantidad solicitada
+
     $cantidad = $producto["cantidad"];
+
 
     // ======================================
     // BUSCAR PRODUCTO
     // ======================================
+
     $sqlProducto = "
         SELECT nombre, stock
         FROM PRODUCTO
@@ -86,20 +131,21 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
 
     $resultadoProducto = $conn->query($sqlProducto);
 
+
     if (!$resultadoProducto) {
 
-        die(
-            "<script>
-                alert('Error al consultar el producto: " . addslashes($conn->error) . "');
-                history.back();
-            </script>"
+        alertaError(
+            "❌ Error al consultar el producto: "
+            . $conn->error
         );
 
     }
 
+
     // ======================================
     // VERIFICAR QUE EL PRODUCTO EXISTA
     // ======================================
+
     if ($resultadoProducto->num_rows == 0) {
 
         $hayStock = false;
@@ -110,20 +156,30 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
             . " no existe.";
 
         break;
+
     }
+
 
     // ======================================
     // OBTENER DATOS DEL PRODUCTO
     // ======================================
-    $datosProducto = $resultadoProducto->fetch_assoc();
 
-    $nombreProducto = $datosProducto["nombre"];
+    $datosProducto =
+        $resultadoProducto->fetch_assoc();
 
-    $stockActual = $datosProducto["stock"];
+
+    $nombreProducto =
+        $datosProducto["nombre"];
+
+
+    $stockActual =
+        $datosProducto["stock"];
+
 
     // ======================================
     // COMPARAR STOCK
     // ======================================
+
     if ($stockActual < $cantidad) {
 
         $hayStock = false;
@@ -137,39 +193,37 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
             . $cantidad;
 
         break;
+
     }
+
 }
+
 
 // ==========================================
 // SI NO HAY STOCK, NO HACER NADA
 // ==========================================
+
 if (!$hayStock) {
 
-    echo "
-    <script>
+    alertaError($mensajeError);
 
-        alert(" . json_encode($mensajeError) . ");
-
-        history.back();
-
-    </script>
-    ";
-
-    $conn->close();
-
-    exit();
 }
+
 
 // ==========================================
 // INICIAR TRANSACCIÓN
 // ==========================================
+
 $conn->begin_transaction();
 
+
 try {
+
 
     // ======================================
     // INSERTAR LA VENTA
     // ======================================
+
     $sql = "INSERT INTO VENTAS
     (
         estado,
@@ -185,98 +239,122 @@ try {
         '$PEDIDOS_ID'
     )";
 
+
     if (!$conn->query($sql)) {
 
         throw new Exception(
-            "Error al registrar la venta: "
+            "❌ Error al registrar la venta: "
             . $conn->error
         );
+
     }
+
 
     // ======================================
     // BUSCAR PRODUCTOS DEL PEDIDO
     // ======================================
+
     $sqlCarrito2 = "
         SELECT PRODUCTO_codigo, cantidad
         FROM CARRITO
         WHERE PEDIDOS_ID = '$PEDIDOS_ID'
     ";
 
-    $resultadoCarrito2 = $conn->query($sqlCarrito2);
+
+    $resultadoCarrito2 =
+        $conn->query($sqlCarrito2);
+
 
     if (!$resultadoCarrito2) {
 
         throw new Exception(
-            "Error al obtener los productos del pedido: "
+            "❌ Error al obtener los productos del pedido: "
             . $conn->error
         );
+
     }
+
 
     // ======================================
     // DESCONTAR STOCK
     // ======================================
-    while ($producto = $resultadoCarrito2->fetch_assoc()) {
 
-        $codigo = $producto["PRODUCTO_codigo"];
+    while ($producto =
+        $resultadoCarrito2->fetch_assoc()) {
 
-        $cantidad = $producto["cantidad"];
+
+        $codigo =
+            $producto["PRODUCTO_codigo"];
+
+
+        $cantidad =
+            $producto["cantidad"];
+
 
         // ==================================
         // ACTUALIZAR STOCK
         // ==================================
+
         $sqlStock = "
             UPDATE PRODUCTO
             SET stock = stock - '$cantidad'
             WHERE codigo = '$codigo'
         ";
 
+
         if (!$conn->query($sqlStock)) {
 
             throw new Exception(
-                "Error al actualizar el stock: "
+                "❌ Error al actualizar el stock: "
                 . $conn->error
             );
+
         }
+
     }
+
 
     // ======================================
     // CONFIRMAR TODAS LAS OPERACIONES
     // ======================================
+
     $conn->commit();
+
 
     // ======================================
     // REDIRECCIONAR
     // ======================================
+
     header(
         "Location: readtodoventa.php"
     );
 
     exit();
 
+
 } catch (Exception $e) {
+
 
     // ======================================
     // DESHACER TODO SI ALGO FALLA
     // ======================================
+
     $conn->rollback();
 
-    echo "
-    <script>
 
-        alert(" . json_encode(
-            "❌ No se pudo registrar la venta.\n\n"
-            . $e->getMessage()
-        ) . ");
+    alertaError(
+        "❌ No se pudo registrar la venta."
+        . "\n\n"
+        . $e->getMessage()
+    );
 
-        history.back();
-
-    </script>
-    ";
 }
+
 
 // ==========================================
 // CERRAR CONEXIÓN
 // ==========================================
+
 $conn->close();
 
 ?>
