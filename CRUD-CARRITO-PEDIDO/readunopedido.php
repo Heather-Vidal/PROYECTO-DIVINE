@@ -1,13 +1,26 @@
 <?php
 
-$conn = new mysqli("localhost","root","","DIVINE");
+/* ==================================================
+   INICIAR SESIÓN
+================================================== */
+
+session_start();
+
+
+/* ==================================================
+   CONEXIÓN
+================================================== */
+
+$conn = new mysqli("localhost", "root", "", "DIVINE");
 
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
 
-/* OBTENER ID DEL PEDIDO */
+/* ==================================================
+   OBTENER ID DEL PEDIDO
+================================================== */
 
 $id_pedido = $_GET['idPedido'] ?? null;
 
@@ -16,13 +29,19 @@ if (!$id_pedido) {
 }
 
 
-/* CONSULTAR INFORMACIÓN DEL PEDIDO */
+/* ==================================================
+   CONSULTAR INFORMACIÓN DEL PEDIDO
+================================================== */
 
 $sqlPedido = "SELECT *
               FROM PEDIDOS
               WHERE ID = '$id_pedido'";
 
 $resultadoPedido = $conn->query($sqlPedido);
+
+if (!$resultadoPedido) {
+    die("Error al consultar el pedido");
+}
 
 if ($resultadoPedido->num_rows == 0) {
     die("El pedido no existe");
@@ -31,84 +50,147 @@ if ($resultadoPedido->num_rows == 0) {
 $pedido = $resultadoPedido->fetch_assoc();
 
 
-/* CONSULTAR PRODUCTOS DEL PEDIDO */
+/* ==================================================
+   CONSULTAR PRODUCTOS DEL PEDIDO
+================================================== */
 
-$sqlProductos = "SELECT CARRITO.PRODUCTO_codigo,
-                        PRODUCTO.nombre,
-                        PRODUCTO.descripcion,
-                        PRODUCTO.precio,
-                        CARRITO.cantidad,
-                        CARRITO.costototal
- FROM CARRITO
- INNER JOIN PRODUCTO
-   ON CARRITO.PRODUCTO_codigo = PRODUCTO.codigo
- WHERE CARRITO.PEDIDOS_ID = '$id_pedido'";
+$sqlProductos = "SELECT 
+                    CARRITO.PRODUCTO_codigo,
+                    PRODUCTO.nombre,
+                    PRODUCTO.descripcion,
+                    PRODUCTO.precio,
+                    CARRITO.cantidad,
+                    CARRITO.costototal
+
+                 FROM CARRITO
+
+                 INNER JOIN PRODUCTO
+                    ON CARRITO.PRODUCTO_codigo = PRODUCTO.codigo
+
+                 WHERE CARRITO.PEDIDOS_ID = '$id_pedido'";
 
 
 $resultadoProductos = $conn->query($sqlProductos);
 
 
-/* CALCULAR TOTAL */
+/* ==================================================
+   CALCULAR TOTAL
+================================================== */
 
 $totalGeneral = 0;
+
 $productos = array();
 
-while($fila = $resultadoProductos->fetch_assoc()){
 
-    $totalGeneral += $fila['costototal'];
+if ($resultadoProductos) {
 
-    $productos[] = $fila;
+    while ($fila = $resultadoProductos->fetch_assoc()) {
 
+        $totalGeneral += $fila['costototal'];
+
+        $productos[] = $fila;
+    }
 }
 
 
 /* ==================================================
-   INFORMACIÓN COMPLETA PARA EL QR
+   INFORMACIÓN PARA EL QR
 ================================================== */
 
 $textoQR = "DIVINE\n";
+
 $textoQR .= "DETALLE DEL PEDIDO\n";
+
 $textoQR .= "-------------------------\n";
+
 $textoQR .= "Pedido: #" . $id_pedido . "\n";
+
 $textoQR .= "Cliente: " . $pedido['nombre'] . "\n";
+
 $textoQR .= "Fecha: " . $pedido['fecha'] . "\n";
+
 $textoQR .= "Telefono: " . $pedido['telefono'] . "\n";
+
 $textoQR .= "Direccion: " . $pedido['direccion'] . "\n";
+
 $textoQR .= "Vendedor: " . $pedido['nombrevendedor'] . "\n";
+
 $textoQR .= "Estado: " . $pedido['estado'] . "\n";
+
 $textoQR .= "-------------------------\n";
+
 $textoQR .= "PRODUCTOS\n";
 
 
-/* AGREGAR CADA PRODUCTO AL QR */
+/* ==================================================
+   PRODUCTOS DEL QR
+================================================== */
 
-foreach($productos as $producto){
+foreach ($productos as $producto) {
 
     $textoQR .= "\n";
-    $textoQR .= "Producto: " . $producto['nombre'] . "\n";
-    $textoQR .= "Descripcion: " . $producto['descripcion'] . "\n";
-    $textoQR .= "Cantidad: " . $producto['cantidad'] . "\n";
-    $textoQR .= "Precio: Bs. " . number_format($producto['precio'], 2) . "\n";
-    $textoQR .= "Subtotal: Bs. " . number_format($producto['costototal'], 2) . "\n";
 
+    $textoQR .= "Producto: " . $producto['nombre'] . "\n";
+
+    $textoQR .= "Descripcion: " . $producto['descripcion'] . "\n";
+
+    $textoQR .= "Cantidad: " . $producto['cantidad'] . "\n";
+
+    $textoQR .= "Precio: Bs. " .
+                number_format($producto['precio'], 2) . "\n";
+
+    $textoQR .= "Subtotal: Bs. " .
+                number_format($producto['costototal'], 2) . "\n";
 }
 
 
-/* AGREGAR TOTAL FINAL */
+/* ==================================================
+   TOTAL QR
+================================================== */
 
 $textoQR .= "\n";
+
 $textoQR .= "-------------------------\n";
-$textoQR .= "TOTAL: Bs. " . number_format($totalGeneral, 2);
+
+$textoQR .= "TOTAL: Bs. " .
+            number_format($totalGeneral, 2);
 
 
-/* CREAR DATOS DEL QR */
+/* ==================================================
+   CREAR QR
+================================================== */
 
 $qrData = rawurlencode($textoQR);
 
+$qrURL =
+    "https://api.qrserver.com/v1/create-qr-code/" .
+    "?size=220x220&data=" . $qrData;
 
-/* URL PARA GENERAR EL QR */
 
-$qrURL = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" . $qrData;
+/* ==================================================
+   ==================================================
+   CONTROL DEL BOTÓN SEGÚN ROL
+   ==================================================
+   
+   ADMINISTRADOR Y VENDEDOR:
+   → Ver pedidos
+   
+   CLIENTE / SESIÓN SIN ROL:
+   → Volver al perfil
+================================================== */
+
+$rol = $_SESSION['rol'] ?? null;
+
+
+/*
+   Si existe sesión y el rol es administrador
+   o vendedor, podrá volver a la lista de pedidos.
+*/
+
+$puedeVerPedidos = (
+    $rol === 'administrador' ||
+    $rol === 'vendedor'
+);
 
 ?>
 
@@ -123,15 +205,14 @@ $qrURL = "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" . $qrD
 <meta
 name="viewport"
 content="width=device-width, initial-scale=1.0"
-
 >
 
 <title>
 DIVINE | Detalle del Pedido
 </title>
 
-<style>
 
+<style>
 
 /* ==================================================
    VARIABLES
@@ -183,47 +264,29 @@ body{
 
     min-height:100vh;
 
-    font-family:
-    'Segoe UI',
-    sans-serif;
+    font-family:'Segoe UI',sans-serif;
 
-    color:
-    var(--texto);
+    color:var(--texto);
 
 
     background:
 
     linear-gradient(
 
-        rgba(
-            255,
-            250,
-            248,
-            .80
-        ),
+        rgba(255,250,248,.80),
 
-        rgba(
-            247,
-            233,
-            236,
-            .92
-        )
+        rgba(247,233,236,.92)
 
     ),
 
     url("../imagenes/fondote.png");
 
 
-    background-size:
-    cover;
+    background-size:cover;
 
+    background-position:center;
 
-    background-position:
-    center;
-
-
-    background-attachment:
-    fixed;
+    background-attachment:fixed;
 
 }
 
@@ -236,27 +299,16 @@ body{
 
     text-align:center;
 
-    padding:
-    45px 20px 35px;
+    padding:45px 20px 35px;
 
 
     background:
 
     linear-gradient(
 
-        rgba(
-            184,
-            111,
-            128,
-            .90
-        ),
+        rgba(184,111,128,.90),
 
-        rgba(
-            143,
-            83,
-            98,
-            .95
-        )
+        rgba(143,83,98,.95)
 
     );
 
@@ -267,17 +319,16 @@ body{
     box-shadow:
 
     0 10px 35px
-    rgba(
-        100,
-        70,
-        80,
-        .20
-    );
+
+    rgba(100,70,80,.20);
 
 
     animation:
+
     aparecerHeader
+
     .7s
+
     ease;
 
 }
@@ -285,75 +336,43 @@ body{
 
 .header-pequeno{
 
-    font-size:
-    .78rem;
+    font-size:.78rem;
 
+    text-transform:uppercase;
 
-    text-transform:
-    uppercase;
+    letter-spacing:5px;
 
+    margin-bottom:12px;
 
-    letter-spacing:
-    5px;
-
-
-    margin-bottom:
-    12px;
-
-
-    opacity:
-    .9;
+    opacity:.9;
 
 }
 
 
 .header h1{
 
-    font-family:
-    Georgia,
-    serif;
+    font-family:Georgia,serif;
 
+    font-size:clamp(2.5rem,5vw,4rem);
 
-    font-size:
-    clamp(
-        2.5rem,
-        5vw,
-        4rem
-    );
+    font-weight:400;
 
-
-    font-weight:
-    400;
-
-
-    letter-spacing:
-    5px;
+    letter-spacing:5px;
 
 }
 
 
 .header-linea{
 
-    width:
-    55px;
+    width:55px;
 
+    height:2px;
 
-    height:
-    2px;
+    background:white;
 
+    margin:20px auto 0;
 
-    background:
-    white;
-
-
-    margin:
-    20px
-    auto
-    0;
-
-
-    opacity:
-    .75;
+    opacity:.75;
 
 }
 
@@ -364,21 +383,13 @@ body{
 
 .contenedor{
 
-    width:
-    90%;
+    width:90%;
 
+    max-width:1050px;
 
-    max-width:
-    1050px;
+    margin:55px auto;
 
-
-    margin:
-    55px
-    auto;
-
-
-    padding-bottom:
-    50px;
+    padding-bottom:50px;
 
 }
 
@@ -389,79 +400,50 @@ body{
 
 .encabezado{
 
-    text-align:
-    center;
+    text-align:center;
 
-
-    margin-bottom:
-    35px;
+    margin-bottom:35px;
 
 }
 
 
 .encabezado-pequeno{
 
-    color:
-    var(--rosa);
+    color:var(--rosa);
 
+    font-size:.78rem;
 
-    font-size:
-    .78rem;
+    text-transform:uppercase;
 
+    letter-spacing:4px;
 
-    text-transform:
-    uppercase;
-
-
-    letter-spacing:
-    4px;
-
-
-    margin-bottom:
-    10px;
+    margin-bottom:10px;
 
 }
 
 
 .encabezado h2{
 
-    font-family:
-    Georgia,
-    serif;
+    font-family:Georgia,serif;
 
+    font-size:2.2rem;
 
-    font-size:
-    2.2rem;
+    font-weight:400;
 
-
-    font-weight:
-    400;
-
-
-    color:
-    var(--texto);
+    color:var(--texto);
 
 }
 
 
 .linea-decorativa{
 
-    width:
-    45px;
+    width:45px;
 
+    height:2px;
 
-    height:
-    2px;
+    background:var(--rosa-claro);
 
-
-    background:
-    var(--rosa-claro);
-
-
-    margin:
-    18px
-    auto
-    0;
+    margin:18px auto 0;
 
 }
 
@@ -472,293 +454,175 @@ body{
 
 .documento{
 
-    background:
-    rgba(
-        255,
-        250,
-        248,
-        .94
-    );
+    background:rgba(255,250,248,.94);
 
+    border:1px solid rgba(184,111,128,.25);
 
-    border:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .25
-    );
+    border-radius:28px;
 
-
-    border-radius:
-    28px;
-
-
-    padding:
-    40px;
-
+    padding:40px;
 
     box-shadow:
 
     0 18px 50px
-    rgba(
-        100,
-        70,
-        80,
-        .14
-    );
 
+    rgba(100,70,80,.14);
 
     animation:
+
     aparecer
+
     .7s
+
     ease;
 
 }
 
 
 /* ==================================================
-   CABECERA DEL DOCUMENTO
+   CABECERA DOCUMENTO
 ================================================== */
 
 .documento-header{
 
-    display:
-    flex;
+    display:flex;
 
+    justify-content:space-between;
 
-    justify-content:
-    space-between;
+    align-items:center;
 
+    gap:25px;
 
-    align-items:
-    center;
+    padding-bottom:28px;
 
-
-    gap:
-    25px;
-
-
-    padding-bottom:
-    28px;
-
-
-    border-bottom:
-    1px solid
-    var(--borde);
+    border-bottom:1px solid var(--borde);
 
 }
 
 
 .marca{
 
-    font-family:
-    Georgia,
-    serif;
+    font-family:Georgia,serif;
 
+    font-size:2rem;
 
-    font-size:
-    2rem;
+    color:var(--vino);
 
-
-    color:
-    var(--vino);
-
-
-    letter-spacing:
-    4px;
+    letter-spacing:4px;
 
 }
 
 
 .numero-pedido{
 
-    text-align:
-    right;
+    text-align:right;
 
 }
 
 
 .numero-pedido small{
 
-    display:
-    block;
+    display:block;
 
+    color:var(--gris);
 
-    color:
-    var(--gris);
+    font-size:.72rem;
 
+    text-transform:uppercase;
 
-    font-size:
-    .72rem;
+    letter-spacing:2px;
 
-
-    text-transform:
-    uppercase;
-
-
-    letter-spacing:
-    2px;
-
-
-    margin-bottom:
-    5px;
+    margin-bottom:5px;
 
 }
 
 
 .numero-pedido strong{
 
-    color:
-    var(--vino-oscuro);
+    color:var(--vino-oscuro);
 
+    font-family:Georgia,serif;
 
-    font-family:
-    Georgia,
-    serif;
-
-
-    font-size:
-    1.4rem;
+    font-size:1.4rem;
 
 }
 
 
 /* ==================================================
-   INFORMACIÓN PEDIDO
+   INFORMACIÓN
 ================================================== */
 
 .informacion{
 
-    display:
-    grid;
+    display:grid;
 
+    grid-template-columns:repeat(2,1fr);
 
-    grid-template-columns:
-    repeat(
-        2,
-        1fr
-    );
+    gap:16px;
 
-
-    gap:
-    16px;
-
-
-    margin-top:
-    30px;
+    margin-top:30px;
 
 }
 
 
 .dato{
 
-    background:
-    rgba(
-        247,
-        233,
-        236,
-        .55
-    );
+    background:rgba(247,233,236,.55);
 
+    border:1px solid rgba(184,111,128,.16);
 
-    border:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .16
-    );
+    border-radius:15px;
 
-
-    border-radius:
-    15px;
-
-
-    padding:
-    17px
-    18px;
-
+    padding:17px 18px;
 
     transition:
-    transform
-    .3s
-    ease,
 
-    box-shadow
-    .3s
-    ease;
+    transform .3s ease,
+
+    box-shadow .3s ease;
 
 }
 
 
 .dato:hover{
 
-    transform:
-    translateY(
-        -3px
-    );
-
+    transform:translateY(-3px);
 
     box-shadow:
 
     0 8px 20px
-    rgba(
-        100,
-        70,
-        80,
-        .08
-    );
+
+    rgba(100,70,80,.08);
 
 }
 
 
 .dato-titulo{
 
-    color:
-    var(--rosa);
+    color:var(--rosa);
 
+    font-size:.7rem;
 
-    font-size:
-    .7rem;
+    text-transform:uppercase;
 
+    letter-spacing:2px;
 
-    text-transform:
-    uppercase;
+    font-weight:700;
 
-
-    letter-spacing:
-    2px;
-
-
-    font-weight:
-    700;
-
-
-    margin-bottom:
-    7px;
+    margin-bottom:7px;
 
 }
 
 
 .dato-valor{
 
-    color:
-    var(--texto);
+    color:var(--texto);
 
+    font-size:.95rem;
 
-    font-size:
-    .95rem;
+    font-weight:600;
 
-
-    font-weight:
-    600;
-
-
-    word-break:
-    break-word;
+    word-break:break-word;
 
 }
 
@@ -768,241 +632,213 @@ body{
 ================================================== */
 
 .estado{
-    display:
-    inline-flex;
-    align-items:
-    center;
-    gap:
-    8px;
-    margin-top:
-    25px;
-    padding:
-    11px
-    20px;
-    border-radius:
-    30px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:25px;
+
+    padding:11px 20px;
+
+    border-radius:30px;
+
     background:
+
     linear-gradient(
+
         135deg,
+
         #fff0f3,
+
         #f5dce2
+
     );
-    color:
-    var(--vino-oscuro);
-    border:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .3
-    );
-    font-size:
-    .85rem;
-    font-weight:
-    700;
-    text-transform:
-    capitalize;
+
+    color:var(--vino-oscuro);
+
+    border:1px solid rgba(184,111,128,.3);
+
+    font-size:.85rem;
+
+    font-weight:700;
+
+    text-transform:capitalize;
 
 }
+
+
 .estado::before{
-    content:
-    "●";
-    color:
-    var(--rosa);
-    font-size:
-    .75rem;
+
+    content:"●";
+
+    color:var(--rosa);
+
+    font-size:.75rem;
+
 }
+
+
 /* ==================================================
    PRODUCTOS
 ================================================== */
+
 .seccion-productos{
-    margin-top:
-    40px;
-}
-.titulo-seccion{
-    display:
-    flex;
-    align-items:
-    center;
-    gap:
-    15px;
-    margin-bottom:
-    20px;
-}
-.titulo-seccion h3{
-    font-family:
-    Georgia,
-    serif;
-    font-size:
-    1.5rem;
-    font-weight:
-    400;
-    color:
-    var(--vino-oscuro);
-}
-.titulo-seccion-linea{
-    flex:
-    1;
-    height:
-    1px;
-    background:
-    var(--borde);
-}
-/* ==================================================
-   TABLA PRODUCTOS
-================================================== */
-.tabla{
-    width:
-    100%;
-    border-collapse:
-    separate;
-    border-spacing:
-    0
-    8px;
+
+    margin-top:40px;
 
 }
+
+
+.titulo-seccion{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+
+.titulo-seccion h3{
+
+    font-family:Georgia,serif;
+
+    font-size:1.5rem;
+
+    font-weight:400;
+
+    color:var(--vino-oscuro);
+
+}
+
+
+.titulo-seccion-linea{
+
+    flex:1;
+
+    height:1px;
+
+    background:var(--borde);
+
+}
+
+
+/* ==================================================
+   TABLA
+================================================== */
+
+.tabla{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0 8px;
+
+}
+
+
 .tabla th{
-    padding:
-    10px
-    15px;
-    color:
-    var(--rosa);
-    font-size:
-    .72rem;
-    text-transform:
-    uppercase;
-    letter-spacing:
-    2px;
-    text-align:
-    left;
+
+    padding:10px 15px;
+
+    color:var(--rosa);
+
+    font-size:.72rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:2px;
+
+    text-align:left;
+
 }
+
+
 .tabla td{
-    padding:
-    17px
-    15px;
-    background:
-    rgba(
-        255,
-        250,
-        251,
-        .85
-    );
-    border-top:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .12
-    );
-    border-bottom:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .12
-    );
-    font-size:
-    .9rem;
+
+    padding:17px 15px;
+
+    background:rgba(255,250,251,.85);
+
+    border-top:1px solid rgba(184,111,128,.12);
+
+    border-bottom:1px solid rgba(184,111,128,.12);
+
+    font-size:.9rem;
+
 }
+
+
 .tabla td:first-child{
-    border-left:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .12
-    );
-    border-radius:
-    12px
-    0
-    0
-    12px;
+
+    border-left:1px solid rgba(184,111,128,.12);
+
+    border-radius:12px 0 0 12px;
+
 }
+
+
 .tabla td:last-child{
-    border-right:
-    1px solid
-    rgba(
-        184,
-        111,
-        128,
-        .12
-    );
-    border-radius:
-    0
-    12px
-    12px
-    0;
+
+    border-right:1px solid rgba(184,111,128,.12);
+
+    border-radius:0 12px 12px 0;
+
 }
+
 
 .producto-nombre{
 
-    color:
-    var(--vino-oscuro);
+    color:var(--vino-oscuro);
 
+    font-family:Georgia,serif;
 
-    font-family:
-    Georgia,
-    serif;
+    font-size:1.05rem;
 
-
-    font-size:
-    1.05rem;
-
-
-    font-weight:
-    700;
+    font-weight:700;
 
 }
 
 
 .producto-descripcion{
 
-    color:
-    var(--gris);
+    color:var(--gris);
 
+    font-size:.78rem;
 
-    font-size:
-    .78rem;
-
-
-    margin-top:
-    4px;
+    margin-top:4px;
 
 }
 
 
 .cantidad{
 
-    text-align:
-    center;
+    text-align:center;
 
-
-    font-weight:
-    600;
+    font-weight:600;
 
 }
 
 
 .precio{
 
-    color:
-    var(--gris);
+    color:var(--gris);
 
 }
 
 
 .subtotal{
 
-    color:
-    var(--vino-oscuro);
+    color:var(--vino-oscuro);
 
-
-    font-weight:
-    700;
+    font-weight:700;
 
 }
 
@@ -1013,24 +849,15 @@ body{
 
 .sin-productos{
 
-    text-align:
-    center;
+    text-align:center;
 
+    padding:35px;
 
-    padding:
-    35px;
+    color:var(--gris);
 
+    background:var(--rosa-palido);
 
-    color:
-    var(--gris);
-
-
-    background:
-    var(--rosa-palido);
-
-
-    border-radius:
-    15px;
+    border-radius:15px;
 
 }
 
@@ -1041,98 +868,68 @@ body{
 
 .total-contenedor{
 
-    display:
-    flex;
+    display:flex;
 
+    justify-content:flex-end;
 
-    justify-content:
-    flex-end;
-
-
-    margin-top:
-    30px;
+    margin-top:30px;
 
 }
 
 
 .total{
 
-    min-width:
-    280px;
+    min-width:280px;
 
+    padding:22px 28px;
 
-    padding:
-    22px
-    28px;
-
-
-    border-radius:
-    20px;
-
+    border-radius:20px;
 
     background:
 
     linear-gradient(
+
         135deg,
+
         var(--vino),
+
         var(--rosa)
+
     );
 
-
-    color:
-    white;
-
+    color:white;
 
     box-shadow:
 
     0 12px 30px
-    rgba(
-        143,
-        83,
-        98,
-        .25
-    );
+
+    rgba(143,83,98,.25);
 
 }
 
 
 .total-label{
 
-    font-size:
-    .75rem;
+    font-size:.75rem;
 
+    text-transform:uppercase;
 
-    text-transform:
-    uppercase;
+    letter-spacing:3px;
 
+    opacity:.85;
 
-    letter-spacing:
-    3px;
-
-
-    opacity:
-    .85;
-
-
-    margin-bottom:
-    8px;
+    margin-bottom:8px;
 
 }
 
 
 .total-monto{
 
-    font-family:
-    Georgia,
-    serif;
+    font-family:Georgia,serif;
 
+    font-size:2rem;
 
-    font-size:
-    2rem;
-
-
-    font-weight:
-    700;
+    font-weight:700;
 
 }
 
@@ -1143,134 +940,84 @@ body{
 
 .qr-seccion{
 
-    margin-top:
-    40px;
+    margin-top:40px;
 
+    padding-top:35px;
 
-    padding-top:
-    35px;
+    border-top:1px solid var(--borde);
 
+    display:flex;
 
-    border-top:
-    1px solid
-    var(--borde);
+    align-items:center;
 
+    justify-content:space-between;
 
-    display:
-    flex;
-
-
-    align-items:
-    center;
-
-
-    justify-content:
-    space-between;
-
-
-    gap:
-    30px;
+    gap:30px;
 
 }
 
 
 .qr-info{
 
-    flex:
-    1;
+    flex:1;
 
 }
 
 
 .qr-info h3{
 
-    font-family:
-    Georgia,
-    serif;
+    font-family:Georgia,serif;
 
+    color:var(--vino-oscuro);
 
-    color:
-    var(--vino-oscuro);
+    font-size:1.5rem;
 
+    font-weight:400;
 
-    font-size:
-    1.5rem;
-
-
-    font-weight:
-    400;
-
-
-    margin-bottom:
-    10px;
+    margin-bottom:10px;
 
 }
 
 
 .qr-info p{
 
-    color:
-    var(--gris);
+    color:var(--gris);
 
+    font-size:.88rem;
 
-    font-size:
-    .88rem;
+    line-height:1.7;
 
-
-    line-height:
-    1.7;
-
-
-    max-width:
-    500px;
+    max-width:500px;
 
 }
 
 
 .qr-box{
 
-    background:
-    white;
+    background:white;
 
+    padding:12px;
 
-    padding:
-    12px;
+    border-radius:15px;
 
-
-    border-radius:
-    15px;
-
-
-    border:
-    1px solid
-    var(--borde);
-
+    border:1px solid var(--borde);
 
     box-shadow:
 
     0 8px 25px
-    rgba(
-        100,
-        70,
-        80,
-        .10
-    );
+
+    rgba(100,70,80,.10);
 
 }
 
 
 .qr-box img{
 
-    display:
-    block;
+    display:block;
 
+    width:150px;
 
-    width:
-    150px;
-
-
-    height:
-    150px;
+    height:150px;
 
 }
 
@@ -1281,137 +1028,83 @@ body{
 
 .acciones{
 
-    display:
-    flex;
+    display:flex;
 
+    justify-content:center;
 
-    justify-content:
-    center;
+    gap:14px;
 
+    flex-wrap:wrap;
 
-    gap:
-    14px;
-
-
-    flex-wrap:
-    wrap;
-
-
-    margin-top:
-    35px;
+    margin-top:35px;
 
 }
 
 
 .btn{
 
-    display:
-    inline-flex;
+    display:inline-flex;
 
+    justify-content:center;
 
-    justify-content:
-    center;
+    align-items:center;
 
+    min-width:170px;
 
-    align-items:
-    center;
+    padding:13px 23px;
 
+    border-radius:30px;
 
-    min-width:
-    170px;
+    border:none;
 
+    text-decoration:none;
 
-    padding:
-    13px
-    23px;
+    font-size:.88rem;
 
+    font-weight:600;
 
-    border-radius:
-    30px;
-
-
-    border:
-    none;
-
-
-    text-decoration:
-    none;
-
-
-    font-size:
-    .88rem;
-
-
-    font-weight:
-    600;
-
-
-    cursor:
-    pointer;
-
+    cursor:pointer;
 
     transition:
-    transform
-    .3s
-    ease,
 
-    box-shadow
-    .3s
-    ease,
+    transform .3s ease,
 
-    background
-    .3s
-    ease;
+    box-shadow .3s ease,
+
+    background .3s ease;
 
 }
 
 
 .btn:hover{
 
-    transform:
-    translateY(
-        -3px
-    );
-
+    transform:translateY(-3px);
 
     box-shadow:
 
     0 9px 22px
-    rgba(
-        100,
-        70,
-        80,
-        .20
-    );
+
+    rgba(100,70,80,.20);
 
 }
 
 
 .btn-volver{
 
-    background:
-    white;
+    background:white;
 
+    color:var(--vino);
 
-    color:
-    var(--vino);
-
-
-    border:
-    1px solid
-    var(--borde);
+    border:1px solid var(--borde);
 
 }
 
 
 .btn-imprimir{
 
-    background:
-    var(--vino);
+    background:var(--vino);
 
-
-    color:
-    white;
+    color:white;
 
 }
 
@@ -1419,15 +1112,18 @@ body{
 .btn-pdf{
 
     background:
+
     linear-gradient(
+
         135deg,
+
         var(--rosa),
+
         var(--vino)
+
     );
 
-
-    color:
-    white;
+    color:white;
 
 }
 
@@ -1440,28 +1136,17 @@ body{
 
     from{
 
-        opacity:
-        0;
+        opacity:0;
 
-
-        transform:
-        translateY(
-            20px
-        );
+        transform:translateY(20px);
 
     }
 
-
     to{
 
-        opacity:
-        1;
+        opacity:1;
 
-
-        transform:
-        translateY(
-            0
-        );
+        transform:translateY(0);
 
     }
 
@@ -1472,28 +1157,17 @@ body{
 
     from{
 
-        opacity:
-        0;
+        opacity:0;
 
-
-        transform:
-        translateY(
-            -15px
-        );
+        transform:translateY(-15px);
 
     }
 
-
     to{
 
-        opacity:
-        1;
+        opacity:1;
 
-
-        transform:
-        translateY(
-            0
-        );
+        transform:translateY(0);
 
     }
 
@@ -1506,99 +1180,77 @@ body{
 
 @media print{
 
-
     body{
 
-        background:
-        white;
+        background:white;
 
     }
 
 
     .header{
 
-        background:
-        white;
+        background:white;
 
+        color:black;
 
-        color:
-        black;
+        box-shadow:none;
 
-
-        box-shadow:
-        none;
-
-
-        padding:
-        20px;
+        padding:20px;
 
     }
 
 
     .header-pequeno{
 
-        color:
-        #555;
+        color:#555;
 
     }
 
 
     .header h1{
 
-        color:
-        #333;
+        color:#333;
 
     }
 
 
     .header-linea{
 
-        background:
-        #333;
+        background:#333;
 
     }
 
 
     .encabezado{
 
-        margin-top:
-        10px;
+        margin-top:10px;
 
     }
 
 
     .documento{
 
-        box-shadow:
-        none;
+        box-shadow:none;
 
+        border:1px solid #ddd;
 
-        border:
-        1px solid
-        #ddd;
-
-
-        background:
-        white;
+        background:white;
 
     }
 
 
     .acciones{
 
-        display:
-        none;
+        display:none;
 
     }
 
 
     .qr-box{
 
-        box-shadow:
-        none;
+        box-shadow:none;
 
     }
-
 
 }
 
@@ -1611,70 +1263,52 @@ body{
 
     .contenedor{
 
-        width:
-        94%;
+        width:94%;
 
-
-        margin:
-        35px
-        auto;
+        margin:35px auto;
 
     }
 
 
     .documento{
 
-        padding:
-        25px
-        20px;
+        padding:25px 20px;
 
-
-        border-radius:
-        20px;
+        border-radius:20px;
 
     }
 
 
     .documento-header{
 
-        flex-direction:
-        column;
+        flex-direction:column;
 
+        align-items:center;
 
-        align-items:
-        center;
-
-
-        text-align:
-        center;
+        text-align:center;
 
     }
 
 
     .numero-pedido{
 
-        text-align:
-        center;
+        text-align:center;
 
     }
 
 
     .informacion{
 
-        grid-template-columns:
-        1fr;
+        grid-template-columns:1fr;
 
     }
 
 
     .tabla{
 
-        display:
-        block;
+        display:block;
 
-
-        overflow-x:
-        auto;
+        overflow-x:auto;
 
     }
 
@@ -1682,79 +1316,67 @@ body{
     .tabla th,
     .tabla td{
 
-        white-space:
-        nowrap;
+        white-space:nowrap;
 
     }
 
 
     .total-contenedor{
 
-        justify-content:
-        center;
+        justify-content:center;
 
     }
 
 
     .total{
 
-        width:
-        100%;
+        width:100%;
 
+        min-width:0;
 
-        min-width:
-        0;
-
-
-        text-align:
-        center;
+        text-align:center;
 
     }
 
 
     .qr-seccion{
 
-        flex-direction:
-        column;
+        flex-direction:column;
 
-
-        text-align:
-        center;
+        text-align:center;
 
     }
 
 
     .qr-info p{
 
-        margin:
-        auto;
+        margin:auto;
 
     }
 
 
     .acciones{
 
-        flex-direction:
-        column;
+        flex-direction:column;
 
     }
 
 
     .btn{
 
-        width:
-        100%;
+        width:100%;
 
     }
 
 }
 
-
 </style>
 
 </head>
 
+
 <body>
+
 
 <!-- ==================================================
      HEADER
@@ -1762,23 +1384,24 @@ body{
 
 <div class="header">
 
-<div class="header-pequeno">
+    <div class="header-pequeno">
 
-    Comprobante de compra
+        Comprobante de compra
+
+    </div>
+
+
+    <h1>
+
+        DIVINE
+
+    </h1>
+
+
+    <div class="header-linea"></div>
 
 </div>
 
-
-<h1>
-
-    DIVINE
-
-</h1>
-
-
-<div class="header-linea"></div>
- 
-</div>
 
 <!-- ==================================================
      CONTENEDOR
@@ -1786,28 +1409,26 @@ body{
 
 <div class="contenedor">
 
- <div class="encabezado">
+
+    <div class="encabezado">
+
+        <div class="encabezado-pequeno">
+
+            Detalle del pedido
+
+        </div>
 
 
-    <div class="encabezado-pequeno">
+        <h2>
 
-        Detalle del pedido
+            Resumen de tu compra
+
+        </h2>
+
+
+        <div class="linea-decorativa"></div>
 
     </div>
-
-
-    <h2>
-
-        Resumen de tu compra
-
-    </h2>
-
-
-    <div class="linea-decorativa"></div>
-
-
-</div>
-
 
 
 <!-- ==================================================
@@ -1825,12 +1446,13 @@ body{
         <div class="marca">
 
             DIVINE
-<div class="linea-decorativa"></div>
+
+            <div class="linea-decorativa"></div>
+
         </div>
 
 
         <div class="numero-pedido">
-
 
             <small>
 
@@ -1841,20 +1463,20 @@ body{
 
             <strong>
 
-                #<?php
+                #
 
-                echo $id_pedido;
+                <?php
+
+                echo htmlspecialchars($id_pedido);
 
                 ?>
 
             </strong>
 
-
         </div>
 
 
     </div>
-
 
 
     <!-- ==================================================
@@ -1865,7 +1487,6 @@ body{
 
 
         <div class="dato">
-
 
             <div class="dato-titulo">
 
@@ -1888,13 +1509,10 @@ body{
 
             </div>
 
-
         </div>
 
 
-
         <div class="dato">
-
 
             <div class="dato-titulo">
 
@@ -1917,13 +1535,10 @@ body{
 
             </div>
 
-
         </div>
 
 
-
         <div class="dato">
-
 
             <div class="dato-titulo">
 
@@ -1946,13 +1561,10 @@ body{
 
             </div>
 
-
         </div>
 
 
-
         <div class="dato">
-
 
             <div class="dato-titulo">
 
@@ -1975,13 +1587,10 @@ body{
 
             </div>
 
-
         </div>
 
 
-
         <div class="dato">
-
 
             <div class="dato-titulo">
 
@@ -2004,19 +1613,17 @@ body{
 
             </div>
 
-
         </div>
 
 
     </div>
 
 
-
-    <!-- ESTADO -->
-
+    <!-- ==================================================
+         ESTADO
+    ================================================== -->
 
     <div class="estado">
-
 
         Estado:
 
@@ -2030,9 +1637,7 @@ body{
 
         ?>
 
-
     </div>
-
 
 
     <!-- ==================================================
@@ -2044,7 +1649,6 @@ body{
 
         <div class="titulo-seccion">
 
-
             <h3>
 
                 Productos del pedido
@@ -2054,208 +1658,308 @@ body{
 
             <div class="titulo-seccion-linea"></div>
 
-
         </div>
- 
+
+
 <?php
 
-if(count($productos) > 0){
+if (count($productos) > 0) {
 
 ?>
 
-         <table class="tabla">
+
+<table class="tabla">
 
 
-            <thead>
+    <thead>
+
+        <tr>
+
+            <th>
+
+                Producto
+
+            </th>
 
 
-                <tr>
+            <th>
+
+                Cantidad
+
+            </th>
 
 
-                    <th>
+            <th>
 
-                        Producto
+                Precio
 
-                    </th>
-
-
-                    <th>
-
-                        Cantidad
-
-                    </th>
+            </th>
 
 
-                    <th>
+            <th>
 
-                        Precio
+                Subtotal
 
-                    </th>
+            </th>
 
+        </tr>
 
-                    <th>
-
-                        Subtotal
-
-                    </th>
+    </thead>
 
 
-                </tr>
+    <tbody>
 
 
-            </thead>
+<?php
+
+foreach ($productos as $producto) {
+
+?>
 
 
-            <tbody>
- 
-<?php foreach($productos as $producto){?>
+<tr>
 
-       <tr>
 
-     <td>
+    <td>
 
-    <div class="producto-nombre">
+        <div class="producto-nombre">
 
- <?php echo htmlspecialchars(strtoupper($producto['nombre']) ); ?>
- 
- </div>
+            <?php
 
-  <div class="producto-descripcion">
+            echo htmlspecialchars(
 
-<?php echo htmlspecialchars($producto['descripcion'] ); ?>
+                strtoupper(
 
-  </div>
+                    $producto['nombre']
 
-  </td>
+                )
 
- <td class="cantidad">
+            );
 
-<?php echo $producto['cantidad']; ?>
+            ?>
 
-  </td>
+        </div>
 
- <td class="precio">
 
-Bs. <?php echo number_format($producto['precio'],2 ); ?>
-   </td>
- 
-   <td class="subtotal">
+        <div class="producto-descripcion">
 
-Bs. <?php echo number_format($producto['costototal'],2 ); ?>
+            <?php
 
-   </td>
+            echo htmlspecialchars(
 
-                </tr>
- 
+                $producto['descripcion']
+
+            );
+
+            ?>
+
+        </div>
+
+    </td>
+
+
+    <td class="cantidad">
+
+        <?php
+
+        echo htmlspecialchars(
+
+            $producto['cantidad']
+
+        );
+
+        ?>
+
+    </td>
+
+
+    <td class="precio">
+
+        Bs.
+
+        <?php
+
+        echo number_format(
+
+            $producto['precio'],
+
+            2
+
+        );
+
+        ?>
+
+    </td>
+
+
+    <td class="subtotal">
+
+        Bs.
+
+        <?php
+
+        echo number_format(
+
+            $producto['costototal'],
+
+            2
+
+        );
+
+        ?>
+
+    </td>
+
+
+</tr>
+
+
 <?php
 
 }
 
 ?>
 
-      </tbody>
 
-     </table>
- 
+    </tbody>
+
+</table>
+
+
 <?php
 
-}else{
+} else {
 
 ?>
 
-         <div class="sin-productos">
 
-            Este pedido todavía no tiene productos.
+<div class="sin-productos">
 
-        </div>
- 
+    Este pedido todavía no tiene productos.
+
+</div>
+
+
 <?php
 
 }
 
 ?>
 
- </div>
 
-     <!-- ==================================================
-         TOTAL
-    ================================================== -->
-
-    <div class="total-contenedor">
+</div>
 
 
-  <div class="total">
+<!-- ==================================================
+     TOTAL
+================================================== -->
 
-             <div class="total-label">
-
-                Total del pedido
-
-            </div>
+<div class="total-contenedor">
 
 
-            <div class="total-monto">
-
-                Bs. <?php echo number_format( $totalGeneral, 2 ); ?>
-
-            </div>
+    <div class="total">
 
 
-           </div>
- 
-  </div>
+        <div class="total-label">
 
-     <!-- ==================================================
-         QR
-    ================================================== -->
-
-    <div class="qr-seccion">
-
-
-        <div class="qr-info">
- 
- <h3>
-
- Código QR del pedido
- 
- </h3>
-
-
-            <p>
-
-                Escanea este código para
-                identificar la información
-                principal de tu pedido DIVINE.
-
-                Este código corresponde
-                exclusivamente al pedido
-
-    <strong>
-
-        #<?php echo $id_pedido; ?>
-
-    </strong>.
-
-
-</p>
-
+            Total del pedido
 
         </div>
 
 
-        <div class="qr-box">
+        <div class="total-monto">
 
+            Bs.
 
-            <img
+            <?php
 
-            src="<?php echo $qrURL; ?>"
+            echo number_format(
 
-            alt="QR del pedido">
+                $totalGeneral,
 
+                2
+
+            );
+
+            ?>
 
         </div>
 
 
     </div>
+
+
+</div>
+
+
+<!-- ==================================================
+     QR
+================================================== -->
+
+<div class="qr-seccion">
+
+
+    <div class="qr-info">
+
+
+        <h3>
+
+            Código QR del pedido
+
+        </h3>
+
+
+        <p>
+
+            Escanea este código para
+
+            identificar la información
+
+            principal de tu pedido DIVINE.
+
+            Este código corresponde
+
+            exclusivamente al pedido
+
+
+            <strong>
+
+                #
+
+                <?php
+
+                echo htmlspecialchars(
+
+                    $id_pedido
+
+                );
+
+                ?>
+
+            </strong>.
+
+        </p>
+
+
+    </div>
+
+
+    <div class="qr-box">
+
+
+        <img
+
+            src="<?php echo $qrURL; ?>"
+
+            alt="QR del pedido"
+
+        >
+
+
+    </div>
+
+
+</div>
 
 
 </div>
@@ -2268,38 +1972,115 @@ Bs. <?php echo number_format($producto['costototal'],2 ); ?>
 <div class="acciones">
 
 
+<?php
+
+/* ==================================================
+   ADMINISTRADOR Y VENDEDOR
+   → VER PEDIDOS
+================================================== */
+
+if ($puedeVerPedidos) {
+
+?>
+
     <a
 
-    href="readtodopedido.php?idPedido=<?php echo $id_pedido; ?>"
+        href="readtodopedido.php"
 
-    class="btn btn-volver">
+        class="btn btn-volver"
 
- ← Lista de pedidos
+    >
 
- </a>
+        ← Ver pedidos
+
+    </a>
 
 
-    <button
+<?php
+
+}
+
+
+/* ==================================================
+   CLIENTE / SESIÓN SIN ROL
+   → VOLVER AL PERFIL
+================================================== */
+
+else {
+
+?>
+
+    <a
+
+        href="../perfilcliente.php"
+
+        class="btn btn-volver"
+
+    >
+
+        ← Volver al perfil
+
+    </a>
+
+
+<?php
+
+}
+
+?>
+
+
+<!-- ==================================================
+     IMPRIMIR
+================================================== -->
+
+<button
 
     type="button"
 
     class="btn btn-imprimir"
 
-    onclick="window.print()">
+    onclick="window.print()"
+
+>
 
     Imprimir pedido
 
-    </button>
+</button>
 
 
-    <button type="button" class="btn btn-pdf"  onclick="window.print()">  Guardar como PDF  </button>
+<!-- ==================================================
+     PDF
+================================================== -->
 
-  </div>
+<button
+
+    type="button"
+
+    class="btn btn-pdf"
+
+    onclick="window.print()"
+
+>
+
+    Guardar como PDF
+
+</button>
+
 
 </div>
+
+
+</div>
+
+
 </body>
+
 </html>
 
+
 <?php
+
 $conn->close();
+
 ?>
