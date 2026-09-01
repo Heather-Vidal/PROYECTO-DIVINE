@@ -15,7 +15,11 @@ $CI = $_POST['CI'];
 
 $sql = "SELECT * FROM CLIENTE
         WHERE nombre='$nombre'
-        AND CI='$CI'";
+        AND CI='$CI'
+       
+        
+        
+        ";
 
 $resultado = mysqli_query($conexion,$sql);
 
