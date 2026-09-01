@@ -180,7 +180,7 @@ $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
       $nombre = $_POST['nombre'];
       $descripcion = $_POST['descripcion'];
-            $categoria = $_POST['categoria'];
+         $categoria = $_POST['categoria'];
       $precio = $_POST['precio'];
       $costo = $_POST['costo'];
       $stock = $_POST['stock'];

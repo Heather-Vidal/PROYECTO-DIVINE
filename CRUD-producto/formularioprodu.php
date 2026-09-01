@@ -611,6 +611,18 @@ select[name="categoria"] option:first-child {
 
  
 
+ <label for="categoria">
+            Categoría:
+        </label>
+
+        <input
+            type="text"
+            name="categoria"
+        >
+       
+
+
+
 
 
 
@@ -866,7 +878,15 @@ $(document).ready(function(){
 
             precio: {
 
-                required: true,
+             categoria:{
+
+                required:true
+
+            },
+
+
+
+            precio:{
 
                 number: true
 
@@ -915,7 +935,15 @@ $(document).ready(function(){
 
             },
 
-            precio: {
+            categoria:{
+
+                required:
+                    "Ingrese la categoría"
+
+            },
+
+
+            precio:{
 
                 required:
                     "Ingrese el precio",

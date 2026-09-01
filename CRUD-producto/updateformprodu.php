@@ -38,7 +38,7 @@ if ($resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_assoc()) {
         $nombre = $fila['nombre'];
         $descripcion = $fila['descripcion'];
-            $categoria = $fila['categoria'];
+        $categoria = $fila['categoria'];
         $precio = $fila['precio'];
         $costo = $fila['costo'];
         $stock = $fila['stock'];
