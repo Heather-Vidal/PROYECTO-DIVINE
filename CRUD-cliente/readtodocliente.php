@@ -391,7 +391,7 @@ if($resultado->num_rows > 0){
     }).then((result) => {
         if (result.isConfirmed) {
             window.location =
-                "eliminarusuario.php?CI=" + CI;
+                "deletecliente.php?CI=" + CI;
         }
     });
 }
