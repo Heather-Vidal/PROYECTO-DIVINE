@@ -384,8 +384,8 @@ if($resultado->num_rows > 0){
         text: "No podrás revertir esta acción",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: rgba(124, 73, 105, 0.8),
-        cancelButtonColor: rgba(69, 20, 36, 0.6),
+        confirmButtonColor: "#532e4e",
+        cancelButtonColor: "#2B140D",
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar"
     }).then((result) => {
