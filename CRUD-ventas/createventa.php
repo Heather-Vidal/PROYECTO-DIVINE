@@ -15,8 +15,10 @@ $conn = new mysqli(
 if ($conn->connect_error) {
 
     die(
-        "Error de conexión: "
-        . $conn->connect_error
+        "<script>
+            alert('Error de conexión: " . addslashes($conn->connect_error) . "');
+            history.back();
+        </script>"
     );
 }
 // ==========================================
@@ -41,8 +43,10 @@ $resultadoCarrito = $conn->query($sqlCarrito);
 if (!$resultadoCarrito) {
 
     die(
-        "Error al buscar los productos: "
-        . $conn->error
+        "<script>
+            alert('Error al buscar los productos: " . addslashes($conn->error) . "');
+            history.back();
+        </script>"
     );
 
 }
@@ -51,7 +55,10 @@ if (!$resultadoCarrito) {
 // ==========================================
 if ($resultadoCarrito->num_rows == 0) {
     die(
-        "❌ Este pedido no tiene productos."
+        "<script>
+            alert('❌ Este pedido no tiene productos.');
+            history.back();
+        </script>"
     );
 }
 // ==========================================
@@ -59,11 +66,15 @@ if ($resultadoCarrito->num_rows == 0) {
 // ==========================================
 $hayStock = true;
 $mensajeError = "";
+
 while ($producto = $resultadoCarrito->fetch_assoc()) {
+
     // Código del producto
     $codigo = $producto["PRODUCTO_codigo"];
+
     // Cantidad solicitada
     $cantidad = $producto["cantidad"];
+
     // ======================================
     // BUSCAR PRODUCTO
     // ======================================
@@ -72,36 +83,51 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
         FROM PRODUCTO
         WHERE codigo = '$codigo'
     ";
+
     $resultadoProducto = $conn->query($sqlProducto);
+
     if (!$resultadoProducto) {
+
         die(
-            "Error al consultar el producto: "
-            . $conn->error
+            "<script>
+                alert('Error al consultar el producto: " . addslashes($conn->error) . "');
+                history.back();
+            </script>"
         );
 
     }
+
     // ======================================
     // VERIFICAR QUE EL PRODUCTO EXISTA
     // ======================================
     if ($resultadoProducto->num_rows == 0) {
+
         $hayStock = false;
+
         $mensajeError =
             "❌ El producto con código "
             . $codigo
-           . " no existe.";
+            . " no existe.";
+
         break;
     }
+
     // ======================================
     // OBTENER DATOS DEL PRODUCTO
     // ======================================
     $datosProducto = $resultadoProducto->fetch_assoc();
+
     $nombreProducto = $datosProducto["nombre"];
+
     $stockActual = $datosProducto["stock"];
+
     // ======================================
     // COMPARAR STOCK
     // ======================================
     if ($stockActual < $cantidad) {
+
         $hayStock = false;
+
         $mensajeError =
             "❌ No hay suficiente stock de "
             . $nombreProducto
@@ -109,22 +135,38 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
             . $stockActual
             . " | Cantidad solicitada: "
             . $cantidad;
+
         break;
     }
 }
+
 // ==========================================
 // SI NO HAY STOCK, NO HACER NADA
 // ==========================================
 if (!$hayStock) {
-    echo $mensajeError;
+
+    echo "
+    <script>
+
+        alert(" . json_encode($mensajeError) . ");
+
+        history.back();
+
+    </script>
+    ";
+
     $conn->close();
+
     exit();
 }
+
 // ==========================================
 // INICIAR TRANSACCIÓN
 // ==========================================
 $conn->begin_transaction();
+
 try {
+
     // ======================================
     // INSERTAR LA VENTA
     // ======================================
@@ -142,6 +184,7 @@ try {
         '$costototal',
         '$PEDIDOS_ID'
     )";
+
     if (!$conn->query($sql)) {
 
         throw new Exception(
@@ -149,6 +192,7 @@ try {
             . $conn->error
         );
     }
+
     // ======================================
     // BUSCAR PRODUCTOS DEL PEDIDO
     // ======================================
@@ -157,19 +201,26 @@ try {
         FROM CARRITO
         WHERE PEDIDOS_ID = '$PEDIDOS_ID'
     ";
+
     $resultadoCarrito2 = $conn->query($sqlCarrito2);
+
     if (!$resultadoCarrito2) {
+
         throw new Exception(
             "Error al obtener los productos del pedido: "
             . $conn->error
         );
     }
+
     // ======================================
     // DESCONTAR STOCK
     // ======================================
     while ($producto = $resultadoCarrito2->fetch_assoc()) {
+
         $codigo = $producto["PRODUCTO_codigo"];
+
         $cantidad = $producto["cantidad"];
+
         // ==================================
         // ACTUALIZAR STOCK
         // ==================================
@@ -178,35 +229,54 @@ try {
             SET stock = stock - '$cantidad'
             WHERE codigo = '$codigo'
         ";
+
         if (!$conn->query($sqlStock)) {
+
             throw new Exception(
                 "Error al actualizar el stock: "
                 . $conn->error
             );
         }
     }
+
     // ======================================
     // CONFIRMAR TODAS LAS OPERACIONES
     // ======================================
     $conn->commit();
+
     // ======================================
     // REDIRECCIONAR
     // ======================================
     header(
         "Location: readtodoventa.php"
     );
+
     exit();
+
 } catch (Exception $e) {
+
     // ======================================
     // DESHACER TODO SI ALGO FALLA
     // ======================================
     $conn->rollback();
-    echo "❌ No se pudo registrar la venta.";
-    echo "<br><br>";
-    echo $e->getMessage();
+
+    echo "
+    <script>
+
+        alert(" . json_encode(
+            "❌ No se pudo registrar la venta.\n\n"
+            . $e->getMessage()
+        ) . ");
+
+        history.back();
+
+    </script>
+    ";
 }
+
 // ==========================================
 // CERRAR CONEXIÓN
 // ==========================================
 $conn->close();
+
 ?>
