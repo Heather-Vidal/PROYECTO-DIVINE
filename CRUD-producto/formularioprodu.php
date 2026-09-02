@@ -92,7 +92,7 @@ form {
 
 
 /* =====================================================
-   IMAGEN DECORATIVA
+   IMAGEN
 ===================================================== */
 
 .imagen {
@@ -116,7 +116,7 @@ form {
 
 
 /* =====================================================
-   TÍTULO
+   TITULOS
 ===================================================== */
 
 h2 {
@@ -134,10 +134,6 @@ h2 {
         serif;
 }
 
-
-/* =====================================================
-   LEYENDA
-===================================================== */
 
 legend {
 
@@ -354,13 +350,18 @@ input[type="submit"] {
 
     width: 100%;
 
-    background: #c96f84;
+    background:
+        linear-gradient(
+            135deg,
+            #c96f84,
+            #b95670
+        );
 
     color: white;
 
     border: none;
 
-    padding: 15px;
+    padding: 16px;
 
     border-radius: 50px;
 
@@ -370,19 +371,40 @@ input[type="submit"] {
 
     cursor: pointer;
 
-    transition: .3s;
+    transition: all .3s ease;
 
     box-shadow:
         0 8px 20px
         rgba(201,111,132,.35);
+
+    letter-spacing: .5px;
 }
 
 
 input[type="submit"]:hover {
 
-    background: #b45d72;
+    background:
+        linear-gradient(
+            135deg,
+            #b95670,
+            #a84761
+        );
 
     transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(180,93,114,.45);
+}
+
+
+input[type="submit"]:active {
+
+    transform: translateY(0);
+
+    box-shadow:
+        0 5px 12px
+        rgba(180,93,114,.30);
 }
 
 
@@ -394,13 +416,15 @@ input[type="submit"]:hover {
 
     width: 100%;
 
-    background: #e0a5b3;
+    background: rgba(255,255,255,.75);
 
-    color: white;
+    color: #bf7485;
 
     text-decoration: none;
 
     padding: 15px;
+
+    border: 2px solid #e0a5b3;
 
     border-radius: 50px;
 
@@ -412,26 +436,32 @@ input[type="submit"]:hover {
 
     cursor: pointer;
 
-    transition: .3s;
+    transition: all .3s ease;
 
     margin-top: 15px;
 
     box-shadow:
-        0 8px 20px
-        rgba(201,111,132,.25);
+        0 5px 15px
+        rgba(201,111,132,.15);
 }
 
 
 .btn-volver:hover {
 
-    background: #c96f84;
+    background: #e0a5b3;
+
+    color: white;
 
     transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 20px
+        rgba(201,111,132,.30);
 }
 
 
 /* =====================================================
-   ERRORES
+   MENSAJES DE ERROR
 ===================================================== */
 
 .error {
@@ -495,8 +525,12 @@ input[type="submit"]:hover {
 >
 
 
+    <!-- IMAGEN SUPERIOR -->
+
     <div class="imagen"></div>
 
+
+    <!-- TÍTULO -->
 
     <h2>
         REGISTRO DE PRODUCTOS DIVINE
@@ -511,6 +545,8 @@ input[type="submit"]:hover {
     <div class="grupo-campos">
 
 
+        <!-- NOMBRE -->
+
         <label for="nombre">
             Nombre:
         </label>
@@ -522,6 +558,8 @@ input[type="submit"]:hover {
         >
 
 
+        <!-- DESCRIPCIÓN -->
+
         <label for="descripcion">
             Descripción:
         </label>
@@ -532,6 +570,8 @@ input[type="submit"]:hover {
             id="descripcion"
         >
 
+
+        <!-- CATEGORÍA -->
 
         <label for="categoria">
             Categoría:
@@ -557,6 +597,8 @@ input[type="submit"]:hover {
         </select>
 
 
+        <!-- PRECIO -->
+
         <label for="precio">
             Precio:
         </label>
@@ -567,6 +609,8 @@ input[type="submit"]:hover {
             id="precio"
         >
 
+
+        <!-- COSTO -->
 
         <label for="costo">
             Costo:
@@ -579,6 +623,8 @@ input[type="submit"]:hover {
         >
 
 
+        <!-- STOCK -->
+
         <label for="stock">
             Stock:
         </label>
@@ -590,6 +636,8 @@ input[type="submit"]:hover {
         >
 
 
+        <!-- CÓDIGO -->
+
         <label for="codigo">
             Código:
         </label>
@@ -600,6 +648,8 @@ input[type="submit"]:hover {
             id="codigo"
         >
 
+
+        <!-- CARGAR IMAGEN -->
 
         <div class="carga-imagen">
 
@@ -649,22 +699,30 @@ input[type="submit"]:hover {
     </div>
 
 
+    <!-- BOTÓN ENVIAR -->
+
     <input
         type="submit"
         value="Enviar"
     >
 
 
+    <!-- BOTÓN VOLVER -->
+
     <a
-        href="index.php"
+        href="../perfilvendedor.php"
         class="btn-volver"
     >
-        ← Volver al perfil
+        Volver al perfil
     </a>
 
 
 </form>
 
+
+<!-- =====================================================
+     MOSTRAR NOMBRE DE IMAGEN
+===================================================== -->
 
 <script>
 
@@ -705,6 +763,10 @@ document
 
 </script>
 
+
+<!-- =====================================================
+     VALIDACIÓN
+===================================================== -->
 
 <script>
 
