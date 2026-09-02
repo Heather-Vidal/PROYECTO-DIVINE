@@ -2012,13 +2012,13 @@ else {
 
     <a
 
-        href="../perfilcliente.php"
+        href="../totu.php"
 
         class="btn btn-volver"
 
     >
 
-        ← Volver al perfil
+        ← Volver al inicio
 
     </a>
 
