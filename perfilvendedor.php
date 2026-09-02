@@ -525,7 +525,7 @@ Stock
 <p>Actualizar pedido</p>
 </a>
 
-<a href="satisfaccion.html" class="metric button-card">
+<a href="interfazventas-pedido.php" class="metric button-card">
 <div class="actualizar">
 <img src="./imagenes/historial2.svg" alt="Historial">
 </div>

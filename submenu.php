@@ -327,9 +327,7 @@ nav{
                     Sugerencias
                 </a>
             </li>
-
-
-                  
+        
             <li>
                 <a href="../CONSULTA-pedido/formreadpedido.php">
                     mis pedidos 
