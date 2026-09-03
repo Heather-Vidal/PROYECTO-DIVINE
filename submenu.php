@@ -327,10 +327,10 @@ nav{
                     Sugerencias
                 </a>
             </li>
-
+        
             <li>
-                <a ../CONSULTAPEDIDO/ href="formreadpedido.php">
-                    Mis pedidos
+                <a href="../CONSULTA-pedido/formreadpedido.php">
+                    mis pedidos 
                 </a>
             </li>
         </ul>
