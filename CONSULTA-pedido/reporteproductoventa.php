@@ -15,23 +15,6 @@ if ($conn->connect_error) {
 
 $ID = $_SESSION["ID"];
 
-// ============================================
-// CONSULTA: PRODUCTOS MÁS VENDIDOS DEL MES
-// ============================================
-//
-// VENTAS
-//    ↓
-// PEDIDOS
-//    ↓
-// CARRITO
-//    ↓
-// PRODUCTO
-//
-// Solo aparecen los pedidos que tienen
-// un registro en VENTAS, es decir,
-// los pedidos que fueron aceptados.
-//
-
 $sql = "SELECT 
             p.nombre,
             SUM(c.cantidad) AS total_vendido
@@ -78,13 +61,9 @@ if ($resultado) {
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <title>Ventas</title>
 
     <style>
@@ -128,7 +107,6 @@ if ($resultado) {
                 0 15px 35px rgba(191, 116, 133, 0.20);
 
             border: 1px solid #f1d1d9;
-
         }
 
         h2 {
@@ -140,7 +118,6 @@ if ($resultado) {
             margin-bottom: 30px;
 
             font-size: 28px;
-
         }
 
         .grafico {
