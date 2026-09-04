@@ -20,7 +20,7 @@ if (
 
     echo "<script>
             alert('ACCESO DENEGADO: Solo los vendedores pueden entrar a esta página.');
-            window.location.href ='../SESIONES/loginformcliente.php';
+            window.location.href ='SESIONES/loginformcliente.php';
           </script>";
 
     exit();
