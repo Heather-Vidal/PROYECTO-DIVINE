@@ -19,8 +19,10 @@ $resultado=$conn-> query($sql);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Productos DIVINE</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 body {
@@ -208,11 +210,12 @@ if($resultado->num_rows > 0){
     echo "<div class='botones'>";
     echo "<a href='readunoprodu.php?codigo=$codigo'><button>Detalles</button></a>";
     echo "<a href='updateformprodu.php?codigo=$codigo'><button>Editar</button></a>";
-    echo "<a href='deleteprodu.php?codigo=$codigo'><button>Eliminar</button></a>";
+    echo "<a href='#'onclick='confirmarEliminacion($codigo)'><button>Eliminar</button></a>";
     echo "</div>";
     echo "</div>";
   }
 ?>
+
     </div>
 
     <div class="volver">
@@ -221,7 +224,25 @@ if($resultado->num_rows > 0){
     </div>
 
   </div>
-
+<script>
+  function confirmarEliminacion(codigo) {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#532e4e",
+        cancelButtonColor: "#2B140D",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location =
+                "deleteprodu.php?codigo=" + codigo;
+        }
+    });
+}
+</script>
 </body>
 </html>
 <?php

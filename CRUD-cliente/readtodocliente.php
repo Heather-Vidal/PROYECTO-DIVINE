@@ -23,18 +23,7 @@ if (
     exit();
 }
 
- 
-
 ?>
-
-
-
-
-
-
-
-
-
 
 <?php
 $servidor="localhost";
@@ -52,9 +41,6 @@ $sql="SELECT * FROM CLIENTE";
 $resultado=$conn->query($sql);
 ?>
 
-
-
- 
 <!DOCTYPE html>
 <html lang="es">
 

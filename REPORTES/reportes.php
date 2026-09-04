@@ -6,7 +6,7 @@ $usuario = "root";
 $contraseña = "";
 $baseDeDatos = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $baseDeDatos);
+$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
@@ -15,10 +15,9 @@ if ($conn->connect_error) {
 $rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
 
 if ($rol == 'administrador') {
-    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
-            FROM VENTAS v 
-            INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID 
-            WHERE v.estado = 'Entregado'";
+$sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
+        FROM VENTAS v 
+        INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID";
 } elseif ($rol == 'vendedor') {
     $nombre = $_SESSION['nombre'];
     $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
