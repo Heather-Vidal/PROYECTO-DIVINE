@@ -9,16 +9,24 @@ $nombreUsuario = $_SESSION['nombre'] ?? 'Usuario';
 $inicial = strtoupper(
     substr($nombreUsuario, 0, 1)
 );
+
+ 
+
 if (
     !isset($_SESSION['rol'])
     ||
     $_SESSION['rol'] != "vendedor"
 ) {
-    header(
-        "Location: ./SESIONES/loginformcliente.php"
-    );
+
+    echo "<script>
+            alert('ACCESO DENEGADO: Solo los vendedores pueden entrar a esta página.');
+            window.location.href ='../SESIONES/loginformcliente.php';
+          </script>";
+
     exit();
 }
+
+
 ?>
  
 <!DOCTYPE html>

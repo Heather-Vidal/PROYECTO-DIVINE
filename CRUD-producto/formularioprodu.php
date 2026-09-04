@@ -5,14 +5,9 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-    Formulario Productos DIVINE
-</title>
+<title>Formulario Productos DIVINE</title>
 
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
@@ -27,7 +22,7 @@
 
 /* =====================================================
    CONFIGURACIÓN GENERAL
-   ===================================================== */
+===================================================== */
 
 * {
     margin: 0;
@@ -39,7 +34,7 @@
 
 /* =====================================================
    FONDO
-   ===================================================== */
+===================================================== */
 
 body {
 
@@ -71,7 +66,7 @@ body {
 
 /* =====================================================
    FORMULARIO
-   ===================================================== */
+===================================================== */
 
 form {
 
@@ -97,8 +92,8 @@ form {
 
 
 /* =====================================================
-   IMAGEN DECORATIVA
-   ===================================================== */
+   IMAGEN
+===================================================== */
 
 .imagen {
 
@@ -121,8 +116,8 @@ form {
 
 
 /* =====================================================
-   TÍTULO
-   ===================================================== */
+   TITULOS
+===================================================== */
 
 h2 {
 
@@ -139,10 +134,6 @@ h2 {
         serif;
 }
 
-
-/* =====================================================
-   LEYENDA
-   ===================================================== */
 
 legend {
 
@@ -164,7 +155,7 @@ legend {
 
 /* =====================================================
    CAMPOS
-   ===================================================== */
+===================================================== */
 
 .grupo-campos {
 
@@ -180,11 +171,14 @@ label {
     font-weight: 600;
 
     margin-bottom: 8px;
+
+    margin-top: 15px;
 }
 
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
 
     width: 100%;
 
@@ -207,7 +201,8 @@ input[type="number"] {
 
 
 input[type="text"]:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+select:focus {
 
     border-color: #c96f84;
 
@@ -219,7 +214,7 @@ input[type="number"]:focus {
 
 /* =====================================================
    CARGA DE IMAGEN
-   ===================================================== */
+===================================================== */
 
 .carga-imagen {
 
@@ -243,19 +238,11 @@ input[type="number"]:focus {
 }
 
 
-/* =====================================================
-   INPUT ORIGINAL OCULTO
-   ===================================================== */
-
 input[type="file"] {
 
     display: none;
 }
 
-
-/* =====================================================
-   CAJA PARA SELECCIONAR ARCHIVO
-   ===================================================== */
 
 .selector-archivo {
 
@@ -301,10 +288,6 @@ input[type="file"] {
 }
 
 
-/* =====================================================
-   ICONO
-   ===================================================== */
-
 .icono-archivo {
 
     font-size: 38px;
@@ -312,10 +295,6 @@ input[type="file"] {
     margin-bottom: 8px;
 }
 
-
-/* =====================================================
-   TEXTO PRINCIPAL
-   ===================================================== */
 
 .texto-archivo {
 
@@ -327,10 +306,6 @@ input[type="file"] {
 }
 
 
-/* =====================================================
-   TEXTO SECUNDARIO
-   ===================================================== */
-
 .texto-secundario {
 
     color: #999;
@@ -340,10 +315,6 @@ input[type="file"] {
     margin-top: 5px;
 }
 
-
-/* =====================================================
-   NOMBRE DEL ARCHIVO
-   ===================================================== */
 
 .nombre-archivo {
 
@@ -373,19 +344,24 @@ input[type="file"] {
 
 /* =====================================================
    BOTÓN ENVIAR
-   ===================================================== */
+===================================================== */
 
 input[type="submit"] {
 
     width: 100%;
 
-    background: #c96f84;
+    background:
+        linear-gradient(
+            135deg,
+            #c96f84,
+            #b95670
+        );
 
     color: white;
 
     border: none;
 
-    padding: 15px;
+    padding: 16px;
 
     border-radius: 50px;
 
@@ -395,37 +371,60 @@ input[type="submit"] {
 
     cursor: pointer;
 
-    transition: .3s;
+    transition: all .3s ease;
 
     box-shadow:
         0 8px 20px
         rgba(201,111,132,.35);
+
+    letter-spacing: .5px;
 }
 
 
 input[type="submit"]:hover {
 
-    background: #b45d72;
+    background:
+        linear-gradient(
+            135deg,
+            #b95670,
+            #a84761
+        );
 
     transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(180,93,114,.45);
+}
+
+
+input[type="submit"]:active {
+
+    transform: translateY(0);
+
+    box-shadow:
+        0 5px 12px
+        rgba(180,93,114,.30);
 }
 
 
 /* =====================================================
-   BOTÓN VOLVER A LA PÁGINA PRINCIPAL
-   ===================================================== */
+   BOTÓN VOLVER
+===================================================== */
 
 .btn-volver {
 
     width: 100%;
 
-    background: #e0a5b3;
+    background: rgba(255,255,255,.75);
 
-    color: white;
+    color: #bf7485;
 
     text-decoration: none;
 
     padding: 15px;
+
+    border: 2px solid #e0a5b3;
 
     border-radius: 50px;
 
@@ -437,27 +436,33 @@ input[type="submit"]:hover {
 
     cursor: pointer;
 
-    transition: .3s;
+    transition: all .3s ease;
 
     margin-top: 15px;
 
     box-shadow:
-        0 8px 20px
-        rgba(201,111,132,.25);
+        0 5px 15px
+        rgba(201,111,132,.15);
 }
 
 
 .btn-volver:hover {
 
-    background: #c96f84;
+    background: #e0a5b3;
+
+    color: white;
 
     transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 20px
+        rgba(201,111,132,.30);
 }
 
 
 /* =====================================================
-   ERRORES
-   ===================================================== */
+   MENSAJES DE ERROR
+===================================================== */
 
 .error {
 
@@ -473,7 +478,7 @@ input[type="submit"]:hover {
 
 /* =====================================================
    RESPONSIVE
-   ===================================================== */
+===================================================== */
 
 @media (max-width: 700px) {
 
@@ -503,48 +508,6 @@ input[type="submit"]:hover {
     }
 
 }
-/* CONTENEDOR DE LOS CAMPOS */
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 7px;
-    font-weight: 600;
-    color: #6b4b4b;
-    font-size: 15px;
-}
-
-/* INPUT DESCRIPCIÓN Y SELECT CATEGORÍA */
-input[name="descripcion"],
-select[name="categoria"] {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d8b8b8;
-    border-radius: 10px;
-    background-color: #fffafa;
-    color: #5a4141;
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
-    transition: 0.3s;
-}
-
-/* EFECTO AL SELECCIONAR */
-input[name="descripcion"]:focus,
-select[name="categoria"]:focus {
-    border-color: #b76e79;
-    box-shadow: 0 0 6px rgba(183, 110, 121, 0.25);
-    background-color: #ffffff;
-}
-
-/* OPCIONES DEL SELECT */
-select[name="categoria"] {
-    cursor: pointer;
-}
-
-/* TEXTO DE LA OPCIÓN INICIAL */
-select[name="categoria"] option:first-child {
-    color: #999;
-}
 
 </style>
 
@@ -562,16 +525,12 @@ select[name="categoria"] option:first-child {
 >
 
 
-    <!-- =================================================
-         IMAGEN DECORATIVA
-         ================================================= -->
+    <!-- IMAGEN SUPERIOR -->
 
     <div class="imagen"></div>
 
 
-    <!-- =================================================
-         TÍTULO
-         ================================================= -->
+    <!-- TÍTULO -->
 
     <h2>
         REGISTRO DE PRODUCTOS DIVINE
@@ -586,9 +545,7 @@ select[name="categoria"] option:first-child {
     <div class="grupo-campos">
 
 
-        <!-- =================================================
-             NOMBRE
-             ================================================= -->
+        <!-- NOMBRE -->
 
         <label for="nombre">
             Nombre:
@@ -601,80 +558,46 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             DESCRIPCIÓN
-             ================================================= -->
+        <!-- DESCRIPCIÓN -->
 
         <label for="descripcion">
             Descripción:
         </label>
 
- 
+        <input
+            type="text"
+            name="descripcion"
+            id="descripcion"
+        >
 
- <label for="categoria">
+
+        <!-- CATEGORÍA -->
+
+        <label for="categoria">
             Categoría:
         </label>
 
-        <input
-            type="text"
+        <select
+            id="categoria"
             name="categoria"
         >
-       
+
+            <option value="">
+                Seleccione una categoría
+            </option>
+
+            <option value="SkinCare">
+                SkinCare
+            </option>
+
+            <option value="SkinHair">
+                SkinHair
+            </option>
+
+        </select>
 
 
-
-
-
-
-  
- 
-<input 
-    type="text" 
-    name="descripcion"
-    id="descripcion"
->
-
-<select id="categoria"   name="categoria">
- <option value="">
-        Seleccione una categoría
-    </option>
-
-    <option value="SkinCare">
-        SkinCare
-    </option>
-
-    <option value="SkinHair">
-        SkinHair
-    </option>
-
-</select>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- <!-- =================================================
-             PRECIO
-             ================================================= -->
+        <!-- PRECIO -->
 
         <label for="precio">
             Precio:
@@ -687,9 +610,7 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             COSTO
-             ================================================= -->
+        <!-- COSTO -->
 
         <label for="costo">
             Costo:
@@ -702,9 +623,7 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             STOCK
-             ================================================= -->
+        <!-- STOCK -->
 
         <label for="stock">
             Stock:
@@ -717,9 +636,7 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             CÓDIGO
-             ================================================= -->
+        <!-- CÓDIGO -->
 
         <label for="codigo">
             Código:
@@ -732,9 +649,7 @@ select[name="categoria"] option:first-child {
         >
 
 
-        <!-- =================================================
-             CARGAR IMAGEN
-             ================================================= -->
+        <!-- CARGAR IMAGEN -->
 
         <div class="carga-imagen">
 
@@ -755,16 +670,13 @@ select[name="categoria"] option:first-child {
                     📷
                 </div>
 
-
                 <div class="texto-archivo">
                     Seleccionar imagen
                 </div>
 
-
                 <div class="texto-secundario">
                     Haz clic aquí para cargar una imagen
                 </div>
-
 
                 <div
                     class="nombre-archivo"
@@ -787,9 +699,7 @@ select[name="categoria"] option:first-child {
     </div>
 
 
-    <!-- =================================================
-         BOTÓN ENVIAR
-         ================================================= -->
+    <!-- BOTÓN ENVIAR -->
 
     <input
         type="submit"
@@ -797,26 +707,24 @@ select[name="categoria"] option:first-child {
     >
 
 
-    <!-- =================================================
-         BOTÓN VOLVER
-         ================================================= -->
+    <!-- BOTÓN VOLVER -->
 
     <a
-        href="index.php"
+        href="../perfilvendedor.php"
         class="btn-volver"
     >
-        ← Volver a la página principal
+        Volver al perfil
     </a>
 
 
 </form>
 
 
-<script>
+<!-- =====================================================
+     MOSTRAR NOMBRE DE IMAGEN
+===================================================== -->
 
-/* =====================================================
-   MOSTRAR NOMBRE DEL ARCHIVO
-   ===================================================== */
+<script>
 
 document
     .getElementById("fileToUpload")
@@ -856,6 +764,10 @@ document
 </script>
 
 
+<!-- =====================================================
+     VALIDACIÓN
+===================================================== -->
+
 <script>
 
 $(document).ready(function(){
@@ -876,17 +788,15 @@ $(document).ready(function(){
 
             },
 
-            precio: {
+            categoria: {
 
-             categoria:{
-
-                required:true
+                required: true
 
             },
 
+            precio: {
 
-
-            precio:{
+                required: true,
 
                 number: true
 
@@ -935,15 +845,14 @@ $(document).ready(function(){
 
             },
 
-            categoria:{
+            categoria: {
 
                 required:
-                    "Ingrese la categoría"
+                    "Seleccione una categoría"
 
             },
 
-
-            precio:{
+            precio: {
 
                 required:
                     "Ingrese el precio",
