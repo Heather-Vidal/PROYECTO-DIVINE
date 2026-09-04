@@ -1,11 +1,10 @@
- 
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Actualizar Carrito</title>
+<title>PEDIDO</title>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
@@ -109,49 +108,19 @@ input[type="submit"]:hover{
 
 <body>
 
-<div class="contenedor">
+<h2>Consultar Pedido</h2>
 
-<h2>ACTUALIZAR CANTIDAD</h2>
+<form action="mostrarestadopedido.php" >
 
-<form id="formUpdate" action="updatecarrito.php" method="POST">
+    <label>Ingrese el nombre del producto:</label> <br>
+    <input type="text" name="Nombre" required><br> <br>
 
-    <input type="hidden" name="idPedido" value=" ">
-    <input type="hidden" name="codigo" value=" ">
+    <label>Cantidad:</label><br>
+    <input type="number" name="Cantidad" min="1" required><br><br>
 
-    <label>ingresa el numero de tu pedido</label>
-    <input type="number" name="cantidad" value=" " min="1">
-
-    <input type="submit" value="Actualizar carrito">
+    <input type="submit" value="Consultar Pedido">
 
 </form>
-
-</div>
-
-<script>
-$(document).ready(function () {
-
-  $("#formUpdate").validate({
-
-    rules: {
-      cantidad: {
-        required: true,
-        min: 1,
-        digits: true
-      }
-    },
-
-    messages: {
-      cantidad: {
-        required: "Ingresa una cantidad",
-        min: "Debe ser mayor a 0",
-        digits: "Solo números enteros"
-      }
-    }
-
-  });
-
-});
-</script>
 
 </body>
 </html>
