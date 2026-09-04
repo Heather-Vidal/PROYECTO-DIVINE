@@ -44,108 +44,69 @@ if ($conn->connect_error) {
         "❌ Error de conexión: "
         . $conn->connect_error
     );
-
 }
-
-
 // ==========================================
 // RECIBIR DATOS DE LA VENTA
 // ==========================================
-
 $PEDIDOS_ID = $_POST["PEDIDOS_ID"];
 $estado = $_POST["estado"];
 $metodo = $_POST["metodo"];
 $costototal = $_POST["costototal"];
-
-
-// ==========================================
+// =========================================
 // BUSCAR LOS PRODUCTOS DEL PEDIDO
 // ==========================================
-
 $sqlCarrito = "
     SELECT PRODUCTO_codigo, cantidad
     FROM CARRITO
     WHERE PEDIDOS_ID = '$PEDIDOS_ID'
 ";
-
 $resultadoCarrito = $conn->query($sqlCarrito);
-
-
 // ==========================================
 // VERIFICAR CONSULTA
 // ==========================================
-
 if (!$resultadoCarrito) {
-
     alertaError(
         "❌ Error al buscar los productos: "
         . $conn->error
     );
-
 }
-
-
 // ==========================================
 // VERIFICAR QUE EL PEDIDO TENGA PRODUCTOS
 // ==========================================
-
 if ($resultadoCarrito->num_rows == 0) {
-
     alertaError(
         "❌ Este pedido no tiene productos."
     );
-
 }
-
-
 // ==========================================
 // VERIFICAR EL STOCK
 // ==========================================
-
 $hayStock = true;
-
 $mensajeError = "";
-
-
 while ($producto = $resultadoCarrito->fetch_assoc()) {
-
     // Código del producto
-
     $codigo = $producto["PRODUCTO_codigo"];
-
-
     // Cantidad solicitada
-
     $cantidad = $producto["cantidad"];
-
-
     // ======================================
     // BUSCAR PRODUCTO
     // ======================================
-
     $sqlProducto = "
         SELECT nombre, stock
         FROM PRODUCTO
         WHERE codigo = '$codigo'
     ";
-
     $resultadoProducto = $conn->query($sqlProducto);
-
-
     if (!$resultadoProducto) {
 
         alertaError(
             "❌ Error al consultar el producto: "
             . $conn->error
         );
-
     }
-
-
     // ======================================
     // VERIFICAR QUE EL PRODUCTO EXISTA
     // ======================================
-
     if ($resultadoProducto->num_rows == 0) {
 
         $hayStock = false;
@@ -158,8 +119,6 @@ while ($producto = $resultadoCarrito->fetch_assoc()) {
         break;
 
     }
-
-
     // ======================================
     // OBTENER DATOS DEL PRODUCTO
     // ======================================
