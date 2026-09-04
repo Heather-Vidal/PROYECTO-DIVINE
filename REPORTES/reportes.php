@@ -6,7 +6,7 @@ $usuario = "root";
 $contraseña = "";
 $baseDeDatos = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $baseDeDatos);
+$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
