@@ -1,3 +1,41 @@
+ 
+<?php
+session_start();
+
+if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
+    header("Location: loginformcliente.php");
+    exit();
+}
+?>
+<?php
+
+ 
+if (
+    !isset($_SESSION['rol']) ||
+    $_SESSION['rol'] != "administrador"
+) {
+
+    echo "<script>
+        alert('ACCESO DENEGADO: Solo los administradores pueden entrar a esta página.');
+        window.location.href = './SESIONES/loginformcliente.php';
+    </script>";
+
+    exit();
+}
+
+ 
+
+?>
+
+
+
+
+
+
+
+
+
+
 <?php
 $servidor="localhost";
 $usuario="root";
@@ -14,6 +52,9 @@ $sql="SELECT * FROM CLIENTE";
 $resultado=$conn->query($sql);
 ?>
 
+
+
+ 
 <!DOCTYPE html>
 <html lang="es">
 

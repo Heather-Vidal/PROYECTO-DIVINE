@@ -18,7 +18,7 @@ if($conn->connect_error){
     echo "OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
 
 }
-
+ 
 
 // =====================================================
 // RECIBIR CÓDIGO

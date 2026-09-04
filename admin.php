@@ -9,19 +9,20 @@ if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
 <?php
 
  
+if (
+    !isset($_SESSION['rol']) ||
+    $_SESSION['rol'] != "administrador"
+) {
 
+    echo "<script>
+        alert('ACCESO DENEGADO: Solo los administradores pueden entrar a esta página.');
+        window.location.href = '../SESIONES/loginformcliente.php';
+    </script>";
 
-// ==========================================
-// VALIDACIÓN DE ROL
-// SOLO ADMINISTRADORES PUEDEN ENTRAR
-// ==========================================
-
-if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "administrador") {
-
-    header("Location: ./SESIONES/loginformcliente.php");
     exit();
-
 }
+
+ 
 
 ?>
 <!DOCTYPE html>

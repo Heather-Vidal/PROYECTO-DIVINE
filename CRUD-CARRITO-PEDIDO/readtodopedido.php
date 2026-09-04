@@ -57,7 +57,7 @@ if ($rol == "vendedor") {
         SELECT *
         FROM PEDIDOS
         WHERE nombrevendedor = '$nombreSeguro'
-        ORDER BY ID DESC
+        ORDER BY ID ASC
     ";
 
 
