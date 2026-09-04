@@ -15,19 +15,35 @@ if ($conn->connect_error) {
 $rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
 
 if ($rol == 'administrador') {
-    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
-            FROM VENTAS v 
+    $sql = "SELECT *
+            FROM VENTAS  
             INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID 
-            WHERE v.estado = 'Entregado'";
+            WHERE v.estado = 'En proceso'";
+
+
+
+
 } elseif ($rol == 'vendedor') {
     $nombre = $_SESSION['nombre'];
-    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
-            FROM VENTAS v 
+    $sql = "SELECT *
+            FROM VENTAS  
             INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID 
             WHERE p.nombrevendedor = '$nombre'";
-} else {
+} 
+
+
+
+
+else {
     $sql = "SELECT * FROM VENTAS WHERE 1=0";
 }
+
+
+
+
+
+
+
 
 $result = $conn->query($sql);
 
