@@ -1,155 +1,73 @@
- <?php
-
-session_start();
-
-
-if (!isset($_SESSION['rol'])) {
-
-    // No existe sesión → volver al inicio de sesión
-    header("Location:  ../SESIONES/loginformcliente.php");
-    exit();
-
-}
-
-
-/* =====================================================
-   VERIFICAR EL ROL
-   ===================================================== */
-
-if ($_SESSION['rol'] == "administrador") {
-
-    // El administrador sí puede ent
-    // rar
-    // No hacemos nada y la página continúa normalmente
-
-} elseif ($_SESSION['rol'] == "vendedor") {
-
-    // El vendedor NO tiene permiso
-    echo "<script>
-            alert('No tienes permisos para ingresar a esta página.');
-            window.location.href = '../SESIONES/loginformcliente.php';
-          </script>";
-    exit();
-
-} else {
-
-    // Cualquier otro rol también será rechazado
-    echo "<script>
-            alert('No tienes permisos para ingresar a esta página.');
-            window.location.href = '../SESIONES/loginformcliente.php';
-          </script>";
-    exit();
-
-}
-
-?>
 <?php
-
- 
+session_start();
 
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-$conn = new mysqli(
-    $servidor,
-    $usuario,
-    $contraseña,
-    $nombreBD
-);
-
-
-
+$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-
-/* ==========================================
-   OBTENER EL ROL ACTUAL DESDE LA SESIÓN
-   ========================================== */
+// =========================================================
+// OBTENER ROL ACTUAL
+// =========================================================
 
 $rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
 
 
-/* ==========================================
-   CONSULTAR VENTAS
-   SOLAMENTE DE PEDIDOS COMPLETADOS
-   ========================================== */
+// =========================================================
+// CONSULTA DE VENTAS
+// =========================================================
 
 if ($rol == 'administrador') {
 
-    $sql = "SELECT 
-                v.id,
-                v.estado,
-                v.metodo,
-                v.costototal,
-                v.PEDIDOS_ID,
-                p.fecha
-            FROM VENTAS v
-            INNER JOIN PEDIDOS p 
-                ON p.ID = v.PEDIDOS_ID
-            WHERE p.estado = 'Completado'";
+    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
+            FROM VENTAS v 
+            INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID";
 
 } elseif ($rol == 'vendedor') {
 
     $nombre = $_SESSION['nombre'];
 
-    $sql = "SELECT 
-                v.id,
-                v.estado,
-                v.metodo,
-                v.costototal,
-                v.PEDIDOS_ID,
-                p.fecha
-            FROM VENTAS v
-            INNER JOIN PEDIDOS p 
-                ON p.ID = v.PEDIDOS_ID
-            WHERE p.estado = 'Completado'
-            AND p.nombrevendedor = '$nombre'";
+    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
+            FROM VENTAS v 
+            INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID 
+            WHERE p.nombrevendedor = '$nombre'";
 
 } else {
 
     $sql = "SELECT * FROM VENTAS WHERE 1=0";
-
 }
-
 
 $result = $conn->query($sql);
 
 
-/* ==========================================
-   FUNCIÓN PARA CONSULTAR LOS TOTALES
-   SOLAMENTE DE PEDIDOS COMPLETADOS
-   ========================================== */
+// =========================================================
+// FUNCIÓN PARA OBTENER TOTALES
+// =========================================================
 
 function obtenerTotal($conn, $intervalo = null) {
 
     if ($intervalo === 'HOY') {
 
-        $where = "WHERE p.estado = 'Completado'
-                  AND p.fecha = CURDATE()";
+        $where = "WHERE p.fecha = CURDATE()";
 
     } elseif ($intervalo) {
 
-        $where = "WHERE p.estado = 'Completado'
-                  AND p.fecha >= DATE_SUB(CURDATE(), INTERVAL $intervalo)";
+        $where = "WHERE p.fecha >= DATE_SUB(CURDATE(), INTERVAL $intervalo)";
 
     } else {
 
-        $where = "WHERE p.estado = 'Completado'";
-
+        $where = "";
     }
 
-
-    $query = "SELECT SUM(v.costototal) AS total
-              FROM VENTAS v
-              INNER JOIN PEDIDOS p
-                  ON p.ID = v.PEDIDOS_ID
-              $where";
-
+    $query = "SELECT SUM(v.costototal) as total 
+              FROM VENTAS v 
+              INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID $where";
 
     $res = $conn->query($query)->fetch_assoc();
 
@@ -157,1013 +75,1689 @@ function obtenerTotal($conn, $intervalo = null) {
 }
 
 
-/* ==========================================
-   CALCULAR INGRESOS
-   ========================================== */
+// =========================================================
+// TOTALES
+// =========================================================
 
-$totalventadia = obtenerTotal($conn, 'HOY');
-
+$totalventadia    = obtenerTotal($conn, 'HOY');
 $totalventasemana = obtenerTotal($conn, '7 DAY');
+$totalventames    = obtenerTotal($conn, '30 DAY');
+$totalventaanio   = obtenerTotal($conn, '365 DAY');
 
-$totalventames = obtenerTotal($conn, '30 DAY');
 
-$totalventaanio = obtenerTotal($conn, '365 DAY');
+// =========================================================
+// REGISTROS
+// =========================================================
+
+$totalRegistros = ($result) ? $result->num_rows : 0;
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Reporte de Ingresos</title>
+<title>Dashboard de Ventas | DIVINE</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <!-- Fuente elegante -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 
-    <style>
+<style>
 
-        /* ==========================================
-           VARIABLES DE COLORES
-           ========================================== */
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-        :root {
+:root {
 
-            --rosa-principal: #ff6b8b;
+    --rosa: #ee5b8b;
+    --rosa-fuerte: #e9477d;
+    --rosa-claro: #f8dce7;
+    --rosa-palido: #fff3f7;
 
-            --rosa-secundario: #ff8ea5;
+    --texto: #252027;
+    --gris: #8c8389;
+    --blanco: #ffffff;
 
-            --rosa-oscuro: #d81b60;
+    --borde: #f1e5ea;
 
-            --rosa-pastel: #ffe6eb;
+    --verde: #3caf7d;
 
-            --rosa-hover: #e91e63;
+}
 
-            --fondo-gradiente:
-                linear-gradient(
-                    135deg,
-                    #fff0f3 0%,
-                    #ffe3e8 100%
-                );
 
-            --texto-oscuro: #4a2c35;
+/* =========================================================
+   RESET
+========================================================= */
 
-            --sombra-suave:
-                0 10px 25px
-                rgba(255, 107, 139, 0.15);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-            --sombra-fuerte:
-                0 15px 30px
-                rgba(216, 27, 96, 0.25);
 
-        }
+/* =========================================================
+   BODY
+========================================================= */
 
+body {
 
-        /* ==========================================
-           CONFIGURACIÓN GENERAL
-           ========================================== */
+    min-height: 100vh;
 
-        * {
+    background: #fff;
 
-            margin: 0;
+    color: var(--texto);
 
-            padding: 0;
+    font-family: 'DM Sans', sans-serif;
 
-            box-sizing: border-box;
+    padding: 25px;
 
-            font-family: 'Poppins', sans-serif;
+}
 
-        }
 
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 
-        /* ==========================================
-           CUERPO
-           ========================================== */
+.contenedor {
 
-        body {
+    width: min(1250px, 100%);
 
-            background: var(--fondo-gradiente);
+    margin: auto;
 
-            color: var(--texto-oscuro);
+}
 
-            min-height: 100vh;
 
-            padding: 20px;
+/* =========================================================
+   CABECERA
+========================================================= */
 
-        }
+.cabecera {
 
+    display: flex;
 
-        /* ==========================================
-           ANIMACIÓN
-           ========================================== */
+    align-items: center;
 
-        .aparicion {
+    justify-content: space-between;
 
-            animation:
-                fadeIn 0.8s ease-out
-                forwards;
+    margin-bottom: 28px;
 
-        }
+}
 
 
-        @keyframes fadeIn {
+.titulo {
 
-            from {
+    color: var(--rosa);
 
-                opacity: 0;
+    font-size: clamp(30px, 5vw, 52px);
 
-                transform:
-                    translateY(20px);
+    line-height: .95;
 
-            }
+    font-weight: 700;
 
-            to {
+    letter-spacing: -2px;
 
-                opacity: 1;
+}
 
-                transform:
-                    translateY(0);
 
-            }
+.subtitulo {
 
-        }
+    color: var(--gris);
 
+    font-size: 13px;
 
-        /* ==========================================
-           ENCABEZADO
-           ========================================== */
+    margin-top: 10px;
 
-        #separador-ingresos {
+}
 
-            text-align: center;
 
-            margin:
-                20px 0 30px 0;
+.logo {
 
-        }
+    width: 48px;
 
+    height: 48px;
 
-        #titseparador-ingresos {
+    border-radius: 50%;
 
-            color:
-                var(--rosa-oscuro);
+    background: var(--rosa-palido);
 
-            font-size:
-                2.2rem;
+    color: var(--rosa);
 
-            font-weight:
-                700;
+    display: flex;
 
-            letter-spacing:
-                1.5px;
+    align-items: center;
 
-            text-transform:
-                uppercase;
+    justify-content: center;
 
-            position:
-                relative;
+    font-size: 22px;
 
-            display:
-                inline-block;
+    border: 1px solid var(--rosa-claro);
 
-            padding-bottom:
-                8px;
+}
 
-        }
 
+/* =========================================================
+   TARJETAS PRINCIPALES
+========================================================= */
 
-        #titseparador-ingresos::after {
+.estadisticas {
 
-            content: '';
+    display: grid;
 
-            position:
-                absolute;
+    grid-template-columns: repeat(4, 1fr);
 
-            width:
-                60%;
+    gap: 14px;
 
-            height:
-                4px;
+    margin-bottom: 18px;
 
-            background:
-                var(--rosa-principal);
+}
 
-            bottom:
-                0;
 
-            left:
-                20%;
+.card {
 
-            border-radius:
-                10px;
+    background: var(--rosa-palido);
 
-        }
+    border: 1px solid #f8e2e9;
 
+    border-radius: 17px;
 
-        /* ==========================================
-           CONTENEDOR PRINCIPAL
-           ========================================== */
+    padding: 20px;
 
-        #centro-reporte {
+    min-height: 145px;
 
-            max-width:
-                1200px;
+    display: flex;
 
-            margin:
-                0 auto;
+    flex-direction: column;
 
-            padding:
-                10px;
+    justify-content: space-between;
 
-        }
+    transition: .3s ease;
 
+}
 
-        /* ==========================================
-           TARJETAS DE INGRESOS
-           ========================================== */
 
-        .tarjetas-ingresos {
+.card:hover {
 
-            display:
-                grid;
+    transform: translateY(-4px);
 
-            grid-template-columns:
-                repeat(
-                    auto-fit,
-                    minmax(220px, 1fr)
-                );
+    box-shadow: 0 12px 30px rgba(238,91,139,.12);
 
-            gap:
-                20px;
+}
 
-            margin-bottom:
-                40px;
 
-        }
+.card-icono {
 
+    width: 37px;
 
-        .tarjeta-ingreso {
+    height: 37px;
 
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.85
-                );
+    border-radius: 50%;
 
-            backdrop-filter:
-                blur(10px);
+    background: var(--rosa);
 
-            border-radius:
-                16px;
+    color: white;
 
-            padding:
-                25px 20px;
+    display: flex;
 
-            text-align:
-                center;
+    align-items: center;
 
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.6
-                );
+    justify-content: center;
 
-            box-shadow:
-                var(--sombra-suave);
+    font-size: 17px;
 
-            transition:
-                all 0.4s
-                cubic-bezier(
-                    0.175,
-                    0.885,
-                    0.32,
-                    1.275
-                );
+}
 
-            position:
-                relative;
 
-            overflow:
-                hidden;
+.card-titulo {
 
-        }
+    color: #484047;
 
+    font-size: 10px;
 
-        .tarjeta-ingreso::before {
+    text-transform: uppercase;
 
-            content: '';
+    line-height: 1.3;
 
-            position:
-                absolute;
+    margin-top: 10px;
 
-            top: 0;
+}
 
-            left: 0;
 
-            width:
-                100%;
+.card-valor {
 
-            height:
-                5px;
+    color: var(--rosa-fuerte);
 
-            background:
-                linear-gradient(
-                    90deg,
-                    var(--rosa-principal),
-                    var(--rosa-secundario)
-                );
+    font-size: 24px;
 
-        }
+    font-weight: 700;
 
+}
 
-        .tarjeta-ingreso:hover {
 
-            transform:
-                translateY(-8px)
-                scale(1.02);
+/* =========================================================
+   ZONA DE GRÁFICAS
+========================================================= */
 
-            box-shadow:
-                var(--sombra-fuerte);
+.graficas {
 
-            background:
-                #ffffff;
+    display: grid;
 
-        }
+    grid-template-columns: 1.15fr .85fr;
 
+    gap: 18px;
 
-        .tarjeta-ingreso h3 {
+    margin-bottom: 18px;
 
-            color:
-                #884d5c;
+}
 
-            font-size:
-                1.1rem;
 
-            font-weight:
-                600;
+.panel {
 
-            margin-bottom:
-                10px;
+    background: white;
 
-            text-transform:
-                uppercase;
+    border: 1px solid var(--borde);
 
-        }
+    border-radius: 18px;
 
+    padding: 20px;
 
-        .tarjeta-ingreso p {
+}
 
-            color:
-                var(--rosa-oscuro);
 
-            font-size:
-                1.8rem;
+.panel-titulo {
 
-            font-weight:
-                700;
+    font-size: 11px;
 
-        }
+    font-weight: 700;
 
+    text-transform: uppercase;
 
-        .tarjeta-ingreso p::before {
+    margin-bottom: 18px;
 
-            content:
-                '$ ';
+    color: #353036;
 
-            font-size:
-                1.3rem;
+}
 
-            color:
-                var(--rosa-secundario);
 
-        }
+/* =========================================================
+   GRÁFICA DE INGRESOS
+========================================================= */
 
+.grafica-linea {
 
-        /* ==========================================
-           TABLA DE INGRESOS
-           ========================================== */
+    height: 210px;
 
-        #tabla-ingresos {
+    position: relative;
 
-            width:
-                100%;
+    display: flex;
 
-            border-collapse:
-                separate;
+    flex-direction: column;
 
-            border-spacing:
-                0 12px;
+    justify-content: flex-end;
 
-            margin-top:
-                10px;
+}
 
-        }
 
+.lineas-fondo {
 
-        #tabla-ingresos th {
+    position: absolute;
 
-            background-color:
-                var(--rosa-oscuro);
+    inset: 0;
 
-            color:
-                white;
+    display: flex;
 
-            padding:
-                16px 20px;
+    flex-direction: column;
 
-            font-size:
-                0.95rem;
+    justify-content: space-between;
 
-            font-weight:
-                600;
+}
 
-            text-transform:
-                uppercase;
 
-            letter-spacing:
-                0.5px;
+.linea {
 
-            border:
-                none;
+    width: 100%;
 
-        }
+    height: 1px;
 
+    background: #f1eaed;
 
-        #tabla-ingresos th:first-child {
+}
 
-            border-top-left-radius:
-                12px;
 
-            border-bottom-left-radius:
-                12px;
+.grafica-svg {
 
-        }
+    position: absolute;
 
+    inset: 10px 0 20px 0;
 
-        #tabla-ingresos th:last-child {
+    width: 100%;
 
-            border-top-right-radius:
-                12px;
+    height: calc(100% - 30px);
 
-            border-bottom-right-radius:
-                12px;
+}
 
-        }
 
+.meses {
 
-        #tabla-ingresos tr.aparicion {
+    position: absolute;
 
-            transition:
-                all 0.3s ease;
+    bottom: 0;
 
-        }
+    left: 0;
 
+    width: 100%;
 
-        #tabla-ingresos td {
+    display: flex;
 
-            background-color:
-                #ffffff;
+    justify-content: space-between;
 
-            padding:
-                16px 20px;
+    color: #aaa1a7;
 
-            font-size:
-                0.95rem;
+    font-size: 8px;
 
-            text-align:
-                center;
+}
 
-            color:
-                var(--texto-oscuro);
 
-            border-top:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+/* =========================================================
+   BARRAS
+========================================================= */
 
-            border-bottom:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+.barras {
 
-        }
+    height: 210px;
 
+    display: flex;
 
-        #tabla-ingresos td:first-child {
+    flex-direction: column;
 
-            border-top-left-radius:
-                12px;
+    justify-content: center;
 
-            border-bottom-left-radius:
-                12px;
+    gap: 12px;
 
-            border-left:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+}
 
-            font-weight:
-                600;
 
-        }
+.barra-item {
 
+    display: flex;
 
-        #tabla-ingresos td:last-child {
+    align-items: center;
 
-            border-top-right-radius:
-                12px;
+    gap: 8px;
 
-            border-bottom-right-radius:
-                12px;
+}
 
-            border-right:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
 
-        }
+.barra-numero {
 
+    width: 22px;
 
-        /* ==========================================
-           EFECTO HOVER
-           ========================================== */
+    font-size: 9px;
 
-        #tabla-ingresos tbody tr:hover td {
+    color: var(--gris);
 
-            background-color:
-                var(--rosa-pastel);
+}
 
-            transform:
-                scale(1.005);
 
-            transition:
-                all 0.2s ease;
+.barra-contenedor {
 
-        }
+    flex: 1;
 
+    height: 15px;
 
-        /* ==========================================
-           BOTÓN MOSTRAR
-           ========================================== */
+    background: #faf0f4;
 
-        a.ver1 {
+    border-radius: 3px;
 
-            display:
-                inline-block;
+    overflow: hidden;
 
-            text-decoration:
-                none;
+}
 
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--rosa-principal),
-                    var(--rosa-oscuro)
-                );
 
-            color:
-                white;
+.barra {
 
-            padding:
-                8px 18px;
+    height: 100%;
 
-            border-radius:
-                20px;
+    background: var(--rosa);
 
-            font-size:
-                0.85rem;
+    border-radius: 3px;
 
-            font-weight:
-                600;
+    animation: crecer .9s ease both;
 
-            box-shadow:
-                0 4px 10px
-                rgba(
-                    216,
-                    27,
-                    96,
-                    0.2
-                );
+}
 
-            transition:
-                all 0.3s ease;
 
-        }
+.barra:nth-child(1) {
+    width: 92%;
+}
 
+.barra:nth-child(2) {
+    width: 78%;
+}
 
-        a.ver1:hover {
+.barra:nth-child(3) {
+    width: 61%;
+}
 
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--rosa-secundario),
-                    var(--rosa-hover)
-                );
+.barra:nth-child(4) {
+    width: 50%;
+}
 
-            box-shadow:
-                0 6px 15px
-                rgba(
-                    216,
-                    27,
-                    96,
-                    0.4
-                );
+.barra:nth-child(5) {
+    width: 42%;
+}
 
-            transform:
-                translateY(-2px);
 
-        }
+@keyframes crecer {
 
+    from {
+        width: 0;
+    }
 
-        a.ver1:active {
+}
 
-            transform:
-                translateY(0);
 
-        }
+/* =========================================================
+   RESUMEN INFERIOR
+========================================================= */
 
+.resumen {
 
-        /* ==========================================
-           TABLA VACÍA
-           ========================================== */
+    display: grid;
 
-        .zzz {
+    grid-template-columns: 1fr 1fr;
 
-            color:
-                #884d5c !important;
+    gap: 18px;
 
-            font-style:
-                italic;
+    margin-bottom: 18px;
 
-            font-weight:
-                500;
+}
 
-            padding:
-                30px !important;
 
-        }
+.resumen-card {
 
+    border: 1px solid var(--borde);
 
-        /* ==========================================
-           RESPONSIVE
-           ========================================== */
+    border-radius: 18px;
 
-        @media (max-width: 768px) {
+    padding: 22px;
 
-            #titseparador-ingresos {
+    background: white;
 
-                font-size:
-                    1.6rem;
+}
 
-            }
 
+.resumen-header {
 
-            #tabla-ingresos th,
-            #tabla-ingresos td {
+    display: flex;
 
-                padding:
-                    10px 8px;
+    justify-content: space-between;
 
-                font-size:
-                    0.85rem;
+    align-items: center;
 
-            }
+}
 
 
-            a.ver1 {
+.resumen-header span {
 
-                padding:
-                    6px 12px;
+    font-size: 10px;
 
-                font-size:
-                    0.75rem;
+    text-transform: uppercase;
 
-            }
+    color: var(--gris);
 
-        }
+    font-weight: 700;
 
-    </style>
+}
+
+
+.resumen-header strong {
+
+    color: var(--rosa);
+
+    font-size: 18px;
+
+}
+
+
+.progreso {
+
+    width: 100%;
+
+    height: 8px;
+
+    background: #f6e9ee;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    margin-top: 20px;
+
+}
+
+
+.progreso span {
+
+    display: block;
+
+    height: 100%;
+
+    background: var(--rosa);
+
+    border-radius: 20px;
+
+}
+
+
+.resumen-info {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 8px;
+
+    font-size: 9px;
+
+    color: var(--gris);
+
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+.historial {
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 20px;
+
+    padding: 22px;
+
+}
+
+
+.historial-cabecera {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+
+}
+
+
+.historial-titulo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.historial-icono {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 11px;
+
+    background: var(--rosa-palido);
+
+    color: var(--rosa);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.historial h2 {
+
+    font-size: 18px;
+
+    color: #302a30;
+
+}
+
+
+.registros {
+
+    background: var(--rosa-palido);
+
+    color: var(--rosa);
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+.tabla-scroll {
+
+    overflow-x: auto;
+
+}
+
+
+#tabla-ingresos {
+
+    width: 100%;
+
+    min-width: 750px;
+
+    border-collapse: collapse;
+
+}
+
+
+#tabla-ingresos th {
+
+    text-align: left;
+
+    padding: 12px;
+
+    color: #a49ba0;
+
+    font-size: 8px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    border-bottom: 1px solid var(--borde);
+
+}
+
+
+#tabla-ingresos td {
+
+    padding: 15px 12px;
+
+    border-bottom: 1px solid #f7eef1;
+
+    font-size: 11px;
+
+    color: #554c52;
+
+}
+
+
+#tabla-ingresos tbody tr {
+
+    transition: .25s ease;
+
+}
+
+
+#tabla-ingresos tbody tr:hover {
+
+    background: #fff8fa;
+
+}
+
+
+#tabla-ingresos td:first-child {
+
+    font-weight: 700;
+
+    color: #352e34;
+
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+.estado {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    background: #e9f8f1;
+
+    color: var(--verde);
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+}
+
+
+.estado::before {
+
+    content: "";
+
+    width: 5px;
+
+    height: 5px;
+
+    background: var(--verde);
+
+    border-radius: 50%;
+
+}
+
+
+/* =========================================================
+   PRECIO
+========================================================= */
+
+.precio {
+
+    color: var(--rosa) !important;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   BOTÓN MOSTRAR
+========================================================= */
+
+a.ver1 {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 7px 11px;
+
+    border-radius: 8px;
+
+    background: var(--rosa-palido);
+
+    color: var(--rosa);
+
+    text-decoration: none;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    transition: .25s ease;
+
+}
+
+
+a.ver1::after {
+
+    content: "→";
+
+}
+
+
+a.ver1:hover {
+
+    background: var(--rosa);
+
+    color: white;
+
+}
+
+
+/* =========================================================
+   SIN RESULTADOS
+========================================================= */
+
+.zzz {
+
+    text-align: center !important;
+
+    padding: 45px !important;
+
+    color: var(--gris) !important;
+
+    font-style: italic;
+
+}
+
+
+/* =========================================================
+   ANIMACIONES
+========================================================= */
+
+.card {
+
+    animation: aparecer .6s ease both;
+
+}
+
+
+.card:nth-child(1) {
+    animation-delay: .05s;
+}
+
+.card:nth-child(2) {
+    animation-delay: .10s;
+}
+
+.card:nth-child(3) {
+    animation-delay: .15s;
+}
+
+.card:nth-child(4) {
+    animation-delay: .20s;
+}
+
+
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 900px) {
+
+    .estadisticas {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+    .graficas {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+@media(max-width: 600px) {
+
+    body {
+
+        padding: 14px;
+
+    }
+
+    .cabecera {
+
+        margin-bottom: 20px;
+
+    }
+
+    .titulo {
+
+        font-size: 34px;
+
+    }
+
+    .estadisticas {
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 10px;
+
+    }
+
+    .card {
+
+        padding: 14px;
+
+        min-height: 125px;
+
+    }
+
+    .card-valor {
+
+        font-size: 19px;
+
+    }
+
+    .graficas {
+
+        gap: 12px;
+
+    }
+
+    .resumen {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .panel,
+    .resumen-card,
+    .historial {
+
+        padding: 16px;
+
+    }
+
+}
+
+
+@media(max-width: 400px) {
+
+    .estadisticas {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .titulo {
+
+        font-size: 30px;
+
+    }
+
+}
+
+</style>
 
 </head>
 
 
 <body>
 
-
-<section
-    id="separador-ingresos"
-    class="aparicion"
->
-
-    <h1 id="titseparador-ingresos">
-
-        REPORTE DE INGRESOS TOTALES
-
-    </h1>
-
-</section>
+<div class="contenedor">
 
 
+    <!-- =====================================================
+         CABECERA
+    ====================================================== -->
 
-<div id="centro-reporte">
+    <header class="cabecera">
 
+        <div>
 
-    <!-- ==========================================
-         TARJETAS DE TOTALES
-         ========================================== -->
+            <h1 class="titulo">
+                E-COMMERCE<br>
+                SALES DASHBOARD
+            </h1>
 
-    <div class="tarjetas-ingresos aparicion">
-
-
-        <div class="tarjeta-ingreso">
-
-            <h3>
-                Hoy
-            </h3>
-
-            <p>
-
-                <?php
-
-                echo number_format(
-                    $totalventadia,
-                    2
-                );
-
-                ?>
-
+            <p class="subtitulo">
+                Resumen general de las ventas realizadas
             </p>
 
         </div>
 
 
+        <div class="logo">
+            ♡
+        </div>
 
-        <div class="tarjeta-ingreso">
+    </header>
 
-            <h3>
-                Última semana
-            </h3>
 
-            <p>
+    <!-- =====================================================
+         ESTADÍSTICAS
+    ====================================================== -->
 
-                <?php
+    <section class="estadisticas">
 
-                echo number_format(
-                    $totalventasemana,
-                    2
-                );
 
-                ?>
+        <!-- TOTAL DEL DÍA -->
 
-            </p>
+        <article class="card">
+
+            <div>
+
+                <div class="card-icono">
+                    $
+                </div>
+
+                <div class="card-titulo">
+                    Total Revenue
+                </div>
+
+            </div>
+
+            <div class="card-valor">
+
+                $<?php echo number_format($totalventadia, 2); ?>
+
+            </div>
+
+        </article>
+
+
+        <!-- ÚLTIMOS 7 DÍAS -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-icono">
+                    ▥
+                </div>
+
+                <div class="card-titulo">
+                    Ventas últimos 7 días
+                </div>
+
+            </div>
+
+            <div class="card-valor">
+
+                $<?php echo number_format($totalventasemana, 2); ?>
+
+            </div>
+
+        </article>
+
+
+        <!-- ÚLTIMOS 30 DÍAS -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-icono">
+                    %
+                </div>
+
+                <div class="card-titulo">
+                    Ventas últimos 30 días
+                </div>
+
+            </div>
+
+            <div class="card-valor">
+
+                $<?php echo number_format($totalventames, 2); ?>
+
+            </div>
+
+        </article>
+
+
+        <!-- ÚLTIMOS 365 DÍAS -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-icono">
+                    ✦
+                </div>
+
+                <div class="card-titulo">
+                    Ventas último año
+                </div>
+
+            </div>
+
+            <div class="card-valor">
+
+                $<?php echo number_format($totalventaanio, 2); ?>
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         GRÁFICAS
+    ====================================================== -->
+
+    <section class="graficas">
+
+
+        <!-- =================================================
+             TENDENCIA
+        ================================================== -->
+
+        <article class="panel">
+
+            <div class="panel-titulo">
+                Monthly Revenue Trend
+            </div>
+
+
+            <div class="grafica-linea">
+
+
+                <div class="lineas-fondo">
+
+                    <div class="linea"></div>
+                    <div class="linea"></div>
+                    <div class="linea"></div>
+                    <div class="linea"></div>
+                    <div class="linea"></div>
+
+                </div>
+
+
+                <svg
+                    class="grafica-svg"
+                    viewBox="0 0 600 190"
+                    preserveAspectRatio="none"
+                >
+
+                    <defs>
+
+                        <linearGradient
+                            id="relleno"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#ee5b8b"
+                                stop-opacity=".30"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#ee5b8b"
+                                stop-opacity=".02"
+                            />
+
+                        </linearGradient>
+
+                    </defs>
+
+
+                    <path
+                        d="
+                        M0,135
+                        C35,110 55,95 85,115
+                        C115,135 125,145 155,120
+                        C185,95 205,45 235,65
+                        C270,90 285,115 320,105
+                        C350,95 365,65 390,50
+                        C420,35 445,65 470,70
+                        C505,75 530,95 550,70
+                        C570,50 585,60 600,40
+                        L600,190
+                        L0,190
+                        Z
+                        "
+                        fill="url(#relleno)"
+                    />
+
+
+                    <path
+                        d="
+                        M0,135
+                        C35,110 55,95 85,115
+                        C115,135 125,145 155,120
+                        C185,95 205,45 235,65
+                        C270,90 285,115 320,105
+                        C350,95 365,65 390,50
+                        C420,35 445,65 470,70
+                        C505,75 530,95 550,70
+                        C570,50 585,60 600,40
+                        "
+                        fill="none"
+                        stroke="#ee5b8b"
+                        stroke-width="4"
+                        stroke-linecap="round"
+                    />
+
+                </svg>
+
+
+                <div class="meses">
+
+                    <span>Jan</span>
+                    <span>Feb</span>
+                    <span>Mar</span>
+                    <span>Apr</span>
+                    <span>May</span>
+                    <span>Jun</span>
+                    <span>Jul</span>
+                    <span>Aug</span>
+                    <span>Sep</span>
+                    <span>Oct</span>
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             BARRAS
+        ================================================== -->
+
+        <article class="panel">
+
+            <div class="panel-titulo">
+                Top ventas
+            </div>
+
+
+            <div class="barras">
+
+
+                <div class="barra-item">
+
+                    <div class="barra-numero">
+                        01
+                    </div>
+
+                    <div class="barra-contenedor">
+
+                        <div
+                            class="barra"
+                            style="width:92%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="barra-item">
+
+                    <div class="barra-numero">
+                        02
+                    </div>
+
+                    <div class="barra-contenedor">
+
+                        <div
+                            class="barra"
+                            style="width:78%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="barra-item">
+
+                    <div class="barra-numero">
+                        03
+                    </div>
+
+                    <div class="barra-contenedor">
+
+                        <div
+                            class="barra"
+                            style="width:61%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="barra-item">
+
+                    <div class="barra-numero">
+                        04
+                    </div>
+
+                    <div class="barra-contenedor">
+
+                        <div
+                            class="barra"
+                            style="width:50%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="barra-item">
+
+                    <div class="barra-numero">
+                        05
+                    </div>
+
+                    <div class="barra-contenedor">
+
+                        <div
+                            class="barra"
+                            style="width:42%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         RESUMEN
+    ====================================================== -->
+
+    <section class="resumen">
+
+
+        <article class="resumen-card">
+
+            <div class="resumen-header">
+
+                <span>
+                    Rendimiento mensual
+                </span>
+
+                <strong>
+                    $<?php echo number_format($totalventames, 2); ?>
+                </strong>
+
+            </div>
+
+
+            <div class="progreso">
+
+                <span style="width:75%;"></span>
+
+            </div>
+
+
+            <div class="resumen-info">
+
+                <span>
+                    Últimos 30 días
+                </span>
+
+                <span>
+                    Ventas
+                </span>
+
+            </div>
+
+        </article>
+
+
+        <article class="resumen-card">
+
+            <div class="resumen-header">
+
+                <span>
+                    Rendimiento anual
+                </span>
+
+                <strong>
+                    $<?php echo number_format($totalventaanio, 2); ?>
+                </strong>
+
+            </div>
+
+
+            <div class="progreso">
+
+                <span style="width:65%;"></span>
+
+            </div>
+
+
+            <div class="resumen-info">
+
+                <span>
+                    Últimos 365 días
+                </span>
+
+                <span>
+                    Total acumulado
+                </span>
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         HISTORIAL
+    ====================================================== -->
+
+    <section class="historial">
+
+
+        <div class="historial-cabecera">
+
+
+            <div class="historial-titulo">
+
+                <div class="historial-icono">
+                    ♡
+                </div>
+
+                <h2>
+                    Historial de ventas
+                </h2>
+
+            </div>
+
+
+            <div class="registros">
+
+                <?php echo $totalRegistros; ?> registros
+
+            </div>
+
 
         </div>
 
 
+        <div class="tabla-scroll">
 
-        <div class="tarjeta-ingreso">
 
-            <h3>
-                Último mes
-            </h3>
+            <table id="tabla-ingresos">
 
-            <p>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            ID Pedido
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Método
+                        </th>
+
+                        <th>
+                            Costo Total
+                        </th>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
 
                 <?php
 
-                echo number_format(
-                    $totalventames,
-                    2
-                );
+                if ($result && $result->num_rows > 0) {
+
+                    while($fila = $result->fetch_assoc()) {
+
+                        $idPedido = $fila["PEDIDOS_ID"];
+
+                        echo "<tr>";
+
+
+                        echo "<td>";
+                        echo htmlspecialchars($fila["PEDIDOS_ID"]);
+                        echo "</td>";
+
+
+                        echo "<td>";
+
+                        echo "<span class='estado'>";
+
+                        echo htmlspecialchars($fila["estado"]);
+
+                        echo "</span>";
+
+                        echo "</td>";
+
+
+                        echo "<td>";
+
+                        echo htmlspecialchars($fila["metodo"]);
+
+                        echo "</td>";
+
+
+                        echo "<td class='precio'>";
+
+                        echo "$" . number_format(
+                            $fila["costototal"],
+                            2
+                        );
+
+                        echo "</td>";
+
+
+                        echo "<td>";
+
+                        echo htmlspecialchars($fila["fecha"]);
+
+                        echo "</td>";
+
+
+                        echo "<td>";
+
+                        echo "<a
+                                class='ver1'
+                                href='readventas1.php?idpedidos=$idPedido'
+                              >
+                                Mostrar
+                              </a>";
+
+                        echo "</td>";
+
+
+                        echo "</tr>";
+
+                    }
+
+                } else {
+
+                    echo "
+
+                    <tr>
+
+                        <td
+                            colspan='6'
+                            class='zzz'
+                        >
+
+                            No hay pedidos registrados
+
+                        </td>
+
+                    </tr>
+
+                    ";
+
+                }
 
                 ?>
 
-            </p>
+
+                </tbody>
+
+            </table>
+
 
         </div>
 
 
-
-        <div class="tarjeta-ingreso">
-
-            <h3>
-                Último año
-            </h3>
-
-            <p>
-
-                <?php
-
-                echo number_format(
-                    $totalventaanio,
-                    2
-                );
-
-                ?>
-
-            </p>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- ==========================================
-         TABLA DE INGRESOS
-         ========================================== -->
-
-    <table id="tabla-ingresos">
-
-
-        <thead>
-
-            <tr class="aparicion">
-
-                <th>
-                    ID Pedido
-                </th>
-
-                <th>
-                    Estado
-                </th>
-
-                <th>
-                    Método
-                </th>
-
-                <th>
-                    Costo Total
-                </th>
-
-                <th>
-                    Fecha
-                </th>
-
-                <th>
-                    Acción
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-
-        <tbody>
-
-
-        <?php
-
-
-        if (
-            $result &&
-            $result->num_rows > 0
-        ) {
-
-
-            while (
-                $fila =
-                $result->fetch_assoc()
-            ) {
-
-
-                $idPedido =
-                    $fila["PEDIDOS_ID"];
-
-
-                echo "<tr class='aparicion'>";
-
-
-                echo "<td>";
-
-                echo htmlspecialchars(
-                    $fila["PEDIDOS_ID"]
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo htmlspecialchars(
-                    $fila["estado"]
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo htmlspecialchars(
-                    $fila["metodo"]
-                );
-
-                echo "</td>";
-
-
-                echo "<td>$";
-
-                echo number_format(
-                    $fila["costototal"],
-                    2
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo htmlspecialchars(
-                    $fila["fecha"]
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo "<a
-                        class='ver1'
-                        href='readventas1.php?idpedidos=$idPedido'
-                      >
-                        Mostrar
-                      </a>";
-
-
-                echo "</td>";
-
-
-                echo "</tr>";
-
-            }
-
-
-        } else {
-
-
-            echo "
-                <tr class='aparicion'>
-
-                    <td
-                        colspan='6'
-                        class='zzz'
-                    >
-
-                        No hay ventas de
-                        pedidos completados
-
-                    </td>
-
-                </tr>
-            ";
-
-        }
-
-
-        ?>
-
-
-        </tbody>
-
-
-    </table>
+    </section>
 
 
 </div>
 
-
 </body>
 
 </html>
- 
