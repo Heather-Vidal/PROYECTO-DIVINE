@@ -4,7 +4,7 @@ session_start();
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
-$baseDeDatos = "DIVINE";
+$nombreBD = "DIVINE";
 
 $conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 if ($conn->connect_error) {
