@@ -654,7 +654,7 @@
             <!-- VENTAS -->
 
             <a
-                href="  ./REPORTES/reportes.php"
+                href="  ../REPORTES/reportes.php"
                 class="boton ventas"
             >
 
@@ -676,7 +676,7 @@
             <!-- PEDIDOS -->
 
             <a
-                href="./REPORTES/clientefrecuente.php"
+                href="../REPORTES/clientefrecuente.php"
                 class="boton pedidos"
             >
 

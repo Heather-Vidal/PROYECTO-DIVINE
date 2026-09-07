@@ -1226,7 +1226,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="../INTERFACES/interfazreportes.php">
+                <a href="./INTERFACES/interfazreportes.php">
 
                     <img
                         src="./imagenes/reportes.svg"
