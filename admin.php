@@ -16,7 +16,7 @@ if (
 
     echo "<script>
         alert('ACCESO DENEGADO: Solo los administradores pueden entrar a esta página.');
-        window.location.href = '../SESIONES/loginformcliente.php';
+        window.location.href = 'SESIONES/loginformcliente.php';
     </script>";
 
     exit();
@@ -1226,7 +1226,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="./REPORTES/reportes.php">
+                <a href="./INTERFACES/interfazventas-pedido.php./REPORTES/reportes.php">
 
                     <img
                         src="./imagenes/reportes.svg"
@@ -1247,7 +1247,7 @@ body::after{
 
             <div class="modulo">
 
-                <a href="interfazventas-pedido.php">
+                <a href="./INTERFACES/interfazventas-pedido.php">
 
                     <img
                         src="./imagenes/ventas.svg"

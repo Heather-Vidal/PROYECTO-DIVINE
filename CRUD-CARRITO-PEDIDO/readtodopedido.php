@@ -1,4 +1,3 @@
- 
 <?php
 
 session_start();
@@ -114,6 +113,9 @@ $mensaje = $_GET['mensaje'] ?? null;
 >
 
 <title>DIVINE | Pedidos</title>
+
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <style>
@@ -536,8 +538,30 @@ body{
 
 /* ELIMINAR */
 
-.botones a:nth-child(3) button{
+.botones a:nth-child(3) button,
+.btn-rechazar {
     background:#b87986;
+}
+
+
+/* Estilos para SweetAlert2 */
+.swal2-popup {
+    border-radius: 20px !important;
+    font-family: 'Segoe UI', sans-serif !important;
+}
+
+.swal2-title {
+    color: var(--vino-oscuro) !important;
+}
+
+.swal2-confirm {
+    background-color: var(--vino) !important;
+    border-radius: 10px !important;
+}
+
+.swal2-cancel {
+    background-color: var(--gris) !important;
+    border-radius: 10px !important;
 }
 
 
@@ -1051,17 +1075,15 @@ if($resultado && $resultado->num_rows > 0){
                     </a>
 
 
-                    <a
-                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Rechazado"
+                    <button
+                        type="button"
+                        class="btn-rechazar"
+                        onclick="confirmarRechazo(<?php echo $idPedido; ?>)"
                     >
 
-                        <button type="button">
+                        Rechazar
 
-                            Rechazar
-
-                        </button>
-
-                    </a>
+                    </button>
 
 
                 </div>
@@ -1200,6 +1222,22 @@ function cerrarMensaje() {
 
 }
 
+function confirmarRechazo(idPedido) {
+    Swal.fire({
+        title: '¿Desea rechazar este pedido?',
+        text: 'El estado pasará a "Rechazado"',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, rechazar',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'actualizarestadopedido.php?idPedido=' + idPedido + '&estado=Rechazado';
+        }
+    });
+}
+
 </script>
 
 
@@ -1213,4 +1251,3 @@ function cerrarMensaje() {
 $conn->close();
 
 ?>
- 
