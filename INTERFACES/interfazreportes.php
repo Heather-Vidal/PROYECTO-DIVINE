@@ -1,601 +1,1007 @@
  
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
 
-    <title>Supervisar - DIVINE</title>
-    <style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* ==================================================
-           VARIABLES DE COLOR
-        ================================================== */
+<title>Supervisar - DIVINE</title>
 
-        :root{
-            --rosa:#b86f80;
-            --rosa-claro:#d9a6b2;
-            --rosa-palido:#f7e9ec;
+<style>
 
-            --crema:#fffaf8;
+/* ==================================================
+   VARIABLES DE COLOR DIVINE
+================================================== */
 
-            --texto:#57494c;
-            --gris:#817679;
+:root{
 
-            --borde:#e3c5cd;
+    --rosa:#b86f80;
+    --rosa-claro:#d9a6b2;
+    --rosa-palido:#f7e9ec;
 
-            --vino:#8f5362;
-            --vino-oscuro:#713d4d;
-        }
+    --crema:#fffaf8;
+    --crema-oscuro:#fdf1f3;
 
+    --texto:#57494c;
+    --gris:#817679;
 
-        /* ==================================================
-           RESET
-        ================================================== */
+    --borde:#e3c5cd;
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-        }
+    --vino:#8f5362;
+    --vino-oscuro:#713d4d;
 
+    --blanco:#ffffff;
 
-        /* ==================================================
-           BODY
-        ================================================== */
+}
 
-        body{
 
-            min-height:100vh;
+/* ==================================================
+   RESET
+================================================== */
 
-            font-family:'Segoe UI', sans-serif;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-            color:var(--texto);
 
-            display:flex;
+/* ==================================================
+   BODY
+================================================== */
 
-            justify-content:center;
+body{
 
-            align-items:center;
+    min-height:100vh;
 
-            overflow:hidden;
+    font-family:'Segoe UI', sans-serif;
 
-            position:relative;
+    color:var(--texto);
 
+    display:flex;
 
-            /* IMAGEN DE FONDO */
+    justify-content:center;
 
-            background:
+    align-items:center;
 
-            linear-gradient(
-                rgba(219, 175, 158, 0.78),
-                rgba(247,233,236,.90)
-            ),
+    overflow:auto;
 
-            url("./imagenes/fondote.png");
+    position:relative;
 
-            background-size:cover;
+    padding:40px 20px;
 
-            background-position:center;
+    background:
 
-            background-attachment:fixed;
-        }
+    linear-gradient(
+        rgba(219,175,158,.72),
+        rgba(247,233,236,.94)
+    ),
 
+    url("./imagenes/fondote.png");
 
-        /* ==================================================
-           DECORACIONES DEL FONDO
-        ================================================== */
+    background-size:cover;
 
-        body::before{
+    background-position:center;
 
-            content:"";
+    background-attachment:fixed;
 
-            position:absolute;
+}
 
-            width:400px;
-            height:400px;
 
-            border-radius:50%;
+/* ==================================================
+   DECORACIONES DEL FONDO
+================================================== */
 
-            background:
+body::before{
 
-            radial-gradient(
-                circle,
-                rgba(184,111,128,.18),
-                rgba(184,111,128,0)
-            );
+    content:"";
 
-            top:-180px;
-            left:-150px;
-        }
+    position:fixed;
 
+    width:480px;
 
-        body::after{
+    height:480px;
 
-            content:"";
+    border-radius:50%;
 
-            position:absolute;
+    background:
 
-            width:420px;
-            height:420px;
+    radial-gradient(
+        circle,
+        rgba(184,111,128,.22),
+        rgba(184,111,128,0)
+    );
 
-            border-radius:50%;
+    top:-230px;
 
-            background:
+    left:-190px;
 
-            radial-gradient(
-                circle,
-                rgba(143,83,98,.14),
-                rgba(143,83,98,0)
-            );
+    pointer-events:none;
 
-            bottom:-200px;
-            right:-150px;
-        }
+}
 
 
-        /* ==================================================
-           PANEL CENTRAL
-        ================================================== */
+body::after{
 
-        .panel{
+    content:"";
 
-            position:relative;
+    position:fixed;
 
-            z-index:2;
+    width:500px;
 
-            width:680px;
+    height:500px;
 
-            max-width:90%;
+    border-radius:50%;
 
-            padding:55px 60px;
+    background:
 
-            text-align:center;
+    radial-gradient(
+        circle,
+        rgba(113,61,77,.18),
+        rgba(113,61,77,0)
+    );
 
+    bottom:-250px;
 
-            background:
+    right:-190px;
 
-            linear-gradient(
-                145deg,
-                rgba(255,250,248,.97),
-                rgba(247,233,236,.94)
-            );
+    pointer-events:none;
 
+}
 
-            border:
 
-            1px solid
-            rgba(184,111,128,.28);
+/* ==================================================
+   PANEL PRINCIPAL
+================================================== */
 
+.panel{
 
-            border-radius:30px;
+    position:relative;
 
+    z-index:2;
 
-            box-shadow:
+    width:850px;
 
-            0 25px 60px
-            rgba(100,70,80,.20),
+    max-width:95%;
 
-            inset 0 1px 0
-            rgba(255,255,255,.9);
+    padding:55px 60px;
 
+    text-align:center;
 
-            backdrop-filter:blur(12px);
+    background:
 
+    linear-gradient(
+        145deg,
+        rgba(255,250,248,.97),
+        rgba(247,233,236,.95)
+    );
 
-            animation:
+    border:
 
-            aparecer .8s ease;
-        }
+    1px solid
+    rgba(184,111,128,.30);
 
+    border-radius:35px;
 
-        /* ==================================================
-           DECORACIÓN SUPERIOR
-        ================================================== */
+    box-shadow:
 
-        .decoracion{
+    0 30px 70px
+    rgba(100,70,80,.25),
 
-            width:65px;
+    inset 0 1px 0
+    rgba(255,255,255,.95);
 
-            height:3px;
+    backdrop-filter:blur(15px);
 
-            margin:0 auto 24px;
+    animation:
 
-            border-radius:10px;
+    aparecer .8s ease;
 
+}
 
-            background:
 
-            linear-gradient(
-                90deg,
-                var(--vino),
-                var(--rosa-claro),
-                var(--vino)
-            );
+/* ==================================================
+   BRILLO SUPERIOR
+================================================== */
 
+.brillo{
 
-            box-shadow:
+    position:absolute;
 
-            0 3px 10px
-            rgba(184,111,128,.25);
-        }
+    width:180px;
 
+    height:180px;
 
-        /* ==================================================
-           TEXTO PEQUEÑO
-        ================================================== */
+    border-radius:50%;
 
-        .pequeno{
+    background:
 
-            color:var(--rosa);
+    radial-gradient(
+        circle,
+        rgba(255,255,255,.65),
+        rgba(255,255,255,0)
+    );
 
-            font-size:.78rem;
+    top:-80px;
 
-            text-transform:uppercase;
+    right:-70px;
 
-            letter-spacing:4px;
+    pointer-events:none;
 
-            margin-bottom:12px;
+}
 
-            font-weight:600;
-        }
 
+/* ==================================================
+   DECORACIÓN
+================================================== */
 
-        /* ==================================================
-           TÍTULO
-        ================================================== */
+.decoracion{
 
-        h1{
+    width:75px;
 
-            font-family:Georgia,serif;
+    height:4px;
 
-            font-size:clamp(
-                2rem,
-                5vw,
-                3.2rem
-            );
+    margin:0 auto 25px;
 
-            font-weight:400;
+    border-radius:20px;
 
-            color:var(--vino-oscuro);
+    background:
 
-            letter-spacing:2px;
+    linear-gradient(
+        90deg,
+        var(--vino),
+        var(--rosa-claro),
+        var(--vino)
+    );
 
-            margin-bottom:15px;
-        }
+    box-shadow:
 
+    0 4px 12px
+    rgba(184,111,128,.28);
 
-        /* ==================================================
-           SUBTÍTULO
-        ================================================== */
+}
 
-        .subtitulo{
 
-            color:var(--gris);
+/* ==================================================
+   TEXTO PEQUEÑO
+================================================== */
 
-            font-size:.95rem;
+.pequeno{
 
-            line-height:1.7;
+    color:var(--rosa);
 
-            max-width:470px;
+    font-size:.76rem;
 
-            margin:0 auto 42px;
-        }
+    text-transform:uppercase;
 
+    letter-spacing:5px;
 
-        /* ==================================================
-           BOTONES
-        ================================================== */
+    margin-bottom:12px;
 
-        .botones{
+    font-weight:700;
 
-            display:flex;
+}
 
-            justify-content:center;
 
-            gap:25px;
-        }
+/* ==================================================
+   TÍTULO
+================================================== */
 
+h1{
 
-        .boton{
+    font-family:Georgia,serif;
 
-            position:relative;
+    font-size:clamp(
+        2.1rem,
+        5vw,
+        3.5rem
+    );
 
-            overflow:hidden;
+    font-weight:400;
 
-            width:220px;
+    color:var(--vino-oscuro);
 
-            padding:19px 22px;
+    letter-spacing:2px;
 
-            border-radius:17px;
+    margin-bottom:16px;
 
-            text-decoration:none;
+}
 
-            display:flex;
 
-            align-items:center;
+/* ==================================================
+   SUBTÍTULO
+================================================== */
 
-            justify-content:center;
+.subtitulo{
 
-            gap:12px;
+    color:var(--gris);
 
-            font-size:.95rem;
+    font-size:.95rem;
 
-            font-weight:600;
+    line-height:1.7;
 
-            letter-spacing:.5px;
+    max-width:530px;
 
-            transition:
+    margin:0 auto 42px;
 
-            transform .3s ease,
+}
 
-            box-shadow .3s ease,
 
-            background .3s ease;
-        }
+/* ==================================================
+   CONTENEDOR DE BOTONES
+================================================== */
 
+.botones{
 
-        /* ==================================================
-           BOTÓN VENTAS
-        ================================================== */
+    display:grid;
 
-        .ventas{
+    grid-template-columns:
+    repeat(3,1fr);
 
-            color:white;
+    gap:18px;
 
+    width:100%;
 
-            background:
+}
 
-            linear-gradient(
-                135deg,
-                var(--vino-oscuro),
-                var(--vino),
-                var(--rosa)
-            );
 
+/* ==================================================
+   BOTÓN GENERAL
+================================================== */
 
-            box-shadow:
+.boton{
 
-            0 10px 25px
-            rgba(113,61,77,.28);
-        }
+    position:relative;
 
+    overflow:hidden;
 
-        /* ==================================================
-           BOTÓN PEDIDOS
-        ================================================== */
+    min-height:175px;
 
-        .pedidos{
+    padding:25px 18px;
 
-            color:var(--vino-oscuro);
+    border-radius:22px;
 
+    text-decoration:none;
 
-            background:
+    display:flex;
 
-            linear-gradient(
-                135deg,
-                var(--rosa-claro),
-                #e5c0c9
-            );
+    flex-direction:column;
 
+    align-items:center;
 
-            border:
+    justify-content:center;
 
-            1px solid
-            rgba(143,83,98,.18);
+    gap:14px;
 
+    font-size:.92rem;
 
-            box-shadow:
+    font-weight:600;
 
-            0 10px 25px
-            rgba(184,111,128,.25);
-        }
+    letter-spacing:.4px;
 
+    transition:
 
-        /* ==================================================
-           HOVER
-        ================================================== */
+    transform .3s ease,
 
-        .boton:hover{
+    box-shadow .3s ease,
 
-            transform:
+    border .3s ease;
 
-            translateY(-7px)
-            scale(1.02);
-        }
+}
 
 
-        .ventas:hover{
+/* ==================================================
+   BOTÓN VENTAS
+================================================== */
 
-            box-shadow:
+.ventas{
 
-            0 18px 35px
-            rgba(113,61,77,.38);
-        }
+    color:white;
 
+    background:
 
-        .pedidos:hover{
+    linear-gradient(
+        145deg,
+        var(--vino-oscuro),
+        var(--vino),
+        var(--rosa)
+    );
 
-            box-shadow:
+    box-shadow:
 
-            0 18px 35px
-            rgba(184,111,128,.38);
-        }
+    0 12px 28px
+    rgba(113,61,77,.28);
 
+}
 
-        /* ==================================================
-           BRILLO DE LOS BOTONES
-        ================================================== */
 
-        .boton::before{
+/* ==================================================
+   BOTÓN CLIENTES
+================================================== */
 
-            content:"";
+.clientes{
 
-            position:absolute;
+    color:var(--vino-oscuro);
 
-            width:80px;
+    background:
 
-            height:200%;
+    linear-gradient(
+        145deg,
+        var(--rosa-claro),
+        #e7c5cd
+    );
 
-            top:-50%;
+    border:
 
-            left:-120px;
+    1px solid
+    rgba(143,83,98,.18);
 
-            transform:rotate(25deg);
+    box-shadow:
 
-            background:
+    0 12px 28px
+    rgba(184,111,128,.20);
 
-            rgba(255,255,255,.22);
+}
 
-            transition:
 
-            left .55s ease;
-        }
+/* ==================================================
+   BOTÓN PRODUCTOS
+================================================== */
 
+.productos{
 
-        .boton:hover::before{
+    color:var(--vino-oscuro);
 
-            left:120%;
-        }
+    background:
 
+    linear-gradient(
+        145deg,
+        #fffaf8,
+        var(--rosa-palido)
+    );
 
-        /* ==================================================
-           ICONOS
-        ================================================== */
+    border:
 
-        .icono{
+    1px solid
+    rgba(184,111,128,.25);
 
-            width:34px;
+    box-shadow:
 
-            height:34px;
+    0 12px 28px
+    rgba(184,111,128,.18);
 
-            display:flex;
+}
 
-            align-items:center;
 
-            justify-content:center;
+/* ==================================================
+   HOVER
+================================================== */
 
-            border-radius:50%;
+.boton:hover{
 
-            font-size:17px;
-        }
+    transform:
 
+    translateY(-9px)
+    scale(1.02);
 
-        .ventas .icono{
+}
 
-            background:
 
-            rgba(255,255,255,.16);
-        }
+/* ==================================================
+   SOMBRA VENTAS
+================================================== */
 
+.ventas:hover{
 
-        .pedidos .icono{
+    box-shadow:
 
-            background:
+    0 20px 40px
+    rgba(113,61,77,.40);
 
-            rgba(113,61,77,.10);
-        }
+}
 
 
-        /* ==================================================
-           PEQUEÑA FRASE INFERIOR
-        ================================================== */
+/* ==================================================
+   SOMBRA CLIENTES
+================================================== */
 
-        .inferior{
+.clientes:hover{
 
-            margin-top:35px;
+    box-shadow:
 
-            color:#a28d92;
+    0 20px 40px
+    rgba(184,111,128,.32);
 
-            font-size:.75rem;
+}
 
-            letter-spacing:1px;
-        }
 
+/* ==================================================
+   SOMBRA PRODUCTOS
+================================================== */
 
-        /* ==================================================
-           ANIMACIÓN
-        ================================================== */
+.productos:hover{
 
-        @keyframes aparecer{
+    box-shadow:
 
-            from{
+    0 20px 40px
+    rgba(184,111,128,.30);
 
-                opacity:0;
+}
 
-                transform:
-                translateY(30px)
-                scale(.97);
-            }
 
-            to{
+/* ==================================================
+   BRILLO DE BOTONES
+================================================== */
 
-                opacity:1;
+.boton::before{
 
-                transform:
-                translateY(0)
-                scale(1);
-            }
-        }
+    content:"";
 
+    position:absolute;
 
-        /* ==================================================
-           RESPONSIVE
-        ================================================== */
+    width:90px;
 
-        @media(max-width:650px){
+    height:220%;
 
-            body{
+    top:-60%;
 
-                overflow:auto;
+    left:-130px;
 
-                padding:30px 0;
-            }
+    transform:rotate(25deg);
 
+    background:
 
-            .panel{
+    rgba(255,255,255,.24);
 
-                padding:42px 25px;
+    transition:
 
-                border-radius:25px;
-            }
+    left .6s ease;
 
+}
 
-            h1{
 
-                font-size:2.2rem;
-            }
+.boton:hover::before{
 
+    left:120%;
 
-            .subtitulo{
+}
 
-                font-size:.88rem;
 
-                margin-bottom:32px;
-            }
+/* ==================================================
+   ICONOS
+================================================== */
 
+.icono{
 
-            .botones{
+    width:58px;
 
-                flex-direction:column;
+    height:58px;
 
-                align-items:center;
+    display:flex;
 
-                gap:15px;
-            }
+    align-items:center;
 
+    justify-content:center;
 
-            .boton{
+    border-radius:18px;
 
-                width:100%;
+    font-size:26px;
 
-                max-width:300px;
-            }
-        }
+    transition:
 
-    </style>
+    transform .3s ease;
+
+}
+
+
+/* ==================================================
+   ICONO VENTAS
+================================================== */
+
+.ventas .icono{
+
+    background:
+
+    rgba(255,255,255,.16);
+
+    color:white;
+
+}
+
+
+/* ==================================================
+   ICONO CLIENTES
+================================================== */
+
+.clientes .icono{
+
+    background:
+
+    rgba(113,61,77,.10);
+
+    color:var(--vino);
+
+}
+
+
+/* ==================================================
+   ICONO PRODUCTOS
+================================================== */
+
+.productos .icono{
+
+    background:
+
+    rgba(184,111,128,.12);
+
+    color:var(--rosa);
+
+}
+
+
+/* ==================================================
+   ANIMACIÓN ICONOS
+================================================== */
+
+.boton:hover .icono{
+
+    transform:
+
+    translateY(-3px)
+    rotate(-3deg)
+    scale(1.08);
+
+}
+
+
+/* ==================================================
+   TEXTO DE BOTONES
+================================================== */
+
+.nombre-boton{
+
+    font-size:1rem;
+
+    font-weight:700;
+
+}
+
+
+.descripcion-boton{
+
+    font-size:.72rem;
+
+    line-height:1.5;
+
+    opacity:.72;
+
+    max-width:180px;
+
+}
+
+
+/* ==================================================
+   ETIQUETA SUPERIOR DEL BOTÓN
+================================================== */
+
+.etiqueta{
+
+    position:absolute;
+
+    top:12px;
+
+    right:12px;
+
+    padding:5px 9px;
+
+    border-radius:20px;
+
+    font-size:.58rem;
+
+    text-transform:uppercase;
+
+    letter-spacing:1px;
+
+    font-weight:700;
+
+}
+
+
+.ventas .etiqueta{
+
+    background:rgba(255,255,255,.15);
+
+    color:white;
+
+}
+
+
+.clientes .etiqueta{
+
+    background:rgba(113,61,77,.08);
+
+    color:var(--vino);
+
+}
+
+
+.productos .etiqueta{
+
+    background:rgba(184,111,128,.10);
+
+    color:var(--rosa);
+
+}
+
+
+/* ==================================================
+   FRASE INFERIOR
+================================================== */
+
+.inferior{
+
+    margin-top:38px;
+
+    color:#a28d92;
+
+    font-size:.72rem;
+
+    letter-spacing:2px;
+
+}
+
+
+/* ==================================================
+   ESTADO DEL SISTEMA
+================================================== */
+
+.estado-sistema{
+
+    margin:28px auto 0;
+
+    width:max-content;
+
+    max-width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:8px 15px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,.55);
+
+    border:1px solid rgba(184,111,128,.15);
+
+    color:#927c82;
+
+    font-size:.65rem;
+
+    letter-spacing:1px;
+
+}
+
+
+.punto{
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:#72b693;
+
+    box-shadow:
+
+    0 0 0 4px
+    rgba(114,182,147,.12);
+
+}
+
+
+/* ==================================================
+   ANIMACIÓN
+================================================== */
+
+@keyframes aparecer{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+        translateY(35px)
+        scale(.96);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+        translateY(0)
+        scale(1);
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE TABLET
+================================================== */
+
+@media(max-width:800px){
+
+    .panel{
+
+        padding:45px 30px;
+
+    }
+
+
+    .botones{
+
+        grid-template-columns:
+
+        repeat(2,1fr);
+
+    }
+
+
+    .productos{
+
+        grid-column:
+
+        span 2;
+
+    }
+
+}
+
+
+/* ==================================================
+   RESPONSIVE CELULAR
+================================================== */
+
+@media(max-width:600px){
+
+    body{
+
+        padding:25px 12px;
+
+        align-items:flex-start;
+
+    }
+
+
+    .panel{
+
+        width:100%;
+
+        max-width:500px;
+
+        padding:42px 20px;
+
+        border-radius:27px;
+
+        margin:auto;
+
+    }
+
+
+    h1{
+
+        font-size:2.15rem;
+
+        line-height:1.15;
+
+    }
+
+
+    .pequeno{
+
+        letter-spacing:3px;
+
+    }
+
+
+    .subtitulo{
+
+        font-size:.86rem;
+
+        margin-bottom:30px;
+
+    }
+
+
+    .botones{
+
+        grid-template-columns:1fr;
+
+        gap:14px;
+
+    }
+
+
+    .productos{
+
+        grid-column:auto;
+
+    }
+
+
+    .boton{
+
+        min-height:145px;
+
+    }
+
+
+    .inferior{
+
+        margin-top:28px;
+
+    }
+
+}
+
+
+/* ==================================================
+   CELULARES PEQUEÑOS
+================================================== */
+
+@media(max-width:380px){
+
+    .panel{
+
+        padding:35px 16px;
+
+    }
+
+
+    h1{
+
+        font-size:1.9rem;
+
+    }
+
+
+    .icono{
+
+        width:50px;
+
+        height:50px;
+
+        font-size:23px;
+
+    }
+
+
+    .boton{
+
+        min-height:135px;
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -603,113 +1009,209 @@
 <body>
 
 
+<!-- ==================================================
+     PANEL PRINCIPAL
+================================================== -->
+
+<div class="panel">
+
+
+    <!-- BRILLO DECORATIVO -->
+
+    <div class="brillo"></div>
+
+
+    <!-- LÍNEA DECORATIVA -->
+
+    <div class="decoracion"></div>
+
+
+    <!-- TEXTO SUPERIOR -->
+
+    <div class="pequeno">
+
+        Panel de supervisión
+
+    </div>
+
+
+    <!-- TÍTULO -->
+
+    <h1>
+
+        ¿Qué reporte deseas supervisar?
+
+    </h1>
+
+
+    <!-- DESCRIPCIÓN -->
+
+    <p class="subtitulo">
+
+        Selecciona una opción para consultar
+        y administrar la información de
+        <strong>DIVINE</strong>.
+
+    </p>
+
+
     <!-- ==================================================
-         PANEL PRINCIPAL
+         BOTONES
     ================================================== -->
 
-    <div class="panel">
+    <div class="botones">
 
 
-        <!-- Línea decorativa -->
+        <!-- ==============================================
+             VENTAS
+        =============================================== -->
 
-        <div class="decoracion"></div>
+        <a
+            href="../REPORTES/reportes.php"
+            class="boton ventas"
+        >
 
+            <span class="etiqueta">
 
-        <!-- Texto pequeño -->
+                Reporte
 
-        <div class="pequeno">
-
-            Panel de supervisión
-
-        </div>
-
-
-        <!-- Título -->
-
-        <h1>
-
-            ¿Qué Reporte deseas supervisar?
-
-        </h1>
+            </span>
 
 
-        <!-- Descripción -->
+            <span class="icono">
 
-        <p class="subtitulo">
+                ✦
 
-            Selecciona una opción para consultar
-            y administrar la información de
-            <strong>DIVINE</strong>.
-
-        </p>
+            </span>
 
 
-        <!-- ==================================================
-             BOTONES
-        ================================================== -->
+            <span class="nombre-boton">
 
-        <div class="botones">
+                Ventas totales
 
-
-            <!-- VENTAS -->
-
-            <a
-                href="  ./REPORTES/reportes.php"
-                class="boton ventas"
-            >
-
-                <span class="icono">
-
-                    ✦
-
-                </span>
-
-                <span>
-
-                  Ventas totales
-
-                </span>
-
-            </a>
+            </span>
 
 
-            <!-- PEDIDOS -->
+            <span class="descripcion-boton">
 
-            <a
-                href="./REPORTES/clientefrecuente.php"
-                class="boton pedidos"
-            >
+                Consulta el historial
+                y las ventas realizadas.
 
-                <span class="icono">
+            </span>
 
-                    ♡
-
-                </span>
-
-                <span>
-
-                Clientes Frecuentes
-
-                </span>
-
-            </a>
+        </a>
 
 
-        </div>
+        <!-- ==============================================
+             CLIENTES
+        =============================================== -->
+
+        <a
+            href="../REPORTES/clientefrecuente.php"
+            class="boton clientes"
+        >
+
+            <span class="etiqueta">
+
+                Clientes
+
+            </span>
 
 
-        <!-- Texto inferior -->
+            <span class="icono">
 
-        <div class="inferior">
+                ♡
 
-            DIVINE · BEAUTY & CARE
+            </span>
 
-        </div>
+
+            <span class="nombre-boton">
+
+                Clientes frecuentes
+
+            </span>
+
+
+            <span class="descripcion-boton">
+
+                Consulta los clientes
+                con mayor frecuencia de compra.
+
+            </span>
+
+        </a>
+
+
+        <!-- ==============================================
+             ESTADO DE PRODUCTOS
+        =============================================== -->
+
+        <a
+            href="../REPORTES/reporteproductoventa.php"
+            class="boton productos"
+        >
+
+            <span class="etiqueta">
+
+                Inventario
+
+            </span>
+
+
+            <span class="icono">
+
+                ♢
+
+            </span>
+
+
+            <span class="nombre-boton">
+
+                Estado de productos
+
+            </span>
+
+
+            <span class="descripcion-boton">
+
+                Consulta el stock y el producto más vendido.
+
+            </span>
+
+        </a>
 
 
     </div>
 
 
+    <!-- ==================================================
+         ESTADO DEL SISTEMA
+    ================================================== -->
+
+    <div class="estado-sistema">
+
+        <span class="punto"></span>
+
+        Sistema DIVINE activo
+
+    </div>
+
+
+    <!-- ==================================================
+         TEXTO INFERIOR
+    ================================================== -->
+
+    <div class="inferior">
+
+        DIVINE · BEAUTY & CARE
+
+    </div>
+
+
+</div>
+
+
 </body>
 
 </html>
+ 

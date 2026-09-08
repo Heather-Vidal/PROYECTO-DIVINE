@@ -1,51 +1,10 @@
- <?php
+<?php
 
 session_start();
 
-
-if (!isset($_SESSION['rol'])) {
-
-    // No existe sesión → volver al inicio de sesión
-    header("Location:  ../SESIONES/loginformcliente.php");
-    exit();
-
-}
-
-
-/* =====================================================
-   VERIFICAR EL ROL
-   ===================================================== */
-
-if ($_SESSION['rol'] == "administrador") {
-
-    // El administrador sí puede ent
-    // rar
-    // No hacemos nada y la página continúa normalmente
-
-} elseif ($_SESSION['rol'] == "vendedor") {
-
-    // El vendedor NO tiene permiso
-    echo "<script>
-            alert('No tienes permisos para ingresar a esta página.');
-            window.location.href = '../SESIONES/loginformcliente.php';
-          </script>";
-    exit();
-
-} else {
-
-    // Cualquier otro rol también será rechazado
-    echo "<script>
-            alert('No tienes permisos para ingresar a esta página.');
-            window.location.href = '../SESIONES/loginformcliente.php';
-          </script>";
-    exit();
-
-}
-
-?>
-<?php
-
- 
+/* =========================================================
+   CONEXIÓN A LA BASE DE DATOS
+========================================================= */
 
 $servidor = "localhost";
 $usuario = "root";
@@ -59,115 +18,233 @@ $conn = new mysqli(
     $nombreBD
 );
 
-
-
-
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
 
-/* ==========================================
-   OBTENER EL ROL ACTUAL DESDE LA SESIÓN
-   ========================================== */
+/* =========================================================
+   VALIDAR SESIÓN
+========================================================= */
 
-$rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
+if (!isset($_SESSION['rol'])) {
+    header("Location: ../SESIONES/loginform.php");
+    exit();
+}
 
+$rol = $_SESSION['rol'];
 
-/* ==========================================
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : '';
+
+/* =========================================================
    CONSULTAR VENTAS
-   SOLAMENTE DE PEDIDOS COMPLETADOS
-   ========================================== */
+========================================================= */
 
-if ($rol == 'administrador') {
+if ($rol == "administrador") {
 
-    $sql = "SELECT 
-                v.id,
-                v.estado,
-                v.metodo,
-                v.costototal,
-                v.PEDIDOS_ID,
-                p.fecha
-            FROM VENTAS v
-            INNER JOIN PEDIDOS p 
-                ON p.ID = v.PEDIDOS_ID
-            WHERE p.estado = 'Completado'";
+    /*
+       MOSTRAR TODAS LAS VENTAS
+       PERO SOLO DE PEDIDOS COMPLETADOS
 
-} elseif ($rol == 'vendedor') {
+       LAS VENTAS DE HOY APARECEN PRIMERO
+    */
 
-    $nombre = $_SESSION['nombre'];
+    $sql = "
+        SELECT 
+            v.id,
+            v.estado,
+            v.metodo,
+            v.costototal,
+            v.PEDIDOS_ID,
+            p.fecha
+        FROM VENTAS v
+        INNER JOIN PEDIDOS p
+            ON p.ID = v.PEDIDOS_ID
+        WHERE p.estado = 'Completado'
+        ORDER BY
+            DATE(p.fecha) = CURDATE() DESC,
+            p.fecha DESC
+    ";
 
-    $sql = "SELECT 
-                v.id,
-                v.estado,
-                v.metodo,
-                v.costototal,
-                v.PEDIDOS_ID,
-                p.fecha
-            FROM VENTAS v
-            INNER JOIN PEDIDOS p 
-                ON p.ID = v.PEDIDOS_ID
-            WHERE p.estado = 'Completado'
-            AND p.nombrevendedor = '$nombre'";
+} elseif ($rol == "vendedor") {
+
+    /*
+       MOSTRAR SOLO LAS VENTAS DEL VENDEDOR
+       Y SOLO DE PEDIDOS COMPLETADOS
+
+       LAS VENTAS DE HOY APARECEN PRIMERO
+    */
+
+    $sql = "
+        SELECT 
+            v.id,
+            v.estado,
+            v.metodo,
+            v.costototal,
+            v.PEDIDOS_ID,
+            p.fecha
+        FROM VENTAS v
+        INNER JOIN PEDIDOS p
+            ON p.ID = v.PEDIDOS_ID
+        WHERE 
+            p.estado = 'Completado'
+            AND p.nombrevendedor = '$nombre'
+        ORDER BY
+            DATE(p.fecha) = CURDATE() DESC,
+            p.fecha DESC
+    ";
 
 } else {
 
-    $sql = "SELECT * FROM VENTAS WHERE 1=0";
+    header("Location: ../SESIONES/loginform.php");
+    exit();
 
 }
 
 
-$result = $conn->query($sql);
+$resultado = $conn->query($sql);
 
 
-/* ==========================================
-   FUNCIÓN PARA CONSULTAR LOS TOTALES
-   SOLAMENTE DE PEDIDOS COMPLETADOS
-   ========================================== */
+/* =========================================================
+   VENTAS DE HOY
+========================================================= */
 
-function obtenerTotal($conn, $intervalo = null) {
+$sqlHoy = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        DATE(p.fecha) = CURDATE()
+        AND p.estado = 'Completado'
+";
 
-    if ($intervalo === 'HOY') {
+if ($rol == "vendedor") {
+    $sqlHoy .= " AND p.nombrevendedor = '$nombre'";
+}
 
-        $where = "WHERE p.estado = 'Completado'
-                  AND p.fecha = CURDATE()";
+$resultadoHoy = $conn->query($sqlHoy);
+$filaHoy = $resultadoHoy->fetch_assoc();
 
-    } elseif ($intervalo) {
-
-        $where = "WHERE p.estado = 'Completado'
-                  AND p.fecha >= DATE_SUB(CURDATE(), INTERVAL $intervalo)";
-
-    } else {
-
-        $where = "WHERE p.estado = 'Completado'";
-
-    }
-
-
-    $query = "SELECT SUM(v.costototal) AS total
-              FROM VENTAS v
-              INNER JOIN PEDIDOS p
-                  ON p.ID = v.PEDIDOS_ID
-              $where";
+$totalHoy = $filaHoy['total'] ?? 0;
 
 
-    $res = $conn->query($query)->fetch_assoc();
+/* =========================================================
+   VENTAS ÚLTIMOS 7 DÍAS
+========================================================= */
 
-    return $res['total'] ?? 0;
+$sqlSemana = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        AND p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlSemana .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoSemana = $conn->query($sqlSemana);
+$filaSemana = $resultadoSemana->fetch_assoc();
+
+$totalSemana = $filaSemana['total'] ?? 0;
+
+
+/* =========================================================
+   VENTAS ÚLTIMOS 30 DÍAS
+========================================================= */
+
+$sqlMes = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+        AND p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlMes .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoMes = $conn->query($sqlMes);
+$filaMes = $resultadoMes->fetch_assoc();
+
+$totalMes = $filaMes['total'] ?? 0;
+
+
+/* =========================================================
+   TOTAL GENERAL
+========================================================= */
+
+$sqlTotal = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlTotal .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoTotal = $conn->query($sqlTotal);
+$filaTotal = $resultadoTotal->fetch_assoc();
+
+$totalGeneral = $filaTotal['total'] ?? 0;
+
+
+// =========================================================
+// DATOS PARA EL GRÁFICO
+// =========================================================
+
+// Se utilizan los mismos totales existentes.
+// No se modifica ninguna consulta ni función.
+
+$valorDia    = (float)$totalventadia;
+$valorSemana = (float)$totalventasemana;
+$valorMes    = (float)$totalventames;
+$valorAnio   = (float)$totalventaanio;
+
+$totalGrafico = $valorDia + $valorSemana + $valorMes + $valorAnio;
+
+if ($totalGrafico > 0) {
+
+    $porDia    = ($valorDia / $totalGrafico) * 100;
+    $porSemana = ($valorSemana / $totalGrafico) * 100;
+    $porMes    = ($valorMes / $totalGrafico) * 100;
+    $porAnio   = ($valorAnio / $totalGrafico) * 100;
+
+} else {
+
+    $porDia = 25;
+    $porSemana = 25;
+    $porMes = 25;
+    $porAnio = 25;
 }
 
 
-/* ==========================================
-   CALCULAR INGRESOS
-   ========================================== */
+// =========================================================
+// BARRAS
+// =========================================================
 
-$totalventadia = obtenerTotal($conn, 'HOY');
+$maxBarra = max(
+    $valorDia,
+    $valorSemana,
+    $valorMes,
+    $valorAnio,
+    1
+);
 
-$totalventasemana = obtenerTotal($conn, '7 DAY');
-
-$totalventames = obtenerTotal($conn, '30 DAY');
-
-$totalventaanio = obtenerTotal($conn, '365 DAY');
+$barraDia    = ($valorDia / $maxBarra) * 100;
+$barraSemana = ($valorSemana / $maxBarra) * 100;
+$barraMes    = ($valorMes / $maxBarra) * 100;
+$barraAnio   = ($valorAnio / $maxBarra) * 100;
 
 ?>
 
@@ -177,701 +254,1842 @@ $totalventaanio = obtenerTotal($conn, '365 DAY');
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Reporte de Ingresos</title>
+<title>Ventas - DIVINE</title>
 
+<style>
 
-    <!-- Fuente elegante -->
+/* =========================================================
+   COLORES DIVINE
+========================================================= */
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+:root {
 
+<<<<<<< HEAD
+    --fondo: #f1fbfa;
 
-    <style>
+    --fondo2: #e8f8f6;
 
-        /* ==========================================
-           VARIABLES DE COLORES
-           ========================================== */
+    --blanco: #ffffff;
 
-        :root {
+    --texto: #183b3d;
 
-            --rosa-principal: #ff6b8b;
+    --texto2: #577274;
 
-            --rosa-secundario: #ff8ea5;
+    --verde: #58c4b8;
 
-            --rosa-oscuro: #d81b60;
+    --verde-oscuro: #0d4749;
 
-            --rosa-pastel: #ffe6eb;
+    --verde-claro: #bfece5;
 
-            --rosa-hover: #e91e63;
+    --verde-palido: #e0f6f2;
 
-            --fondo-gradiente:
-                linear-gradient(
-                    135deg,
-                    #fff0f3 0%,
-                    #ffe3e8 100%
-                );
+    --azul: #79b9bd;
 
-            --texto-oscuro: #4a2c35;
+    --amarillo: #dce9a5;
 
-            --sombra-suave:
-                0 10px 25px
-                rgba(255, 107, 139, 0.15);
+    --rosa: #eeb0c6;
 
-            --sombra-fuerte:
-                0 15px 30px
-                rgba(216, 27, 96, 0.25);
+    --morado: #c7a8df;
 
-        }
+    --borde: #d9efed;
 
+    --sombra: 0 8px 30px rgba(39, 107, 105, .07);
+=======
+    --rosa: #b86f80;
 
-        /* ==========================================
-           CONFIGURACIÓN GENERAL
-           ========================================== */
+    --rosa-claro: #d9a6b2;
 
-        * {
+    --rosa-palido: #f7e9ec;
 
-            margin: 0;
+    --crema: #fffaf8;
 
-            padding: 0;
+    --texto: #57494c;
 
-            box-sizing: border-box;
+    --gris: #817679;
 
-            font-family: 'Poppins', sans-serif;
+    --borde: #e3c5cd;
 
-        }
+    --vino: #8f5362;
 
+    --vino-oscuro: #713d4d;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-        /* ==========================================
-           CUERPO
-           ========================================== */
+}
 
-        body {
 
-            background: var(--fondo-gradiente);
+/* =========================================================
+   GENERAL
+========================================================= */
 
-            color: var(--texto-oscuro);
+* {
 
-            min-height: 100vh;
+    margin: 0;
 
-            padding: 20px;
+    padding: 0;
 
-        }
+    box-sizing: border-box;
 
+}
 
-        /* ==========================================
-           ANIMACIÓN
-           ========================================== */
 
-        .aparicion {
+body {
 
-            animation:
-                fadeIn 0.8s ease-out
-                forwards;
+    font-family: Arial, sans-serif;
 
-        }
+    min-height: 100vh;
 
+    background:
+<<<<<<< HEAD
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(151, 225, 218, .25),
+            transparent 28%
+        ),
+        var(--fondo);
+=======
 
-        @keyframes fadeIn {
+        linear-gradient(
+            rgba(255,250,248,0.88),
+            rgba(247,233,236,0.94)
+        ),
 
-            from {
+        url("../imagenes/fondote.png");
 
-                opacity: 0;
+    background-size: cover;
 
-                transform:
-                    translateY(20px);
+    background-position: center;
 
-            }
+    background-attachment: fixed;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-            to {
+    color: var(--texto);
 
-                opacity: 1;
+}
 
-                transform:
-                    translateY(0);
 
-            }
+/* =========================================================
+   CONTENEDOR
+========================================================= */
 
-        }
+.contenedor {
 
+    width: 94%;
 
-        /* ==========================================
-           ENCABEZADO
-           ========================================== */
+    max-width: 1250px;
 
-        #separador-ingresos {
+    margin: 40px auto;
 
-            text-align: center;
+}
 
-            margin:
-                20px 0 30px 0;
 
-        }
+/* =========================================================
+   ENCABEZADO
+========================================================= */
 
+.encabezado {
 
-        #titseparador-ingresos {
+<<<<<<< HEAD
+    display: flex;
 
-            color:
-                var(--rosa-oscuro);
+    align-items: center;
 
-            font-size:
-                2.2rem;
+    justify-content: space-between;
 
-            font-weight:
-                700;
+    margin-bottom: 24px;
 
-            letter-spacing:
-                1.5px;
+}
 
-            text-transform:
-                uppercase;
 
-            position:
-                relative;
+.izquierda-cabecera {
 
-            display:
-                inline-block;
+    display: flex;
 
-            padding-bottom:
-                8px;
+    align-items: center;
 
-        }
+    gap: 14px;
 
+}
 
-        #titseparador-ingresos::after {
 
-            content: '';
+.menu-icono {
 
-            position:
-                absolute;
+    width: 42px;
 
-            width:
-                60%;
+    height: 42px;
 
-            height:
-                4px;
+    border-radius: 12px;
 
-            background:
-                var(--rosa-principal);
+    background: var(--verde-oscuro);
 
-            bottom:
-                0;
+    color: white;
 
-            left:
-                20%;
+    display: flex;
 
-            border-radius:
-                10px;
+    align-items: center;
 
-        }
+    justify-content: center;
 
+    font-size: 18px;
 
-        /* ==========================================
-           CONTENEDOR PRINCIPAL
-           ========================================== */
+}
 
-        #centro-reporte {
 
-            max-width:
-                1200px;
+.titulo {
 
-            margin:
-                0 auto;
+    font-size: 24px;
 
-            padding:
-                10px;
+    font-weight: 700;
 
-        }
+    letter-spacing: -.8px;
 
+    color: var(--verde-oscuro);
 
-        /* ==========================================
-           TARJETAS DE INGRESOS
-           ========================================== */
+}
 
-        .tarjetas-ingresos {
 
-            display:
-                grid;
+.subtitulo {
 
-            grid-template-columns:
-                repeat(
-                    auto-fit,
-                    minmax(220px, 1fr)
-                );
+    color: var(--texto2);
 
-            gap:
-                20px;
+    font-size: 11px;
 
-            margin-bottom:
-                40px;
+    margin-top: 3px;
 
-        }
+}
 
 
-        .tarjeta-ingreso {
+.usuario {
 
-            background:
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.85
-                );
+    display: flex;
 
-            backdrop-filter:
-                blur(10px);
+    align-items: center;
 
-            border-radius:
-                16px;
+    gap: 10px;
 
-            padding:
-                25px 20px;
+}
 
-            text-align:
-                center;
 
-            border:
-                1px solid
-                rgba(
-                    255,
-                    255,
-                    255,
-                    0.6
-                );
+.usuario-info {
 
-            box-shadow:
-                var(--sombra-suave);
+    text-align: right;
 
-            transition:
-                all 0.4s
-                cubic-bezier(
-                    0.175,
-                    0.885,
-                    0.32,
-                    1.275
-                );
+}
 
-            position:
-                relative;
 
-            overflow:
-                hidden;
+.usuario-nombre {
 
-        }
+    font-size: 11px;
 
+    font-weight: 700;
 
-        .tarjeta-ingreso::before {
+    color: var(--texto);
 
-            content: '';
+}
 
-            position:
-                absolute;
 
-            top: 0;
+.usuario-rol {
 
-            left: 0;
+    font-size: 8px;
 
-            width:
-                100%;
+    color: var(--texto2);
 
-            height:
-                5px;
+    text-transform: uppercase;
 
-            background:
-                linear-gradient(
-                    90deg,
-                    var(--rosa-principal),
-                    var(--rosa-secundario)
-                );
+}
 
-        }
 
+.avatar {
 
-        .tarjeta-ingreso:hover {
+    width: 42px;
 
-            transform:
-                translateY(-8px)
-                scale(1.02);
+    height: 42px;
 
-            box-shadow:
-                var(--sombra-fuerte);
+    border-radius: 50%;
 
-            background:
-                #ffffff;
+    background: linear-gradient(
+        135deg,
+        #7ccbc3,
+        #4ba7a4
+    );
 
-        }
+    color: white;
 
+    display: flex;
 
-        .tarjeta-ingreso h3 {
+    align-items: center;
 
-            color:
-                #884d5c;
+    justify-content: center;
 
-            font-size:
-                1.1rem;
+    font-weight: 700;
 
-            font-weight:
-                600;
+    font-size: 14px;
 
-            margin-bottom:
-                10px;
+    box-shadow: 0 5px 15px rgba(57, 146, 143, .2);
 
-            text-transform:
-                uppercase;
+}
 
-        }
 
+/* =========================================================
+   TITULO DEL DASHBOARD
+========================================================= */
 
-        .tarjeta-ingreso p {
+.dashboard-titulo {
 
-            color:
-                var(--rosa-oscuro);
+    margin-bottom: 18px;
 
-            font-size:
-                1.8rem;
+}
 
-            font-weight:
-                700;
 
-        }
+.dashboard-titulo h1 {
 
+    font-size: 18px;
 
-        .tarjeta-ingreso p::before {
+    color: var(--verde-oscuro);
 
-            content:
-                '$ ';
+    font-weight: 700;
 
-            font-size:
-                1.3rem;
+}
 
-            color:
-                var(--rosa-secundario);
 
-        }
+.dashboard-titulo p {
 
+    font-size: 10px;
 
-        /* ==========================================
-           TABLA DE INGRESOS
-           ========================================== */
+    color: var(--texto2);
 
-        #tabla-ingresos {
+    margin-top: 4px;
 
-            width:
-                100%;
+}
 
-            border-collapse:
-                separate;
 
-            border-spacing:
-                0 12px;
+/* =========================================================
+   TARJETAS PRINCIPALES
+========================================================= */
 
-            margin-top:
-                10px;
+.estadisticas {
 
-        }
+    display: grid;
 
+    grid-template-columns: repeat(4, 1fr);
 
-        #tabla-ingresos th {
+    gap: 13px;
 
-            background-color:
-                var(--rosa-oscuro);
+    margin-bottom: 16px;
 
-            color:
-                white;
+}
 
-            padding:
-                16px 20px;
 
-            font-size:
-                0.95rem;
+.card {
 
-            font-weight:
-                600;
+    min-height: 135px;
 
-            text-transform:
-                uppercase;
+    padding: 17px;
 
-            letter-spacing:
-                0.5px;
+    border-radius: 17px;
 
-            border:
-                none;
+    border: 1px solid rgba(255,255,255,.7);
 
-        }
+    position: relative;
 
+    overflow: hidden;
 
-        #tabla-ingresos th:first-child {
+    display: flex;
 
-            border-top-left-radius:
-                12px;
+    flex-direction: column;
 
-            border-bottom-left-radius:
-                12px;
+    justify-content: space-between;
 
-        }
+    box-shadow: var(--sombra);
 
+    transition: .3s ease;
 
-        #tabla-ingresos th:last-child {
+}
 
-            border-top-right-radius:
-                12px;
 
-            border-bottom-right-radius:
-                12px;
+.card:hover {
 
-        }
+    transform: translateY(-3px);
 
+}
 
-        #tabla-ingresos tr.aparicion {
 
-            transition:
-                all 0.3s ease;
+.card:nth-child(1) {
 
-        }
+    background: #c9f0ea;
 
+}
 
-        #tabla-ingresos td {
 
-            background-color:
-                #ffffff;
+.card:nth-child(2) {
 
-            padding:
-                16px 20px;
+    background: #bce8e4;
 
-            font-size:
-                0.95rem;
+}
 
-            text-align:
-                center;
 
-            color:
-                var(--texto-oscuro);
+.card:nth-child(3) {
 
-            border-top:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+    background: #f4b8ca;
 
-            border-bottom:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+}
 
-        }
 
+.card:nth-child(4) {
 
-        #tabla-ingresos td:first-child {
+    background: #c9d9f0;
 
-            border-top-left-radius:
-                12px;
+}
 
-            border-bottom-left-radius:
-                12px;
 
-            border-left:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+.card::after {
 
-            font-weight:
-                600;
+    content: "";
 
-        }
+    position: absolute;
 
+    width: 75px;
 
-        #tabla-ingresos td:last-child {
+    height: 75px;
 
-            border-top-right-radius:
-                12px;
+    border-radius: 50%;
 
-            border-bottom-right-radius:
-                12px;
+    background: rgba(255,255,255,.20);
 
-            border-right:
-                1px solid
-                rgba(
-                    255,
-                    182,
-                    193,
-                    0.3
-                );
+    right: -20px;
 
-        }
+    bottom: -25px;
 
+}
 
-        /* ==========================================
-           EFECTO HOVER
-           ========================================== */
 
-        #tabla-ingresos tbody tr:hover td {
+.card-arriba {
 
-            background-color:
-                var(--rosa-pastel);
+    display: flex;
 
-            transform:
-                scale(1.005);
+    justify-content: space-between;
 
-            transition:
-                all 0.2s ease;
+    align-items: flex-start;
 
-        }
+}
 
 
-        /* ==========================================
-           BOTÓN MOSTRAR
-           ========================================== */
+.card-icono {
 
-        a.ver1 {
+    width: 28px;
 
-            display:
-                inline-block;
+    height: 28px;
 
-            text-decoration:
-                none;
+    border-radius: 8px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--rosa-principal),
-                    var(--rosa-oscuro)
-                );
+    background: rgba(255,255,255,.6);
 
-            color:
-                white;
+    color: var(--verde-oscuro);
 
-            padding:
-                8px 18px;
+    display: flex;
 
-            border-radius:
-                20px;
+    align-items: center;
 
-            font-size:
-                0.85rem;
+    justify-content: center;
 
-            font-weight:
-                600;
+    font-size: 13px;
 
-            box-shadow:
-                0 4px 10px
-                rgba(
-                    216,
-                    27,
-                    96,
-                    0.2
-                );
+    font-weight: 700;
 
-            transition:
-                all 0.3s ease;
+}
 
-        }
 
+.card-menu {
 
-        a.ver1:hover {
+    width: 25px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--rosa-secundario),
-                    var(--rosa-hover)
-                );
+    height: 25px;
 
-            box-shadow:
-                0 6px 15px
-                rgba(
-                    216,
-                    27,
-                    96,
-                    0.4
-                );
+    border-radius: 50%;
 
-            transform:
-                translateY(-2px);
+    background: rgba(255,255,255,.35);
 
-        }
+    display: flex;
 
+    align-items: center;
 
-        a.ver1:active {
+    justify-content: center;
 
-            transform:
-                translateY(0);
+    font-size: 13px;
 
-        }
+}
 
 
-        /* ==========================================
-           TABLA VACÍA
-           ========================================== */
+.card-titulo {
 
-        .zzz {
+    margin-top: 8px;
 
-            color:
-                #884d5c !important;
+    font-size: 9px;
 
-            font-style:
-                italic;
+    color: #527070;
 
-            font-weight:
-                500;
+    font-weight: 600;
 
-            padding:
-                30px !important;
+}
 
-        }
 
+.card-valor {
 
-        /* ==========================================
-           RESPONSIVE
-           ========================================== */
+    font-size: 23px;
 
-        @media (max-width: 768px) {
+    font-weight: 700;
 
-            #titseparador-ingresos {
+    color: var(--verde-oscuro);
 
-                font-size:
-                    1.6rem;
+    margin-top: 3px;
 
-            }
+}
 
 
-            #tabla-ingresos th,
-            #tabla-ingresos td {
+.card-cambio {
 
-                padding:
-                    10px 8px;
+    font-size: 8px;
 
-                font-size:
-                    0.85rem;
+    color: #568783;
 
-            }
+    margin-top: 2px;
 
+}
 
-            a.ver1 {
 
-                padding:
-                    6px 12px;
+/* =========================================================
+   GRÁFICAS
+========================================================= */
 
-                font-size:
-                    0.75rem;
+.graficas {
 
-            }
+    display: grid;
 
-        }
+    grid-template-columns: 1fr 1.15fr;
 
-    </style>
+    gap: 16px;
+
+    margin-bottom: 16px;
+
+}
+
+
+.panel {
+
+    background: rgba(255,255,255,.72);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 17px;
+
+    padding: 18px;
+
+    box-shadow: var(--sombra);
+
+}
+
+
+.panel-cabecera {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 14px;
+=======
+    background: rgba(255,250,248,0.94);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 25px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 10px 30px rgba(143,83,98,0.18);
+
+    margin-bottom: 25px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.encabezado h1 {
+
+    color: var(--vino-oscuro);
+
+    font-size: 35px;
+
+<<<<<<< HEAD
+    color: var(--verde-oscuro);
+
+}
+
+
+.panel-subtitulo {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+    margin-top: 3px;
+
+}
+
+
+.filtro {
+
+    background: var(--verde-palido);
+
+    border: none;
+
+    padding: 7px 10px;
+
+    border-radius: 9px;
+
+    color: var(--verde-oscuro);
+
+    font-size: 8px;
+
+    font-family: inherit;
+=======
+    margin-bottom: 8px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+<<<<<<< HEAD
+/* =========================================================
+   DONUT
+========================================================= */
+
+.donut-contenedor {
+
+    min-height: 205px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 25px;
+
+}
+
+
+.donut {
+
+    width: 165px;
+
+    height: 165px;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            var(--verde) 0deg
+            <?php echo ($porDia * 3.6); ?>deg,
+
+            var(--amarillo)
+            <?php echo ($porDia * 3.6); ?>deg
+            <?php echo (($porDia + $porSemana) * 3.6); ?>deg,
+
+            var(--rosa)
+            <?php echo (($porDia + $porSemana) * 3.6); ?>deg
+            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg,
+
+            var(--azul)
+            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg
+            360deg
+        );
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-shadow: 0 8px 20px rgba(69, 152, 148, .12);
+
+}
+
+
+.donut::before {
+
+    content: "";
+
+    width: 105px;
+
+    height: 105px;
+
+    border-radius: 50%;
+
+    background: var(--blanco);
+
+    position: absolute;
+
+}
+
+
+.donut-centro {
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+
+}
+
+
+.donut-centro small {
+
+    display: block;
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+}
+
+
+.donut-centro strong {
+
+    display: block;
+
+    font-size: 18px;
+
+    color: var(--verde-oscuro);
+
+    margin-top: 3px;
+
+}
+
+
+.leyenda {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.leyenda-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+}
+
+
+.punto {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+}
+
+
+.punto.verde {
+
+    background: var(--verde);
+
+}
+
+
+.punto.amarillo {
+
+    background: var(--amarillo);
+
+}
+
+
+.punto.rosa {
+
+    background: var(--rosa);
+
+}
+
+
+.punto.azul {
+
+    background: var(--azul);
+
+}
+
+
+/* =========================================================
+   BARRAS VERTICALES
+========================================================= */
+
+.grafico-barras {
+
+    height: 220px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-around;
+
+    gap: 15px;
+
+    padding: 10px 5px 0;
+
+}
+
+
+.columna {
+
+    height: 100%;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 7px;
+
+}
+
+
+.valor-barra {
+
+    font-size: 7px;
+
+    color: var(--texto2);
+
+    white-space: nowrap;
+
+}
+
+
+.barrita {
+
+    width: 42px;
+
+    max-width: 80%;
+
+    border-radius: 12px 12px 5px 5px;
+
+    min-height: 8px;
+
+    animation: subir .9s ease both;
+
+}
+
+
+.columna:nth-child(1) .barrita {
+
+    height: <?php echo max(8, $barraDia * 1.55); ?>px;
+
+    background: #efcba0;
+
+}
+
+
+.columna:nth-child(2) .barrita {
+
+    height: <?php echo max(8, $barraSemana * 1.55); ?>px;
+
+    background: #d69fda;
+
+}
+
+
+.columna:nth-child(3) .barrita {
+
+    height: <?php echo max(8, $barraMes * 1.55); ?>px;
+
+    background: #b9d983;
+
+}
+
+
+.columna:nth-child(4) .barrita {
+
+    height: <?php echo max(8, $barraAnio * 1.55); ?>px;
+
+    background: #84c7c1;
+
+}
+
+
+.nombre-barra {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+}
+
+
+@keyframes subir {
+
+    from {
+
+        transform: scaleY(0);
+
+        transform-origin: bottom;
+
+    }
+
+    to {
+
+        transform: scaleY(1);
+
+        transform-origin: bottom;
+
+    }
+=======
+.encabezado p {
+
+    color: var(--gris);
+
+    font-size: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+/* =========================================================
+<<<<<<< HEAD
+   RESUMEN
+=======
+   TARJETAS DE RESUMEN
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+========================================================= */
+
+.resumen {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 16px;
+
+<<<<<<< HEAD
+    margin-bottom: 16px;
+=======
+    margin-bottom: 25px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.tarjeta {
+
+    background: rgba(255,250,248,0.94);
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+<<<<<<< HEAD
+    border-radius: 16px;
+
+    padding: 16px;
+
+    box-shadow: var(--sombra);
+=======
+    border-radius: 22px;
+
+    padding: 23px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 20px rgba(143,83,98,0.12);
+
+    transition: 0.3s;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.tarjeta:hover {
+
+    transform: translateY(-5px);
+
+<<<<<<< HEAD
+    align-items: center;
+=======
+    box-shadow:
+        0 12px 25px rgba(143,83,98,0.20);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    justify-content: space-between;
+
+}
+
+
+.tarjeta .icono {
+
+<<<<<<< HEAD
+    font-size: 9px;
+
+    color: var(--texto2);
+
+    text-transform: uppercase;
+
+    font-weight: 700;
+=======
+    font-size: 28px;
+
+    margin-bottom: 8px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.tarjeta h3 {
+
+<<<<<<< HEAD
+    font-size: 17px;
+
+    color: var(--verde-oscuro);
+=======
+    color: var(--vino);
+
+    font-size: 15px;
+
+    margin-bottom: 7px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.tarjeta .monto {
+
+    color: var(--vino-oscuro);
+
+<<<<<<< HEAD
+    height: 7px;
+
+    background: #edf7f6;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    margin-top: 14px;
+
+}
+
+
+.progreso span {
+
+    display: block;
+
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #72cfc4,
+        #42aaa3
+    );
+
+    border-radius: 10px;
+
+}
+
+
+.resumen-info {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 7px;
+
+    font-size: 8px;
+
+    color: #91a2a3;
+
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+.historial {
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 17px;
+
+    padding: 18px;
+
+    box-shadow: var(--sombra);
+
+}
+
+
+.historial-cabecera {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+
+}
+
+
+.historial-titulo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+}
+
+
+.historial-icono {
+
+    width: 33px;
+
+    height: 33px;
+
+    border-radius: 9px;
+
+    background: var(--verde-palido);
+
+    color: var(--verde-oscuro);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+}
+
+
+.historial h2 {
+
+    font-size: 13px;
+
+    color: var(--verde-oscuro);
+
+}
+
+
+.historial-descripcion {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+    margin-top: 2px;
+
+}
+
+
+.registros {
+
+    background: var(--verde-palido);
+
+    color: var(--verde-oscuro);
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 8px;
+
+    font-weight: 700;
+=======
+    font-size: 23px;
+
+    font-weight: bold;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+.contenedor-tabla {
+
+    background: rgba(255,250,248,0.96);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 10px 30px rgba(143,83,98,0.15);
+
+    overflow-x: auto;
+
+}
+
+
+.titulo-tabla {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+
+}
+
+
+.titulo-tabla h2 {
+
+    color: var(--vino-oscuro);
+
+    font-size: 24px;
+
+}
+
+
+.titulo-tabla span {
+
+    color: var(--gris);
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+table {
+
+    width: 100%;
+
+<<<<<<< HEAD
+    min-width: 720px;
+
+=======
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+    border-collapse: collapse;
+
+    overflow: hidden;
+
+<<<<<<< HEAD
+
+#tabla-ingresos th {
+
+    text-align: left;
+
+    padding: 10px 11px;
+
+    color: #91a2a3;
+
+    font-size: 7px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
+
+    border-bottom: 1px solid #eaf3f2;
+=======
+    border-radius: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+thead {
+
+<<<<<<< HEAD
+    padding: 12px 11px;
+
+    border-bottom: 1px solid #f0f6f5;
+
+    font-size: 9px;
+
+    color: #52696a;
+
+}
+
+
+#tabla-ingresos tbody tr {
+
+    transition: .2s ease;
+
+}
+
+
+#tabla-ingresos tbody tr:hover {
+
+    background: #f5fbfa;
+
+}
+
+
+#tabla-ingresos td:first-child {
+
+    color: var(--verde-oscuro);
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+.estado {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    background: #e5f7ef;
+
+    color: #3c9c75;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+}
+
+
+.estado::before {
+
+    content: "";
+
+    width: 5px;
+
+    height: 5px;
+
+    background: #4eb889;
+
+    border-radius: 50%;
+
+}
+
+
+/* =========================================================
+   PRECIO
+========================================================= */
+
+.precio {
+
+    color: var(--verde-oscuro) !important;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   BOTÓN MOSTRAR
+========================================================= */
+
+a.ver1 {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 8px;
+
+    background: var(--verde-palido);
+
+    color: var(--verde-oscuro);
+
+    text-decoration: none;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    transition: .2s ease;
+
+}
+
+
+a.ver1::after {
+
+    content: "↗";
+
+    font-size: 9px;
+
+}
+
+
+a.ver1:hover {
+
+    background: var(--verde-oscuro);
+=======
+    background: var(--vino);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    color: white;
+
+}
+
+
+th {
+
+    padding: 15px 12px;
+
+    font-size: 14px;
+
+<<<<<<< HEAD
+    padding: 40px !important;
+
+    color: #91a2a3 !important;
+=======
+    text-align: center;
+
+}
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+
+td {
+
+    padding: 14px 12px;
+
+    text-align: center;
+
+    border-bottom: 1px solid var(--borde);
+
+    font-size: 14px;
+
+}
+
+
+tbody tr {
+
+    transition: 0.2s;
+
+}
+
+
+tbody tr:hover {
+
+    background: var(--rosa-palido);
+
+}
+
+
+/* =========================================================
+   ESTADOS
+========================================================= */
+
+.estado {
+
+<<<<<<< HEAD
+    animation: aparecer .5s ease both;
+=======
+    display: inline-block;
+
+    padding: 6px 13px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+}
+
+
+.estado-completado {
+
+    background: #ead8de;
+
+    color: var(--vino-oscuro);
+
+}
+
+
+.estado-pendiente {
+
+    background: #f5e8c8;
+
+    color: #856d35;
+
+<<<<<<< HEAD
+        transform: translateY(12px);
+=======
+}
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+
+.estado-cancelado {
+
+    background: #f1d4d4;
+
+    color: #9b4b4b;
+
+}
+
+
+/* =========================================================
+   SEPARADORES DE HOY
+========================================================= */
+
+.separador-ventas td {
+
+    padding: 0;
+
+    border: none;
+
+}
+
+
+.separador-contenido {
+
+    margin: 20px 0;
+
+    padding: 15px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--rosa-palido),
+            #fff
+        );
+
+    border:
+
+        1px solid var(--rosa-claro);
+
+    border-radius: 15px;
+
+    color: var(--vino-oscuro);
+
+    font-weight: bold;
+
+    font-size: 16px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.separador-otras td {
+
+    padding-top: 25px;
+
+}
+
+
+.separador-otras .separador-contenido {
+
+    background: #f8f1f2;
+
+    color: var(--gris);
+
+    border-color: var(--borde);
+
+}
+
+
+/* =========================================================
+   VENTA DE HOY
+========================================================= */
+
+.venta-hoy {
+
+    background: rgba(247,233,236,0.45);
+
+}
+
+
+/* =========================================================
+   SIN VENTAS
+========================================================= */
+
+.sin-ventas {
+
+    padding: 45px;
+
+    text-align: center;
+
+    color: var(--gris);
+
+}
+
+
+.sin-ventas .emoji {
+
+    font-size: 45px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.sin-ventas h3 {
+
+    color: var(--vino);
+
+    margin-bottom: 5px;
+
+}
+
+
+/* =========================================================
+   BOTÓN VOLVER
+========================================================= */
+
+.volver {
+
+    display: inline-block;
+
+    margin-top: 20px;
+
+    padding: 12px 25px;
+
+    background: var(--vino);
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+
+}
+
+
+.volver:hover {
+
+    background: var(--vino-oscuro);
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+<<<<<<< HEAD
+@media(max-width: 950px) {
+=======
+@media (max-width: 900px) {
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    .resumen {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
+
+<<<<<<< HEAD
+@media(max-width: 650px) {
+=======
+@media (max-width: 600px) {
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    .contenedor {
+
+<<<<<<< HEAD
+        padding: 13px;
+
+    }
+
+    .cabecera {
+
+        align-items: flex-start;
+
+    }
+
+    .usuario-info {
+
+        display: none;
+
+    }
+
+    .titulo {
+
+        font-size: 19px;
+
+    }
+
+    .estadisticas {
+
+        grid-template-columns: 1fr 1fr;
+
+        gap: 9px;
+
+    }
+
+    .card {
+
+        min-height: 120px;
+
+        padding: 13px;
+
+    }
+
+    .card-valor {
+
+        font-size: 18px;
+
+    }
+
+    .donut-contenedor {
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+    .donut {
+
+        width: 135px;
+
+        height: 135px;
+
+    }
+
+    .donut::before {
+
+        width: 85px;
+
+        height: 85px;
+
+    }
+
+    .leyenda {
+
+        flex-direction: row;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+    }
+=======
+        width: 96%;
+
+        margin: 20px auto;
+
+    }
+
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    .resumen {
+
+        grid-template-columns: 1fr;
+
+    }
+
+<<<<<<< HEAD
+}
+=======
+
+    .encabezado h1 {
+
+        font-size: 27px;
+
+    }
+
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    .contenedor-tabla {
+
+<<<<<<< HEAD
+@media(max-width: 400px) {
+
+    .estadisticas {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .titulo {
+
+        font-size: 17px;
+
+    }
+
+    .usuario .avatar {
+
+        width: 35px;
+
+        height: 35px;
+=======
+        padding: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -879,118 +2097,586 @@ $totalventaanio = obtenerTotal($conn, '365 DAY');
 <body>
 
 
-<section
-    id="separador-ingresos"
-    class="aparicion"
->
-
-    <h1 id="titseparador-ingresos">
-
-        REPORTE DE INGRESOS TOTALES
-
-    </h1>
-
-</section>
+<div class="contenedor">
 
 
+    <!-- =====================================================
+         ENCABEZADO
+    ====================================================== -->
 
-<div id="centro-reporte">
+    <div class="encabezado">
 
+<<<<<<< HEAD
+        <div class="izquierda-cabecera">
 
-    <!-- ==========================================
-         TARJETAS DE TOTALES
-         ========================================== -->
+            <div class="menu-icono">
+                ☰
+            </div>
 
-    <div class="tarjetas-ingresos aparicion">
+            <div>
 
+                <div class="titulo">
+                    DIVINE SALES
+                </div>
 
-        <div class="tarjeta-ingreso">
+                <div class="subtitulo">
+                    Panel de control de ventas
+                </div>
 
-            <h3>
-                Hoy
-            </h3>
-
-            <p>
-
-                <?php
-
-                echo number_format(
-                    $totalventadia,
-                    2
-                );
-
-                ?>
-
-            </p>
+            </div>
 
         </div>
 
 
+        <div class="usuario">
 
-        <div class="tarjeta-ingreso">
+            <div class="usuario-info">
 
-            <h3>
-                Última semana
-            </h3>
+                <div class="usuario-nombre">
+                    <?php
+                    echo isset($_SESSION['nombre'])
+                        ? htmlspecialchars($_SESSION['nombre'])
+                        : 'Usuario';
+                    ?>
+                </div>
 
-            <p>
+                <div class="usuario-rol">
+                    <?php echo htmlspecialchars($rol); ?>
+                </div>
+
+            </div>
+
+            <div class="avatar">
 
                 <?php
 
-                echo number_format(
-                    $totalventasemana,
-                    2
-                );
+                if (isset($_SESSION['nombre']) && $_SESSION['nombre'] != '') {
+
+                    echo strtoupper(
+                        substr(
+                            $_SESSION['nombre'],
+                            0,
+                            1
+                        )
+                    );
+
+                } else {
+
+                    echo "U";
+
+                }
 
                 ?>
 
-            </p>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         TITULO
+    ====================================================== -->
+
+    <div class="dashboard-titulo">
+
+        <h1>
+            Resultados de ventas
+        </h1>
+
+        <p>
+            Resumen general de las ventas realizadas
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ESTADÍSTICAS
+    ====================================================== -->
+
+    <section class="estadisticas">
+
+
+        <!-- HOY -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        $
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
+                </div>
+
+                <div class="card-titulo">
+                    Ventas de hoy
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventadia, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Total del día
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- 7 DÍAS -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        ▦
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
+                </div>
+
+                <div class="card-titulo">
+                    Últimos 7 días
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventasemana, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Ventas acumuladas
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- 30 DÍAS -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        %
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
+                </div>
+
+                <div class="card-titulo">
+                    Últimos 30 días
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventames, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Rendimiento mensual
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- AÑO -->
+
+        <article class="card">
+
+            <div>
+
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        ✦
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
+                </div>
+
+                <div class="card-titulo">
+                    Último año
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventaanio, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Total acumulado
+                </div>
+
+            </div>
+
+        </article>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         GRÁFICAS
+    ====================================================== -->
+
+    <section class="graficas">
+
+
+        <!-- =================================================
+             GRÁFICO TORTA
+        ================================================== -->
+
+        <article class="panel">
+
+            <div class="panel-cabecera">
+
+                <div>
+
+                    <div class="panel-titulo">
+                        Distribución de ventas
+                    </div>
+
+                    <div class="panel-subtitulo">
+                        Comparación por período
+                    </div>
+
+                </div>
+
+                <select class="filtro">
+
+                    <option>
+                        Este mes
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="donut-contenedor">
+
+
+                <div class="donut">
+
+                    <div class="donut-centro">
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            $<?php echo number_format($totalGrafico, 0); ?>
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="leyenda">
+
+
+                    <div class="leyenda-item">
+
+                        <span class="punto verde"></span>
+
+                        Hoy
+
+                    </div>
+
+
+                    <div class="leyenda-item">
+
+                        <span class="punto amarillo"></span>
+
+                        7 días
+
+                    </div>
+
+
+                    <div class="leyenda-item">
+
+                        <span class="punto rosa"></span>
+
+                        30 días
+
+                    </div>
+
+
+                    <div class="leyenda-item">
+
+                        <span class="punto azul"></span>
+
+                        Año
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+
+        <!-- =================================================
+             GRÁFICO DE BARRAS
+        ================================================== -->
+
+        <article class="panel">
+
+            <div class="panel-cabecera">
+
+                <div>
+
+                    <div class="panel-titulo">
+                        Resumen de ventas
+                    </div>
+
+                    <div class="panel-subtitulo">
+                        Rendimiento por período
+                    </div>
+
+                </div>
+
+                <select class="filtro">
+
+                    <option>
+                        Ventas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="grafico-barras">
+
+
+                <div class="columna">
+
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorDia,
+                            0
+                        );
+                        ?>
+
+                    </div>
+
+                    <div class="barrita"></div>
+
+                    <div class="nombre-barra">
+                        Hoy
+                    </div>
+
+                </div>
+
+
+                <div class="columna">
+
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorSemana,
+                            0
+                        );
+                        ?>
+
+                    </div>
+
+                    <div class="barrita"></div>
+
+                    <div class="nombre-barra">
+                        7 días
+                    </div>
+
+                </div>
+
+
+                <div class="columna">
+
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorMes,
+                            0
+                        );
+                        ?>
+
+                    </div>
+
+                    <div class="barrita"></div>
+
+                    <div class="nombre-barra">
+                        30 días
+                    </div>
+
+                </div>
+
+
+                <div class="columna">
+
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorAnio,
+                            0
+                        );
+                        ?>
+
+                    </div>
+
+                    <div class="barrita"></div>
+
+                    <div class="nombre-barra">
+                        Año
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+
+    </section>
+=======
+        <h1>💗 Historial de Ventas</h1>
+
+        <p>
+            Consulta y supervisa las ventas registradas en DIVINE
+        </p>
+
+    </div>
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+
+    <!-- =====================================================
+         RESUMEN
+    ====================================================== -->
+
+    <div class="resumen">
+
+
+        <div class="tarjeta">
+
+            <div class="icono">
+                🌸
+            </div>
+
+            <h3>Ventas de hoy</h3>
+
+            <div class="monto">
+                Bs <?= number_format($totalHoy, 2) ?>
+            </div>
 
         </div>
 
 
+        <div class="tarjeta">
 
-        <div class="tarjeta-ingreso">
+            <div class="icono">
+                📅
+            </div>
 
-            <h3>
-                Último mes
-            </h3>
+            <h3>Últimos 7 días</h3>
 
-            <p>
-
-                <?php
-
-                echo number_format(
-                    $totalventames,
-                    2
-                );
-
-                ?>
-
-            </p>
+            <div class="monto">
+                Bs <?= number_format($totalSemana, 2) ?>
+            </div>
 
         </div>
 
 
+        <div class="tarjeta">
 
-        <div class="tarjeta-ingreso">
+            <div class="icono">
+                💕
+            </div>
 
-            <h3>
-                Último año
-            </h3>
+            <h3>Últimos 30 días</h3>
 
-            <p>
+            <div class="monto">
+                Bs <?= number_format($totalMes, 2) ?>
+            </div>
 
-                <?php
+        </div>
 
-                echo number_format(
-                    $totalventaanio,
-                    2
-                );
 
-                ?>
+        <div class="tarjeta">
 
-            </p>
+            <div class="icono">
+                ✨
+            </div>
+
+            <h3>Total general</h3>
+
+            <div class="monto">
+                Bs <?= number_format($totalGeneral, 2) ?>
+            </div>
 
         </div>
 
@@ -998,166 +2684,384 @@ $totalventaanio = obtenerTotal($conn, '365 DAY');
     </div>
 
 
+    <!-- =====================================================
+<<<<<<< HEAD
+         HISTORIAL DE VENTAS
+=======
+         TABLA DE VENTAS
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+    ====================================================== -->
 
-    <!-- ==========================================
-         TABLA DE INGRESOS
-         ========================================== -->
-
-    <table id="tabla-ingresos">
-
-
-        <thead>
-
-            <tr class="aparicion">
-
-                <th>
-                    ID Pedido
-                </th>
-
-                <th>
-                    Estado
-                </th>
-
-                <th>
-                    Método
-                </th>
-
-                <th>
-                    Costo Total
-                </th>
-
-                <th>
-                    Fecha
-                </th>
-
-                <th>
-                    Acción
-                </th>
-
-            </tr>
-
-        </thead>
+    <div class="contenedor-tabla">
 
 
+        <div class="titulo-tabla">
 
-        <tbody>
+            <h2>✨ Ventas registradas</h2>
+
+<<<<<<< HEAD
+            <div class="historial-titulo">
+
+                <div class="historial-icono">
+                    ♡
+                </div>
+
+                <div>
+
+                    <h2>
+                        Historial de ventas
+                    </h2>
+
+                    <div class="historial-descripcion">
+                        Últimas ventas registradas
+                    </div>
+
+                </div>
+
+            </div>
 
 
-        <?php
+            <div class="registros">
+
+                <?php echo $totalRegistros; ?> registros
+
+            </div>
+
+=======
+            <span>
+                Solo pedidos completados
+            </span>
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+        </div>
 
 
-        if (
-            $result &&
-            $result->num_rows > 0
-        ) {
+        <?php if ($resultado && $resultado->num_rows > 0): ?>
 
 
-            while (
-                $fila =
-                $result->fetch_assoc()
-            ) {
+        <table>
 
 
-                $idPedido =
-                    $fila["PEDIDOS_ID"];
+            <thead>
+
+                <tr>
+
+                    <th>ID Venta</th>
+
+                    <th>Pedido</th>
+
+                    <th>Fecha</th>
+
+                    <th>Método</th>
+
+                    <th>Estado</th>
+
+                    <th>Total</th>
+
+                </tr>
+
+            </thead>
 
 
-                echo "<tr class='aparicion'>";
+            <tbody>
 
 
-                echo "<td>";
+            <?php
 
-                echo htmlspecialchars(
-                    $fila["PEDIDOS_ID"]
+            $fechaHoy = date('Y-m-d');
+
+            $mostroHoy = false;
+
+            $mostroOtras = false;
+
+
+<<<<<<< HEAD
+                        echo "<td>";
+                        echo htmlspecialchars(
+                            $fila["PEDIDOS_ID"]
+                        );
+                        echo "</td>";
+=======
+            while ($fila = $resultado->fetch_assoc()):
+
+                $fechaVenta = date(
+                    'Y-m-d',
+                    strtotime($fila['fecha'])
                 );
 
-                echo "</td>";
+                $esHoy = ($fechaVenta == $fechaHoy);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
-                echo "<td>";
+                /*
+                   SI ES LA PRIMERA VENTA DE HOY,
+                   MOSTRAR EL SEPARADOR
+                */
 
-                echo htmlspecialchars(
-                    $fila["estado"]
-                );
+                if ($esHoy && !$mostroHoy):
 
-                echo "</td>";
+<<<<<<< HEAD
+                        echo htmlspecialchars(
+                            $fila["estado"]
+                        );
+=======
+                    $mostroHoy = true;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
+            ?>
 
-                echo "<td>";
+                <tr class="separador-ventas">
 
-                echo htmlspecialchars(
-                    $fila["metodo"]
-                );
+                    <td colspan="6">
 
-                echo "</td>";
+                        <div class="separador-contenido">
 
+                            ✨ VENTAS DE HOY ✨
 
-                echo "<td>$";
-
-                echo number_format(
-                    $fila["costototal"],
-                    2
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo htmlspecialchars(
-                    $fila["fecha"]
-                );
-
-                echo "</td>";
-
-
-                echo "<td>";
-
-                echo "<a
-                        class='ver1'
-                        href='readventas1.php?idpedidos=$idPedido'
-                      >
-                        Mostrar
-                      </a>";
-
-
-                echo "</td>";
-
-
-                echo "</tr>";
-
-            }
-
-
-        } else {
-
-
-            echo "
-                <tr class='aparicion'>
-
-                    <td
-                        colspan='6'
-                        class='zzz'
-                    >
-
-                        No hay ventas de
-                        pedidos completados
+                        </div>
 
                     </td>
 
                 </tr>
-            ";
-
-        }
 
 
-        ?>
+            <?php
+
+<<<<<<< HEAD
+                        echo htmlspecialchars(
+                            $fila["metodo"]
+                        );
+
+                        echo "</td>";
+=======
+                endif;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
-        </tbody>
+                /*
+                   SI YA PASAMOS DE HOY
+                   MOSTRAR SEPARADOR DE OTRAS VENTAS
+                */
+
+                if (!$esHoy && !$mostroOtras):
+
+                    $mostroOtras = true;
+
+            ?>
+
+                <tr class="separador-otras">
+
+                    <td colspan="6">
+
+                        <div class="separador-contenido">
+
+                            📋 OTRAS VENTAS
+
+                        </div>
+
+                    </td>
+
+                </tr>
 
 
-    </table>
+            <?php
+
+<<<<<<< HEAD
+                        echo htmlspecialchars(
+                            $fila["fecha"]
+                        );
+=======
+                endif;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+            ?>
+
+
+<<<<<<< HEAD
+                        echo "<td>";
+
+                        echo "<a
+                                class='ver1'
+                                href='readventas1.php?idpedidos=" .
+                                urlencode($idPedido) .
+                                "'
+                              >
+                                Mostrar
+                              </a>";
+
+                        echo "</td>";
+=======
+                <tr class="<?= $esHoy ? 'venta-hoy' : '' ?>">
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+
+                    <!-- ID VENTA -->
+
+                    <td>
+
+                        <strong>
+                            #<?= htmlspecialchars($fila['id']) ?>
+                        </strong>
+
+                    </td>
+
+
+                    <!-- PEDIDO -->
+
+                    <td>
+
+                        #<?= htmlspecialchars($fila['PEDIDOS_ID']) ?>
+
+                    </td>
+
+
+                    <!-- FECHA -->
+
+                    <td>
+
+                        <?= date(
+                            'd/m/Y H:i',
+                            strtotime($fila['fecha'])
+                        ) ?>
+
+                        <?php if ($esHoy): ?>
+
+                            <br>
+
+                            <small
+                                style="
+                                color:var(--vino);
+                                font-weight:bold;
+                                "
+                            >
+                                HOY 💗
+                            </small>
+
+                        <?php endif; ?>
+
+                    </td>
+
+
+                    <!-- MÉTODO -->
+
+                    <td>
+
+                        <?= htmlspecialchars(
+                            $fila['metodo']
+                        ) ?>
+
+                    </td>
+
+
+                    <!-- ESTADO -->
+
+                    <td>
+
+
+                        <?php
+
+                        $estado = $fila['estado'];
+
+                        if (
+                            strtolower($estado)
+                            == 'completado'
+                        ) {
+
+                            echo '<span class="estado estado-completado">
+                                    ✓ Completado
+                                  </span>';
+
+                        } elseif (
+                            strtolower($estado)
+                            == 'pendiente'
+                        ) {
+
+                            echo '<span class="estado estado-pendiente">
+                                    ⏳ Pendiente
+                                  </span>';
+
+                        } else {
+
+                            echo '<span class="estado estado-cancelado">
+                                    ' .
+                                    htmlspecialchars($estado)
+                                    .
+                                  '</span>';
+
+                        }
+
+                        ?>
+
+
+                    </td>
+
+
+                    <!-- TOTAL -->
+
+                    <td>
+
+                        <strong
+                            style="
+                            color:var(--vino-oscuro);
+                            "
+                        >
+
+                            Bs
+                            <?= number_format(
+                                $fila['costototal'],
+                                2
+                            ) ?>
+
+                        </strong>
+
+                    </td>
+
+
+                </tr>
+
+
+            <?php endwhile; ?>
+
+
+            </tbody>
+
+
+        </table>
+
+
+        <?php else: ?>
+
+
+            <div class="sin-ventas">
+
+                <div class="emoji">
+                    🌸
+                </div>
+
+                <h3>
+                    No hay ventas registradas
+                </h3>
+
+                <p>
+                    Todavía no existen ventas asociadas
+                    a pedidos completados.
+                </p>
+
+            </div>
+
+
+        <?php endif; ?>
+
+
+        <a
+            href="../REPORTES/reportes.php"
+            class="volver"
+        >
+            ← Volver a reportes
+        </a>
+
+
+    </div>
 
 
 </div>
@@ -1166,4 +3070,9 @@ $totalventaanio = obtenerTotal($conn, '365 DAY');
 </body>
 
 </html>
- 
+
+<?php
+
+$conn->close();
+
+?>
