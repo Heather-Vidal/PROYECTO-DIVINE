@@ -259,6 +259,12 @@ body {
     color: #a65b71;
 }
 
+/* ESTILO PARA STOCK BAJO */
+.stock-bajo {
+    color: #d9534f !important;
+    font-weight: 700;
+}
+
 
 /* ==============================
    BOTONES PRODUCTO
@@ -719,7 +725,9 @@ if ($resultado && $resultado->num_rows > 0) {
 
             <p>
                 <span>Stock:</span>
-                <?= $stock ?>
+                <strong class="<?= ($stock <= 5) ? 'stock-bajo' : '' ?>">
+                    <?= $stock ?>
+                </strong>
             </p>
 
 
@@ -931,4 +939,3 @@ function confirmarEliminacion(codigo) {
 $conn->close();
 
 ?>
- 
