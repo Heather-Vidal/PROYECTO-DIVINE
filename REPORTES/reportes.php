@@ -1,3 +1,4 @@
+ 
 <?php
 
 session_start();
@@ -19,8 +20,15 @@ $conn = new mysqli(
 );
 
 if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+
+    die(
+        "Error de conexión: "
+        . $conn->connect_error
+    );
+
 }
+
+$conn->set_charset("utf8");
 
 
 /* =========================================================
@@ -28,70 +36,118 @@ if ($conn->connect_error) {
 ========================================================= */
 
 if (!isset($_SESSION['rol'])) {
+
     header("Location: ../SESIONES/loginform.php");
     exit();
+
 }
 
 $rol = $_SESSION['rol'];
 
-$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : '';
+$nombre = isset($_SESSION['nombre'])
+    ? $_SESSION['nombre']
+    : '';
+
 
 /* =========================================================
-   CONSULTAR VENTAS
+   PROTEGER NOMBRE DEL VENDEDOR
 ========================================================= */
+
+$nombreSeguro = $conn->real_escape_string($nombre);
+
+
+/* =========================================================
+   CONSULTAR TODAS LAS VENTAS COMPLETADAS
+=========================================================
+
+   MUY IMPORTANTE:
+
+   LA FECHA SE TOMA DE:
+
+       VENTAS.fecha
+
+   NO DE:
+
+       PEDIDOS.fecha
+
+   Y solamente aparecen ventas donde:
+
+       VENTAS.estado = Completado
+
+   Y además:
+
+       PEDIDOS.estado = Completado
+========================================================= */
+
 
 if ($rol == "administrador") {
 
-    /*
-       MOSTRAR TODAS LAS VENTAS
-       PERO SOLO DE PEDIDOS COMPLETADOS
-
-       LAS VENTAS DE HOY APARECEN PRIMERO
-    */
-
     $sql = "
-        SELECT 
+        SELECT
             v.id,
             v.estado,
             v.metodo,
             v.costototal,
             v.PEDIDOS_ID,
-            p.fecha
+            v.fecha,
+            p.nombrevendedor,
+            p.estado AS estado_pedido
         FROM VENTAS v
+
         INNER JOIN PEDIDOS p
             ON p.ID = v.PEDIDOS_ID
-        WHERE p.estado = 'Completado'
+
+        WHERE
+            LOWER(TRIM(v.estado)) = 'completado'
+
+            AND
+
+            LOWER(TRIM(p.estado)) = 'completado'
+
         ORDER BY
-            DATE(p.fecha) = CURDATE() DESC,
-            p.fecha DESC
+
+            DATE(v.fecha) = CURDATE() DESC,
+
+            v.fecha DESC,
+
+            v.id DESC
     ";
 
 } elseif ($rol == "vendedor") {
 
-    /*
-       MOSTRAR SOLO LAS VENTAS DEL VENDEDOR
-       Y SOLO DE PEDIDOS COMPLETADOS
-
-       LAS VENTAS DE HOY APARECEN PRIMERO
-    */
-
     $sql = "
-        SELECT 
+        SELECT
             v.id,
             v.estado,
             v.metodo,
             v.costototal,
             v.PEDIDOS_ID,
-            p.fecha
+            v.fecha,
+            p.nombrevendedor,
+            p.estado AS estado_pedido
         FROM VENTAS v
+
         INNER JOIN PEDIDOS p
             ON p.ID = v.PEDIDOS_ID
-        WHERE 
-            p.estado = 'Completado'
-            AND p.nombrevendedor = '$nombre'
+
+        WHERE
+            LOWER(TRIM(v.estado)) = 'completado'
+
+            AND
+
+            LOWER(TRIM(p.estado)) = 'completado'
+
+            AND
+
+            p.nombrevendedor = '$nombreSeguro'
+
         ORDER BY
-            DATE(p.fecha) = CURDATE() DESC,
-            p.fecha DESC
+
+            DATE(v.fecha) = CURDATE() DESC,
+
+            v.fecha DESC,
+
+            v.id DESC
     ";
 
 } else {
@@ -102,123 +158,354 @@ if ($rol == "administrador") {
 }
 
 
+/* =========================================================
+   EJECUTAR CONSULTA DE VENTAS
+========================================================= */
+
 $resultado = $conn->query($sql);
+
+if (!$resultado) {
+
+    die(
+        "Error al consultar las ventas: "
+        . $conn->error
+    );
+
+}
 
 
 /* =========================================================
    VENTAS DE HOY
+=========================================================
+
+   AQUÍ TAMBIÉN SE USA:
+
+       v.fecha
+
+   NO p.fecha
 ========================================================= */
 
 $sqlHoy = "
-    SELECT SUM(v.costototal) AS total
+    SELECT
+
+        COUNT(v.id) AS cantidad,
+
+        COALESCE(
+            SUM(v.costototal),
+            0
+        ) AS total
+
     FROM VENTAS v
+
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
+
     WHERE
-        DATE(p.fecha) = CURDATE()
-        AND p.estado = 'Completado'
+
+        LOWER(TRIM(v.estado)) = 'completado'
+
+        AND
+
+        LOWER(TRIM(p.estado)) = 'completado'
+
+        AND
+
+        DATE(v.fecha) = CURDATE()
 ";
 
+
+/* =========================================================
+   SI ES VENDEDOR
+========================================================= */
+
 if ($rol == "vendedor") {
-    $sqlHoy .= " AND p.nombrevendedor = '$nombre'";
+
+    $sqlHoy .= "
+
+        AND p.nombrevendedor = '$nombreSeguro'
+
+    ";
+
 }
+
+
+/* =========================================================
+   EJECUTAR
+========================================================= */
 
 $resultadoHoy = $conn->query($sqlHoy);
+
+if (!$resultadoHoy) {
+
+    die(
+        "Error al calcular las ventas de hoy: "
+        . $conn->error
+    );
+
+}
+
 $filaHoy = $resultadoHoy->fetch_assoc();
 
-$totalHoy = $filaHoy['total'] ?? 0;
+
+$cantidadHoy = isset($filaHoy['cantidad'])
+    ? (int)$filaHoy['cantidad']
+    : 0;
 
 
-/* =========================================================
-   VENTAS ÚLTIMOS 7 DÍAS
-========================================================= */
-
-$sqlSemana = "
-    SELECT SUM(v.costototal) AS total
-    FROM VENTAS v
-    INNER JOIN PEDIDOS p
-        ON p.ID = v.PEDIDOS_ID
-    WHERE
-        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-        AND p.estado = 'Completado'
-";
-
-if ($rol == "vendedor") {
-    $sqlSemana .= " AND p.nombrevendedor = '$nombre'";
-}
-
-$resultadoSemana = $conn->query($sqlSemana);
-$filaSemana = $resultadoSemana->fetch_assoc();
-
-$totalSemana = $filaSemana['total'] ?? 0;
-
-
-/* =========================================================
-   VENTAS ÚLTIMOS 30 DÍAS
-========================================================= */
-
-$sqlMes = "
-    SELECT SUM(v.costototal) AS total
-    FROM VENTAS v
-    INNER JOIN PEDIDOS p
-        ON p.ID = v.PEDIDOS_ID
-    WHERE
-        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-        AND p.estado = 'Completado'
-";
-
-if ($rol == "vendedor") {
-    $sqlMes .= " AND p.nombrevendedor = '$nombre'";
-}
-
-$resultadoMes = $conn->query($sqlMes);
-$filaMes = $resultadoMes->fetch_assoc();
-
-$totalMes = $filaMes['total'] ?? 0;
+$totalHoy = isset($filaHoy['total'])
+    ? (float)$filaHoy['total']
+    : 0;
 
 
 /* =========================================================
    TOTAL GENERAL
+=========================================================
+
+   CUENTA TODAS LAS VENTAS COMPLETADAS.
+
+   NO IMPORTA SI SON DE HOY, AYER,
+   LA SEMANA PASADA, ETC.
+
+   TAMBIÉN SE COMPRUEBA QUE PEDIDOS
+   ESTÉ EN COMPLETADO.
 ========================================================= */
 
 $sqlTotal = "
-    SELECT SUM(v.costototal) AS total
+    SELECT
+
+        COUNT(v.id) AS cantidad,
+
+        COALESCE(
+            SUM(v.costototal),
+            0
+        ) AS total
+
     FROM VENTAS v
+
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
-    WHERE p.estado = 'Completado'
+
+    WHERE
+
+        LOWER(TRIM(v.estado)) = 'completado'
+
+        AND
+
+        LOWER(TRIM(p.estado)) = 'completado'
 ";
 
+
 if ($rol == "vendedor") {
-    $sqlTotal .= " AND p.nombrevendedor = '$nombre'";
+
+    $sqlTotal .= "
+
+        AND p.nombrevendedor = '$nombreSeguro'
+
+    ";
+
 }
 
+
 $resultadoTotal = $conn->query($sqlTotal);
+
+if (!$resultadoTotal) {
+
+    die(
+        "Error al calcular el total general: "
+        . $conn->error
+    );
+
+}
+
 $filaTotal = $resultadoTotal->fetch_assoc();
 
-$totalGeneral = $filaTotal['total'] ?? 0;
+
+$cantidadTotal = isset($filaTotal['cantidad'])
+    ? (int)$filaTotal['cantidad']
+    : 0;
 
 
-// =========================================================
-// DATOS PARA EL GRÁFICO
-// =========================================================
+$totalGeneral = isset($filaTotal['total'])
+    ? (float)$filaTotal['total']
+    : 0;
 
-// Se utilizan los mismos totales existentes.
-// No se modifica ninguna consulta ni función.
 
-$valorDia    = (float)$totalventadia;
-$valorSemana = (float)$totalventasemana;
-$valorMes    = (float)$totalventames;
-$valorAnio   = (float)$totalventaanio;
+/* =========================================================
+   TOTAL ÚLTIMOS 7 DÍAS
+=========================================================
 
-$totalGrafico = $valorDia + $valorSemana + $valorMes + $valorAnio;
+   TAMBIÉN SE USA v.fecha
+========================================================= */
+
+$sqlSemana = "
+    SELECT
+
+        COALESCE(
+            SUM(v.costototal),
+            0
+        ) AS total
+
+    FROM VENTAS v
+
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+
+    WHERE
+
+        LOWER(TRIM(v.estado)) = 'completado'
+
+        AND
+
+        LOWER(TRIM(p.estado)) = 'completado'
+
+        AND
+
+        DATE(v.fecha)
+        >= DATE_SUB(
+            CURDATE(),
+            INTERVAL 6 DAY
+        )
+
+        AND
+
+        DATE(v.fecha)
+        <= CURDATE()
+";
+
+
+if ($rol == "vendedor") {
+
+    $sqlSemana .= "
+
+        AND p.nombrevendedor = '$nombreSeguro'
+
+    ";
+
+}
+
+
+$resultadoSemana = $conn->query($sqlSemana);
+
+if (!$resultadoSemana) {
+
+    die(
+        "Error al calcular las ventas de los últimos 7 días: "
+        . $conn->error
+    );
+
+}
+
+$filaSemana = $resultadoSemana->fetch_assoc();
+
+
+$totalSemana = isset($filaSemana['total'])
+    ? (float)$filaSemana['total']
+    : 0;
+
+
+/* =========================================================
+   TOTAL ÚLTIMOS 30 DÍAS
+========================================================= */
+
+$sqlMes = "
+    SELECT
+
+        COALESCE(
+            SUM(v.costototal),
+            0
+        ) AS total
+
+    FROM VENTAS v
+
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+
+    WHERE
+
+        LOWER(TRIM(v.estado)) = 'completado'
+
+        AND
+
+        LOWER(TRIM(p.estado)) = 'completado'
+
+        AND
+
+        DATE(v.fecha)
+        >= DATE_SUB(
+            CURDATE(),
+            INTERVAL 29 DAY
+        )
+
+        AND
+
+        DATE(v.fecha)
+        <= CURDATE()
+";
+
+
+if ($rol == "vendedor") {
+
+    $sqlMes .= "
+
+        AND p.nombrevendedor = '$nombreSeguro'
+
+    ";
+
+}
+
+
+$resultadoMes = $conn->query($sqlMes);
+
+if (!$resultadoMes) {
+
+    die(
+        "Error al calcular las ventas de los últimos 30 días: "
+        . $conn->error
+    );
+
+}
+
+$filaMes = $resultadoMes->fetch_assoc();
+
+
+$totalMes = isset($filaMes['total'])
+    ? (float)$filaMes['total']
+    : 0;
+
+
+/* =========================================================
+   DATOS PARA GRÁFICO
+========================================================= */
+
+$valorDia = $totalHoy;
+
+$valorSemana = $totalSemana;
+
+$valorMes = $totalMes;
+
+$valorAnio = $totalGeneral;
+
+
+$totalGrafico =
+    $valorDia
+    + $valorSemana
+    + $valorMes
+    + $valorAnio;
+
 
 if ($totalGrafico > 0) {
 
-    $porDia    = ($valorDia / $totalGrafico) * 100;
-    $porSemana = ($valorSemana / $totalGrafico) * 100;
-    $porMes    = ($valorMes / $totalGrafico) * 100;
-    $porAnio   = ($valorAnio / $totalGrafico) * 100;
+    $porDia =
+        ($valorDia / $totalGrafico) * 100;
+
+    $porSemana =
+        ($valorSemana / $totalGrafico) * 100;
+
+    $porMes =
+        ($valorMes / $totalGrafico) * 100;
+
+    $porAnio =
+        ($valorAnio / $totalGrafico) * 100;
 
 } else {
 
@@ -226,12 +513,13 @@ if ($totalGrafico > 0) {
     $porSemana = 25;
     $porMes = 25;
     $porAnio = 25;
+
 }
 
 
-// =========================================================
-// BARRAS
-// =========================================================
+/* =========================================================
+   BARRAS
+========================================================= */
 
 $maxBarra = max(
     $valorDia,
@@ -241,10 +529,21 @@ $maxBarra = max(
     1
 );
 
-$barraDia    = ($valorDia / $maxBarra) * 100;
-$barraSemana = ($valorSemana / $maxBarra) * 100;
-$barraMes    = ($valorMes / $maxBarra) * 100;
-$barraAnio   = ($valorAnio / $maxBarra) * 100;
+
+$barraDia =
+    ($valorDia / $maxBarra) * 100;
+
+
+$barraSemana =
+    ($valorSemana / $maxBarra) * 100;
+
+
+$barraMes =
+    ($valorMes / $maxBarra) * 100;
+
+
+$barraAnio =
+    ($valorAnio / $maxBarra) * 100;
 
 ?>
 
@@ -256,43 +555,43 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>Ventas - DIVINE</title>
+
 
 <style>
 
 /* =========================================================
-   COLORES DIVINE
+   COLORES
 ========================================================= */
 
 :root {
 
     --fondo: #f1fbfa;
 
-    --fondo2: #e8f8f6;
-
     --blanco: #ffffff;
 
     --texto: #183b3d;
 
-    --texto2: #577274;
-
-    --verde: #58c4b8;
-
-    --verde-oscuro: #0d4749;
-
-    --verde-claro: #bfece5;
-
-    --verde-palido: #e0f6f2;
-
-    --azul: #79b9bd;
-
-    --amarillo: #dce9a5;
+    --gris: #718486;
 
     --rosa: #eeb0c6;
 
-    --morado: #c7a8df;
+    --rosa-claro: #f5dbe4;
+
+    --rosa-palido: #faedf2;
+
+    --vino: #b86f89;
+
+    --vino-oscuro: #7f4058;
+
+    --verde: #58c4b8;
+
+    --verde-claro: #dff2ec;
 
     --borde: #d9efed;
 
@@ -325,9 +624,10 @@ body {
     background:
         radial-gradient(
             circle at 10% 10%,
-            rgba(151, 225, 218, .25),
+            rgba(151,225,218,.25),
             transparent 28%
         ),
+
         var(--fondo);
 
     color: var(--texto);
@@ -1125,7 +1425,7 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(4, 1fr);
+        repeat(2, 1fr);
 
     gap: 16px;
 
@@ -1135,8 +1435,6 @@ body {
 
 
 .tarjeta {
-
-    background: rgba(255,250,248,0.94);
 
     background: white;
 
@@ -1337,12 +1635,12 @@ body {
 
 
 /* =========================================================
-   TABLA
+   CONTENEDOR TABLA
 ========================================================= */
 
 .contenedor-tabla {
 
-    background: rgba(255,250,248,0.96);
+    background: white;
 
     border: 1px solid var(--borde);
 
@@ -1351,12 +1649,16 @@ body {
     padding: 25px;
 
     box-shadow:
-        0 10px 30px rgba(143,83,98,0.15);
+        0 10px 30px rgba(143,83,98,.15);
 
     overflow-x: auto;
 
 }
 
+
+/* =========================================================
+   TITULO TABLA
+========================================================= */
 
 .titulo-tabla {
 
@@ -1580,7 +1882,8 @@ td {
 
     text-align: center;
 
-    border-bottom: 1px solid var(--borde);
+    border-bottom:
+        1px solid var(--borde);
 
     font-size: 14px;
 
@@ -1589,7 +1892,7 @@ td {
 
 tbody tr {
 
-    transition: 0.2s;
+    transition: .2s;
 
 }
 
@@ -1602,7 +1905,7 @@ tbody tr:hover {
 
 
 /* =========================================================
-   ESTADOS
+   SEPARADOR HOY
 ========================================================= */
 
 .estado {
@@ -1652,62 +1955,152 @@ tbody tr:hover {
 }
 
 
-.separador-contenido {
+.separador-hoy-contenido {
 
-    margin: 20px 0;
+    margin: 25px 0 15px 0;
 
-    padding: 15px;
+    padding: 18px;
+
+    text-align: left;
 
     background:
 
         linear-gradient(
-            135deg,
-            var(--rosa-palido),
+            90deg,
+            var(--rosa-claro),
             #fff
         );
 
-    border:
-
-        1px solid var(--rosa-claro);
+    border-left:
+        7px solid var(--vino);
 
     border-radius: 15px;
 
     color: var(--vino-oscuro);
 
-    font-weight: bold;
+    font-size: 20px;
 
-    font-size: 16px;
+    font-weight: bold;
 
     letter-spacing: 1px;
 
 }
 
 
-.separador-otras td {
+/* =========================================================
+   SEPARADOR ANTERIORES
+========================================================= */
 
-    padding-top: 25px;
+.separador-anteriores td {
+
+    padding: 0;
+
+    border: none;
 
 }
 
 
-.separador-otras .separador-contenido {
+.separador-anteriores-contenido {
 
-    background: #f8f1f2;
+    margin: 30px 0 15px 0;
 
-    color: var(--gris);
+    padding: 18px;
 
-    border-color: var(--borde);
+    text-align: left;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            #edf8f6,
+            #fff
+        );
+
+    border-left:
+        7px solid var(--verde);
+
+    border-radius: 15px;
+
+    color: var(--texto);
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    letter-spacing: .5px;
 
 }
 
 
 /* =========================================================
-   VENTA DE HOY
+   FILAS DE HOY
 ========================================================= */
 
 .venta-hoy {
 
-    background: rgba(247,233,236,0.45);
+    background:
+        rgba(247,233,236,.55);
+
+}
+
+
+.venta-hoy td {
+
+    border-bottom:
+        1px solid var(--rosa-claro);
+
+}
+
+
+/* =========================================================
+   INDICADOR HOY
+========================================================= */
+
+.indicador-hoy {
+
+    display: inline-block;
+
+    margin-top: 6px;
+
+    padding: 5px 11px;
+
+    border-radius: 15px;
+
+    background: var(--rosa-claro);
+
+    color: var(--vino-oscuro);
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+/* =========================================================
+   ESTADO
+========================================================= */
+
+.estado {
+
+    display: inline-block;
+
+    padding: 7px 14px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.estado-completado {
+
+    background: var(--verde-claro);
+
+    color: #287363;
 
 }
 
@@ -1718,7 +2111,7 @@ tbody tr:hover {
 
 .sin-ventas {
 
-    padding: 45px;
+    padding: 50px;
 
     text-align: center;
 
@@ -1729,7 +2122,7 @@ tbody tr:hover {
 
 .sin-ventas .emoji {
 
-    font-size: 45px;
+    font-size: 50px;
 
     margin-bottom: 10px;
 
@@ -1740,7 +2133,7 @@ tbody tr:hover {
 
     color: var(--vino);
 
-    margin-bottom: 5px;
+    margin-bottom: 7px;
 
 }
 
@@ -1767,7 +2160,7 @@ tbody tr:hover {
 
     font-weight: bold;
 
-    transition: 0.3s;
+    transition: .3s;
 
 }
 
@@ -1787,10 +2180,9 @@ tbody tr:hover {
 
 @media(max-width: 950px) {
 
-    .resumen {
+    .resumen-principal {
 
-        grid-template-columns:
-            repeat(2, 1fr);
+        grid-template-columns: 1fr;
 
     }
 
@@ -1932,85 +2324,126 @@ tbody tr:hover {
 
         <div class="izquierda-cabecera">
 
-            <div class="menu-icono">
-                ☰
-            </div>
+        <p>
+            Consulta las ventas completadas registradas
+            en DIVINE
+        </p>
 
-            <div>
-
-                <div class="titulo">
-                    DIVINE SALES
-                </div>
-
-                <div class="subtitulo">
-                    Panel de control de ventas
-                </div>
-
-            </div>
-
-        </div>
+    </div>
 
 
-        <div class="usuario">
+    <!-- =====================================================
+         RESUMEN PRINCIPAL
+    ====================================================== -->
 
-            <div class="usuario-info">
+    <div class="resumen-principal">
 
-                <div class="usuario-nombre">
-                    <?php
-                    echo isset($_SESSION['nombre'])
-                        ? htmlspecialchars($_SESSION['nombre'])
-                        : 'Usuario';
-                    ?>
-                </div>
 
-                <div class="usuario-rol">
-                    <?php echo htmlspecialchars($rol); ?>
-                </div>
+        <!-- =================================================
+             VENTAS DE HOY
+        ================================================== -->
+
+        <div class="tarjeta-grande tarjeta-hoy">
+
+            <div class="etiqueta-grande">
+
+                ✨ VENTAS DE HOY ✨
 
             </div>
 
-            <div class="avatar">
 
-                <?php
+            <!-- DINERO DE HOY -->
 
-                if (isset($_SESSION['nombre']) && $_SESSION['nombre'] != '') {
+            <div class="monto-grande">
 
-                    echo strtoupper(
-                        substr(
-                            $_SESSION['nombre'],
-                            0,
-                            1
-                        )
-                    );
+                Bs
+                <?= number_format(
+                    $totalHoy,
+                    2
+                ) ?>
 
-                } else {
+            </div>
 
-                    echo "U";
 
-                }
+            <!-- CANTIDAD DE VENTAS DE HOY -->
 
+            <div class="cantidad-grande">
+
+                💗
+
+                <?= $cantidadHoy ?>
+
+                <?=
+                    $cantidadHoy == 1
+                    ? 'VENTA HOY'
+                    : 'VENTAS HOY'
                 ?>
 
             </div>
 
+
+            <div class="detalle-grande">
+
+                Ventas completadas registradas
+                el día de hoy
+
+            </div>
+
         </div>
 
-    </header>
+
+        <!-- =================================================
+             TOTAL GENERAL
+        ================================================== -->
+
+        <div class="tarjeta-grande tarjeta-general">
+
+            <div class="etiqueta-grande">
+
+                📊 TOTAL GENERAL
+
+            </div>
 
 
-    <!-- =====================================================
-         TITULO
-    ====================================================== -->
+            <!-- DINERO TOTAL -->
 
-    <div class="dashboard-titulo">
+            <div class="monto-grande">
 
-        <h1>
-            Resultados de ventas
-        </h1>
+                Bs
+                <?= number_format(
+                    $totalGeneral,
+                    2
+                ) ?>
 
-        <p>
-            Resumen general de las ventas realizadas
-        </p>
+            </div>
+
+
+            <!-- CANTIDAD TOTAL -->
+
+            <div class="cantidad-grande">
+
+                ✨
+
+                <?= $cantidadTotal ?>
+
+                <?=
+                    $cantidadTotal == 1
+                    ? 'VENTA COMPLETADA'
+                    : 'VENTAS COMPLETADAS'
+                ?>
+
+            </div>
+
+
+            <div class="detalle-grande">
+
+                Total acumulado de todas las
+                ventas completadas
+
+            </div>
+
+        </div>
+
 
     </div>
 
@@ -2435,20 +2868,7 @@ tbody tr:hover {
     <div class="resumen">
 
 
-        <div class="tarjeta">
-
-            <div class="icono">
-                🌸
-            </div>
-
-            <h3>Ventas de hoy</h3>
-
-            <div class="monto">
-                Bs <?= number_format($totalHoy, 2) ?>
-            </div>
-
-        </div>
-
+        <!-- 7 DÍAS -->
 
         <div class="tarjeta">
 
@@ -2456,14 +2876,24 @@ tbody tr:hover {
                 📅
             </div>
 
-            <h3>Últimos 7 días</h3>
+            <h3>
+                Últimos 7 días
+            </h3>
 
             <div class="monto">
-                Bs <?= number_format($totalSemana, 2) ?>
+
+                Bs
+                <?= number_format(
+                    $totalSemana,
+                    2
+                ) ?>
+
             </div>
 
         </div>
 
+
+        <!-- 30 DÍAS -->
 
         <div class="tarjeta">
 
@@ -2471,25 +2901,18 @@ tbody tr:hover {
                 💕
             </div>
 
-            <h3>Últimos 30 días</h3>
+            <h3>
+                Últimos 30 días
+            </h3>
 
             <div class="monto">
-                Bs <?= number_format($totalMes, 2) ?>
-            </div>
 
-        </div>
+                Bs
+                <?= number_format(
+                    $totalMes,
+                    2
+                ) ?>
 
-
-        <div class="tarjeta">
-
-            <div class="icono">
-                ✨
-            </div>
-
-            <h3>Total general</h3>
-
-            <div class="monto">
-                Bs <?= number_format($totalGeneral, 2) ?>
             </div>
 
         </div>
@@ -2507,7 +2930,9 @@ tbody tr:hover {
 
         <div class="titulo-tabla">
 
-            <h2>✨ Ventas registradas</h2>
+            <h2>
+                ✨ Ventas completadas
+            </h2>
 
             <div class="historial-titulo">
 
@@ -2540,7 +2965,11 @@ tbody tr:hover {
         </div>
 
 
-        <?php if ($resultado && $resultado->num_rows > 0): ?>
+        <?php if (
+            $resultado
+            &&
+            $resultado->num_rows > 0
+        ): ?>
 
 
         <table>
@@ -2550,17 +2979,29 @@ tbody tr:hover {
 
                 <tr>
 
-                    <th>ID Venta</th>
+                    <th>
+                        ID Venta
+                    </th>
 
-                    <th>Pedido</th>
+                    <th>
+                        Pedido
+                    </th>
 
-                    <th>Fecha</th>
+                    <th>
+                        Fecha de venta
+                    </th>
 
-                    <th>Método</th>
+                    <th>
+                        Método
+                    </th>
 
-                    <th>Estado</th>
+                    <th>
+                        Estado
+                    </th>
 
-                    <th>Total</th>
+                    <th>
+                        Total
+                    </th>
 
                 </tr>
 
@@ -2572,11 +3013,22 @@ tbody tr:hover {
 
             <?php
 
+            /* =================================================
+               FECHA DE HOY
+
+               SE COMPARA CON v.fecha
+            ================================================= */
+
             $fechaHoy = date('Y-m-d');
+
+
+            /* =================================================
+               CONTROL DE SEPARADORES
+            ================================================= */
 
             $mostroHoy = false;
 
-            $mostroOtras = false;
+            $mostroAnteriores = false;
 
 
                         echo "<td>";
@@ -2586,12 +3038,15 @@ tbody tr:hover {
                         echo "</td>";
 
 
-                /*
-                   SI ES LA PRIMERA VENTA DE HOY,
-                   MOSTRAR EL SEPARADOR
-                */
+                /* =============================================
+                   MOSTRAR SEPARADOR HOY
+                ============================================= */
 
-                if ($esHoy && !$mostroHoy):
+                if (
+                    $esHoy
+                    &&
+                    !$mostroHoy
+                ):
 
                         echo htmlspecialchars(
                             $fila["estado"]
@@ -2599,13 +3054,15 @@ tbody tr:hover {
 
             ?>
 
-                <tr class="separador-ventas">
+                <tr class="separador-hoy">
 
                     <td colspan="6">
 
-                        <div class="separador-contenido">
+                        <div
+                            class="separador-hoy-contenido"
+                        >
 
-                            ✨ VENTAS DE HOY ✨
+                            💗 ✨ HOY ✨ 💗
 
                         </div>
 
@@ -2623,24 +3080,29 @@ tbody tr:hover {
                         echo "</td>";
 
 
-                /*
-                   SI YA PASAMOS DE HOY
-                   MOSTRAR SEPARADOR DE OTRAS VENTAS
-                */
+                /* =============================================
+                   MOSTRAR SEPARADOR ANTERIORES
+                ============================================= */
 
-                if (!$esHoy && !$mostroOtras):
+                if (
+                    !$esHoy
+                    &&
+                    !$mostroAnteriores
+                ):
 
-                    $mostroOtras = true;
+                    $mostroAnteriores = true;
 
             ?>
 
-                <tr class="separador-otras">
+                <tr class="separador-anteriores">
 
                     <td colspan="6">
 
-                        <div class="separador-contenido">
+                        <div
+                            class="separador-anteriores-contenido"
+                        >
 
-                            📋 OTRAS VENTAS
+                            📋 VENTAS COMPLETADAS ANTERIORES
 
                         </div>
 
@@ -2672,12 +3134,18 @@ tbody tr:hover {
                         echo "</td>";
 
 
-                    <!-- ID VENTA -->
+                    <!-- ID -->
 
                     <td>
 
                         <strong>
-                            #<?= htmlspecialchars($fila['id']) ?>
+
+                            #
+
+                            <?= htmlspecialchars(
+                                $fila['id']
+                            ) ?>
+
                         </strong>
 
                     </td>
@@ -2687,32 +3155,38 @@ tbody tr:hover {
 
                     <td>
 
-                        #<?= htmlspecialchars($fila['PEDIDOS_ID']) ?>
+                        #
+
+                        <?= htmlspecialchars(
+                            $fila['PEDIDOS_ID']
+                        ) ?>
 
                     </td>
 
 
-                    <!-- FECHA -->
+                    <!-- FECHA DE VENTAS -->
 
                     <td>
 
                         <?= date(
                             'd/m/Y H:i',
-                            strtotime($fila['fecha'])
+                            strtotime(
+                                $fila['fecha']
+                            )
                         ) ?>
+
 
                         <?php if ($esHoy): ?>
 
                             <br>
 
-                            <small
-                                style="
-                                color:var(--vino);
-                                font-weight:bold;
-                                "
+                            <span
+                                class="indicador-hoy"
                             >
+
                                 HOY 💗
-                            </small>
+
+                            </span>
 
                         <?php endif; ?>
 
@@ -2724,7 +3198,7 @@ tbody tr:hover {
                     <td>
 
                         <?= htmlspecialchars(
-                            $fila['metodo']
+                            $fila['metodo'] ?? ''
                         ) ?>
 
                     </td>
@@ -2734,41 +3208,13 @@ tbody tr:hover {
 
                     <td>
 
+                        <span
+                            class="estado estado-completado"
+                        >
 
-                        <?php
+                            ✓ Completado
 
-                        $estado = $fila['estado'];
-
-                        if (
-                            strtolower($estado)
-                            == 'completado'
-                        ) {
-
-                            echo '<span class="estado estado-completado">
-                                    ✓ Completado
-                                  </span>';
-
-                        } elseif (
-                            strtolower($estado)
-                            == 'pendiente'
-                        ) {
-
-                            echo '<span class="estado estado-pendiente">
-                                    ⏳ Pendiente
-                                  </span>';
-
-                        } else {
-
-                            echo '<span class="estado estado-cancelado">
-                                    ' .
-                                    htmlspecialchars($estado)
-                                    .
-                                  '</span>';
-
-                        }
-
-                        ?>
-
+                        </span>
 
                     </td>
 
@@ -2779,13 +3225,14 @@ tbody tr:hover {
 
                         <strong
                             style="
-                            color:var(--vino-oscuro);
+                                color:var(--vino-oscuro);
                             "
                         >
 
                             Bs
+
                             <?= number_format(
-                                $fila['costototal'],
+                                (float)$fila['costototal'],
                                 2
                             ) ?>
 
@@ -2809,6 +3256,10 @@ tbody tr:hover {
         <?php else: ?>
 
 
+            <!-- =================================================
+                 SIN VENTAS
+            ================================================== -->
+
             <div class="sin-ventas">
 
                 <div class="emoji">
@@ -2816,12 +3267,13 @@ tbody tr:hover {
                 </div>
 
                 <h3>
-                    No hay ventas registradas
+                    No hay ventas completadas
                 </h3>
 
                 <p>
-                    Todavía no existen ventas asociadas
-                    a pedidos completados.
+                    No existen ventas donde tanto
+                    VENTAS como PEDIDOS tengan el estado
+                    "Completado".
                 </p>
 
             </div>
@@ -2830,11 +3282,17 @@ tbody tr:hover {
         <?php endif; ?>
 
 
+        <!-- =================================================
+             VOLVER
+        ================================================== -->
+
         <a
             href="../REPORTES/reportes.php"
             class="volver"
         >
+
             ← Volver a reportes
+
         </a>
 
 
@@ -2848,8 +3306,10 @@ tbody tr:hover {
 
 </html>
 
+
 <?php
 
 $conn->close();
 
 ?>
+ 
