@@ -1,4 +1,4 @@
-```php
+ 
 <?php
 
 session_start();
@@ -1997,5 +1997,4 @@ tbody tr:hover {
 $conn->close();
 
 ?>
-```
  
