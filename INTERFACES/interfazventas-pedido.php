@@ -654,7 +654,7 @@
             <!-- VENTAS -->
 
             <a
-                href="./CRUD-ventas/readtodoventa.php"
+                href="../CRUD-ventas/readtodoventa.php"
                 class="boton ventas"
             >
 
@@ -676,7 +676,7 @@
             <!-- PEDIDOS -->
 
             <a
-                href="./CRUD-CARRITO-PEDIDO/readtodopedido.php"
+                href="../CRUD-CARRITO-PEDIDO/readtodopedido.php"
                 class="boton pedidos"
             >
 
