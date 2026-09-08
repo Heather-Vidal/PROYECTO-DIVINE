@@ -268,7 +268,6 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
 
 :root {
 
-<<<<<<< HEAD
     --fondo: #f1fbfa;
 
     --fondo2: #e8f8f6;
@@ -298,25 +297,6 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
     --borde: #d9efed;
 
     --sombra: 0 8px 30px rgba(39, 107, 105, .07);
-=======
-    --rosa: #b86f80;
-
-    --rosa-claro: #d9a6b2;
-
-    --rosa-palido: #f7e9ec;
-
-    --crema: #fffaf8;
-
-    --texto: #57494c;
-
-    --gris: #817679;
-
-    --borde: #e3c5cd;
-
-    --vino: #8f5362;
-
-    --vino-oscuro: #713d4d;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -343,28 +323,12 @@ body {
     min-height: 100vh;
 
     background:
-<<<<<<< HEAD
         radial-gradient(
             circle at 10% 10%,
             rgba(151, 225, 218, .25),
             transparent 28%
         ),
         var(--fondo);
-=======
-
-        linear-gradient(
-            rgba(255,250,248,0.88),
-            rgba(247,233,236,0.94)
-        ),
-
-        url("../imagenes/fondote.png");
-
-    background-size: cover;
-
-    background-position: center;
-
-    background-attachment: fixed;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     color: var(--texto);
 
@@ -392,7 +356,6 @@ body {
 
 .encabezado {
 
-<<<<<<< HEAD
     display: flex;
 
     align-items: center;
@@ -801,23 +764,6 @@ body {
     align-items: center;
 
     margin-bottom: 14px;
-=======
-    background: rgba(255,250,248,0.94);
-
-    border: 1px solid var(--borde);
-
-    border-radius: 25px;
-
-    padding: 30px;
-
-    text-align: center;
-
-    box-shadow:
-
-        0 10px 30px rgba(143,83,98,0.18);
-
-    margin-bottom: 25px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -828,7 +774,6 @@ body {
 
     font-size: 35px;
 
-<<<<<<< HEAD
     color: var(--verde-oscuro);
 
 }
@@ -860,14 +805,10 @@ body {
     font-size: 8px;
 
     font-family: inherit;
-=======
-    margin-bottom: 8px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-<<<<<<< HEAD
 /* =========================================================
    DONUT
 ========================================================= */
@@ -1171,23 +1112,12 @@ body {
         transform-origin: bottom;
 
     }
-=======
-.encabezado p {
-
-    color: var(--gris);
-
-    font-size: 15px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
 /* =========================================================
-<<<<<<< HEAD
    RESUMEN
-=======
-   TARJETAS DE RESUMEN
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 ========================================================= */
 
 .resumen {
@@ -1199,11 +1129,7 @@ body {
 
     gap: 16px;
 
-<<<<<<< HEAD
     margin-bottom: 16px;
-=======
-    margin-bottom: 25px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1216,24 +1142,11 @@ body {
 
     border: 1px solid var(--borde);
 
-<<<<<<< HEAD
     border-radius: 16px;
 
     padding: 16px;
 
     box-shadow: var(--sombra);
-=======
-    border-radius: 22px;
-
-    padding: 23px;
-
-    text-align: center;
-
-    box-shadow:
-        0 8px 20px rgba(143,83,98,0.12);
-
-    transition: 0.3s;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1242,12 +1155,7 @@ body {
 
     transform: translateY(-5px);
 
-<<<<<<< HEAD
     align-items: center;
-=======
-    box-shadow:
-        0 12px 25px rgba(143,83,98,0.20);
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     justify-content: space-between;
 
@@ -1256,7 +1164,6 @@ body {
 
 .tarjeta .icono {
 
-<<<<<<< HEAD
     font-size: 9px;
 
     color: var(--texto2);
@@ -1264,28 +1171,15 @@ body {
     text-transform: uppercase;
 
     font-weight: 700;
-=======
-    font-size: 28px;
-
-    margin-bottom: 8px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
 .tarjeta h3 {
 
-<<<<<<< HEAD
     font-size: 17px;
 
     color: var(--verde-oscuro);
-=======
-    color: var(--vino);
-
-    font-size: 15px;
-
-    margin-bottom: 7px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1294,7 +1188,6 @@ body {
 
     color: var(--vino-oscuro);
 
-<<<<<<< HEAD
     height: 7px;
 
     background: #edf7f6;
@@ -1439,11 +1332,6 @@ body {
     font-size: 8px;
 
     font-weight: 700;
-=======
-    font-size: 23px;
-
-    font-weight: bold;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1509,16 +1397,12 @@ table {
 
     width: 100%;
 
-<<<<<<< HEAD
     min-width: 720px;
 
-=======
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
     border-collapse: collapse;
 
     overflow: hidden;
 
-<<<<<<< HEAD
 
 #tabla-ingresos th {
 
@@ -1535,16 +1419,12 @@ table {
     letter-spacing: .8px;
 
     border-bottom: 1px solid #eaf3f2;
-=======
-    border-radius: 15px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
 thead {
 
-<<<<<<< HEAD
     padding: 12px 11px;
 
     border-bottom: 1px solid #f0f6f5;
@@ -1677,9 +1557,6 @@ a.ver1::after {
 a.ver1:hover {
 
     background: var(--verde-oscuro);
-=======
-    background: var(--vino);
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     color: white;
 
@@ -1692,15 +1569,9 @@ th {
 
     font-size: 14px;
 
-<<<<<<< HEAD
     padding: 40px !important;
 
     color: #91a2a3 !important;
-=======
-    text-align: center;
-
-}
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
 td {
@@ -1736,19 +1607,7 @@ tbody tr:hover {
 
 .estado {
 
-<<<<<<< HEAD
     animation: aparecer .5s ease both;
-=======
-    display: inline-block;
-
-    padding: 6px 13px;
-
-    border-radius: 20px;
-
-    font-size: 12px;
-
-    font-weight: bold;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1768,11 +1627,7 @@ tbody tr:hover {
 
     color: #856d35;
 
-<<<<<<< HEAD
         transform: translateY(12px);
-=======
-}
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
 .estado-cancelado {
@@ -1930,11 +1785,7 @@ tbody tr:hover {
    RESPONSIVE
 ========================================================= */
 
-<<<<<<< HEAD
 @media(max-width: 950px) {
-=======
-@media (max-width: 900px) {
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     .resumen {
 
@@ -1946,15 +1797,10 @@ tbody tr:hover {
 }
 
 
-<<<<<<< HEAD
 @media(max-width: 650px) {
-=======
-@media (max-width: 600px) {
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     .contenedor {
 
-<<<<<<< HEAD
         padding: 13px;
 
     }
@@ -2032,14 +1878,6 @@ tbody tr:hover {
         justify-content: center;
 
     }
-=======
-        width: 96%;
-
-        margin: 20px auto;
-
-    }
-
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     .resumen {
 
@@ -2047,21 +1885,10 @@ tbody tr:hover {
 
     }
 
-<<<<<<< HEAD
 }
-=======
-
-    .encabezado h1 {
-
-        font-size: 27px;
-
-    }
-
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     .contenedor-tabla {
 
-<<<<<<< HEAD
 @media(max-width: 400px) {
 
     .estadisticas {
@@ -2081,9 +1908,6 @@ tbody tr:hover {
         width: 35px;
 
         height: 35px;
-=======
-        padding: 15px;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     }
 
@@ -2106,7 +1930,6 @@ tbody tr:hover {
 
     <div class="encabezado">
 
-<<<<<<< HEAD
         <div class="izquierda-cabecera">
 
             <div class="menu-icono">
@@ -2603,15 +2426,6 @@ tbody tr:hover {
 
 
     </section>
-=======
-        <h1>💗 Historial de Ventas</h1>
-
-        <p>
-            Consulta y supervisa las ventas registradas en DIVINE
-        </p>
-
-    </div>
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
     <!-- =====================================================
@@ -2685,11 +2499,7 @@ tbody tr:hover {
 
 
     <!-- =====================================================
-<<<<<<< HEAD
          HISTORIAL DE VENTAS
-=======
-         TABLA DE VENTAS
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
     ====================================================== -->
 
     <div class="contenedor-tabla">
@@ -2699,7 +2509,6 @@ tbody tr:hover {
 
             <h2>✨ Ventas registradas</h2>
 
-<<<<<<< HEAD
             <div class="historial-titulo">
 
                 <div class="historial-icono">
@@ -2727,11 +2536,6 @@ tbody tr:hover {
 
             </div>
 
-=======
-            <span>
-                Solo pedidos completados
-            </span>
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
         </div>
 
@@ -2775,22 +2579,11 @@ tbody tr:hover {
             $mostroOtras = false;
 
 
-<<<<<<< HEAD
                         echo "<td>";
                         echo htmlspecialchars(
                             $fila["PEDIDOS_ID"]
                         );
                         echo "</td>";
-=======
-            while ($fila = $resultado->fetch_assoc()):
-
-                $fechaVenta = date(
-                    'Y-m-d',
-                    strtotime($fila['fecha'])
-                );
-
-                $esHoy = ($fechaVenta == $fechaHoy);
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
                 /*
@@ -2800,13 +2593,9 @@ tbody tr:hover {
 
                 if ($esHoy && !$mostroHoy):
 
-<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["estado"]
                         );
-=======
-                    $mostroHoy = true;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
             ?>
 
@@ -2827,15 +2616,11 @@ tbody tr:hover {
 
             <?php
 
-<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["metodo"]
                         );
 
                         echo "</td>";
-=======
-                endif;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
                 /*
@@ -2866,18 +2651,13 @@ tbody tr:hover {
 
             <?php
 
-<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["fecha"]
                         );
-=======
-                endif;
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
             ?>
 
 
-<<<<<<< HEAD
                         echo "<td>";
 
                         echo "<a
@@ -2890,9 +2670,6 @@ tbody tr:hover {
                               </a>";
 
                         echo "</td>";
-=======
-                <tr class="<?= $esHoy ? 'venta-hoy' : '' ?>">
->>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
                     <!-- ID VENTA -->

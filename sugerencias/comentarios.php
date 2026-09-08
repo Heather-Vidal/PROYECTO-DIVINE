@@ -20,7 +20,7 @@ $archivo = 'mensajes.txt';
       padding: 40px 20px;
    background-image: url("../imagenes/mezcla.jpg");
                   background-repeat: no-repeat;
-                  background-size:100%;     
+                  background-size:140%;     
       min-height: 100vh;
     }
 
