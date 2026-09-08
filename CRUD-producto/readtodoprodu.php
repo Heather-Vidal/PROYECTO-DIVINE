@@ -327,6 +327,12 @@ body {
 
 }
 
+/* ESTILO PARA STOCK BAJO */
+.stock-bajo {
+    color: #d9534f !important;
+    font-weight: 700;
+}
+
 
 /* ==========================================
    IMAGEN DEL PRODUCTO
@@ -1111,17 +1117,12 @@ if (
                 </p>
 
 
-                <p>
-
-                    <span>
-
-                        Costo:
-
-                    </span>
-
-                    Bs. <?= $costo ?>
-
-                </p>
+            <p>
+                <span>Stock:</span>
+                <strong class="<?= ($stock <= 5) ? 'stock-bajo' : '' ?>">
+                    <?= $stock ?>
+                </strong>
+            </p>
 
 
                 <p>
@@ -1499,6 +1500,5 @@ function confirmarEliminacion(codigo) {
 
 
 $conn->close();
-
 
 ?>
