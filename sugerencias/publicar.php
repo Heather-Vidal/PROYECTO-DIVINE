@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-sizing: border-box;
         }
         body {
-              background-image: url("../imagenes/fondi.png");
+              background-image: url("../imagenes/rositafon.jpg");
                   background-repeat: no-repeat;
                   background-size:100%;
             font-family: Arial, sans-serif;
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             align-items: center;
         }
         .formulario {
-            background-color: #492d3b;
+            background-color: #4d2b3c;
             width: 90%;
             max-width: 500px;
             padding: 35px;
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #f3b6ca;
+            border: 2px solid #704050;
             border-radius: 10px;
             outline: none;
             font-size: 15px;
