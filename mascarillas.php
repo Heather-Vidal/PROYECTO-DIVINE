@@ -5,6 +5,7 @@ $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
+
 $conn = new mysqli(
     $servidor,
     $usuario,
@@ -12,8 +13,14 @@ $conn = new mysqli(
     $nombreBD
 );
 
+
 if ($conn->connect_error) {
-    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: " . $conn->connect_error);
+
+    die(
+        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: "
+        . $conn->connect_error
+    );
+
 }
 
 
@@ -22,18 +29,34 @@ if ($conn->connect_error) {
 ================================================== */
 
 $sql = "SELECT * FROM producto WHERE categoria='SkinHair'";
+
 $resultado = $conn->query($sql);
+
+
+if (!$resultado) {
+
+    die(
+        "Error al consultar los productos: "
+        . $conn->error
+    );
+
+}
 
 ?>
 
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>DIVINE | Skin Hair</title>
 
@@ -222,8 +245,6 @@ body::after {
 
 }
 
-
-/* decoración */
 
 .hero::before {
 
@@ -691,13 +712,13 @@ body::after {
 
     box-shadow:
 
-    0 10px 35px rgba(100,70,80,.05);
+        0 10px 35px rgba(100,70,80,.05);
 
     transition:
 
-    transform .45s ease,
+        transform .45s ease,
 
-    box-shadow .45s ease;
+        box-shadow .45s ease;
 
 }
 
@@ -708,7 +729,7 @@ body::after {
 
     box-shadow:
 
-    0 25px 55px rgba(100,70,80,.14);
+        0 25px 55px rgba(100,70,80,.14);
 
 }
 
@@ -758,15 +779,15 @@ body::after {
 
     background:
 
-    linear-gradient(
+        linear-gradient(
 
-        135deg,
+            135deg,
 
-        #f8e9ed,
+            #f8e9ed,
 
-        #fffaf8
+            #fffaf8
 
-    );
+        );
 
     position: relative;
 
@@ -802,7 +823,11 @@ body::after {
 
     object-fit: cover;
 
-    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+    display: block;
+
+    transition:
+
+        transform .8s cubic-bezier(.2,.7,.2,1);
 
 }
 
@@ -810,6 +835,43 @@ body::after {
 .card:hover .imagen-producto img {
 
     transform: scale(1.07);
+
+}
+
+
+/* ==================================================
+   PLACEHOLDER
+================================================== */
+
+.placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: var(--rosa);
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 1rem;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #f8e9ed,
+
+            #fffaf8
+
+        );
 
 }
 
@@ -1221,9 +1283,9 @@ body::after {
 
     transition:
 
-    opacity .8s ease,
+        opacity .8s ease,
 
-    transform .8s ease;
+        transform .8s ease;
 
 }
 
@@ -1509,9 +1571,67 @@ if ($resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_assoc()) {
 
 
+        /* ==================================================
+           OBTENER CÓDIGO DEL PRODUCTO
+        ================================================== */
+
         $codigo = $fila['codigo'];
 
+
+        /* ==================================================
+           OBTENER STOCK
+        ================================================== */
+
         $stock = (int)$fila['stock'];
+
+
+        /* ==================================================
+           BUSCAR IMAGEN DEL PRODUCTO
+           
+           BUSCARÁ:
+           
+           p-CODIGO.jpg
+           p-CODIGO.jpeg
+           p-CODIGO.png
+           p-CODIGO.gif
+        ================================================== */
+
+        $directorio = "./PRODUCTO-img/";
+
+        $nombreArchivo = "p-" . $codigo;
+
+        $extensiones = [
+
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+
+        ];
+
+        $imagenProducto = null;
+
+
+        foreach ($extensiones as $extension) {
+
+
+            $ruta =
+
+                $directorio .
+                $nombreArchivo .
+                "." .
+                $extension;
+
+
+            if (file_exists($ruta)) {
+
+                $imagenProducto = $ruta;
+
+                break;
+
+            }
+
+        }
 
 
 ?>
@@ -1524,6 +1644,10 @@ if ($resultado->num_rows > 0) {
         <div class="card animar">
 
 
+            <!-- ==================================================
+                 ETIQUETA
+            ================================================== -->
+
             <div class="etiqueta-producto">
 
                 ✦ Hair Care
@@ -1531,21 +1655,34 @@ if ($resultado->num_rows > 0) {
             </div>
 
 
-            <!-- IMAGEN -->
+            <!-- ==================================================
+                 IMAGEN DEL PRODUCTO
+            ================================================== -->
 
             <div class="imagen-producto">
 
 
+<?php
+
+if ($imagenProducto !== null) {
+
+?>
+
+
                 <img
 
-                    src="./imagenes/producto-predeterminado.jpg"
+                    src="<?php
+
+                    echo htmlspecialchars(
+                        $imagenProducto
+                    );
+
+                    ?>"
 
                     alt="<?php
 
                     echo htmlspecialchars(
-
                         $fila['nombre']
-
                     );
 
                     ?>"
@@ -1553,23 +1690,46 @@ if ($resultado->num_rows > 0) {
                 >
 
 
+<?php
+
+} else {
+
+?>
+
+
+                <div class="placeholder">
+
+                    Imagen del producto
+
+                </div>
+
+
+<?php
+
+}
+
+?>
+
+
             </div>
 
 
 
-            <!-- INFORMACIÓN -->
+            <!-- ==================================================
+                 INFORMACIÓN
+            ================================================== -->
 
             <div class="info">
 
+
+                <!-- NOMBRE -->
 
                 <h3>
 
                     <?php
 
                     echo htmlspecialchars(
-
                         $fila['nombre']
-
                     );
 
                     ?>
@@ -1578,14 +1738,14 @@ if ($resultado->num_rows > 0) {
 
 
 
+                <!-- DESCRIPCIÓN -->
+
                 <p class="descripcion">
 
                     <?php
 
                     echo htmlspecialchars(
-
                         $fila['descripcion']
-
                     );
 
                     ?>
@@ -1598,7 +1758,9 @@ if ($resultado->num_rows > 0) {
 
 
 
-                <!-- PRECIO -->
+                <!-- ==================================================
+                     PRECIO
+                ================================================== -->
 
                 <div class="precio-contenedor">
 
@@ -1617,9 +1779,7 @@ if ($resultado->num_rows > 0) {
                         <?php
 
                         echo htmlspecialchars(
-
                             $fila['precio']
-
                         );
 
                         ?>
@@ -1632,6 +1792,11 @@ if ($resultado->num_rows > 0) {
 
 
 <?php
+
+
+/* ==================================================
+   BOTÓN SEGÚN STOCK
+================================================== */
 
 
 if ($stock <= 0) {
@@ -1658,7 +1823,11 @@ if ($stock <= 0) {
 
                 <a
 
-                    href="./CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php echo $codigo; ?>"
+                    href="./CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php
+
+                    echo htmlspecialchars($codigo);
+
+                    ?>"
 
                     class="btn-carrito"
 
@@ -1680,6 +1849,11 @@ if ($stock <= 0) {
 
 
 <?php
+
+
+/* ==================================================
+   MOSTRAR STOCK
+================================================== */
 
 
 if ($stock <= 0) {
@@ -1777,6 +1951,10 @@ if ($stock <= 0) {
 ?>
 
 
+        <!-- ==================================================
+             SIN PRODUCTOS
+        ================================================== -->
+
         <div class="sin-productos">
 
 
@@ -1871,56 +2049,70 @@ include 'submenpiepag.php';
 
 
 
+<!-- ==================================================
+     ANIMACIÓN DE PRODUCTOS
+================================================== -->
+
 <script>
 
-/* ==================================================
-   ANIMACIÓN DE PRODUCTOS
-================================================== */
+
+const elementos =
+
+    document.querySelectorAll(
+        '.animar'
+    );
 
 
-const elementos = document.querySelectorAll('.animar');
+const observador =
+
+    new IntersectionObserver(
+
+        (entradas) => {
 
 
-const observador = new IntersectionObserver(
+            entradas.forEach(
 
-    (entradas) => {
-
-
-        entradas.forEach(
-
-            (entrada) => {
+                (entrada) => {
 
 
-                if (entrada.isIntersecting) {
+                    if (
+
+                        entrada.isIntersecting
+
+                    ) {
 
 
-                    entrada.target.classList.add('activo');
+                        entrada
+                            .target
+                            .classList
+                            .add(
+                                'activo'
+                            );
 
 
-                    observador.unobserve(
+                        observador.unobserve(
 
-                        entrada.target
+                            entrada.target
 
-                    );
+                        );
 
+
+                    }
 
                 }
 
-
-            }
-
-        );
+            );
 
 
-    },
+        },
 
-    {
+        {
 
-        threshold: 0.12
+            threshold: 0.12
 
-    }
+        }
 
-);
+    );
 
 
 elementos.forEach(

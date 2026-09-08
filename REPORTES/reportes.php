@@ -91,6 +91,54 @@ $totalventaanio   = obtenerTotal($conn, '365 DAY');
 
 $totalRegistros = ($result) ? $result->num_rows : 0;
 
+
+// =========================================================
+// DATOS PARA EL GRÁFICO
+// =========================================================
+
+// Se utilizan los mismos totales existentes.
+// No se modifica ninguna consulta ni función.
+
+$valorDia    = (float)$totalventadia;
+$valorSemana = (float)$totalventasemana;
+$valorMes    = (float)$totalventames;
+$valorAnio   = (float)$totalventaanio;
+
+$totalGrafico = $valorDia + $valorSemana + $valorMes + $valorAnio;
+
+if ($totalGrafico > 0) {
+
+    $porDia    = ($valorDia / $totalGrafico) * 100;
+    $porSemana = ($valorSemana / $totalGrafico) * 100;
+    $porMes    = ($valorMes / $totalGrafico) * 100;
+    $porAnio   = ($valorAnio / $totalGrafico) * 100;
+
+} else {
+
+    $porDia = 25;
+    $porSemana = 25;
+    $porMes = 25;
+    $porAnio = 25;
+}
+
+
+// =========================================================
+// BARRAS
+// =========================================================
+
+$maxBarra = max(
+    $valorDia,
+    $valorSemana,
+    $valorMes,
+    $valorAnio,
+    1
+);
+
+$barraDia    = ($valorDia / $maxBarra) * 100;
+$barraSemana = ($valorSemana / $maxBarra) * 100;
+$barraMes    = ($valorMes / $maxBarra) * 100;
+$barraAnio   = ($valorAnio / $maxBarra) * 100;
+
 ?>
 
 <!DOCTYPE html>
@@ -110,7 +158,6 @@ $totalRegistros = ($result) ? $result->num_rows : 0;
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-
 <style>
 
 /* =========================================================
@@ -119,18 +166,35 @@ $totalRegistros = ($result) ? $result->num_rows : 0;
 
 :root {
 
-    --rosa: #ee5b8b;
-    --rosa-fuerte: #e9477d;
-    --rosa-claro: #f8dce7;
-    --rosa-palido: #fff3f7;
+    --fondo: #f1fbfa;
 
-    --texto: #252027;
-    --gris: #8c8389;
+    --fondo2: #e8f8f6;
+
     --blanco: #ffffff;
 
-    --borde: #f1e5ea;
+    --texto: #183b3d;
 
-    --verde: #3caf7d;
+    --texto2: #577274;
+
+    --verde: #58c4b8;
+
+    --verde-oscuro: #0d4749;
+
+    --verde-claro: #bfece5;
+
+    --verde-palido: #e0f6f2;
+
+    --azul: #79b9bd;
+
+    --amarillo: #dce9a5;
+
+    --rosa: #eeb0c6;
+
+    --morado: #c7a8df;
+
+    --borde: #d9efed;
+
+    --sombra: 0 8px 30px rgba(39, 107, 105, .07);
 
 }
 
@@ -140,9 +204,11 @@ $totalRegistros = ($result) ? $result->num_rows : 0;
 ========================================================= */
 
 * {
+
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
 }
 
 
@@ -154,7 +220,13 @@ body {
 
     min-height: 100vh;
 
-    background: #fff;
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(151, 225, 218, .25),
+            transparent 28%
+        ),
+        var(--fondo);
 
     color: var(--texto);
 
@@ -190,48 +262,33 @@ body {
 
     justify-content: space-between;
 
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 
 }
 
 
-.titulo {
+.izquierda-cabecera {
 
-    color: var(--rosa);
+    display: flex;
 
-    font-size: clamp(30px, 5vw, 52px);
+    align-items: center;
 
-    line-height: .95;
-
-    font-weight: 700;
-
-    letter-spacing: -2px;
+    gap: 14px;
 
 }
 
 
-.subtitulo {
+.menu-icono {
 
-    color: var(--gris);
+    width: 42px;
 
-    font-size: 13px;
+    height: 42px;
 
-    margin-top: 10px;
+    border-radius: 12px;
 
-}
+    background: var(--verde-oscuro);
 
-
-.logo {
-
-    width: 48px;
-
-    height: 48px;
-
-    border-radius: 50%;
-
-    background: var(--rosa-palido);
-
-    color: var(--rosa);
+    color: white;
 
     display: flex;
 
@@ -239,9 +296,135 @@ body {
 
     justify-content: center;
 
-    font-size: 22px;
+    font-size: 18px;
 
-    border: 1px solid var(--rosa-claro);
+}
+
+
+.titulo {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    letter-spacing: -.8px;
+
+    color: var(--verde-oscuro);
+
+}
+
+
+.subtitulo {
+
+    color: var(--texto2);
+
+    font-size: 11px;
+
+    margin-top: 3px;
+
+}
+
+
+.usuario {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.usuario-info {
+
+    text-align: right;
+
+}
+
+
+.usuario-nombre {
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: var(--texto);
+
+}
+
+
+.usuario-rol {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+    text-transform: uppercase;
+
+}
+
+
+.avatar {
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(
+        135deg,
+        #7ccbc3,
+        #4ba7a4
+    );
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: 700;
+
+    font-size: 14px;
+
+    box-shadow: 0 5px 15px rgba(57, 146, 143, .2);
+
+}
+
+
+/* =========================================================
+   TITULO DEL DASHBOARD
+========================================================= */
+
+.dashboard-titulo {
+
+    margin-bottom: 18px;
+
+}
+
+
+.dashboard-titulo h1 {
+
+    font-size: 18px;
+
+    color: var(--verde-oscuro);
+
+    font-weight: 700;
+
+}
+
+
+.dashboard-titulo p {
+
+    font-size: 10px;
+
+    color: var(--texto2);
+
+    margin-top: 4px;
 
 }
 
@@ -256,30 +439,34 @@ body {
 
     grid-template-columns: repeat(4, 1fr);
 
-    gap: 14px;
+    gap: 13px;
 
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 
 }
 
 
 .card {
 
-    background: var(--rosa-palido);
+    min-height: 135px;
 
-    border: 1px solid #f8e2e9;
+    padding: 17px;
 
     border-radius: 17px;
 
-    padding: 20px;
+    border: 1px solid rgba(255,255,255,.7);
 
-    min-height: 145px;
+    position: relative;
+
+    overflow: hidden;
 
     display: flex;
 
     flex-direction: column;
 
     justify-content: space-between;
+
+    box-shadow: var(--sombra);
 
     transition: .3s ease;
 
@@ -288,24 +475,82 @@ body {
 
 .card:hover {
 
-    transform: translateY(-4px);
+    transform: translateY(-3px);
 
-    box-shadow: 0 12px 30px rgba(238,91,139,.12);
+}
+
+
+.card:nth-child(1) {
+
+    background: #c9f0ea;
+
+}
+
+
+.card:nth-child(2) {
+
+    background: #bce8e4;
+
+}
+
+
+.card:nth-child(3) {
+
+    background: #f4b8ca;
+
+}
+
+
+.card:nth-child(4) {
+
+    background: #c9d9f0;
+
+}
+
+
+.card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 75px;
+
+    height: 75px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.20);
+
+    right: -20px;
+
+    bottom: -25px;
+
+}
+
+
+.card-arriba {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
 
 }
 
 
 .card-icono {
 
-    width: 37px;
+    width: 28px;
 
-    height: 37px;
+    height: 28px;
 
-    border-radius: 50%;
+    border-radius: 8px;
 
-    background: var(--rosa);
+    background: rgba(255,255,255,.6);
 
-    color: white;
+    color: var(--verde-oscuro);
 
     display: flex;
 
@@ -313,63 +558,112 @@ body {
 
     justify-content: center;
 
-    font-size: 17px;
-
-}
-
-
-.card-titulo {
-
-    color: #484047;
-
-    font-size: 10px;
-
-    text-transform: uppercase;
-
-    line-height: 1.3;
-
-    margin-top: 10px;
-
-}
-
-
-.card-valor {
-
-    color: var(--rosa-fuerte);
-
-    font-size: 24px;
+    font-size: 13px;
 
     font-weight: 700;
 
 }
 
 
+.card-menu {
+
+    width: 25px;
+
+    height: 25px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.35);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+}
+
+
+.card-titulo {
+
+    margin-top: 8px;
+
+    font-size: 9px;
+
+    color: #527070;
+
+    font-weight: 600;
+
+}
+
+
+.card-valor {
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+    color: var(--verde-oscuro);
+
+    margin-top: 3px;
+
+}
+
+
+.card-cambio {
+
+    font-size: 8px;
+
+    color: #568783;
+
+    margin-top: 2px;
+
+}
+
+
 /* =========================================================
-   ZONA DE GRÁFICAS
+   GRÁFICAS
 ========================================================= */
 
 .graficas {
 
     display: grid;
 
-    grid-template-columns: 1.15fr .85fr;
+    grid-template-columns: 1fr 1.15fr;
 
-    gap: 18px;
+    gap: 16px;
 
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 
 }
 
 
 .panel {
 
-    background: white;
+    background: rgba(255,255,255,.72);
 
     border: 1px solid var(--borde);
 
-    border-radius: 18px;
+    border-radius: 17px;
 
-    padding: 20px;
+    padding: 18px;
+
+    box-shadow: var(--sombra);
+
+}
+
+
+.panel-cabecera {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 14px;
 
 }
 
@@ -380,24 +674,242 @@ body {
 
     font-weight: 700;
 
-    text-transform: uppercase;
+    color: var(--verde-oscuro);
 
-    margin-bottom: 18px;
+}
 
-    color: #353036;
+
+.panel-subtitulo {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+    margin-top: 3px;
+
+}
+
+
+.filtro {
+
+    background: var(--verde-palido);
+
+    border: none;
+
+    padding: 7px 10px;
+
+    border-radius: 9px;
+
+    color: var(--verde-oscuro);
+
+    font-size: 8px;
+
+    font-family: inherit;
 
 }
 
 
 /* =========================================================
-   GRÁFICA DE INGRESOS
+   DONUT
 ========================================================= */
 
-.grafica-linea {
+.donut-contenedor {
 
-    height: 210px;
+    min-height: 205px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 25px;
+
+}
+
+
+.donut {
+
+    width: 165px;
+
+    height: 165px;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            var(--verde) 0deg
+            <?php echo ($porDia * 3.6); ?>deg,
+
+            var(--amarillo)
+            <?php echo ($porDia * 3.6); ?>deg
+            <?php echo (($porDia + $porSemana) * 3.6); ?>deg,
+
+            var(--rosa)
+            <?php echo (($porDia + $porSemana) * 3.6); ?>deg
+            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg,
+
+            var(--azul)
+            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg
+            360deg
+        );
 
     position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-shadow: 0 8px 20px rgba(69, 152, 148, .12);
+
+}
+
+
+.donut::before {
+
+    content: "";
+
+    width: 105px;
+
+    height: 105px;
+
+    border-radius: 50%;
+
+    background: var(--blanco);
+
+    position: absolute;
+
+}
+
+
+.donut-centro {
+
+    position: relative;
+
+    z-index: 2;
+
+    text-align: center;
+
+}
+
+
+.donut-centro small {
+
+    display: block;
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+}
+
+
+.donut-centro strong {
+
+    display: block;
+
+    font-size: 18px;
+
+    color: var(--verde-oscuro);
+
+    margin-top: 3px;
+
+}
+
+
+.leyenda {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.leyenda-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+}
+
+
+.punto {
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+}
+
+
+.punto.verde {
+
+    background: var(--verde);
+
+}
+
+
+.punto.amarillo {
+
+    background: var(--amarillo);
+
+}
+
+
+.punto.rosa {
+
+    background: var(--rosa);
+
+}
+
+
+.punto.azul {
+
+    background: var(--azul);
+
+}
+
+
+/* =========================================================
+   BARRAS VERTICALES
+========================================================= */
+
+.grafico-barras {
+
+    height: 220px;
+
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-around;
+
+    gap: 15px;
+
+    padding: 10px 5px 0;
+
+}
+
+
+.columna {
+
+    height: 100%;
+
+    flex: 1;
 
     display: flex;
 
@@ -405,170 +917,107 @@ body {
 
     justify-content: flex-end;
 
-}
+    align-items: center;
 
-
-.lineas-fondo {
-
-    position: absolute;
-
-    inset: 0;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
+    gap: 7px;
 
 }
 
 
-.linea {
+.valor-barra {
 
-    width: 100%;
+    font-size: 7px;
 
-    height: 1px;
+    color: var(--texto2);
 
-    background: #f1eaed;
-
-}
-
-
-.grafica-svg {
-
-    position: absolute;
-
-    inset: 10px 0 20px 0;
-
-    width: 100%;
-
-    height: calc(100% - 30px);
+    white-space: nowrap;
 
 }
 
 
-.meses {
+.barrita {
 
-    position: absolute;
+    width: 42px;
 
-    bottom: 0;
+    max-width: 80%;
 
-    left: 0;
+    border-radius: 12px 12px 5px 5px;
 
-    width: 100%;
+    min-height: 8px;
 
-    display: flex;
+    animation: subir .9s ease both;
 
-    justify-content: space-between;
+}
 
-    color: #aaa1a7;
+
+.columna:nth-child(1) .barrita {
+
+    height: <?php echo max(8, $barraDia * 1.55); ?>px;
+
+    background: #efcba0;
+
+}
+
+
+.columna:nth-child(2) .barrita {
+
+    height: <?php echo max(8, $barraSemana * 1.55); ?>px;
+
+    background: #d69fda;
+
+}
+
+
+.columna:nth-child(3) .barrita {
+
+    height: <?php echo max(8, $barraMes * 1.55); ?>px;
+
+    background: #b9d983;
+
+}
+
+
+.columna:nth-child(4) .barrita {
+
+    height: <?php echo max(8, $barraAnio * 1.55); ?>px;
+
+    background: #84c7c1;
+
+}
+
+
+.nombre-barra {
 
     font-size: 8px;
 
-}
-
-
-/* =========================================================
-   BARRAS
-========================================================= */
-
-.barras {
-
-    height: 210px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
-
-    gap: 12px;
+    color: var(--texto2);
 
 }
 
 
-.barra-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-}
-
-
-.barra-numero {
-
-    width: 22px;
-
-    font-size: 9px;
-
-    color: var(--gris);
-
-}
-
-
-.barra-contenedor {
-
-    flex: 1;
-
-    height: 15px;
-
-    background: #faf0f4;
-
-    border-radius: 3px;
-
-    overflow: hidden;
-
-}
-
-
-.barra {
-
-    height: 100%;
-
-    background: var(--rosa);
-
-    border-radius: 3px;
-
-    animation: crecer .9s ease both;
-
-}
-
-
-.barra:nth-child(1) {
-    width: 92%;
-}
-
-.barra:nth-child(2) {
-    width: 78%;
-}
-
-.barra:nth-child(3) {
-    width: 61%;
-}
-
-.barra:nth-child(4) {
-    width: 50%;
-}
-
-.barra:nth-child(5) {
-    width: 42%;
-}
-
-
-@keyframes crecer {
+@keyframes subir {
 
     from {
-        width: 0;
+
+        transform: scaleY(0);
+
+        transform-origin: bottom;
+
+    }
+
+    to {
+
+        transform: scaleY(1);
+
+        transform-origin: bottom;
+
     }
 
 }
 
 
 /* =========================================================
-   RESUMEN INFERIOR
+   RESUMEN
 ========================================================= */
 
 .resumen {
@@ -577,22 +1026,24 @@ body {
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 18px;
+    gap: 16px;
 
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 
 }
 
 
 .resumen-card {
 
+    background: white;
+
     border: 1px solid var(--borde);
 
-    border-radius: 18px;
+    border-radius: 16px;
 
-    padding: 22px;
+    padding: 16px;
 
-    background: white;
+    box-shadow: var(--sombra);
 
 }
 
@@ -601,20 +1052,20 @@ body {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
+
+    justify-content: space-between;
 
 }
 
 
 .resumen-header span {
 
-    font-size: 10px;
+    font-size: 9px;
+
+    color: var(--texto2);
 
     text-transform: uppercase;
-
-    color: var(--gris);
 
     font-weight: 700;
 
@@ -623,9 +1074,9 @@ body {
 
 .resumen-header strong {
 
-    color: var(--rosa);
+    font-size: 17px;
 
-    font-size: 18px;
+    color: var(--verde-oscuro);
 
 }
 
@@ -634,15 +1085,15 @@ body {
 
     width: 100%;
 
-    height: 8px;
+    height: 7px;
 
-    background: #f6e9ee;
+    background: #edf7f6;
 
-    border-radius: 20px;
+    border-radius: 10px;
 
     overflow: hidden;
 
-    margin-top: 20px;
+    margin-top: 14px;
 
 }
 
@@ -653,9 +1104,13 @@ body {
 
     height: 100%;
 
-    background: var(--rosa);
+    background: linear-gradient(
+        90deg,
+        #72cfc4,
+        #42aaa3
+    );
 
-    border-radius: 20px;
+    border-radius: 10px;
 
 }
 
@@ -666,11 +1121,11 @@ body {
 
     justify-content: space-between;
 
-    margin-top: 8px;
+    margin-top: 7px;
 
-    font-size: 9px;
+    font-size: 8px;
 
-    color: var(--gris);
+    color: #91a2a3;
 
 }
 
@@ -685,9 +1140,11 @@ body {
 
     border: 1px solid var(--borde);
 
-    border-radius: 20px;
+    border-radius: 17px;
 
-    padding: 22px;
+    padding: 18px;
+
+    box-shadow: var(--sombra);
 
 }
 
@@ -700,7 +1157,7 @@ body {
 
     align-items: center;
 
-    margin-bottom: 18px;
+    margin-bottom: 15px;
 
 }
 
@@ -711,22 +1168,22 @@ body {
 
     align-items: center;
 
-    gap: 12px;
+    gap: 9px;
 
 }
 
 
 .historial-icono {
 
-    width: 38px;
+    width: 33px;
 
-    height: 38px;
+    height: 33px;
 
-    border-radius: 11px;
+    border-radius: 9px;
 
-    background: var(--rosa-palido);
+    background: var(--verde-palido);
 
-    color: var(--rosa);
+    color: var(--verde-oscuro);
 
     display: flex;
 
@@ -734,29 +1191,42 @@ body {
 
     justify-content: center;
 
+    font-size: 13px;
+
 }
 
 
 .historial h2 {
 
-    font-size: 18px;
+    font-size: 13px;
 
-    color: #302a30;
+    color: var(--verde-oscuro);
+
+}
+
+
+.historial-descripcion {
+
+    font-size: 8px;
+
+    color: var(--texto2);
+
+    margin-top: 2px;
 
 }
 
 
 .registros {
 
-    background: var(--rosa-palido);
+    background: var(--verde-palido);
 
-    color: var(--rosa);
+    color: var(--verde-oscuro);
 
-    padding: 7px 12px;
+    padding: 6px 10px;
 
     border-radius: 20px;
 
-    font-size: 9px;
+    font-size: 8px;
 
     font-weight: 700;
 
@@ -778,7 +1248,7 @@ body {
 
     width: 100%;
 
-    min-width: 750px;
+    min-width: 720px;
 
     border-collapse: collapse;
 
@@ -789,53 +1259,53 @@ body {
 
     text-align: left;
 
-    padding: 12px;
+    padding: 10px 11px;
 
-    color: #a49ba0;
+    color: #91a2a3;
 
-    font-size: 8px;
+    font-size: 7px;
 
     text-transform: uppercase;
 
-    letter-spacing: 1px;
+    letter-spacing: .8px;
 
-    border-bottom: 1px solid var(--borde);
+    border-bottom: 1px solid #eaf3f2;
 
 }
 
 
 #tabla-ingresos td {
 
-    padding: 15px 12px;
+    padding: 12px 11px;
 
-    border-bottom: 1px solid #f7eef1;
+    border-bottom: 1px solid #f0f6f5;
 
-    font-size: 11px;
+    font-size: 9px;
 
-    color: #554c52;
+    color: #52696a;
 
 }
 
 
 #tabla-ingresos tbody tr {
 
-    transition: .25s ease;
+    transition: .2s ease;
 
 }
 
 
 #tabla-ingresos tbody tr:hover {
 
-    background: #fff8fa;
+    background: #f5fbfa;
 
 }
 
 
 #tabla-ingresos td:first-child {
 
-    font-weight: 700;
+    color: var(--verde-oscuro);
 
-    color: #352e34;
+    font-weight: 700;
 
 }
 
@@ -850,17 +1320,17 @@ body {
 
     align-items: center;
 
-    gap: 6px;
+    gap: 5px;
 
-    padding: 5px 9px;
+    padding: 5px 8px;
 
     border-radius: 20px;
 
-    background: #e9f8f1;
+    background: #e5f7ef;
 
-    color: var(--verde);
+    color: #3c9c75;
 
-    font-size: 8px;
+    font-size: 7px;
 
     font-weight: 700;
 
@@ -875,7 +1345,7 @@ body {
 
     height: 5px;
 
-    background: var(--verde);
+    background: #4eb889;
 
     border-radius: 50%;
 
@@ -888,7 +1358,7 @@ body {
 
 .precio {
 
-    color: var(--rosa) !important;
+    color: var(--verde-oscuro) !important;
 
     font-weight: 700;
 
@@ -907,35 +1377,37 @@ a.ver1 {
 
     gap: 5px;
 
-    padding: 7px 11px;
+    padding: 6px 10px;
 
     border-radius: 8px;
 
-    background: var(--rosa-palido);
+    background: var(--verde-palido);
 
-    color: var(--rosa);
+    color: var(--verde-oscuro);
 
     text-decoration: none;
 
-    font-size: 9px;
+    font-size: 7px;
 
     font-weight: 700;
 
-    transition: .25s ease;
+    transition: .2s ease;
 
 }
 
 
 a.ver1::after {
 
-    content: "→";
+    content: "↗";
+
+    font-size: 9px;
 
 }
 
 
 a.ver1:hover {
 
-    background: var(--rosa);
+    background: var(--verde-oscuro);
 
     color: white;
 
@@ -950,9 +1422,9 @@ a.ver1:hover {
 
     text-align: center !important;
 
-    padding: 45px !important;
+    padding: 40px !important;
 
-    color: var(--gris) !important;
+    color: #91a2a3 !important;
 
     font-style: italic;
 
@@ -965,7 +1437,7 @@ a.ver1:hover {
 
 .card {
 
-    animation: aparecer .6s ease both;
+    animation: aparecer .5s ease both;
 
 }
 
@@ -993,7 +1465,7 @@ a.ver1:hover {
 
         opacity: 0;
 
-        transform: translateY(15px);
+        transform: translateY(12px);
 
     }
 
@@ -1012,7 +1484,7 @@ a.ver1:hover {
    RESPONSIVE
 ========================================================= */
 
-@media(max-width: 900px) {
+@media(max-width: 950px) {
 
     .estadisticas {
 
@@ -1029,23 +1501,29 @@ a.ver1:hover {
 }
 
 
-@media(max-width: 600px) {
+@media(max-width: 650px) {
 
     body {
 
-        padding: 14px;
+        padding: 13px;
 
     }
 
     .cabecera {
 
-        margin-bottom: 20px;
+        align-items: flex-start;
+
+    }
+
+    .usuario-info {
+
+        display: none;
 
     }
 
     .titulo {
 
-        font-size: 34px;
+        font-size: 19px;
 
     }
 
@@ -1053,41 +1531,61 @@ a.ver1:hover {
 
         grid-template-columns: 1fr 1fr;
 
-        gap: 10px;
+        gap: 9px;
 
     }
 
     .card {
 
-        padding: 14px;
+        min-height: 120px;
 
-        min-height: 125px;
+        padding: 13px;
 
     }
 
     .card-valor {
 
-        font-size: 19px;
+        font-size: 18px;
 
     }
 
-    .graficas {
+    .donut-contenedor {
 
-        gap: 12px;
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+    .donut {
+
+        width: 135px;
+
+        height: 135px;
+
+    }
+
+    .donut::before {
+
+        width: 85px;
+
+        height: 85px;
+
+    }
+
+    .leyenda {
+
+        flex-direction: row;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
 
     }
 
     .resumen {
 
         grid-template-columns: 1fr;
-
-    }
-
-    .panel,
-    .resumen-card,
-    .historial {
-
-        padding: 16px;
 
     }
 
@@ -1104,7 +1602,15 @@ a.ver1:hover {
 
     .titulo {
 
-        font-size: 30px;
+        font-size: 17px;
+
+    }
+
+    .usuario .avatar {
+
+        width: 35px;
+
+        height: 35px;
 
     }
 
@@ -1126,25 +1632,89 @@ a.ver1:hover {
 
     <header class="cabecera">
 
-        <div>
+        <div class="izquierda-cabecera">
 
-            <h1 class="titulo">
-                E-COMMERCE<br>
-                SALES DASHBOARD
-            </h1>
+            <div class="menu-icono">
+                ☰
+            </div>
 
-            <p class="subtitulo">
-                Resumen general de las ventas realizadas
-            </p>
+            <div>
+
+                <div class="titulo">
+                    DIVINE SALES
+                </div>
+
+                <div class="subtitulo">
+                    Panel de control de ventas
+                </div>
+
+            </div>
 
         </div>
 
 
-        <div class="logo">
-            ♡
+        <div class="usuario">
+
+            <div class="usuario-info">
+
+                <div class="usuario-nombre">
+                    <?php
+                    echo isset($_SESSION['nombre'])
+                        ? htmlspecialchars($_SESSION['nombre'])
+                        : 'Usuario';
+                    ?>
+                </div>
+
+                <div class="usuario-rol">
+                    <?php echo htmlspecialchars($rol); ?>
+                </div>
+
+            </div>
+
+            <div class="avatar">
+
+                <?php
+
+                if (isset($_SESSION['nombre']) && $_SESSION['nombre'] != '') {
+
+                    echo strtoupper(
+                        substr(
+                            $_SESSION['nombre'],
+                            0,
+                            1
+                        )
+                    );
+
+                } else {
+
+                    echo "U";
+
+                }
+
+                ?>
+
+            </div>
+
         </div>
 
     </header>
+
+
+    <!-- =====================================================
+         TITULO
+    ====================================================== -->
+
+    <div class="dashboard-titulo">
+
+        <h1>
+            Resultados de ventas
+        </h1>
+
+        <p>
+            Resumen general de las ventas realizadas
+        </p>
+
+    </div>
 
 
     <!-- =====================================================
@@ -1154,100 +1724,168 @@ a.ver1:hover {
     <section class="estadisticas">
 
 
-        <!-- TOTAL DEL DÍA -->
+        <!-- HOY -->
 
         <article class="card">
 
             <div>
 
-                <div class="card-icono">
-                    $
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        $
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
                 </div>
 
                 <div class="card-titulo">
-                    Total Revenue
+                    Ventas de hoy
                 </div>
 
             </div>
 
-            <div class="card-valor">
 
-                $<?php echo number_format($totalventadia, 2); ?>
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventadia, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Total del día
+                </div>
 
             </div>
 
         </article>
 
 
-        <!-- ÚLTIMOS 7 DÍAS -->
+        <!-- 7 DÍAS -->
 
         <article class="card">
 
             <div>
 
-                <div class="card-icono">
-                    ▥
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        ▦
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
                 </div>
 
                 <div class="card-titulo">
-                    Ventas últimos 7 días
+                    Últimos 7 días
                 </div>
 
             </div>
 
-            <div class="card-valor">
 
-                $<?php echo number_format($totalventasemana, 2); ?>
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventasemana, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Ventas acumuladas
+                </div>
 
             </div>
 
         </article>
 
 
-        <!-- ÚLTIMOS 30 DÍAS -->
+        <!-- 30 DÍAS -->
 
         <article class="card">
 
             <div>
 
-                <div class="card-icono">
-                    %
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        %
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
                 </div>
 
                 <div class="card-titulo">
-                    Ventas últimos 30 días
+                    Últimos 30 días
                 </div>
 
             </div>
 
-            <div class="card-valor">
 
-                $<?php echo number_format($totalventames, 2); ?>
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventames, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Rendimiento mensual
+                </div>
 
             </div>
 
         </article>
 
 
-        <!-- ÚLTIMOS 365 DÍAS -->
+        <!-- AÑO -->
 
         <article class="card">
 
             <div>
 
-                <div class="card-icono">
-                    ✦
+                <div class="card-arriba">
+
+                    <div class="card-icono">
+                        ✦
+                    </div>
+
+                    <div class="card-menu">
+                        •••
+                    </div>
+
                 </div>
 
                 <div class="card-titulo">
-                    Ventas último año
+                    Último año
                 </div>
 
             </div>
 
-            <div class="card-valor">
 
-                $<?php echo number_format($totalventaanio, 2); ?>
+            <div>
+
+                <div class="card-valor">
+
+                    $<?php echo number_format($totalventaanio, 2); ?>
+
+                </div>
+
+                <div class="card-cambio">
+                    Total acumulado
+                </div>
 
             </div>
 
@@ -1265,115 +1903,94 @@ a.ver1:hover {
 
 
         <!-- =================================================
-             TENDENCIA
+             GRÁFICO TORTA
         ================================================== -->
 
         <article class="panel">
 
-            <div class="panel-titulo">
-                Monthly Revenue Trend
+            <div class="panel-cabecera">
+
+                <div>
+
+                    <div class="panel-titulo">
+                        Distribución de ventas
+                    </div>
+
+                    <div class="panel-subtitulo">
+                        Comparación por período
+                    </div>
+
+                </div>
+
+                <select class="filtro">
+
+                    <option>
+                        Este mes
+                    </option>
+
+                </select>
+
             </div>
 
 
-            <div class="grafica-linea">
+            <div class="donut-contenedor">
 
 
-                <div class="lineas-fondo">
+                <div class="donut">
 
-                    <div class="linea"></div>
-                    <div class="linea"></div>
-                    <div class="linea"></div>
-                    <div class="linea"></div>
-                    <div class="linea"></div>
+                    <div class="donut-centro">
+
+                        <small>
+                            Total
+                        </small>
+
+                        <strong>
+                            $<?php echo number_format($totalGrafico, 0); ?>
+                        </strong>
+
+                    </div>
 
                 </div>
 
 
-                <svg
-                    class="grafica-svg"
-                    viewBox="0 0 600 190"
-                    preserveAspectRatio="none"
-                >
-
-                    <defs>
-
-                        <linearGradient
-                            id="relleno"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                        >
-
-                            <stop
-                                offset="0%"
-                                stop-color="#ee5b8b"
-                                stop-opacity=".30"
-                            />
-
-                            <stop
-                                offset="100%"
-                                stop-color="#ee5b8b"
-                                stop-opacity=".02"
-                            />
-
-                        </linearGradient>
-
-                    </defs>
+                <div class="leyenda">
 
 
-                    <path
-                        d="
-                        M0,135
-                        C35,110 55,95 85,115
-                        C115,135 125,145 155,120
-                        C185,95 205,45 235,65
-                        C270,90 285,115 320,105
-                        C350,95 365,65 390,50
-                        C420,35 445,65 470,70
-                        C505,75 530,95 550,70
-                        C570,50 585,60 600,40
-                        L600,190
-                        L0,190
-                        Z
-                        "
-                        fill="url(#relleno)"
-                    />
+                    <div class="leyenda-item">
+
+                        <span class="punto verde"></span>
+
+                        Hoy
+
+                    </div>
 
 
-                    <path
-                        d="
-                        M0,135
-                        C35,110 55,95 85,115
-                        C115,135 125,145 155,120
-                        C185,95 205,45 235,65
-                        C270,90 285,115 320,105
-                        C350,95 365,65 390,50
-                        C420,35 445,65 470,70
-                        C505,75 530,95 550,70
-                        C570,50 585,60 600,40
-                        "
-                        fill="none"
-                        stroke="#ee5b8b"
-                        stroke-width="4"
-                        stroke-linecap="round"
-                    />
+                    <div class="leyenda-item">
 
-                </svg>
+                        <span class="punto amarillo"></span>
+
+                        7 días
+
+                    </div>
 
 
-                <div class="meses">
+                    <div class="leyenda-item">
 
-                    <span>Jan</span>
-                    <span>Feb</span>
-                    <span>Mar</span>
-                    <span>Apr</span>
-                    <span>May</span>
-                    <span>Jun</span>
-                    <span>Jul</span>
-                    <span>Aug</span>
-                    <span>Sep</span>
-                    <span>Oct</span>
+                        <span class="punto rosa"></span>
+
+                        30 días
+
+                    </div>
+
+
+                    <div class="leyenda-item">
+
+                        <span class="punto azul"></span>
+
+                        Año
+
+                    </div>
+
 
                 </div>
 
@@ -1384,104 +2001,122 @@ a.ver1:hover {
 
 
         <!-- =================================================
-             BARRAS
+             GRÁFICO DE BARRAS
         ================================================== -->
 
         <article class="panel">
 
-            <div class="panel-titulo">
-                Top ventas
+            <div class="panel-cabecera">
+
+                <div>
+
+                    <div class="panel-titulo">
+                        Resumen de ventas
+                    </div>
+
+                    <div class="panel-subtitulo">
+                        Rendimiento por período
+                    </div>
+
+                </div>
+
+                <select class="filtro">
+
+                    <option>
+                        Ventas
+                    </option>
+
+                </select>
+
             </div>
 
 
-            <div class="barras">
+            <div class="grafico-barras">
 
 
-                <div class="barra-item">
+                <div class="columna">
 
-                    <div class="barra-numero">
-                        01
-                    </div>
+                    <div class="valor-barra">
 
-                    <div class="barra-contenedor">
-
-                        <div
-                            class="barra"
-                            style="width:92%"
-                        ></div>
+                        $<?php
+                        echo number_format(
+                            $valorDia,
+                            0
+                        );
+                        ?>
 
                     </div>
 
-                </div>
+                    <div class="barrita"></div>
 
-
-                <div class="barra-item">
-
-                    <div class="barra-numero">
-                        02
-                    </div>
-
-                    <div class="barra-contenedor">
-
-                        <div
-                            class="barra"
-                            style="width:78%"
-                        ></div>
-
+                    <div class="nombre-barra">
+                        Hoy
                     </div>
 
                 </div>
 
 
-                <div class="barra-item">
+                <div class="columna">
 
-                    <div class="barra-numero">
-                        03
-                    </div>
+                    <div class="valor-barra">
 
-                    <div class="barra-contenedor">
-
-                        <div
-                            class="barra"
-                            style="width:61%"
-                        ></div>
+                        $<?php
+                        echo number_format(
+                            $valorSemana,
+                            0
+                        );
+                        ?>
 
                     </div>
 
-                </div>
+                    <div class="barrita"></div>
 
-
-                <div class="barra-item">
-
-                    <div class="barra-numero">
-                        04
-                    </div>
-
-                    <div class="barra-contenedor">
-
-                        <div
-                            class="barra"
-                            style="width:50%"
-                        ></div>
-
+                    <div class="nombre-barra">
+                        7 días
                     </div>
 
                 </div>
 
 
-                <div class="barra-item">
+                <div class="columna">
 
-                    <div class="barra-numero">
-                        05
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorMes,
+                            0
+                        );
+                        ?>
+
                     </div>
 
-                    <div class="barra-contenedor">
+                    <div class="barrita"></div>
 
-                        <div
-                            class="barra"
-                            style="width:42%"
-                        ></div>
+                    <div class="nombre-barra">
+                        30 días
+                    </div>
 
+                </div>
+
+
+                <div class="columna">
+
+                    <div class="valor-barra">
+
+                        $<?php
+                        echo number_format(
+                            $valorAnio,
+                            0
+                        );
+                        ?>
+
+                    </div>
+
+                    <div class="barrita"></div>
+
+                    <div class="nombre-barra">
+                        Año
                     </div>
 
                 </div>
@@ -1580,7 +2215,7 @@ a.ver1:hover {
 
 
     <!-- =====================================================
-         HISTORIAL
+         HISTORIAL DE VENTAS
     ====================================================== -->
 
     <section class="historial">
@@ -1595,9 +2230,17 @@ a.ver1:hover {
                     ♡
                 </div>
 
-                <h2>
-                    Historial de ventas
-                </h2>
+                <div>
+
+                    <h2>
+                        Historial de ventas
+                    </h2>
+
+                    <div class="historial-descripcion">
+                        Últimas ventas registradas
+                    </div>
+
+                </div>
 
             </div>
 
@@ -1666,7 +2309,9 @@ a.ver1:hover {
 
 
                         echo "<td>";
-                        echo htmlspecialchars($fila["PEDIDOS_ID"]);
+                        echo htmlspecialchars(
+                            $fila["PEDIDOS_ID"]
+                        );
                         echo "</td>";
 
 
@@ -1674,7 +2319,9 @@ a.ver1:hover {
 
                         echo "<span class='estado'>";
 
-                        echo htmlspecialchars($fila["estado"]);
+                        echo htmlspecialchars(
+                            $fila["estado"]
+                        );
 
                         echo "</span>";
 
@@ -1683,7 +2330,9 @@ a.ver1:hover {
 
                         echo "<td>";
 
-                        echo htmlspecialchars($fila["metodo"]);
+                        echo htmlspecialchars(
+                            $fila["metodo"]
+                        );
 
                         echo "</td>";
 
@@ -1700,7 +2349,9 @@ a.ver1:hover {
 
                         echo "<td>";
 
-                        echo htmlspecialchars($fila["fecha"]);
+                        echo htmlspecialchars(
+                            $fila["fecha"]
+                        );
 
                         echo "</td>";
 
@@ -1709,7 +2360,9 @@ a.ver1:hover {
 
                         echo "<a
                                 class='ver1'
-                                href='readventas1.php?idpedidos=$idPedido'
+                                href='readventas1.php?idpedidos=" .
+                                urlencode($idPedido) .
+                                "'
                               >
                                 Mostrar
                               </a>";
