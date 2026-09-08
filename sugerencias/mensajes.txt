@@ -7,4 +7,9 @@
 2026-09-01 20:26:43 | fesd: fsdfsd
 2026-09-04 20:53:46 | sapito: ola omo estan todos me caen  muy bien
 2026-09-08 15:38:07 | Maria: q tal te va en la vida??
+<<<<<<< HEAD
 2026-09-08 16:39:32 | mxcmc,.: mclclmcccdcñ-lmdfs
+=======
+2026-09-08 15:48:22 | hjjdfgf: dewsfdre
+2026-09-08 16:35:04 | hfdhfhfd: fdgfdg
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb

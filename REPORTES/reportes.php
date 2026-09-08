@@ -1,95 +1,202 @@
 <?php
+
 session_start();
+
+/* =========================================================
+   CONEXIÓN A LA BASE DE DATOS
+========================================================= */
 
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
 
 if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// =========================================================
-// OBTENER ROL ACTUAL
-// =========================================================
 
-$rol = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
+/* =========================================================
+   VALIDAR SESIÓN
+========================================================= */
 
+if (!isset($_SESSION['rol'])) {
+    header("Location: ../SESIONES/loginform.php");
+    exit();
+}
 
-// =========================================================
-// CONSULTA DE VENTAS
-// =========================================================
+$rol = $_SESSION['rol'];
 
-if ($rol == 'administrador') {
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : '';
 
-    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
-            FROM VENTAS v 
-            INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID";
+/* =========================================================
+   CONSULTAR VENTAS
+========================================================= */
 
-} elseif ($rol == 'vendedor') {
+if ($rol == "administrador") {
 
-    $nombre = $_SESSION['nombre'];
+    /*
+       MOSTRAR TODAS LAS VENTAS
+       PERO SOLO DE PEDIDOS COMPLETADOS
 
-    $sql = "SELECT v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, p.fecha 
-            FROM VENTAS v 
-            INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID 
-            WHERE p.nombrevendedor = '$nombre'";
+       LAS VENTAS DE HOY APARECEN PRIMERO
+    */
+
+    $sql = "
+        SELECT 
+            v.id,
+            v.estado,
+            v.metodo,
+            v.costototal,
+            v.PEDIDOS_ID,
+            p.fecha
+        FROM VENTAS v
+        INNER JOIN PEDIDOS p
+            ON p.ID = v.PEDIDOS_ID
+        WHERE p.estado = 'Completado'
+        ORDER BY
+            DATE(p.fecha) = CURDATE() DESC,
+            p.fecha DESC
+    ";
+
+} elseif ($rol == "vendedor") {
+
+    /*
+       MOSTRAR SOLO LAS VENTAS DEL VENDEDOR
+       Y SOLO DE PEDIDOS COMPLETADOS
+
+       LAS VENTAS DE HOY APARECEN PRIMERO
+    */
+
+    $sql = "
+        SELECT 
+            v.id,
+            v.estado,
+            v.metodo,
+            v.costototal,
+            v.PEDIDOS_ID,
+            p.fecha
+        FROM VENTAS v
+        INNER JOIN PEDIDOS p
+            ON p.ID = v.PEDIDOS_ID
+        WHERE 
+            p.estado = 'Completado'
+            AND p.nombrevendedor = '$nombre'
+        ORDER BY
+            DATE(p.fecha) = CURDATE() DESC,
+            p.fecha DESC
+    ";
 
 } else {
 
-    $sql = "SELECT * FROM VENTAS WHERE 1=0";
-}
+    header("Location: ../SESIONES/loginform.php");
+    exit();
 
-$result = $conn->query($sql);
-
-
-// =========================================================
-// FUNCIÓN PARA OBTENER TOTALES
-// =========================================================
-
-function obtenerTotal($conn, $intervalo = null) {
-
-    if ($intervalo === 'HOY') {
-
-        $where = "WHERE p.fecha = CURDATE()";
-
-    } elseif ($intervalo) {
-
-        $where = "WHERE p.fecha >= DATE_SUB(CURDATE(), INTERVAL $intervalo)";
-
-    } else {
-
-        $where = "";
-    }
-
-    $query = "SELECT SUM(v.costototal) as total 
-              FROM VENTAS v 
-              INNER JOIN PEDIDOS p ON p.ID = v.PEDIDOS_ID $where";
-
-    $res = $conn->query($query)->fetch_assoc();
-
-    return $res['total'] ?? 0;
 }
 
 
-// =========================================================
-// TOTALES
-// =========================================================
-
-$totalventadia    = obtenerTotal($conn, 'HOY');
-$totalventasemana = obtenerTotal($conn, '7 DAY');
-$totalventames    = obtenerTotal($conn, '30 DAY');
-$totalventaanio   = obtenerTotal($conn, '365 DAY');
+$resultado = $conn->query($sql);
 
 
-// =========================================================
-// REGISTROS
-// =========================================================
+/* =========================================================
+   VENTAS DE HOY
+========================================================= */
 
-$totalRegistros = ($result) ? $result->num_rows : 0;
+$sqlHoy = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        DATE(p.fecha) = CURDATE()
+        AND p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlHoy .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoHoy = $conn->query($sqlHoy);
+$filaHoy = $resultadoHoy->fetch_assoc();
+
+$totalHoy = $filaHoy['total'] ?? 0;
+
+
+/* =========================================================
+   VENTAS ÚLTIMOS 7 DÍAS
+========================================================= */
+
+$sqlSemana = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        AND p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlSemana .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoSemana = $conn->query($sqlSemana);
+$filaSemana = $resultadoSemana->fetch_assoc();
+
+$totalSemana = $filaSemana['total'] ?? 0;
+
+
+/* =========================================================
+   VENTAS ÚLTIMOS 30 DÍAS
+========================================================= */
+
+$sqlMes = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE
+        p.fecha >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+        AND p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlMes .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoMes = $conn->query($sqlMes);
+$filaMes = $resultadoMes->fetch_assoc();
+
+$totalMes = $filaMes['total'] ?? 0;
+
+
+/* =========================================================
+   TOTAL GENERAL
+========================================================= */
+
+$sqlTotal = "
+    SELECT SUM(v.costototal) AS total
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE p.estado = 'Completado'
+";
+
+if ($rol == "vendedor") {
+    $sqlTotal .= " AND p.nombrevendedor = '$nombre'";
+}
+
+$resultadoTotal = $conn->query($sqlTotal);
+$filaTotal = $resultadoTotal->fetch_assoc();
+
+$totalGeneral = $filaTotal['total'] ?? 0;
 
 
 // =========================================================
@@ -142,6 +249,7 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -150,22 +258,17 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard de Ventas | DIVINE</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Ventas - DIVINE</title>
 
 <style>
 
 /* =========================================================
-   VARIABLES
+   COLORES DIVINE
 ========================================================= */
 
 :root {
 
+<<<<<<< HEAD
     --fondo: #f1fbfa;
 
     --fondo2: #e8f8f6;
@@ -195,44 +298,75 @@ $barraAnio   = ($valorAnio / $maxBarra) * 100;
     --borde: #d9efed;
 
     --sombra: 0 8px 30px rgba(39, 107, 105, .07);
+=======
+    --rosa: #b86f80;
+
+    --rosa-claro: #d9a6b2;
+
+    --rosa-palido: #f7e9ec;
+
+    --crema: #fffaf8;
+
+    --texto: #57494c;
+
+    --gris: #817679;
+
+    --borde: #e3c5cd;
+
+    --vino: #8f5362;
+
+    --vino-oscuro: #713d4d;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
 /* =========================================================
-   RESET
+   GENERAL
 ========================================================= */
 
 * {
 
     margin: 0;
+
     padding: 0;
+
     box-sizing: border-box;
 
 }
 
 
-/* =========================================================
-   BODY
-========================================================= */
-
 body {
+
+    font-family: Arial, sans-serif;
 
     min-height: 100vh;
 
     background:
+<<<<<<< HEAD
         radial-gradient(
             circle at 10% 10%,
             rgba(151, 225, 218, .25),
             transparent 28%
         ),
         var(--fondo);
+=======
+
+        linear-gradient(
+            rgba(255,250,248,0.88),
+            rgba(247,233,236,0.94)
+        ),
+
+        url("../imagenes/fondote.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-attachment: fixed;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     color: var(--texto);
-
-    font-family: 'DM Sans', sans-serif;
-
-    padding: 25px;
 
 }
 
@@ -243,19 +377,22 @@ body {
 
 .contenedor {
 
-    width: min(1250px, 100%);
+    width: 94%;
 
-    margin: auto;
+    max-width: 1250px;
+
+    margin: 40px auto;
 
 }
 
 
 /* =========================================================
-   CABECERA
+   ENCABEZADO
 ========================================================= */
 
-.cabecera {
+.encabezado {
 
+<<<<<<< HEAD
     display: flex;
 
     align-items: center;
@@ -664,16 +801,34 @@ body {
     align-items: center;
 
     margin-bottom: 14px;
+=======
+    background: rgba(255,250,248,0.94);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 25px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 10px 30px rgba(143,83,98,0.18);
+
+    margin-bottom: 25px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.panel-titulo {
+.encabezado h1 {
 
-    font-size: 11px;
+    color: var(--vino-oscuro);
 
-    font-weight: 700;
+    font-size: 35px;
 
+<<<<<<< HEAD
     color: var(--verde-oscuro);
 
 }
@@ -705,10 +860,14 @@ body {
     font-size: 8px;
 
     font-family: inherit;
+=======
+    margin-bottom: 8px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
+<<<<<<< HEAD
 /* =========================================================
    DONUT
 ========================================================= */
@@ -1012,55 +1171,92 @@ body {
         transform-origin: bottom;
 
     }
+=======
+.encabezado p {
+
+    color: var(--gris);
+
+    font-size: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
 /* =========================================================
+<<<<<<< HEAD
    RESUMEN
+=======
+   TARJETAS DE RESUMEN
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 ========================================================= */
 
 .resumen {
 
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        repeat(4, 1fr);
 
     gap: 16px;
 
+<<<<<<< HEAD
     margin-bottom: 16px;
+=======
+    margin-bottom: 25px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.resumen-card {
+.tarjeta {
+
+    background: rgba(255,250,248,0.94);
 
     background: white;
 
     border: 1px solid var(--borde);
 
+<<<<<<< HEAD
     border-radius: 16px;
 
     padding: 16px;
 
     box-shadow: var(--sombra);
+=======
+    border-radius: 22px;
+
+    padding: 23px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 20px rgba(143,83,98,0.12);
+
+    transition: 0.3s;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.resumen-header {
+.tarjeta:hover {
 
-    display: flex;
+    transform: translateY(-5px);
 
+<<<<<<< HEAD
     align-items: center;
+=======
+    box-shadow:
+        0 12px 25px rgba(143,83,98,0.20);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     justify-content: space-between;
 
 }
 
 
-.resumen-header span {
+.tarjeta .icono {
 
+<<<<<<< HEAD
     font-size: 9px;
 
     color: var(--texto2);
@@ -1068,23 +1264,37 @@ body {
     text-transform: uppercase;
 
     font-weight: 700;
+=======
+    font-size: 28px;
+
+    margin-bottom: 8px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.resumen-header strong {
+.tarjeta h3 {
 
+<<<<<<< HEAD
     font-size: 17px;
 
     color: var(--verde-oscuro);
+=======
+    color: var(--vino);
+
+    font-size: 15px;
+
+    margin-bottom: 7px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.progreso {
+.tarjeta .monto {
 
-    width: 100%;
+    color: var(--vino-oscuro);
 
+<<<<<<< HEAD
     height: 7px;
 
     background: #edf7f6;
@@ -1229,6 +1439,11 @@ body {
     font-size: 8px;
 
     font-weight: 700;
+=======
+    font-size: 23px;
+
+    font-weight: bold;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
@@ -1237,23 +1452,73 @@ body {
    TABLA
 ========================================================= */
 
-.tabla-scroll {
+.contenedor-tabla {
+
+    background: rgba(255,250,248,0.96);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 25px;
+
+    padding: 25px;
+
+    box-shadow:
+        0 10px 30px rgba(143,83,98,0.15);
 
     overflow-x: auto;
 
 }
 
 
-#tabla-ingresos {
+.titulo-tabla {
 
-    width: 100%;
+    display: flex;
 
-    min-width: 720px;
+    justify-content: space-between;
 
-    border-collapse: collapse;
+    align-items: center;
+
+    margin-bottom: 20px;
 
 }
 
+
+.titulo-tabla h2 {
+
+    color: var(--vino-oscuro);
+
+    font-size: 24px;
+
+}
+
+
+.titulo-tabla span {
+
+    color: var(--gris);
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   TABLA
+========================================================= */
+
+table {
+
+    width: 100%;
+
+<<<<<<< HEAD
+    min-width: 720px;
+
+=======
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+    border-collapse: collapse;
+
+    overflow: hidden;
+
+<<<<<<< HEAD
 
 #tabla-ingresos th {
 
@@ -1270,12 +1535,16 @@ body {
     letter-spacing: .8px;
 
     border-bottom: 1px solid #eaf3f2;
+=======
+    border-radius: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-#tabla-ingresos td {
+thead {
 
+<<<<<<< HEAD
     padding: 12px 11px;
 
     border-bottom: 1px solid #f0f6f5;
@@ -1408,74 +1677,251 @@ a.ver1::after {
 a.ver1:hover {
 
     background: var(--verde-oscuro);
+=======
+    background: var(--vino);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     color: white;
 
 }
 
 
-/* =========================================================
-   SIN RESULTADOS
-========================================================= */
+th {
 
-.zzz {
+    padding: 15px 12px;
 
-    text-align: center !important;
+    font-size: 14px;
 
+<<<<<<< HEAD
     padding: 40px !important;
 
     color: #91a2a3 !important;
+=======
+    text-align: center;
 
-    font-style: italic;
+}
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+
+td {
+
+    padding: 14px 12px;
+
+    text-align: center;
+
+    border-bottom: 1px solid var(--borde);
+
+    font-size: 14px;
+
+}
+
+
+tbody tr {
+
+    transition: 0.2s;
+
+}
+
+
+tbody tr:hover {
+
+    background: var(--rosa-palido);
 
 }
 
 
 /* =========================================================
-   ANIMACIONES
+   ESTADOS
 ========================================================= */
 
-.card {
+.estado {
 
+<<<<<<< HEAD
     animation: aparecer .5s ease both;
+=======
+    display: inline-block;
+
+    padding: 6px 13px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 }
 
 
-.card:nth-child(1) {
-    animation-delay: .05s;
-}
+.estado-completado {
 
-.card:nth-child(2) {
-    animation-delay: .10s;
-}
+    background: #ead8de;
 
-.card:nth-child(3) {
-    animation-delay: .15s;
-}
+    color: var(--vino-oscuro);
 
-.card:nth-child(4) {
-    animation-delay: .20s;
 }
 
 
-@keyframes aparecer {
+.estado-pendiente {
 
-    from {
+    background: #f5e8c8;
 
-        opacity: 0;
+    color: #856d35;
 
+<<<<<<< HEAD
         transform: translateY(12px);
+=======
+}
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-    }
 
-    to {
+.estado-cancelado {
 
-        opacity: 1;
+    background: #f1d4d4;
 
-        transform: translateY(0);
+    color: #9b4b4b;
 
-    }
+}
+
+
+/* =========================================================
+   SEPARADORES DE HOY
+========================================================= */
+
+.separador-ventas td {
+
+    padding: 0;
+
+    border: none;
+
+}
+
+
+.separador-contenido {
+
+    margin: 20px 0;
+
+    padding: 15px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            var(--rosa-palido),
+            #fff
+        );
+
+    border:
+
+        1px solid var(--rosa-claro);
+
+    border-radius: 15px;
+
+    color: var(--vino-oscuro);
+
+    font-weight: bold;
+
+    font-size: 16px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.separador-otras td {
+
+    padding-top: 25px;
+
+}
+
+
+.separador-otras .separador-contenido {
+
+    background: #f8f1f2;
+
+    color: var(--gris);
+
+    border-color: var(--borde);
+
+}
+
+
+/* =========================================================
+   VENTA DE HOY
+========================================================= */
+
+.venta-hoy {
+
+    background: rgba(247,233,236,0.45);
+
+}
+
+
+/* =========================================================
+   SIN VENTAS
+========================================================= */
+
+.sin-ventas {
+
+    padding: 45px;
+
+    text-align: center;
+
+    color: var(--gris);
+
+}
+
+
+.sin-ventas .emoji {
+
+    font-size: 45px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.sin-ventas h3 {
+
+    color: var(--vino);
+
+    margin-bottom: 5px;
+
+}
+
+
+/* =========================================================
+   BOTÓN VOLVER
+========================================================= */
+
+.volver {
+
+    display: inline-block;
+
+    margin-top: 20px;
+
+    padding: 12px 25px;
+
+    background: var(--vino);
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+    transition: 0.3s;
+
+}
+
+
+.volver:hover {
+
+    background: var(--vino-oscuro);
+
+    transform: translateY(-2px);
 
 }
 
@@ -1484,27 +1930,31 @@ a.ver1:hover {
    RESPONSIVE
 ========================================================= */
 
+<<<<<<< HEAD
 @media(max-width: 950px) {
+=======
+@media (max-width: 900px) {
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-    .estadisticas {
+    .resumen {
 
-        grid-template-columns: repeat(2, 1fr);
-
-    }
-
-    .graficas {
-
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(2, 1fr);
 
     }
 
 }
 
 
+<<<<<<< HEAD
 @media(max-width: 650px) {
+=======
+@media (max-width: 600px) {
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-    body {
+    .contenedor {
 
+<<<<<<< HEAD
         padding: 13px;
 
     }
@@ -1582,6 +2032,14 @@ a.ver1:hover {
         justify-content: center;
 
     }
+=======
+        width: 96%;
+
+        margin: 20px auto;
+
+    }
+
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     .resumen {
 
@@ -1589,9 +2047,21 @@ a.ver1:hover {
 
     }
 
+<<<<<<< HEAD
 }
+=======
 
+    .encabezado h1 {
 
+        font-size: 27px;
+
+    }
+
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
+
+    .contenedor-tabla {
+
+<<<<<<< HEAD
 @media(max-width: 400px) {
 
     .estadisticas {
@@ -1611,6 +2081,9 @@ a.ver1:hover {
         width: 35px;
 
         height: 35px;
+=======
+        padding: 15px;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
     }
 
@@ -1623,15 +2096,17 @@ a.ver1:hover {
 
 <body>
 
+
 <div class="contenedor">
 
 
     <!-- =====================================================
-         CABECERA
+         ENCABEZADO
     ====================================================== -->
 
-    <header class="cabecera">
+    <div class="encabezado">
 
+<<<<<<< HEAD
         <div class="izquierda-cabecera">
 
             <div class="menu-icono">
@@ -2128,102 +2603,103 @@ a.ver1:hover {
 
 
     </section>
+=======
+        <h1>💗 Historial de Ventas</h1>
+
+        <p>
+            Consulta y supervisa las ventas registradas en DIVINE
+        </p>
+
+    </div>
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
     <!-- =====================================================
          RESUMEN
     ====================================================== -->
 
-    <section class="resumen">
+    <div class="resumen">
 
 
-        <article class="resumen-card">
+        <div class="tarjeta">
 
-            <div class="resumen-header">
-
-                <span>
-                    Rendimiento mensual
-                </span>
-
-                <strong>
-                    $<?php echo number_format($totalventames, 2); ?>
-                </strong>
-
+            <div class="icono">
+                🌸
             </div>
 
+            <h3>Ventas de hoy</h3>
 
-            <div class="progreso">
-
-                <span style="width:75%;"></span>
-
+            <div class="monto">
+                Bs <?= number_format($totalHoy, 2) ?>
             </div>
 
+        </div>
 
-            <div class="resumen-info">
 
-                <span>
-                    Últimos 30 días
-                </span>
+        <div class="tarjeta">
 
-                <span>
-                    Ventas
-                </span>
-
+            <div class="icono">
+                📅
             </div>
 
-        </article>
+            <h3>Últimos 7 días</h3>
 
-
-        <article class="resumen-card">
-
-            <div class="resumen-header">
-
-                <span>
-                    Rendimiento anual
-                </span>
-
-                <strong>
-                    $<?php echo number_format($totalventaanio, 2); ?>
-                </strong>
-
+            <div class="monto">
+                Bs <?= number_format($totalSemana, 2) ?>
             </div>
 
+        </div>
 
-            <div class="progreso">
 
-                <span style="width:65%;"></span>
+        <div class="tarjeta">
 
+            <div class="icono">
+                💕
             </div>
 
+            <h3>Últimos 30 días</h3>
 
-            <div class="resumen-info">
-
-                <span>
-                    Últimos 365 días
-                </span>
-
-                <span>
-                    Total acumulado
-                </span>
-
+            <div class="monto">
+                Bs <?= number_format($totalMes, 2) ?>
             </div>
 
-        </article>
+        </div>
 
 
-    </section>
+        <div class="tarjeta">
+
+            <div class="icono">
+                ✨
+            </div>
+
+            <h3>Total general</h3>
+
+            <div class="monto">
+                Bs <?= number_format($totalGeneral, 2) ?>
+            </div>
+
+        </div>
+
+
+    </div>
 
 
     <!-- =====================================================
+<<<<<<< HEAD
          HISTORIAL DE VENTAS
+=======
+         TABLA DE VENTAS
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
     ====================================================== -->
 
-    <section class="historial">
+    <div class="contenedor-tabla">
 
 
-        <div class="historial-cabecera">
+        <div class="titulo-tabla">
 
+            <h2>✨ Ventas registradas</h2>
 
+<<<<<<< HEAD
             <div class="historial-titulo">
 
                 <div class="historial-icono">
@@ -2251,111 +2727,157 @@ a.ver1:hover {
 
             </div>
 
+=======
+            <span>
+                Solo pedidos completados
+            </span>
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
         </div>
 
 
-        <div class="tabla-scroll">
+        <?php if ($resultado && $resultado->num_rows > 0): ?>
 
 
-            <table id="tabla-ingresos">
+        <table>
 
 
-                <thead>
+            <thead>
 
-                    <tr>
+                <tr>
 
-                        <th>
-                            ID Pedido
-                        </th>
+                    <th>ID Venta</th>
 
-                        <th>
-                            Estado
-                        </th>
+                    <th>Pedido</th>
 
-                        <th>
-                            Método
-                        </th>
+                    <th>Fecha</th>
 
-                        <th>
-                            Costo Total
-                        </th>
+                    <th>Método</th>
 
-                        <th>
-                            Fecha
-                        </th>
+                    <th>Estado</th>
 
-                        <th>
-                            Acción
-                        </th>
+                    <th>Total</th>
 
-                    </tr>
+                </tr>
 
-                </thead>
+            </thead>
 
 
-                <tbody>
+            <tbody>
 
 
-                <?php
+            <?php
 
-                if ($result && $result->num_rows > 0) {
+            $fechaHoy = date('Y-m-d');
 
-                    while($fila = $result->fetch_assoc()) {
+            $mostroHoy = false;
 
-                        $idPedido = $fila["PEDIDOS_ID"];
-
-                        echo "<tr>";
+            $mostroOtras = false;
 
 
+<<<<<<< HEAD
                         echo "<td>";
                         echo htmlspecialchars(
                             $fila["PEDIDOS_ID"]
                         );
                         echo "</td>";
+=======
+            while ($fila = $resultado->fetch_assoc()):
+
+                $fechaVenta = date(
+                    'Y-m-d',
+                    strtotime($fila['fecha'])
+                );
+
+                $esHoy = ($fechaVenta == $fechaHoy);
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
-                        echo "<td>";
+                /*
+                   SI ES LA PRIMERA VENTA DE HOY,
+                   MOSTRAR EL SEPARADOR
+                */
 
-                        echo "<span class='estado'>";
+                if ($esHoy && !$mostroHoy):
 
+<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["estado"]
                         );
+=======
+                    $mostroHoy = true;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-                        echo "</span>";
+            ?>
 
-                        echo "</td>";
+                <tr class="separador-ventas">
+
+                    <td colspan="6">
+
+                        <div class="separador-contenido">
+
+                            ✨ VENTAS DE HOY ✨
+
+                        </div>
+
+                    </td>
+
+                </tr>
 
 
-                        echo "<td>";
+            <?php
 
+<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["metodo"]
                         );
 
                         echo "</td>";
+=======
+                endif;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
-                        echo "<td class='precio'>";
+                /*
+                   SI YA PASAMOS DE HOY
+                   MOSTRAR SEPARADOR DE OTRAS VENTAS
+                */
 
-                        echo "$" . number_format(
-                            $fila["costototal"],
-                            2
-                        );
+                if (!$esHoy && !$mostroOtras):
 
-                        echo "</td>";
+                    $mostroOtras = true;
+
+            ?>
+
+                <tr class="separador-otras">
+
+                    <td colspan="6">
+
+                        <div class="separador-contenido">
+
+                            📋 OTRAS VENTAS
+
+                        </div>
+
+                    </td>
+
+                </tr>
 
 
-                        echo "<td>";
+            <?php
 
+<<<<<<< HEAD
                         echo htmlspecialchars(
                             $fila["fecha"]
                         );
+=======
+                endif;
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
-                        echo "</td>";
+            ?>
 
 
+<<<<<<< HEAD
                         echo "<td>";
 
                         echo "<a
@@ -2368,49 +2890,189 @@ a.ver1:hover {
                               </a>";
 
                         echo "</td>";
+=======
+                <tr class="<?= $esHoy ? 'venta-hoy' : '' ?>">
+>>>>>>> 8f4f1ca673cd41e748a3fd3e63bca944517369fb
 
 
-                        echo "</tr>";
+                    <!-- ID VENTA -->
 
-                    }
+                    <td>
 
-                } else {
+                        <strong>
+                            #<?= htmlspecialchars($fila['id']) ?>
+                        </strong>
 
-                    echo "
+                    </td>
 
-                    <tr>
 
-                        <td
-                            colspan='6'
-                            class='zzz'
+                    <!-- PEDIDO -->
+
+                    <td>
+
+                        #<?= htmlspecialchars($fila['PEDIDOS_ID']) ?>
+
+                    </td>
+
+
+                    <!-- FECHA -->
+
+                    <td>
+
+                        <?= date(
+                            'd/m/Y H:i',
+                            strtotime($fila['fecha'])
+                        ) ?>
+
+                        <?php if ($esHoy): ?>
+
+                            <br>
+
+                            <small
+                                style="
+                                color:var(--vino);
+                                font-weight:bold;
+                                "
+                            >
+                                HOY 💗
+                            </small>
+
+                        <?php endif; ?>
+
+                    </td>
+
+
+                    <!-- MÉTODO -->
+
+                    <td>
+
+                        <?= htmlspecialchars(
+                            $fila['metodo']
+                        ) ?>
+
+                    </td>
+
+
+                    <!-- ESTADO -->
+
+                    <td>
+
+
+                        <?php
+
+                        $estado = $fila['estado'];
+
+                        if (
+                            strtolower($estado)
+                            == 'completado'
+                        ) {
+
+                            echo '<span class="estado estado-completado">
+                                    ✓ Completado
+                                  </span>';
+
+                        } elseif (
+                            strtolower($estado)
+                            == 'pendiente'
+                        ) {
+
+                            echo '<span class="estado estado-pendiente">
+                                    ⏳ Pendiente
+                                  </span>';
+
+                        } else {
+
+                            echo '<span class="estado estado-cancelado">
+                                    ' .
+                                    htmlspecialchars($estado)
+                                    .
+                                  '</span>';
+
+                        }
+
+                        ?>
+
+
+                    </td>
+
+
+                    <!-- TOTAL -->
+
+                    <td>
+
+                        <strong
+                            style="
+                            color:var(--vino-oscuro);
+                            "
                         >
 
-                            No hay pedidos registrados
+                            Bs
+                            <?= number_format(
+                                $fila['costototal'],
+                                2
+                            ) ?>
 
-                        </td>
+                        </strong>
 
-                    </tr>
-
-                    ";
-
-                }
-
-                ?>
+                    </td>
 
 
-                </tbody>
-
-            </table>
+                </tr>
 
 
-        </div>
+            <?php endwhile; ?>
 
 
-    </section>
+            </tbody>
+
+
+        </table>
+
+
+        <?php else: ?>
+
+
+            <div class="sin-ventas">
+
+                <div class="emoji">
+                    🌸
+                </div>
+
+                <h3>
+                    No hay ventas registradas
+                </h3>
+
+                <p>
+                    Todavía no existen ventas asociadas
+                    a pedidos completados.
+                </p>
+
+            </div>
+
+
+        <?php endif; ?>
+
+
+        <a
+            href="../REPORTES/reportes.php"
+            class="volver"
+        >
+            ← Volver a reportes
+        </a>
+
+
+    </div>
 
 
 </div>
 
+
 </body>
 
 </html>
+
+<?php
+
+$conn->close();
+
+?>
