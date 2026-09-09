@@ -27,7 +27,7 @@ if ($conn->connect_error) {
    CONSULTAR PRODUCTOS SKINCARE
 ================================================== */
 
-$sql = "SELECT * FROM producto WHERE categoria='SkinCare'";
+$sql = "SELECT * FROM producto WHERE categoria='SkinHair'";
 
 $resultado = $conn->query($sql);
 
