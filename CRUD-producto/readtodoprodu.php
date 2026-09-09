@@ -1401,104 +1401,48 @@ if (
     =========================================== -->
 
     <div class="volver">
-
-
         <a
-
             href="javascript:history.back()"
-
             class="btn-volver"
-
         >
-
             ← Volver atrás
-
         </a>
-
-
         <a
-
             href="formularioprodu.php"
-
             class="btn-registrar"
-
         >
-
             ＋ Registrar producto
-
         </a>
-
-
     </div>
-
-
 </div>
-
-
-<!-- ==========================================
-     JAVASCRIPT ELIMINAR
-========================================== -->
-
+/*javascript eliminar*/
 <script>
-
-
 function confirmarEliminacion(codigo) {
-
-
     Swal.fire({
-
         title: "¿Eliminar producto?",
-
         text: "Esta acción no se puede deshacer.",
-
         icon: "warning",
-
         showCancelButton: true,
-
         confirmButtonColor: "#a65b71",
-
         cancelButtonColor: "#532e4e",
-
         confirmButtonText: "Sí, eliminar",
-
         cancelButtonText: "Cancelar",
-
         reverseButtons: true
-
     }).then((result) => {
-
-
         if (
-
             result.isConfirmed
-
         ) {
-
-
             window.location.href =
 
                 "deleteprodu.php?codigo=" +
 
                 encodeURIComponent(codigo);
-
-
         }
-
     });
-
 }
-
 </script>
-
-
 </body>
-
 </html>
-
-
 <?php
-
-
 $conn->close();
-
 ?>
