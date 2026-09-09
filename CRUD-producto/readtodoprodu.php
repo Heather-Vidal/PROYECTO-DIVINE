@@ -1439,7 +1439,29 @@ function confirmarEliminacion(codigo) {
                 encodeURIComponent(codigo);
         }
     });
-}
+};
+<?php
+   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 3";
+   $resultadoBajos = $conn->query($bajos);
+   $arrayBajos = [];
+   while ($filaBajos = $resultadoBajos->fetch_assoc()) {
+       $arrayBajos[] = $filaBajos['nombre'];
+   }
+    if (count($arrayBajos) > 0) {
+        $nombresBajos = implode(", ", $arrayBajos);
+        echo "window.onload = function() {
+            Swal.fire({
+                title: '¡Atención!',
+                html: 'Los siguientes productos tienen stock bajo: <br><strong>$nombresBajos</strong>',
+                icon: 'warning',
+                confirmButtonColor: '#a65b71',
+                confirmButtonText: 'Aceptar'
+            });
+        };";
+    }
+
+?>
+
 </script>
 </body>
 </html>
