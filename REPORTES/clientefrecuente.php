@@ -6,11 +6,12 @@ if ($conexion->connect_error) {
 }
 
 $sql = "SELECT
-            pedidos.nombre,
-            COUNT(pedidos.ID) AS cantidad_pedidos
-        FROM pedidos
-        GROUP BY pedidos.nombre
-        ORDER BY cantidad_pedidos DESC";
+    pedidos.nombre,
+    COUNT(pedidos.ID) AS cantidad_pedidos
+FROM pedidos
+WHERE pedidos.estado = 'Aceptado'
+GROUP BY pedidos.nombre
+ORDER BY cantidad_pedidos DESC";
 
 $resultado = $conexion->query($sql);
 

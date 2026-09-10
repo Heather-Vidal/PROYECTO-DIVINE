@@ -262,11 +262,9 @@ font-size:24px;
 
 <option value="pendiente" <?= ($estado == 'pendiente') ? 'selected' : '' ?>>Pendiente</option>
 
-<option value="proceso" <?= ($estado == 'proceso') ? 'selected' : '' ?>>En proceso</option>
-
 <option value="rechazado" <?= ($estado == 'rechazado') ? 'selected' : '' ?>>Rechazado</option>
 
-<option value="completado" <?= ($estado == 'completado') ? 'selected' : '' ?>>Completado</option>
+<option value="completado" <?= ($estado == 'completado') ? 'selected' : '' ?>>Aceptado</option>
 
 </select>
 
