@@ -574,14 +574,6 @@ $archivo = 'mensajes.txt';
         font-size: 14px;
       }
     }
-<<<<<<< HEAD
-
-  </style>
-</head>
-
-<body>
-
-=======
     /* ESTILOS PERSONALIZADOS PARA SWEETALERT2 */
 .alerta-personalizada {
   border: 1px solid rgba(218, 174, 193, 0.5) !important;
@@ -622,35 +614,11 @@ $archivo = 'mensajes.txt';
  
 <body> 
 <script>
->>>>>>> de3cdec8c3b49e42a70d9b25227d089d9f12254f
 <?php
 
 if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
 
 ?>
-<<<<<<< HEAD
-
-<script>
-
-Swal.fire({
-
-    icon: 'success',
-
-    title: '¡Comentario guardado!',
-
-    text: 'Tu comentario se guardó correctamente.',
-
-    confirmButtonText: 'Aceptar',
-
-    confirmButtonColor: '#c98da8',
-
-    background: '#fffafd',
-
-    color: '#684957'
-
-});
-
-=======
     Swal.fire({
         title: '¡Comentario guardado!',
         text: 'Tu comentario se guardó correctamente.',
@@ -670,12 +638,11 @@ Swal.fire({
 <?php
 }
 ?>
->>>>>>> de3cdec8c3b49e42a70d9b25227d089d9f12254f
 </script>
 
 <?php
 
-}
+
 
 ?>
 

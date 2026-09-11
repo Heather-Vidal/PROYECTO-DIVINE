@@ -13,8 +13,56 @@ session_start();
 
 $conn = new mysqli("localhost", "root", "", "DIVINE");
 
+/* ==================================================
+   SWEETALERT PARA ERRORES
+   Todos los errores de este pedido se muestran
+   de forma visual y no con mensajes PHP simples.
+================================================== */
+
+function mostrarErrorPedido($titulo, $mensaje)
+{
+    $tituloJS = json_encode($titulo, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $mensajeJS = json_encode($mensaje, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+    echo '<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIVINE | Error</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<script>
+Swal.fire({
+    icon: "error",
+    title: ' . $tituloJS . ',
+    text: ' . $mensajeJS . ',
+    confirmButtonText: "Entendido",
+    confirmButtonColor: "#8f5362",
+    background: "#fffaf8",
+    color: "#57494c",
+    allowOutsideClick: false,
+    allowEscapeKey: true
+}).then(function() {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        window.location.href = "../totu.php";
+    }
+});
+</script>
+</body>
+</html>';
+    exit();
+}
+
+
 if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+    mostrarErrorPedido(
+        "Error de conexión",
+        "No se pudo conectar con la base de datos. Intenta nuevamente."
+    );
 }
 
 
@@ -22,10 +70,13 @@ if ($conn->connect_error) {
    OBTENER ID DEL PEDIDO
 ================================================== */
 
-$id_pedido = $_GET['idPedido'] ?? null;
+$id_pedido = filter_input(INPUT_GET, 'idPedido', FILTER_VALIDATE_INT);
 
 if (!$id_pedido) {
-    die("No llegó el id del pedido");
+    mostrarErrorPedido(
+        "Pedido no encontrado",
+        "No llegó un ID de pedido válido. Verifica el enlace e inténtalo nuevamente."
+    );
 }
 
 
@@ -40,11 +91,17 @@ $sqlPedido = "SELECT *
 $resultadoPedido = $conn->query($sqlPedido);
 
 if (!$resultadoPedido) {
-    die("Error al consultar el pedido");
+    mostrarErrorPedido(
+        "Error al consultar el pedido",
+        "No fue posible obtener la información del pedido. Intenta nuevamente."
+    );
 }
 
 if ($resultadoPedido->num_rows == 0) {
-    die("El pedido no existe");
+    mostrarErrorPedido(
+        "Pedido inexistente",
+        "El pedido solicitado no existe o ya no está disponible."
+    );
 }
 
 $pedido = $resultadoPedido->fetch_assoc();
@@ -71,6 +128,13 @@ $sqlProductos = "SELECT
 
 
 $resultadoProductos = $conn->query($sqlProductos);
+
+if (!$resultadoProductos) {
+    mostrarErrorPedido(
+        "Error al cargar los productos",
+        "No fue posible obtener los productos asociados a este pedido. Intenta nuevamente."
+    );
+}
 
 
 /* ==================================================
