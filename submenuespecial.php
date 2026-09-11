@@ -67,7 +67,6 @@ nav{
     padding:15px 20px;
     font-size:20px;
     transition:.3s;
-
     border-radius:10px;
 
 }
@@ -709,6 +708,8 @@ nav{
 
             </li>
 
+
+
             <li>
 
                 <a href="#ofertas">
@@ -718,6 +719,8 @@ nav{
                 </a>
 
             </li>
+
+
 
             <li>
 
@@ -729,15 +732,25 @@ nav{
 
             </li>
 
-            </li>
-            <a href="CONSULTA-pedido/formreadpedido.php">
-                    Mis Pedidos
-                </a>
+
+
             <li>
+
+                <a href="./CONSULTA-pedido/formreadpedido.php">
+
+                    Consulta 
+
+                </a>
+
+            </li>
+
 
         </ul>
 
+
     </nav>
+
+
 
     <!-- ==================================================
          ICONOS
@@ -758,6 +771,26 @@ nav{
  
 <img   src="./imagenes/lupa-removebg-preview.png" alt="Buscar" >
 </button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             </div>

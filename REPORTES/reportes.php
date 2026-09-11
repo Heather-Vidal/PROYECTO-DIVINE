@@ -68,17 +68,13 @@ $sql = "
         v.fecha DESC,
         v.id DESC
 ";
-
 $resultado = $conn->query($sql);
-
 if (!$resultado) {
     die("Error al consultar las ventas: " . $conn->error);
 }
-
 /* =========================================================
    DATOS DE LAS VENTAS DE HOY
    ========================================================= */
-
 $sqlHoy = "
     SELECT
         COUNT(v.id) AS cantidad,
@@ -89,21 +85,16 @@ $sqlHoy = "
     WHERE p.estado = 'Aceptado'
       AND DATE(v.fecha) = CURDATE()
 ";
-
 $resultadoHoy = $conn->query($sqlHoy);
-
 if (!$resultadoHoy) {
     die("Error al calcular las ventas de hoy: " . $conn->error);
 }
-
 $filaHoy = $resultadoHoy->fetch_assoc();
 $cantidadHoy = isset($filaHoy['cantidad']) ? (int)$filaHoy['cantidad'] : 0;
 $totalHoy = isset($filaHoy['total']) ? (float)$filaHoy['total'] : 0;
-
 /* =========================================================
    TOTAL GENERAL
    ========================================================= */
-
 $sqlTotal = "
     SELECT
         COUNT(v.id) AS cantidad,
@@ -113,21 +104,16 @@ $sqlTotal = "
         ON p.ID = v.PEDIDOS_ID
     WHERE p.estado = 'Aceptado'
 ";
-
 $resultadoTotal = $conn->query($sqlTotal);
-
 if (!$resultadoTotal) {
     die("Error al calcular el total general: " . $conn->error);
 }
-
 $filaTotal = $resultadoTotal->fetch_assoc();
 $cantidadTotal = isset($filaTotal['cantidad']) ? (int)$filaTotal['cantidad'] : 0;
 $totalGeneral = isset($filaTotal['total']) ? (float)$filaTotal['total'] : 0;
-
 /* =========================================================
    TOTAL ÚLTIMOS 7 DÍAS
    ========================================================= */
-
 $sqlSemana = "
     SELECT
         COALESCE(SUM(v.costototal), 0) AS total
@@ -138,20 +124,15 @@ $sqlSemana = "
       AND DATE(v.fecha) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
       AND DATE(v.fecha) <= CURDATE()
 ";
-
 $resultadoSemana = $conn->query($sqlSemana);
-
 if (!$resultadoSemana) {
     die("Error al calcular las ventas de los últimos 7 días: " . $conn->error);
 }
-
 $filaSemana = $resultadoSemana->fetch_assoc();
 $totalSemana = isset($filaSemana['total']) ? (float)$filaSemana['total'] : 0;
-
 /* =========================================================
    TOTAL ÚLTIMOS 30 DÍAS
    ========================================================= */
-
 $sqlMes = "
     SELECT
         COALESCE(SUM(v.costototal), 0) AS total
