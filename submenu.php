@@ -329,7 +329,7 @@ nav{
             </li>
         
             <li>
-                <a href="../CONSULTA-pedido/formreadpedido.php">
+                <a href="CONSULTA-pedido/formreadpedido.php">
                     mis pedidos 
                 </a>
             </li>
