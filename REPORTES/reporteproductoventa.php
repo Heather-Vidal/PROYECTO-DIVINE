@@ -36,6 +36,11 @@ $sql = "SELECT
         WHERE MONTH(pe.fecha) = MONTH(CURDATE())
         AND YEAR(pe.fecha) = YEAR(CURDATE())
         GROUP BY p.codigo, p.nombre
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
         ORDER BY total_vendido DESC";
 
 $resultado = $conn->query($sql);
@@ -66,18 +71,32 @@ $sqlStock = "SELECT
                 codigo,
                 nombre,
                 stock
+
             FROM PRODUCTO
+
             WHERE stock <= 5
+
             ORDER BY stock ASC";
 
+<<<<<<< HEAD
+
+$resultadoStock = $conn->query($sqlStock);
+=======
 $resultadoStock =
     $conn->query($sqlStock);
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 $nombresStock = [];
 $cantidadesStock = [];
 
 if ($resultadoStock) {
 
+<<<<<<< HEAD
+    while ($fila = $resultadoStock->fetch_assoc()) {
+
+        $nombresStock[] = $fila["nombre"];
+        $cantidadesStock[] = $fila["stock"];
+=======
     while ($fila =
         $resultadoStock->fetch_assoc()) {
 
@@ -86,6 +105,7 @@ if ($resultadoStock) {
 
         $cantidadesStock[] =
             (int)$fila["stock"];
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
     }
 
@@ -162,14 +182,80 @@ $cantidadTop =
 <html lang="es">
 
 <head>
+<<<<<<< HEAD
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>Ventas e Inventario</title>
+
+
+    <style>
+=======
 
 <meta charset="UTF-8">
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
 
+<<<<<<< HEAD
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            background: linear-gradient(
+                135deg,
+                #fff5f7,
+                #f8dfe5
+            );
+
+            padding: 30px;
+        }
+
+        .contenedor {
+
+            width: 800px;
+            max-width: 95%;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 35px rgba(191, 116, 133, 0.20);
+
+            border: 1px solid #f1d1d9;
+
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            text-align: center;
+
+            color: #bf7485;
+
+            margin-bottom: 30px;
+
+            font-size: 28px;
+        }
+
+        .grafico {
+
+            width: 100%;
+            height: 400px;
+=======
 <title>
     DIVINE | Dashboard
 </title>
@@ -181,6 +267,7 @@ $cantidadTop =
 <link rel="preconnect"
       href="https://fonts.gstatic.com"
       crossorigin>
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
@@ -1856,10 +1943,48 @@ body {
 
 <body>
 
+<<<<<<< HEAD
+
+    <!-- =====================================================
+         PRODUCTO MÁS VENDIDO DEL MES
+         ===================================================== -->
+=======
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <div class="dashboard">
 
 
+<<<<<<< HEAD
+        <div class="grafico">
+
+            <canvas id="graficoVentas"></canvas>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PRODUCTOS CON BAJO STOCK
+         ===================================================== -->
+
+    <div class="contenedor">
+
+        <h2>Productos con bajo stock</h2>
+
+        <div class="grafico">
+
+            <canvas id="graficoStock"></canvas>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+=======
 <!-- =====================================================
      HEADER
      ===================================================== -->
@@ -1907,6 +2032,7 @@ body {
 
 
 </header>
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 
 
@@ -1919,6 +2045,43 @@ body {
 
     <div class="hero-left">
 
+<<<<<<< HEAD
+            type: 'bar',
+
+            data: {
+
+                labels: nombres,
+
+                datasets: [{
+
+                    label: 'Cantidad de productos vendidos',
+
+                    data: veces,
+
+                    backgroundColor: '#c96f84',
+
+                    borderColor: '#b45d72',
+
+                    borderWidth: 1,
+
+                    borderRadius: 8
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+=======
 
         <small>
             Dashboard · Analytics
@@ -2704,11 +2867,31 @@ new Chart(
 
                         drawBorder:
                             false
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
                 },
 
+<<<<<<< HEAD
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            stepSize: 1
+
+                        },
+
+                        title: {
+
+                            display: true,
+
+                            text: 'Cantidad vendida'
+=======
 
                 x: {
 
@@ -2727,19 +2910,124 @@ new Chart(
 
                             weight:
                                 "500"
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                         }
 
                     },
 
+<<<<<<< HEAD
+                    x: {
+
+                        title: {
+
+                            display: true,
+
+                            text: 'Productos'
+
+                        }
+=======
                     grid: {
 
                         display:
                             false
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
                 }
+<<<<<<< HEAD
+
+            }
+
+        });
+
+
+        /* =====================================================
+           GRÁFICO PRODUCTOS CON BAJO STOCK
+           ===================================================== */
+
+        const nombresStock = <?php echo json_encode($nombresStock); ?>;
+
+        const cantidadesStock = <?php echo json_encode($cantidadesStock); ?>;
+
+        const ctxStock = document.getElementById('graficoStock');
+
+
+        new Chart(ctxStock, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: nombresStock,
+
+                datasets: [{
+
+                    label: 'Cantidad disponible',
+
+                    data: cantidadesStock,
+
+                    backgroundColor: '#e89aaa',
+
+                    borderColor: '#c96f84',
+
+                    borderWidth: 1,
+
+                    borderRadius: 8
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        display: true
+
+                    }
+
+                },
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        ticks: {
+
+                            stepSize: 1
+
+                        },
+
+                        title: {
+
+                            display: true,
+
+                            text: 'Cantidad en stock'
+
+                        }
+
+                    },
+
+                    x: {
+
+                        title: {
+
+                            display: true,
+
+                            text: 'Productos'
+
+                        }
+=======
 
             },
 
@@ -2807,6 +3095,7 @@ new Chart(
                                 );
 
                             }
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
@@ -2814,6 +3103,11 @@ new Chart(
 
             }
 
+<<<<<<< HEAD
+        });
+
+    </script>
+=======
         }
 
     }
@@ -3018,6 +3312,7 @@ new Chart(
 
 </script>
 
+>>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 </body>
 
