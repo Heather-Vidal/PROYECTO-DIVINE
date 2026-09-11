@@ -6,7 +6,7 @@
 
 $idPedido = $_GET['idPedido'] ?? null;
 
-$estado = $_GET['estado'] ?? null;
+ 
 
 $costoTotal = $_GET['costoTotal'] ?? null;
 
@@ -25,12 +25,7 @@ if (!$idPedido) {
 // ==========================================
 // VERIFICAR ESTADO
 // ==========================================
-
-if (!$estado) {
-
-    die("No se recibió el estado del pedido.");
-
-}
+ 
 
 
 // ==========================================
@@ -364,19 +359,7 @@ input[type="submit"]:hover{
         value="<?php echo htmlspecialchars($idPedido); ?>"
     >
 
-
-    <!-- ==================================================
-         ESTADO
-
-         VIENE DEL ARCHIVO ANTERIOR
-         ================================================== -->
-
-    <input
-        type="hidden"
-        name="estado"
-        value="<?php echo htmlspecialchars($estado); ?>"
-    >
-
+ 
 
     <!-- ==================================================
          COSTO TOTAL
@@ -388,6 +371,17 @@ input[type="submit"]:hover{
         type="hidden"
         name="costototal"
         value="<?php echo htmlspecialchars($costoTotal); ?>"
+    >
+
+
+
+
+
+
+       <input
+        type="hidden"
+        name="estado"
+        value="En proceso"
     >
 
 
@@ -410,22 +404,34 @@ input[type="submit"]:hover{
          ESTADO
          ================================================== -->
 
+
+
     <label>
-        Estado actual:
+       Estado actual de la Venta:
     </label>
 
     <div class="estado-mostrado">
 
         <strong>
 
-            <?php
-            echo htmlspecialchars($estado);
-            ?>
+           En proceso
 
         </strong>
-
+(hasta que se le entregue)
     </div>
 
+
+
+
+
+
+
+
+
+
+
+
+   
 
     <!-- ==================================================
          MÉTODO DE PAGO

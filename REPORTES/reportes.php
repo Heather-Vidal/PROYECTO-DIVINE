@@ -1,11 +1,9 @@
- 
 <?php
-
 session_start();
 
 /* =========================================================
    CONEXIÓN A LA BASE DE DATOS
-========================================================= */
+   ========================================================= */
 
 $servidor = "localhost";
 $usuario = "root";
@@ -20,3296 +18,1116 @@ $conn = new mysqli(
 );
 
 if ($conn->connect_error) {
-
-    die(
-        "Error de conexión: "
-        . $conn->connect_error
-    );
-
+    die("Error de conexión: " . $conn->connect_error);
 }
 
 $conn->set_charset("utf8");
 
-
 /* =========================================================
    VALIDAR SESIÓN
-========================================================= */
+   ========================================================= */
 
 if (!isset($_SESSION['rol'])) {
-
     header("Location: ../SESIONES/loginform.php");
     exit();
-
 }
 
 $rol = $_SESSION['rol'];
-
-$nombre = isset($_SESSION['nombre'])
-    ? $_SESSION['nombre']
-    : '';
-
+$nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : "";
 
 /* =========================================================
-   PROTEGER NOMBRE DEL VENDEDOR
-========================================================= */
+   CONSULTA DE VENTAS
+   =========================================================
+   IMPORTANTE:
+   - Se mantienen los nombres de las tablas y columnas del archivo:
+       VENTAS, PEDIDOS
+       v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, v.fecha
+       p.ID, p.estado, p.nombrevendedor
+   - El WHERE queda SOLO con:
+       p.estado = 'Aceptado'
+   - Se ordena para que HOY aparezca primero y después
+     todas las ventas de otros días.
+   ========================================================= */
 
-$nombreSeguro = $conn->real_escape_string($nombre);
-
-
-/* =========================================================
-   CONSULTAR TODAS LAS VENTAS COMPLETADAS
-=========================================================
-
-   MUY IMPORTANTE:
-
-   LA FECHA SE TOMA DE:
-
-       VENTAS.fecha
-
-   NO DE:
-
-       PEDIDOS.fecha
-
-   Y solamente aparecen ventas donde:
-
-       VENTAS.estado = Completado
-
-   Y además:
-
-       PEDIDOS.estado = Completado
-========================================================= */
-
-
-if ($rol == "administrador") {
-
-    $sql = "
-        SELECT
-            v.id,
-            v.estado,
-            v.metodo,
-            v.costototal,
-            v.PEDIDOS_ID,
-            v.fecha,
-            p.nombrevendedor,
-            p.estado AS estado_pedido
-        FROM VENTAS v
-
-        INNER JOIN PEDIDOS p
-            ON p.ID = v.PEDIDOS_ID
-
-        WHERE
-            LOWER(TRIM(v.estado)) = 'completado'
-
-            AND
-
-            LOWER(TRIM(p.estado)) = 'completado'
-
-        ORDER BY
-
-            DATE(v.fecha) = CURDATE() DESC,
-
-            v.fecha DESC,
-
-            v.id DESC
-    ";
-
-} elseif ($rol == "vendedor") {
-
-    $sql = "
-        SELECT
-            v.id,
-            v.estado,
-            v.metodo,
-            v.costototal,
-            v.PEDIDOS_ID,
-            v.fecha,
-            p.nombrevendedor,
-            p.estado AS estado_pedido
-        FROM VENTAS v
-
-        INNER JOIN PEDIDOS p
-            ON p.ID = v.PEDIDOS_ID
-
-        WHERE
-            LOWER(TRIM(v.estado)) = 'completado'
-
-            AND
-
-            LOWER(TRIM(p.estado)) = 'completado'
-
-            AND
-
-            p.nombrevendedor = '$nombreSeguro'
-
-        ORDER BY
-
-            DATE(v.fecha) = CURDATE() DESC,
-
-            v.fecha DESC,
-
-            v.id DESC
-    ";
-
-} else {
-
-    header("Location: ../SESIONES/loginform.php");
-    exit();
-
-}
-
-
-/* =========================================================
-   EJECUTAR CONSULTA DE VENTAS
-========================================================= */
+$sql = "
+    SELECT
+        v.id,
+        v.estado,
+        v.metodo,
+        v.costototal,
+        v.PEDIDOS_ID,
+        v.fecha,
+        p.nombrevendedor,
+        p.estado AS estado_pedido
+    FROM VENTAS v
+    INNER JOIN PEDIDOS p
+        ON p.ID = v.PEDIDOS_ID
+    WHERE p.estado = 'Aceptado'
+    ORDER BY
+        DATE(v.fecha) = CURDATE() DESC,
+        v.fecha DESC,
+        v.id DESC
+";
 
 $resultado = $conn->query($sql);
 
 if (!$resultado) {
-
-    die(
-        "Error al consultar las ventas: "
-        . $conn->error
-    );
-
+    die("Error al consultar las ventas: " . $conn->error);
 }
 
-
 /* =========================================================
-   VENTAS DE HOY
-=========================================================
-
-   AQUÍ TAMBIÉN SE USA:
-
-       v.fecha
-
-   NO p.fecha
-========================================================= */
+   DATOS DE LAS VENTAS DE HOY
+   ========================================================= */
 
 $sqlHoy = "
     SELECT
-
         COUNT(v.id) AS cantidad,
-
-        COALESCE(
-            SUM(v.costototal),
-            0
-        ) AS total
-
+        COALESCE(SUM(v.costototal), 0) AS total
     FROM VENTAS v
-
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
-
-    WHERE
-
-        LOWER(TRIM(v.estado)) = 'completado'
-
-        AND
-
-        LOWER(TRIM(p.estado)) = 'completado'
-
-        AND
-
-        DATE(v.fecha) = CURDATE()
+    WHERE p.estado = 'Aceptado'
+      AND DATE(v.fecha) = CURDATE()
 ";
-
-
-/* =========================================================
-   SI ES VENDEDOR
-========================================================= */
-
-if ($rol == "vendedor") {
-
-    $sqlHoy .= "
-
-        AND p.nombrevendedor = '$nombreSeguro'
-
-    ";
-
-}
-
-
-/* =========================================================
-   EJECUTAR
-========================================================= */
 
 $resultadoHoy = $conn->query($sqlHoy);
 
 if (!$resultadoHoy) {
-
-    die(
-        "Error al calcular las ventas de hoy: "
-        . $conn->error
-    );
-
+    die("Error al calcular las ventas de hoy: " . $conn->error);
 }
 
 $filaHoy = $resultadoHoy->fetch_assoc();
-
-
-$cantidadHoy = isset($filaHoy['cantidad'])
-    ? (int)$filaHoy['cantidad']
-    : 0;
-
-
-$totalHoy = isset($filaHoy['total'])
-    ? (float)$filaHoy['total']
-    : 0;
-
+$cantidadHoy = isset($filaHoy['cantidad']) ? (int)$filaHoy['cantidad'] : 0;
+$totalHoy = isset($filaHoy['total']) ? (float)$filaHoy['total'] : 0;
 
 /* =========================================================
    TOTAL GENERAL
-=========================================================
-
-   CUENTA TODAS LAS VENTAS COMPLETADAS.
-
-   NO IMPORTA SI SON DE HOY, AYER,
-   LA SEMANA PASADA, ETC.
-
-   TAMBIÉN SE COMPRUEBA QUE PEDIDOS
-   ESTÉ EN COMPLETADO.
-========================================================= */
+   ========================================================= */
 
 $sqlTotal = "
     SELECT
-
         COUNT(v.id) AS cantidad,
-
-        COALESCE(
-            SUM(v.costototal),
-            0
-        ) AS total
-
+        COALESCE(SUM(v.costototal), 0) AS total
     FROM VENTAS v
-
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
-
-    WHERE
-
-        LOWER(TRIM(v.estado)) = 'completado'
-
-        AND
-
-        LOWER(TRIM(p.estado)) = 'completado'
+    WHERE p.estado = 'Aceptado'
 ";
-
-
-if ($rol == "vendedor") {
-
-    $sqlTotal .= "
-
-        AND p.nombrevendedor = '$nombreSeguro'
-
-    ";
-
-}
-
 
 $resultadoTotal = $conn->query($sqlTotal);
 
 if (!$resultadoTotal) {
-
-    die(
-        "Error al calcular el total general: "
-        . $conn->error
-    );
-
+    die("Error al calcular el total general: " . $conn->error);
 }
 
 $filaTotal = $resultadoTotal->fetch_assoc();
-
-
-$cantidadTotal = isset($filaTotal['cantidad'])
-    ? (int)$filaTotal['cantidad']
-    : 0;
-
-
-$totalGeneral = isset($filaTotal['total'])
-    ? (float)$filaTotal['total']
-    : 0;
-
+$cantidadTotal = isset($filaTotal['cantidad']) ? (int)$filaTotal['cantidad'] : 0;
+$totalGeneral = isset($filaTotal['total']) ? (float)$filaTotal['total'] : 0;
 
 /* =========================================================
    TOTAL ÚLTIMOS 7 DÍAS
-=========================================================
-
-   TAMBIÉN SE USA v.fecha
-========================================================= */
+   ========================================================= */
 
 $sqlSemana = "
     SELECT
-
-        COALESCE(
-            SUM(v.costototal),
-            0
-        ) AS total
-
+        COALESCE(SUM(v.costototal), 0) AS total
     FROM VENTAS v
-
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
-
-    WHERE
-
-        LOWER(TRIM(v.estado)) = 'completado'
-
-        AND
-
-        LOWER(TRIM(p.estado)) = 'completado'
-
-        AND
-
-        DATE(v.fecha)
-        >= DATE_SUB(
-            CURDATE(),
-            INTERVAL 6 DAY
-        )
-
-        AND
-
-        DATE(v.fecha)
-        <= CURDATE()
+    WHERE p.estado = 'Aceptado'
+      AND DATE(v.fecha) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+      AND DATE(v.fecha) <= CURDATE()
 ";
-
-
-if ($rol == "vendedor") {
-
-    $sqlSemana .= "
-
-        AND p.nombrevendedor = '$nombreSeguro'
-
-    ";
-
-}
-
 
 $resultadoSemana = $conn->query($sqlSemana);
 
 if (!$resultadoSemana) {
-
-    die(
-        "Error al calcular las ventas de los últimos 7 días: "
-        . $conn->error
-    );
-
+    die("Error al calcular las ventas de los últimos 7 días: " . $conn->error);
 }
 
 $filaSemana = $resultadoSemana->fetch_assoc();
-
-
-$totalSemana = isset($filaSemana['total'])
-    ? (float)$filaSemana['total']
-    : 0;
-
+$totalSemana = isset($filaSemana['total']) ? (float)$filaSemana['total'] : 0;
 
 /* =========================================================
    TOTAL ÚLTIMOS 30 DÍAS
-========================================================= */
+   ========================================================= */
 
 $sqlMes = "
     SELECT
-
-        COALESCE(
-            SUM(v.costototal),
-            0
-        ) AS total
-
+        COALESCE(SUM(v.costototal), 0) AS total
     FROM VENTAS v
-
     INNER JOIN PEDIDOS p
         ON p.ID = v.PEDIDOS_ID
-
-    WHERE
-
-        LOWER(TRIM(v.estado)) = 'completado'
-
-        AND
-
-        LOWER(TRIM(p.estado)) = 'completado'
-
-        AND
-
-        DATE(v.fecha)
-        >= DATE_SUB(
-            CURDATE(),
-            INTERVAL 29 DAY
-        )
-
-        AND
-
-        DATE(v.fecha)
-        <= CURDATE()
+    WHERE p.estado = 'Aceptado'
+      AND DATE(v.fecha) >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
+      AND DATE(v.fecha) <= CURDATE()
 ";
-
-
-if ($rol == "vendedor") {
-
-    $sqlMes .= "
-
-        AND p.nombrevendedor = '$nombreSeguro'
-
-    ";
-
-}
-
 
 $resultadoMes = $conn->query($sqlMes);
 
 if (!$resultadoMes) {
-
-    die(
-        "Error al calcular las ventas de los últimos 30 días: "
-        . $conn->error
-    );
-
+    die("Error al calcular las ventas de los últimos 30 días: " . $conn->error);
 }
 
 $filaMes = $resultadoMes->fetch_assoc();
+$totalMes = isset($filaMes['total']) ? (float)$filaMes['total'] : 0;
 
-
-$totalMes = isset($filaMes['total'])
-    ? (float)$filaMes['total']
-    : 0;
-
+$totalRegistros = $resultado->num_rows;
 
 /* =========================================================
-   DATOS PARA GRÁFICO
-========================================================= */
+   DATOS PARA GRÁFICOS
+   ========================================================= */
 
 $valorDia = $totalHoy;
-
 $valorSemana = $totalSemana;
-
 $valorMes = $totalMes;
+$valorTotal = $totalGeneral;
 
-$valorAnio = $totalGeneral;
+$maxBarra = max($valorDia, $valorSemana, $valorMes, $valorTotal, 1);
 
+$barraDia = ($valorDia / $maxBarra) * 100;
+$barraSemana = ($valorSemana / $maxBarra) * 100;
+$barraMes = ($valorMes / $maxBarra) * 100;
+$barraTotal = ($valorTotal / $maxBarra) * 100;
 
-$totalGrafico =
-    $valorDia
-    + $valorSemana
-    + $valorMes
-    + $valorAnio;
-
+$totalGrafico = $valorDia + $valorSemana + $valorMes + $valorTotal;
 
 if ($totalGrafico > 0) {
-
-    $porDia =
-        ($valorDia / $totalGrafico) * 100;
-
-    $porSemana =
-        ($valorSemana / $totalGrafico) * 100;
-
-    $porMes =
-        ($valorMes / $totalGrafico) * 100;
-
-    $porAnio =
-        ($valorAnio / $totalGrafico) * 100;
-
+    $porDia = ($valorDia / $totalGrafico) * 100;
+    $porSemana = ($valorSemana / $totalGrafico) * 100;
+    $porMes = ($valorMes / $totalGrafico) * 100;
+    $porTotal = ($valorTotal / $totalGrafico) * 100;
 } else {
-
     $porDia = 25;
     $porSemana = 25;
     $porMes = 25;
-    $porAnio = 25;
-
+    $porTotal = 25;
 }
 
-
-/* =========================================================
-   BARRAS
-========================================================= */
-
-$maxBarra = max(
-    $valorDia,
-    $valorSemana,
-    $valorMes,
-    $valorAnio,
-    1
-);
-
-
-$barraDia =
-    ($valorDia / $maxBarra) * 100;
-
-
-$barraSemana =
-    ($valorSemana / $maxBarra) * 100;
-
-
-$barraMes =
-    ($valorMes / $maxBarra) * 100;
-
-
-$barraAnio =
-    ($valorAnio / $maxBarra) * 100;
-
+$anguloDia = $porDia * 3.6;
+$anguloSemana = ($porDia + $porSemana) * 3.6;
+$anguloMes = ($porDia + $porSemana + $porMes) * 3.6;
 ?>
-
 <!DOCTYPE html>
 
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ventas - DIVINE</title>
 
-
 <style>
-
-/* =========================================================
-   COLORES
-========================================================= */
-
-:root {
-
-    --fondo: #f1fbfa;
-
-    --blanco: #ffffff;
-
-    --texto: #183b3d;
-
-    --gris: #718486;
-
-    --rosa: #eeb0c6;
-
-    --rosa-claro: #f5dbe4;
-
-    --rosa-palido: #faedf2;
-
-    --vino: #b86f89;
-
-    --vino-oscuro: #7f4058;
-
-    --verde: #58c4b8;
-
-    --verde-claro: #dff2ec;
-
-    --borde: #d9efed;
-
-    --sombra: 0 8px 30px rgba(39, 107, 105, .07);
-
+:root{
+    --rosa:#eeb0c6;
+    --rosa-fuerte:#d985a3;
+    --rosa-oscuro:#a95676;
+    --rosa-claro:#f8dfe8;
+    --rosa-palido:#fff4f7;
+    --rosa-suave:#fdebf1;
+    --blanco:#ffffff;
+    --texto:#5d4650;
+    --gris:#8b7b81;
+    --borde:#f0d8e0;
+    --sombra:0 10px 30px rgba(169,86,118,.12);
 }
 
-
-/* =========================================================
-   GENERAL
-========================================================= */
-
-* {
-
-    margin: 0;
-
-    padding: 0;
-
-    box-sizing: border-box;
-
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-
-body {
-
-    font-family: Arial, sans-serif;
-
-    min-height: 100vh;
-
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
     background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(151,225,218,.25),
-            transparent 28%
-        ),
-
-        var(--fondo);
-
-    color: var(--texto);
-
+        radial-gradient(circle at 5% 5%, rgba(238,176,198,.35), transparent 25%),
+        radial-gradient(circle at 95% 10%, rgba(248,223,232,.7), transparent 25%),
+        linear-gradient(135deg,#fff8fa,#fff1f5);
+    color:var(--texto);
 }
-
-
-/* =========================================================
-   CONTENEDOR
-========================================================= */
-
-.contenedor {
-
-    width: 94%;
-
-    max-width: 1250px;
 
-    margin: 40px auto;
-
+.contenedor{
+    width:94%;
+    max-width:1250px;
+    margin:32px auto 50px;
 }
-
-
-/* =========================================================
-   ENCABEZADO
-========================================================= */
-
-.encabezado {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    margin-bottom: 24px;
 
+.encabezado{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:25px;
 }
 
-
-.izquierda-cabecera {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
+.izquierda-cabecera{
+    display:flex;
+    align-items:center;
+    gap:13px;
 }
-
-
-.menu-icono {
-
-    width: 42px;
-
-    height: 42px;
-
-    border-radius: 12px;
-
-    background: var(--verde-oscuro);
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 18px;
 
+.menu-icono{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--rosa-fuerte),var(--rosa));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    box-shadow:0 7px 18px rgba(169,86,118,.2);
 }
 
-
-.titulo {
-
-    font-size: 24px;
-
-    font-weight: 700;
-
-    letter-spacing: -.8px;
-
-    color: var(--verde-oscuro);
-
+.titulo{
+    font-size:25px;
+    font-weight:800;
+    color:var(--rosa-oscuro);
+    letter-spacing:-.7px;
 }
-
-
-.subtitulo {
 
-    color: var(--texto2);
-
-    font-size: 11px;
-
-    margin-top: 3px;
-
+.subtitulo{
+    color:var(--gris);
+    font-size:11px;
+    margin-top:3px;
 }
-
-
-.usuario {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
 
+.usuario{
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
-
-.usuario-info {
-
-    text-align: right;
-
+.usuario-info{
+    text-align:right;
 }
-
-
-.usuario-nombre {
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    color: var(--texto);
 
+.usuario-nombre{
+    font-size:11px;
+    font-weight:700;
+    color:var(--texto);
 }
 
-
-.usuario-rol {
-
-    font-size: 8px;
-
-    color: var(--texto2);
-
-    text-transform: uppercase;
-
+.usuario-rol{
+    font-size:8px;
+    color:var(--gris);
+    text-transform:uppercase;
+    margin-top:2px;
 }
-
-
-.avatar {
-
-    width: 42px;
 
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: linear-gradient(
-        135deg,
-        #7ccbc3,
-        #4ba7a4
-    );
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: 700;
-
-    font-size: 14px;
-
-    box-shadow: 0 5px 15px rgba(57, 146, 143, .2);
-
+.avatar{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--rosa),var(--rosa-fuerte));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:15px;
+    box-shadow:0 6px 16px rgba(169,86,118,.18);
 }
-
-
-/* =========================================================
-   TITULO DEL DASHBOARD
-========================================================= */
 
-.dashboard-titulo {
-
-    margin-bottom: 18px;
-
+.dashboard-titulo{
+    margin-bottom:18px;
 }
-
-
-.dashboard-titulo h1 {
 
-    font-size: 18px;
-
-    color: var(--verde-oscuro);
-
-    font-weight: 700;
-
+.dashboard-titulo h1{
+    font-size:21px;
+    color:var(--rosa-oscuro);
 }
-
-
-.dashboard-titulo p {
-
-    font-size: 10px;
-
-    color: var(--texto2);
-
-    margin-top: 4px;
 
+.dashboard-titulo p{
+    font-size:10px;
+    color:var(--gris);
+    margin-top:5px;
 }
 
-
-/* =========================================================
-   TARJETAS PRINCIPALES
-========================================================= */
-
-.estadisticas {
-
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 13px;
-
-    margin-bottom: 16px;
-
+.resumen-principal{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:16px;
 }
-
 
-.card {
-
-    min-height: 135px;
-
-    padding: 17px;
-
-    border-radius: 17px;
-
-    border: 1px solid rgba(255,255,255,.7);
-
-    position: relative;
-
-    overflow: hidden;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
-
-    box-shadow: var(--sombra);
-
-    transition: .3s ease;
-
+.tarjeta-grande{
+    padding:21px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--sombra);
+    position:relative;
+    overflow:hidden;
 }
 
-
-.card:hover {
-
-    transform: translateY(-3px);
-
+.tarjeta-grande::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    right:-35px;
+    bottom:-55px;
+    background:rgba(255,255,255,.3);
 }
-
 
-.card:nth-child(1) {
-
-    background: #c9f0ea;
-
+.tarjeta-hoy{
+    background:linear-gradient(135deg,#f6c4d5,#efb0c7);
 }
-
-
-.card:nth-child(2) {
 
-    background: #bce8e4;
-
+.tarjeta-general{
+    background:linear-gradient(135deg,#f9dfe8,#f3c7d6);
 }
-
-
-.card:nth-child(3) {
-
-    background: #f4b8ca;
 
+.etiqueta-grande{
+    font-size:10px;
+    font-weight:800;
+    color:#8e4e68;
+    letter-spacing:.6px;
 }
 
-
-.card:nth-child(4) {
-
-    background: #c9d9f0;
-
+.monto-grande{
+    font-size:29px;
+    font-weight:800;
+    color:#873e5c;
+    margin:10px 0 6px;
 }
-
-
-.card::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 75px;
 
-    height: 75px;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,.20);
-
-    right: -20px;
-
-    bottom: -25px;
-
+.cantidad-grande{
+    font-size:10px;
+    color:#96556f;
+    font-weight:700;
 }
-
-
-.card-arriba {
-
-    display: flex;
 
-    justify-content: space-between;
-
-    align-items: flex-start;
-
+.detalle-grande{
+    font-size:9px;
+    color:#a16b80;
+    margin-top:7px;
 }
-
-
-.card-icono {
-
-    width: 28px;
-
-    height: 28px;
-
-    border-radius: 8px;
-
-    background: rgba(255,255,255,.6);
 
-    color: var(--verde-oscuro);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
+.estadisticas{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
+    margin-bottom:16px;
 }
-
-
-.card-menu {
-
-    width: 25px;
-
-    height: 25px;
-
-    border-radius: 50%;
-
-    background: rgba(255,255,255,.35);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 13px;
 
+.card{
+    min-height:125px;
+    padding:16px;
+    border-radius:18px;
+    background:white;
+    border:1px solid var(--borde);
+    box-shadow:var(--sombra);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    transition:.25s ease;
 }
 
-
-.card-titulo {
-
-    margin-top: 8px;
-
-    font-size: 9px;
-
-    color: #527070;
-
-    font-weight: 600;
-
+.card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 30px rgba(169,86,118,.16);
 }
-
-
-.card-valor {
 
-    font-size: 23px;
-
-    font-weight: 700;
-
-    color: var(--verde-oscuro);
-
-    margin-top: 3px;
-
+.card-arriba{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
-
-
-.card-cambio {
-
-    font-size: 8px;
-
-    color: #568783;
 
-    margin-top: 2px;
-
+.card-icono{
+    width:29px;
+    height:29px;
+    border-radius:9px;
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:800;
 }
-
-
-/* =========================================================
-   GRÁFICAS
-========================================================= */
-
-.graficas {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1.15fr;
-
-    gap: 16px;
-
-    margin-bottom: 16px;
 
+.card-menu{
+    color:#c7aab5;
+    font-size:12px;
 }
 
-
-.panel {
-
-    background: rgba(255,255,255,.72);
-
-    border: 1px solid var(--borde);
-
-    border-radius: 17px;
-
-    padding: 18px;
-
-    box-shadow: var(--sombra);
-
+.card-titulo{
+    margin-top:8px;
+    font-size:9px;
+    color:var(--gris);
+    font-weight:700;
 }
-
 
-.panel-cabecera {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 14px;
-
+.card-valor{
+    font-size:21px;
+    font-weight:800;
+    color:var(--rosa-oscuro);
 }
-
-
-.encabezado h1 {
-
-    color: var(--vino-oscuro);
 
-    font-size: 35px;
-
-    color: var(--verde-oscuro);
-
+.card-cambio{
+    font-size:8px;
+    color:#aa8793;
+    margin-top:3px;
 }
-
-
-.panel-subtitulo {
 
-    font-size: 8px;
-
-    color: var(--texto2);
-
-    margin-top: 3px;
-
+.graficas{
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    gap:16px;
+    margin-bottom:16px;
 }
-
 
-.filtro {
-
-    background: var(--verde-palido);
-
-    border: none;
-
-    padding: 7px 10px;
-
-    border-radius: 9px;
-
-    color: var(--verde-oscuro);
-
-    font-size: 8px;
-
-    font-family: inherit;
-
+.panel{
+    background:rgba(255,255,255,.9);
+    border:1px solid var(--borde);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:var(--sombra);
 }
 
-
-/* =========================================================
-   DONUT
-========================================================= */
+.panel-cabecera{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
 
-.donut-contenedor {
+.panel-titulo{
+    color:var(--rosa-oscuro);
+    font-size:13px;
+    font-weight:800;
+}
 
-    min-height: 205px;
+.panel-subtitulo{
+    font-size:8px;
+    color:var(--gris);
+    margin-top:3px;
+}
 
-    display: flex;
+.filtro{
+    background:var(--rosa-palido);
+    border:1px solid var(--borde);
+    padding:7px 10px;
+    border-radius:9px;
+    color:var(--rosa-oscuro);
+    font-size:8px;
+}
 
-    align-items: center;
+.donut-contenedor{
+    min-height:205px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:25px;
+}
 
-    justify-content: center;
+.donut{
+    width:165px;
+    height:165px;
+    border-radius:50%;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 20px rgba(169,86,118,.12);
+}
 
-    gap: 25px;
+.donut::before{
+    content:"";
+    width:105px;
+    height:105px;
+    border-radius:50%;
+    background:white;
+    position:absolute;
+}
 
+.donut-centro{
+    position:relative;
+    z-index:2;
+    text-align:center;
 }
 
+.donut-centro small{
+    display:block;
+    font-size:8px;
+    color:var(--gris);
+}
 
-.donut {
+.donut-centro strong{
+    display:block;
+    font-size:17px;
+    color:var(--rosa-oscuro);
+    margin-top:3px;
+}
 
-    width: 165px;
+.leyenda{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
 
-    height: 165px;
+.leyenda-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:8px;
+    color:var(--gris);
+}
 
-    border-radius: 50%;
+.punto{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+}
 
-    background:
-        conic-gradient(
-            var(--verde) 0deg
-            <?php echo ($porDia * 3.6); ?>deg,
+.punto.rosa1{background:#d985a3}
+.punto.rosa2{background:#efb0c7}
+.punto.rosa3{background:#f3c9d8}
+.punto.rosa4{background:#c56f91}
 
-            var(--amarillo)
-            <?php echo ($porDia * 3.6); ?>deg
-            <?php echo (($porDia + $porSemana) * 3.6); ?>deg,
+.grafico-barras{
+    height:220px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-around;
+    gap:15px;
+    padding:10px 5px 0;
+}
 
-            var(--rosa)
-            <?php echo (($porDia + $porSemana) * 3.6); ?>deg
-            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg,
+.columna{
+    height:100%;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+    gap:7px;
+}
 
-            var(--azul)
-            <?php echo (($porDia + $porSemana + $porMes) * 3.6); ?>deg
-            360deg
-        );
+.valor-barra{
+    font-size:7px;
+    color:var(--gris);
+    white-space:nowrap;
+}
 
-    position: relative;
+.barrita{
+    width:42px;
+    max-width:80%;
+    border-radius:12px 12px 5px 5px;
+    min-height:8px;
+    animation:subir .8s ease both;
+}
 
-    display: flex;
+.barrita.rosa1{background:#efc4d3}
+.barrita.rosa2{background:#d99ab1}
+.barrita.rosa3{background:#efb0c7}
+.barrita.rosa4{background:#c97d99}
 
-    align-items: center;
+.nombre-barra{
+    font-size:8px;
+    color:var(--gris);
+}
 
-    justify-content: center;
+@keyframes subir{
+    from{transform:scaleY(0);transform-origin:bottom}
+    to{transform:scaleY(1);transform-origin:bottom}
+}
 
-    box-shadow: 0 8px 20px rgba(69, 152, 148, .12);
+.contenedor-tabla{
+    background:white;
+    border:1px solid var(--borde);
+    border-radius:22px;
+    padding:21px;
+    box-shadow:var(--sombra);
+    overflow-x:auto;
+}
 
+.titulo-tabla{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
 }
 
+.titulo-tabla h2{
+    color:var(--rosa-oscuro);
+    font-size:19px;
+}
 
-.donut::before {
+.registros{
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:8px;
+    font-weight:800;
+}
 
-    content: "";
+table{
+    width:100%;
+    min-width:720px;
+    border-collapse:collapse;
+}
 
-    width: 105px;
+th{
+    text-align:center;
+    padding:12px 10px;
+    color:#a48b95;
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    border-bottom:1px solid var(--borde);
+    background:#fffafd;
+}
 
-    height: 105px;
+td{
+    padding:13px 10px;
+    text-align:center;
+    border-bottom:1px solid #f7e8ed;
+    font-size:11px;
+    color:#6c5961;
+}
 
-    border-radius: 50%;
+tbody tr{
+    transition:.2s ease;
+}
 
-    background: var(--blanco);
+tbody tr:hover{
+    background:var(--rosa-palido);
+}
 
-    position: absolute;
+.venta-hoy{
+    background:rgba(253,235,241,.65);
+}
 
+.venta-hoy td{
+    border-bottom:1px solid var(--rosa-claro);
 }
 
+td:first-child{
+    color:var(--rosa-oscuro);
+    font-weight:800;
+}
 
-.donut-centro {
+.precio{
+    color:var(--rosa-oscuro)!important;
+    font-weight:800;
+}
 
-    position: relative;
+.estado{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#f7e0e8;
+    color:#a65374;
+    font-size:8px;
+    font-weight:800;
+}
 
-    z-index: 2;
+.estado::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#d985a3;
+}
 
-    text-align: center;
+.separador-ventas td{
+    padding:0;
+    border:none;
+    background:white;
+}
 
+.separador-hoy-contenido{
+    margin:23px 0 12px;
+    padding:13px 16px;
+    text-align:left;
+    background:linear-gradient(90deg,var(--rosa-claro),#fff);
+    border-left:6px solid var(--rosa-fuerte);
+    border-radius:13px;
+    color:var(--rosa-oscuro);
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:.7px;
 }
 
+.separador-anteriores-contenido{
+    margin:28px 0 12px;
+    padding:13px 16px;
+    text-align:left;
+    background:linear-gradient(90deg,#fff0f4,#fff);
+    border-left:6px solid #c98aa0;
+    border-radius:13px;
+    color:#8c6070;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
 
-.donut-centro small {
+.indicador-hoy{
+    display:inline-block;
+    margin-top:5px;
+    padding:4px 9px;
+    border-radius:15px;
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    font-size:8px;
+    font-weight:800;
+}
 
-    display: block;
+.sin-ventas{
+    padding:55px 20px;
+    text-align:center;
+    color:var(--gris);
+}
 
-    font-size: 8px;
+.sin-ventas .emoji{
+    font-size:45px;
+    margin-bottom:10px;
+}
 
-    color: var(--texto2);
+.sin-ventas h3{
+    color:var(--rosa-oscuro);
+    margin-bottom:7px;
+}
 
+.volver{
+    display:inline-block;
+    margin-top:18px;
+    padding:11px 23px;
+    background:linear-gradient(135deg,var(--rosa-fuerte),var(--rosa-oscuro));
+    color:white;
+    text-decoration:none;
+    border-radius:20px;
+    font-weight:800;
+    font-size:10px;
+    transition:.25s;
 }
 
+.volver:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(169,86,118,.22);
+}
 
-.donut-centro strong {
+@media(max-width:950px){
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .graficas{grid-template-columns:1fr}
+}
 
-    display: block;
+@media(max-width:650px){
+    .contenedor{width:94%;margin-top:20px}
+    .usuario-info{display:none}
+    .titulo{font-size:20px}
+    .resumen-principal{grid-template-columns:1fr}
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .donut-contenedor{flex-direction:column;gap:15px}
+    .leyenda{flex-direction:row;flex-wrap:wrap;justify-content:center}
+}
 
-    font-size: 18px;
-
-    color: var(--verde-oscuro);
-
-    margin-top: 3px;
-
-}
-
-
-.leyenda {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-}
-
-
-.leyenda-item {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    font-size: 8px;
-
-    color: var(--texto2);
-
-}
-
-
-.punto {
-
-    width: 8px;
-
-    height: 8px;
-
-    border-radius: 50%;
-
-}
-
-
-.punto.verde {
-
-    background: var(--verde);
-
-}
-
-
-.punto.amarillo {
-
-    background: var(--amarillo);
-
-}
-
-
-.punto.rosa {
-
-    background: var(--rosa);
-
-}
-
-
-.punto.azul {
-
-    background: var(--azul);
-
-}
-
-
-/* =========================================================
-   BARRAS VERTICALES
-========================================================= */
-
-.grafico-barras {
-
-    height: 220px;
-
-    display: flex;
-
-    align-items: flex-end;
-
-    justify-content: space-around;
-
-    gap: 15px;
-
-    padding: 10px 5px 0;
-
-}
-
-
-.columna {
-
-    height: 100%;
-
-    flex: 1;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: flex-end;
-
-    align-items: center;
-
-    gap: 7px;
-
-}
-
-
-.valor-barra {
-
-    font-size: 7px;
-
-    color: var(--texto2);
-
-    white-space: nowrap;
-
-}
-
-
-.barrita {
-
-    width: 42px;
-
-    max-width: 80%;
-
-    border-radius: 12px 12px 5px 5px;
-
-    min-height: 8px;
-
-    animation: subir .9s ease both;
-
-}
-
-
-.columna:nth-child(1) .barrita {
-
-    height: <?php echo max(8, $barraDia * 1.55); ?>px;
-
-    background: #efcba0;
-
-}
-
-
-.columna:nth-child(2) .barrita {
-
-    height: <?php echo max(8, $barraSemana * 1.55); ?>px;
-
-    background: #d69fda;
-
-}
-
-
-.columna:nth-child(3) .barrita {
-
-    height: <?php echo max(8, $barraMes * 1.55); ?>px;
-
-    background: #b9d983;
-
-}
-
-
-.columna:nth-child(4) .barrita {
-
-    height: <?php echo max(8, $barraAnio * 1.55); ?>px;
-
-    background: #84c7c1;
-
-}
-
-
-.nombre-barra {
-
-    font-size: 8px;
-
-    color: var(--texto2);
-
-}
-
-
-@keyframes subir {
-
-    from {
-
-        transform: scaleY(0);
-
-        transform-origin: bottom;
-
-    }
-
-    to {
-
-        transform: scaleY(1);
-
-        transform-origin: bottom;
-
-    }
-
-}
-
-
-/* =========================================================
-   RESUMEN
-========================================================= */
-
-.resumen {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 16px;
-
-    margin-bottom: 16px;
-
-}
-
-
-.tarjeta {
-
-    background: white;
-
-    border: 1px solid var(--borde);
-
-    border-radius: 16px;
-
-    padding: 16px;
-
-    box-shadow: var(--sombra);
-
-}
-
-
-.tarjeta:hover {
-
-    transform: translateY(-5px);
-
-    align-items: center;
-
-    justify-content: space-between;
-
-}
-
-
-.tarjeta .icono {
-
-    font-size: 9px;
-
-    color: var(--texto2);
-
-    text-transform: uppercase;
-
-    font-weight: 700;
-
-}
-
-
-.tarjeta h3 {
-
-    font-size: 17px;
-
-    color: var(--verde-oscuro);
-
-}
-
-
-.tarjeta .monto {
-
-    color: var(--vino-oscuro);
-
-    height: 7px;
-
-    background: #edf7f6;
-
-    border-radius: 10px;
-
-    overflow: hidden;
-
-    margin-top: 14px;
-
-}
-
-
-.progreso span {
-
-    display: block;
-
-    height: 100%;
-
-    background: linear-gradient(
-        90deg,
-        #72cfc4,
-        #42aaa3
-    );
-
-    border-radius: 10px;
-
-}
-
-
-.resumen-info {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-top: 7px;
-
-    font-size: 8px;
-
-    color: #91a2a3;
-
-}
-
-
-/* =========================================================
-   HISTORIAL
-========================================================= */
-
-.historial {
-
-    background: white;
-
-    border: 1px solid var(--borde);
-
-    border-radius: 17px;
-
-    padding: 18px;
-
-    box-shadow: var(--sombra);
-
-}
-
-
-.historial-cabecera {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 15px;
-
-}
-
-
-.historial-titulo {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-}
-
-
-.historial-icono {
-
-    width: 33px;
-
-    height: 33px;
-
-    border-radius: 9px;
-
-    background: var(--verde-palido);
-
-    color: var(--verde-oscuro);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 13px;
-
-}
-
-
-.historial h2 {
-
-    font-size: 13px;
-
-    color: var(--verde-oscuro);
-
-}
-
-
-.historial-descripcion {
-
-    font-size: 8px;
-
-    color: var(--texto2);
-
-    margin-top: 2px;
-
-}
-
-
-.registros {
-
-    background: var(--verde-palido);
-
-    color: var(--verde-oscuro);
-
-    padding: 6px 10px;
-
-    border-radius: 20px;
-
-    font-size: 8px;
-
-    font-weight: 700;
-
-}
-
-
-/* =========================================================
-   CONTENEDOR TABLA
-========================================================= */
-
-.contenedor-tabla {
-
-    background: white;
-
-    border: 1px solid var(--borde);
-
-    border-radius: 25px;
-
-    padding: 25px;
-
-    box-shadow:
-        0 10px 30px rgba(143,83,98,.15);
-
-    overflow-x: auto;
-
-}
-
-
-/* =========================================================
-   TITULO TABLA
-========================================================= */
-
-.titulo-tabla {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 20px;
-
-}
-
-
-.titulo-tabla h2 {
-
-    color: var(--vino-oscuro);
-
-    font-size: 24px;
-
-}
-
-
-.titulo-tabla span {
-
-    color: var(--gris);
-
-    font-size: 14px;
-
-}
-
-
-/* =========================================================
-   TABLA
-========================================================= */
-
-table {
-
-    width: 100%;
-
-    min-width: 720px;
-
-    border-collapse: collapse;
-
-    overflow: hidden;
-
-
-#tabla-ingresos th {
-
-    text-align: left;
-
-    padding: 10px 11px;
-
-    color: #91a2a3;
-
-    font-size: 7px;
-
-    text-transform: uppercase;
-
-    letter-spacing: .8px;
-
-    border-bottom: 1px solid #eaf3f2;
-
-}
-
-
-thead {
-
-    padding: 12px 11px;
-
-    border-bottom: 1px solid #f0f6f5;
-
-    font-size: 9px;
-
-    color: #52696a;
-
-}
-
-
-#tabla-ingresos tbody tr {
-
-    transition: .2s ease;
-
-}
-
-
-#tabla-ingresos tbody tr:hover {
-
-    background: #f5fbfa;
-
-}
-
-
-#tabla-ingresos td:first-child {
-
-    color: var(--verde-oscuro);
-
-    font-weight: 700;
-
-}
-
-
-/* =========================================================
-   ESTADO
-========================================================= */
-
-.estado {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    padding: 5px 8px;
-
-    border-radius: 20px;
-
-    background: #e5f7ef;
-
-    color: #3c9c75;
-
-    font-size: 7px;
-
-    font-weight: 700;
-
-}
-
-
-.estado::before {
-
-    content: "";
-
-    width: 5px;
-
-    height: 5px;
-
-    background: #4eb889;
-
-    border-radius: 50%;
-
-}
-
-
-/* =========================================================
-   PRECIO
-========================================================= */
-
-.precio {
-
-    color: var(--verde-oscuro) !important;
-
-    font-weight: 700;
-
-}
-
-
-/* =========================================================
-   BOTÓN MOSTRAR
-========================================================= */
-
-a.ver1 {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 5px;
-
-    padding: 6px 10px;
-
-    border-radius: 8px;
-
-    background: var(--verde-palido);
-
-    color: var(--verde-oscuro);
-
-    text-decoration: none;
-
-    font-size: 7px;
-
-    font-weight: 700;
-
-    transition: .2s ease;
-
-}
-
-
-a.ver1::after {
-
-    content: "↗";
-
-    font-size: 9px;
-
-}
-
-
-a.ver1:hover {
-
-    background: var(--verde-oscuro);
-
-    color: white;
-
-}
-
-
-th {
-
-    padding: 15px 12px;
-
-    font-size: 14px;
-
-    padding: 40px !important;
-
-    color: #91a2a3 !important;
-
-
-td {
-
-    padding: 14px 12px;
-
-    text-align: center;
-
-    border-bottom:
-        1px solid var(--borde);
-
-    font-size: 14px;
-
-}
-
-
-tbody tr {
-
-    transition: .2s;
-
-}
-
-
-tbody tr:hover {
-
-    background: var(--rosa-palido);
-
-}
-
-
-/* =========================================================
-   SEPARADOR HOY
-========================================================= */
-
-.estado {
-
-    animation: aparecer .5s ease both;
-
-}
-
-
-.estado-completado {
-
-    background: #ead8de;
-
-    color: var(--vino-oscuro);
-
-}
-
-
-.estado-pendiente {
-
-    background: #f5e8c8;
-
-    color: #856d35;
-
-        transform: translateY(12px);
-
-
-.estado-cancelado {
-
-    background: #f1d4d4;
-
-    color: #9b4b4b;
-
-}
-
-
-/* =========================================================
-   SEPARADORES DE HOY
-========================================================= */
-
-.separador-ventas td {
-
-    padding: 0;
-
-    border: none;
-
-}
-
-
-.separador-hoy-contenido {
-
-    margin: 25px 0 15px 0;
-
-    padding: 18px;
-
-    text-align: left;
-
-    background:
-
-        linear-gradient(
-            90deg,
-            var(--rosa-claro),
-            #fff
-        );
-
-    border-left:
-        7px solid var(--vino);
-
-    border-radius: 15px;
-
-    color: var(--vino-oscuro);
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    letter-spacing: 1px;
-
-}
-
-
-/* =========================================================
-   SEPARADOR ANTERIORES
-========================================================= */
-
-.separador-anteriores td {
-
-    padding: 0;
-
-    border: none;
-
-}
-
-
-.separador-anteriores-contenido {
-
-    margin: 30px 0 15px 0;
-
-    padding: 18px;
-
-    text-align: left;
-
-    background:
-
-        linear-gradient(
-            90deg,
-            #edf8f6,
-            #fff
-        );
-
-    border-left:
-        7px solid var(--verde);
-
-    border-radius: 15px;
-
-    color: var(--texto);
-
-    font-size: 18px;
-
-    font-weight: bold;
-
-    letter-spacing: .5px;
-
-}
-
-
-/* =========================================================
-   FILAS DE HOY
-========================================================= */
-
-.venta-hoy {
-
-    background:
-        rgba(247,233,236,.55);
-
-}
-
-
-.venta-hoy td {
-
-    border-bottom:
-        1px solid var(--rosa-claro);
-
-}
-
-
-/* =========================================================
-   INDICADOR HOY
-========================================================= */
-
-.indicador-hoy {
-
-    display: inline-block;
-
-    margin-top: 6px;
-
-    padding: 5px 11px;
-
-    border-radius: 15px;
-
-    background: var(--rosa-claro);
-
-    color: var(--vino-oscuro);
-
-    font-size: 11px;
-
-    font-weight: bold;
-
-}
-
-
-/* =========================================================
-   ESTADO
-========================================================= */
-
-.estado {
-
-    display: inline-block;
-
-    padding: 7px 14px;
-
-    border-radius: 20px;
-
-    font-size: 12px;
-
-    font-weight: bold;
-
-}
-
-
-.estado-completado {
-
-    background: var(--verde-claro);
-
-    color: #287363;
-
-}
-
-
-/* =========================================================
-   SIN VENTAS
-========================================================= */
-
-.sin-ventas {
-
-    padding: 50px;
-
-    text-align: center;
-
-    color: var(--gris);
-
-}
-
-
-.sin-ventas .emoji {
-
-    font-size: 50px;
-
-    margin-bottom: 10px;
-
-}
-
-
-.sin-ventas h3 {
-
-    color: var(--vino);
-
-    margin-bottom: 7px;
-
-}
-
-
-/* =========================================================
-   BOTÓN VOLVER
-========================================================= */
-
-.volver {
-
-    display: inline-block;
-
-    margin-top: 20px;
-
-    padding: 12px 25px;
-
-    background: var(--vino);
-
-    color: white;
-
-    text-decoration: none;
-
-    border-radius: 20px;
-
-    font-weight: bold;
-
-    transition: .3s;
-
-}
-
-
-.volver:hover {
-
-    background: var(--vino-oscuro);
-
-    transform: translateY(-2px);
-
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media(max-width: 950px) {
-
-    .resumen-principal {
-
-        grid-template-columns: 1fr;
-
-    }
-
-}
-
-
-@media(max-width: 650px) {
-
-    .contenedor {
-
-        padding: 13px;
-
-    }
-
-    .cabecera {
-
-        align-items: flex-start;
-
-    }
-
-    .usuario-info {
-
-        display: none;
-
-    }
-
-    .titulo {
-
-        font-size: 19px;
-
-    }
-
-    .estadisticas {
-
-        grid-template-columns: 1fr 1fr;
-
-        gap: 9px;
-
-    }
-
-    .card {
-
-        min-height: 120px;
-
-        padding: 13px;
-
-    }
-
-    .card-valor {
-
-        font-size: 18px;
-
-    }
-
-    .donut-contenedor {
-
-        flex-direction: column;
-
-        gap: 15px;
-
-    }
-
-    .donut {
-
-        width: 135px;
-
-        height: 135px;
-
-    }
-
-    .donut::before {
-
-        width: 85px;
-
-        height: 85px;
-
-    }
-
-    .leyenda {
-
-        flex-direction: row;
-
-        flex-wrap: wrap;
-
-        justify-content: center;
-
-    }
-
-    .resumen {
-
-        grid-template-columns: 1fr;
-
-    }
-
-}
-
-    .contenedor-tabla {
-
-@media(max-width: 400px) {
-
-    .estadisticas {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .titulo {
-
-        font-size: 17px;
-
-    }
-
-    .usuario .avatar {
-
-        width: 35px;
-
-        height: 35px;
-
-    }
-
+@media(max-width:400px){
+    .estadisticas{grid-template-columns:1fr}
+    .avatar{width:37px;height:37px}
 }
-
 </style>
-
 </head>
 
-
 <body>
-
-
 <div class="contenedor">
 
-
-    <!-- =====================================================
-         ENCABEZADO
-    ====================================================== -->
-
     <div class="encabezado">
-
         <div class="izquierda-cabecera">
-
-        <p>
-            Consulta las ventas completadas registradas
-            en DIVINE
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         RESUMEN PRINCIPAL
-    ====================================================== -->
-
-    <div class="resumen-principal">
-
-
-        <!-- =================================================
-             VENTAS DE HOY
-        ================================================== -->
-
-        <div class="tarjeta-grande tarjeta-hoy">
-
-            <div class="etiqueta-grande">
-
-                ✨ VENTAS DE HOY ✨
-
+            <div class="menu-icono">☰</div>
+            <div>
+                <div class="titulo">DIVINE</div>
+                <div class="subtitulo">Control y registro de ventas</div>
             </div>
-
-
-            <!-- DINERO DE HOY -->
-
-            <div class="monto-grande">
-
-                Bs
-                <?= number_format(
-                    $totalHoy,
-                    2
-                ) ?>
-
-            </div>
-
-
-            <!-- CANTIDAD DE VENTAS DE HOY -->
-
-            <div class="cantidad-grande">
-
-                💗
-
-                <?= $cantidadHoy ?>
-
-                <?=
-                    $cantidadHoy == 1
-                    ? 'VENTA HOY'
-                    : 'VENTAS HOY'
-                ?>
-
-            </div>
-
-
-            <div class="detalle-grande">
-
-                Ventas completadas registradas
-                el día de hoy
-
-            </div>
-
         </div>
 
+        <div class="usuario">
+            <div class="usuario-info">
+                <div class="usuario-nombre"><?= htmlspecialchars($nombre) ?></div>
+                <div class="usuario-rol"><?= htmlspecialchars($rol) ?></div>
+            </div>
+            <div class="avatar">
+                <?= htmlspecialchars(strtoupper(substr($nombre ?: 'U', 0, 1))) ?>
+            </div>
+        </div>
+    </div>
 
-        <!-- =================================================
-             TOTAL GENERAL
-        ================================================== -->
+    <div class="dashboard-titulo">
+        <h1>Resumen de ventas</h1>
+        <p>Las ventas de hoy aparecen primero y después todas las ventas registradas.</p>
+    </div>
+
+    <section class="resumen-principal">
+        <div class="tarjeta-grande tarjeta-hoy">
+            <div class="etiqueta-grande">✨ VENTAS DE HOY ✨</div>
+            <div class="monto-grande">Bs <?= number_format($totalHoy, 2) ?></div>
+            <div class="cantidad-grande">
+                💗 <?= $cantidadHoy ?> <?= $cantidadHoy == 1 ? 'VENTA HOY' : 'VENTAS HOY' ?>
+            </div>
+            <div class="detalle-grande">Pedidos cuyo estado es "Aceptado" y cuya venta corresponde a hoy.</div>
+        </div>
 
         <div class="tarjeta-grande tarjeta-general">
-
-            <div class="etiqueta-grande">
-
-                📊 TOTAL GENERAL
-
-            </div>
-
-
-            <!-- DINERO TOTAL -->
-
-            <div class="monto-grande">
-
-                Bs
-                <?= number_format(
-                    $totalGeneral,
-                    2
-                ) ?>
-
-            </div>
-
-
-            <!-- CANTIDAD TOTAL -->
-
+            <div class="etiqueta-grande">📊 TOTAL DE VENTAS</div>
+            <div class="monto-grande">Bs <?= number_format($totalGeneral, 2) ?></div>
             <div class="cantidad-grande">
-
-                ✨
-
-                <?= $cantidadTotal ?>
-
-                <?=
-                    $cantidadTotal == 1
-                    ? 'VENTA COMPLETADA'
-                    : 'VENTAS COMPLETADAS'
-                ?>
-
+                ✨ <?= $cantidadTotal ?> <?= $cantidadTotal == 1 ? 'VENTA REGISTRADA' : 'VENTAS REGISTRADAS' ?>
             </div>
-
-
-            <div class="detalle-grande">
-
-                Total acumulado de todas las
-                ventas completadas
-
-            </div>
-
+            <div class="detalle-grande">Todas las ventas relacionadas con pedidos en estado "Aceptado".</div>
         </div>
-
-
-    </div>
-
-
-    <!-- =====================================================
-         ESTADÍSTICAS
-    ====================================================== -->
+    </section>
 
     <section class="estadisticas">
-
-
-        <!-- HOY -->
-
         <article class="card">
-
             <div>
-
                 <div class="card-arriba">
-
-                    <div class="card-icono">
-                        $
-                    </div>
-
-                    <div class="card-menu">
-                        •••
-                    </div>
-
+                    <div class="card-icono">♡</div>
+                    <div class="card-menu">•••</div>
                 </div>
-
-                <div class="card-titulo">
-                    Ventas de hoy
-                </div>
-
+                <div class="card-titulo">Ventas de hoy</div>
             </div>
-
-
             <div>
-
-                <div class="card-valor">
-
-                    $<?php echo number_format($totalventadia, 2); ?>
-
-                </div>
-
-                <div class="card-cambio">
-                    Total del día
-                </div>
-
+                <div class="card-valor">Bs <?= number_format($totalHoy,2) ?></div>
+                <div class="card-cambio"><?= $cantidadHoy ?> ventas hoy</div>
             </div>
-
         </article>
 
-
-        <!-- 7 DÍAS -->
-
         <article class="card">
-
             <div>
-
                 <div class="card-arriba">
-
-                    <div class="card-icono">
-                        ▦
-                    </div>
-
-                    <div class="card-menu">
-                        •••
-                    </div>
-
+                    <div class="card-icono">7</div>
+                    <div class="card-menu">•••</div>
                 </div>
-
-                <div class="card-titulo">
-                    Últimos 7 días
-                </div>
-
+                <div class="card-titulo">Últimos 7 días</div>
             </div>
-
-
             <div>
-
-                <div class="card-valor">
-
-                    $<?php echo number_format($totalventasemana, 2); ?>
-
-                </div>
-
-                <div class="card-cambio">
-                    Ventas acumuladas
-                </div>
-
+                <div class="card-valor">Bs <?= number_format($totalSemana,2) ?></div>
+                <div class="card-cambio">Ventas acumuladas</div>
             </div>
-
         </article>
 
-
-        <!-- 30 DÍAS -->
-
         <article class="card">
-
             <div>
-
                 <div class="card-arriba">
-
-                    <div class="card-icono">
-                        %
-                    </div>
-
-                    <div class="card-menu">
-                        •••
-                    </div>
-
+                    <div class="card-icono">30</div>
+                    <div class="card-menu">•••</div>
                 </div>
-
-                <div class="card-titulo">
-                    Últimos 30 días
-                </div>
-
+                <div class="card-titulo">Últimos 30 días</div>
             </div>
-
-
             <div>
-
-                <div class="card-valor">
-
-                    $<?php echo number_format($totalventames, 2); ?>
-
-                </div>
-
-                <div class="card-cambio">
-                    Rendimiento mensual
-                </div>
-
+                <div class="card-valor">Bs <?= number_format($totalMes,2) ?></div>
+                <div class="card-cambio">Rendimiento mensual</div>
             </div>
-
         </article>
 
-
-        <!-- AÑO -->
-
         <article class="card">
-
             <div>
-
                 <div class="card-arriba">
-
-                    <div class="card-icono">
-                        ✦
-                    </div>
-
-                    <div class="card-menu">
-                        •••
-                    </div>
-
+                    <div class="card-icono">✦</div>
+                    <div class="card-menu">•••</div>
                 </div>
-
-                <div class="card-titulo">
-                    Último año
-                </div>
-
+                <div class="card-titulo">Total general</div>
             </div>
-
-
             <div>
-
-                <div class="card-valor">
-
-                    $<?php echo number_format($totalventaanio, 2); ?>
-
-                </div>
-
-                <div class="card-cambio">
-                    Total acumulado
-                </div>
-
+                <div class="card-valor">Bs <?= number_format($totalGeneral,2) ?></div>
+                <div class="card-cambio">Todas las ventas</div>
             </div>
-
         </article>
-
-
     </section>
-
-
-    <!-- =====================================================
-         GRÁFICAS
-    ====================================================== -->
 
     <section class="graficas">
-
-
-        <!-- =================================================
-             GRÁFICO TORTA
-        ================================================== -->
-
         <article class="panel">
-
             <div class="panel-cabecera">
-
                 <div>
-
-                    <div class="panel-titulo">
-                        Distribución de ventas
-                    </div>
-
-                    <div class="panel-subtitulo">
-                        Comparación por período
-                    </div>
-
+                    <div class="panel-titulo">Distribución de ventas</div>
+                    <div class="panel-subtitulo">Resumen visual por período</div>
                 </div>
-
-                <select class="filtro">
-
-                    <option>
-                        Este mes
-                    </option>
-
-                </select>
-
+                <div class="filtro">DIVINE ♡</div>
             </div>
-
 
             <div class="donut-contenedor">
-
-
-                <div class="donut">
-
+                <div
+                    class="donut"
+                    style="background:conic-gradient(
+                        #d985a3 0deg <?= $anguloDia ?>deg,
+                        #efb0c7 <?= $anguloDia ?>deg <?= $anguloSemana ?>deg,
+                        #f3c9d8 <?= $anguloSemana ?>deg <?= $anguloMes ?>deg,
+                        #c56f91 <?= $anguloMes ?>deg 360deg
+                    );"
+                >
                     <div class="donut-centro">
-
-                        <small>
-                            Total
-                        </small>
-
-                        <strong>
-                            $<?php echo number_format($totalGrafico, 0); ?>
-                        </strong>
-
+                        <small>Total</small>
+                        <strong>Bs <?= number_format($totalGrafico,0) ?></strong>
                     </div>
-
                 </div>
-
 
                 <div class="leyenda">
-
-
-                    <div class="leyenda-item">
-
-                        <span class="punto verde"></span>
-
-                        Hoy
-
-                    </div>
-
-
-                    <div class="leyenda-item">
-
-                        <span class="punto amarillo"></span>
-
-                        7 días
-
-                    </div>
-
-
-                    <div class="leyenda-item">
-
-                        <span class="punto rosa"></span>
-
-                        30 días
-
-                    </div>
-
-
-                    <div class="leyenda-item">
-
-                        <span class="punto azul"></span>
-
-                        Año
-
-                    </div>
-
-
+                    <div class="leyenda-item"><span class="punto rosa1"></span>Hoy</div>
+                    <div class="leyenda-item"><span class="punto rosa2"></span>7 días</div>
+                    <div class="leyenda-item"><span class="punto rosa3"></span>30 días</div>
+                    <div class="leyenda-item"><span class="punto rosa4"></span>Total</div>
                 </div>
-
-
             </div>
-
         </article>
-
-
-        <!-- =================================================
-             GRÁFICO DE BARRAS
-        ================================================== -->
 
         <article class="panel">
-
             <div class="panel-cabecera">
-
                 <div>
-
-                    <div class="panel-titulo">
-                        Resumen de ventas
-                    </div>
-
-                    <div class="panel-subtitulo">
-                        Rendimiento por período
-                    </div>
-
+                    <div class="panel-titulo">Resumen de ventas</div>
+                    <div class="panel-subtitulo">Comparación por período</div>
                 </div>
-
-                <select class="filtro">
-
-                    <option>
-                        Ventas
-                    </option>
-
-                </select>
-
+                <div class="filtro">Ventas</div>
             </div>
-
 
             <div class="grafico-barras">
-
-
                 <div class="columna">
-
-                    <div class="valor-barra">
-
-                        $<?php
-                        echo number_format(
-                            $valorDia,
-                            0
-                        );
-                        ?>
-
-                    </div>
-
-                    <div class="barrita"></div>
-
-                    <div class="nombre-barra">
-                        Hoy
-                    </div>
-
+                    <div class="valor-barra">Bs <?= number_format($valorDia,0) ?></div>
+                    <div class="barrita rosa1" style="height:<?= max(8,$barraDia*1.55) ?>px;"></div>
+                    <div class="nombre-barra">Hoy</div>
                 </div>
 
-
                 <div class="columna">
-
-                    <div class="valor-barra">
-
-                        $<?php
-                        echo number_format(
-                            $valorSemana,
-                            0
-                        );
-                        ?>
-
-                    </div>
-
-                    <div class="barrita"></div>
-
-                    <div class="nombre-barra">
-                        7 días
-                    </div>
-
+                    <div class="valor-barra">Bs <?= number_format($valorSemana,0) ?></div>
+                    <div class="barrita rosa2" style="height:<?= max(8,$barraSemana*1.55) ?>px;"></div>
+                    <div class="nombre-barra">7 días</div>
                 </div>
 
-
                 <div class="columna">
-
-                    <div class="valor-barra">
-
-                        $<?php
-                        echo number_format(
-                            $valorMes,
-                            0
-                        );
-                        ?>
-
-                    </div>
-
-                    <div class="barrita"></div>
-
-                    <div class="nombre-barra">
-                        30 días
-                    </div>
-
+                    <div class="valor-barra">Bs <?= number_format($valorMes,0) ?></div>
+                    <div class="barrita rosa3" style="height:<?= max(8,$barraMes*1.55) ?>px;"></div>
+                    <div class="nombre-barra">30 días</div>
                 </div>
 
-
                 <div class="columna">
-
-                    <div class="valor-barra">
-
-                        $<?php
-                        echo number_format(
-                            $valorAnio,
-                            0
-                        );
-                        ?>
-
-                    </div>
-
-                    <div class="barrita"></div>
-
-                    <div class="nombre-barra">
-                        Año
-                    </div>
-
+                    <div class="valor-barra">Bs <?= number_format($valorTotal,0) ?></div>
+                    <div class="barrita rosa4" style="height:<?= max(8,$barraTotal*1.55) ?>px;"></div>
+                    <div class="nombre-barra">Total</div>
                 </div>
-
-
             </div>
-
         </article>
-
-
     </section>
 
-
-    <!-- =====================================================
-         RESUMEN
-    ====================================================== -->
-
-    <div class="resumen">
-
-
-        <!-- 7 DÍAS -->
-
-        <div class="tarjeta">
-
-            <div class="icono">
-                📅
-            </div>
-
-            <h3>
-                Últimos 7 días
-            </h3>
-
-            <div class="monto">
-
-                Bs
-                <?= number_format(
-                    $totalSemana,
-                    2
-                ) ?>
-
-            </div>
-
-        </div>
-
-
-        <!-- 30 DÍAS -->
-
-        <div class="tarjeta">
-
-            <div class="icono">
-                💕
-            </div>
-
-            <h3>
-                Últimos 30 días
-            </h3>
-
-            <div class="monto">
-
-                Bs
-                <?= number_format(
-                    $totalMes,
-                    2
-                ) ?>
-
-            </div>
-
-        </div>
-
-
-    </div>
-
-
-    <!-- =====================================================
-         HISTORIAL DE VENTAS
-    ====================================================== -->
-
     <div class="contenedor-tabla">
-
-
         <div class="titulo-tabla">
-
-            <h2>
-                ✨ Ventas completadas
-            </h2>
-
-            <div class="historial-titulo">
-
-                <div class="historial-icono">
-                    ♡
-                </div>
-
-                <div>
-
-                    <h2>
-                        Historial de ventas
-                    </h2>
-
-                    <div class="historial-descripcion">
-                        Últimas ventas registradas
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="registros">
-
-                <?php echo $totalRegistros; ?> registros
-
-            </div>
-
-
+            <h2>💗 Ventas registradas</h2>
+            <div class="registros"><?= $totalRegistros ?> registros</div>
         </div>
 
+        <?php if ($resultado && $resultado->num_rows > 0): ?>
 
-        <?php if (
-            $resultado
-            &&
-            $resultado->num_rows > 0
-        ): ?>
-
-
-        <table>
-
-
+        <table id="tabla-ingresos">
             <thead>
-
                 <tr>
-
-                    <th>
-                        ID Venta
-                    </th>
-
-                    <th>
-                        Pedido
-                    </th>
-
-                    <th>
-                        Fecha de venta
-                    </th>
-
-                    <th>
-                        Método
-                    </th>
-
-                    <th>
-                        Estado
-                    </th>
-
-                    <th>
-                        Total
-                    </th>
-
+                    <th>ID Venta</th>
+                    <th>Pedido</th>
+                    <th>Fecha de venta</th>
+                    <th>Método</th>
+                    <th>Estado</th>
+                    <th>Total</th>
                 </tr>
-
             </thead>
 
-
             <tbody>
-
-
             <?php
-
-            /* =================================================
-               FECHA DE HOY
-
-               SE COMPARA CON v.fecha
-            ================================================= */
-
             $fechaHoy = date('Y-m-d');
-
-
-            /* =================================================
-               CONTROL DE SEPARADORES
-            ================================================= */
-
             $mostroHoy = false;
-
             $mostroAnteriores = false;
 
+            while ($fila = $resultado->fetch_assoc()):
+                $fechaVenta = !empty($fila['fecha'])
+                    ? date('Y-m-d', strtotime($fila['fecha']))
+                    : '';
 
-                        echo "<td>";
-                        echo htmlspecialchars(
-                            $fila["PEDIDOS_ID"]
-                        );
-                        echo "</td>";
-
-
-                /* =============================================
-                   MOSTRAR SEPARADOR HOY
-                ============================================= */
-
-                if (
-                    $esHoy
-                    &&
-                    !$mostroHoy
-                ):
-
-                        echo htmlspecialchars(
-                            $fila["estado"]
-                        );
-
+                $esHoy = ($fechaVenta === $fechaHoy);
             ?>
 
-                <tr class="separador-hoy">
+                <?php if ($esHoy && !$mostroHoy): ?>
+                    <?php $mostroHoy = true; ?>
+                    <tr class="separador-ventas">
+                        <td colspan="6">
+                            <div class="separador-hoy-contenido">
+                                💗 ✨ VENTAS DE HOY ✨ 💗
+                            </div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
 
-                    <td colspan="6">
+                <?php if (!$esHoy && !$mostroAnteriores): ?>
+                    <?php $mostroAnteriores = true; ?>
+                    <tr class="separador-ventas">
+                        <td colspan="6">
+                            <div class="separador-anteriores-contenido">
+                                📋 VENTAS DE OTROS DÍAS
+                            </div>
+                        </td>
+                    </tr>
+                <?php endif; ?>
 
-                        <div
-                            class="separador-hoy-contenido"
-                        >
-
-                            💗 ✨ HOY ✨ 💗
-
-                        </div>
-
+                <tr class="<?= $esHoy ? 'venta-hoy' : '' ?>">
+                    <td>
+                        <strong>#<?= htmlspecialchars($fila['id']) ?></strong>
                     </td>
-
-                </tr>
-
-
-            <?php
-
-                        echo htmlspecialchars(
-                            $fila["metodo"]
-                        );
-
-                        echo "</td>";
-
-
-                /* =============================================
-                   MOSTRAR SEPARADOR ANTERIORES
-                ============================================= */
-
-                if (
-                    !$esHoy
-                    &&
-                    !$mostroAnteriores
-                ):
-
-                    $mostroAnteriores = true;
-
-            ?>
-
-                <tr class="separador-anteriores">
-
-                    <td colspan="6">
-
-                        <div
-                            class="separador-anteriores-contenido"
-                        >
-
-                            📋 VENTAS COMPLETADAS ANTERIORES
-
-                        </div>
-
-                    </td>
-
-                </tr>
-
-
-            <?php
-
-                        echo htmlspecialchars(
-                            $fila["fecha"]
-                        );
-
-            ?>
-
-
-                        echo "<td>";
-
-                        echo "<a
-                                class='ver1'
-                                href='readventas1.php?idpedidos=" .
-                                urlencode($idPedido) .
-                                "'
-                              >
-                                Mostrar
-                              </a>";
-
-                        echo "</td>";
-
-
-                    <!-- ID -->
 
                     <td>
-
-                        <strong>
-
-                            #
-
-                            <?= htmlspecialchars(
-                                $fila['id']
-                            ) ?>
-
-                        </strong>
-
+                        #<?= htmlspecialchars($fila['PEDIDOS_ID']) ?>
                     </td>
 
-
-                    <!-- PEDIDO -->
-
                     <td>
-
-                        #
-
-                        <?= htmlspecialchars(
-                            $fila['PEDIDOS_ID']
-                        ) ?>
-
-                    </td>
-
-
-                    <!-- FECHA DE VENTAS -->
-
-                    <td>
-
-                        <?= date(
-                            'd/m/Y H:i',
-                            strtotime(
-                                $fila['fecha']
-                            )
-                        ) ?>
-
+                        <?= !empty($fila['fecha'])
+                            ? date('d/m/Y H:i', strtotime($fila['fecha']))
+                            : 'Sin fecha' ?>
 
                         <?php if ($esHoy): ?>
-
                             <br>
-
-                            <span
-                                class="indicador-hoy"
-                            >
-
-                                HOY 💗
-
-                            </span>
-
+                            <span class="indicador-hoy">HOY 💗</span>
                         <?php endif; ?>
-
                     </td>
 
-
-                    <!-- MÉTODO -->
-
                     <td>
-
-                        <?= htmlspecialchars(
-                            $fila['metodo'] ?? ''
-                        ) ?>
-
+                        <?= htmlspecialchars($fila['metodo'] ?? '') ?>
                     </td>
 
-
-                    <!-- ESTADO -->
-
                     <td>
-
-                        <span
-                            class="estado estado-completado"
-                        >
-
-                            ✓ Completado
-
+                        <span class="estado">
+                            ✓ <?= htmlspecialchars($fila['estado_pedido'] ?? 'Aceptado') ?>
                         </span>
-
                     </td>
-
-
-                    <!-- TOTAL -->
 
                     <td>
-
-                        <strong
-                            style="
-                                color:var(--vino-oscuro);
-                            "
-                        >
-
-                            Bs
-
-                            <?= number_format(
-                                (float)$fila['costototal'],
-                                2
-                            ) ?>
-
+                        <strong class="precio">
+                            Bs <?= number_format((float)$fila['costototal'], 2) ?>
                         </strong>
-
                     </td>
-
-
                 </tr>
 
-
             <?php endwhile; ?>
-
-
             </tbody>
-
-
         </table>
-
 
         <?php else: ?>
 
-
-            <!-- =================================================
-                 SIN VENTAS
-            ================================================== -->
-
             <div class="sin-ventas">
-
-                <div class="emoji">
-                    🌸
-                </div>
-
-                <h3>
-                    No hay ventas completadas
-                </h3>
-
-                <p>
-                    No existen ventas donde tanto
-                    VENTAS como PEDIDOS tengan el estado
-                    "Completado".
-                </p>
-
+                <div class="emoji">🌸</div>
+                <h3>No hay ventas registradas</h3>
+                <p>No existen ventas relacionadas con pedidos cuyo estado sea "Aceptado".</p>
             </div>
-
 
         <?php endif; ?>
 
-
-        <!-- =================================================
-             VOLVER
-        ================================================== -->
-
-        <a
-            href="../REPORTES/reportes.php"
-            class="volver"
-        >
-
-            ← Volver a reportes
-
-        </a>
-
-
+        <a href="../REPORTES/reportes.php" class="volver">← Volver a reportes</a>
     </div>
 
-
 </div>
-
-
 </body>
-
 </html>
 
-
 <?php
-
 $conn->close();
-
 ?>
- 

@@ -56,7 +56,7 @@ if ($rol == "vendedor") {
         SELECT *
         FROM PEDIDOS
         WHERE nombrevendedor = '$nombreSeguro'
-        ORDER BY ID ASC
+        ORDER BY ID DESC
     ";
 
 
@@ -1063,7 +1063,7 @@ if($resultado && $resultado->num_rows > 0){
 
 
                     <a
-                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=En%20proceso"
+                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Aceptado"
                     >
 
                         <button type="button">
