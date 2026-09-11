@@ -356,19 +356,64 @@ $archivo = 'mensajes.txt';
         top: 20px;
       }
     }
+    /* ESTILOS PERSONALIZADOS PARA SWEETALERT2 */
+.alerta-personalizada {
+  border: 1px solid rgba(218, 174, 193, 0.5) !important;
+  box-shadow: 0 20px 50px rgba(126, 82, 105, 0.2) !important;
+  padding: 30px !important;
+}
+
+.alerta-titulo {
+  font-family: "Georgia", "Times New Roman", serif !important;
+  color: #a8758b !important;
+  font-size: 26px !important;
+  font-weight: normal !important;
+}
+
+.alerta-boton {
+  background: linear-gradient(135deg, #e9c4d3, #d8a5ba) !important;
+  color: #684957 !important;
+  border: none !important;
+  padding: 12px 30px !important;
+  border-radius: 25px !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  box-shadow: 0 5px 15px rgba(174, 119, 142, 0.2) !important;
+  transition: all 0.3s ease !important;
+  outline: none !important;
+}
+
+.alerta-boton:hover {
+  background: linear-gradient(135deg, #d9afc1, #c997ad) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(174, 119, 142, 0.3) !important;
+}
   </style> 
 </head> 
  
 <body> 
- <script>
+<script>
 <?php
 if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
 ?>
     Swal.fire({
-        icon: 'success',
         title: '¡Comentario guardado!',
         text: 'Tu comentario se guardó correctamente.',
-        confirmButtonText: 'Aceptar'
+        icon: 'success',
+        iconColor: '#d5a0b5',
+        confirmButtonText: 'Aceptar',
+        background: '#fffcfd',
+        color: '#654b59',
+        borderRadius: '25px',
+        customClass: {
+            popup: 'alerta-personalizada',
+            title: 'alerta-titulo',
+            confirmButton: 'alerta-boton'
+        },
+        buttonsStyling: false
     });
 <?php
 }
