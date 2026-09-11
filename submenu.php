@@ -315,11 +315,11 @@ nav{
                     Contacto
                 </a>
             </li>
-
-            <li>
-                <a href="#consulta">
-                    Consulta Personal
+            <a href=".CONSULTA-pedido/formreadpedido.php">
+                    mis pedidos 
                 </a>
+            <li>
+                
             </li>
                   
             <li>
@@ -328,11 +328,6 @@ nav{
                 </a>
             </li>
         
-            <li>
-                <a href="../CONSULTA-pedido/formreadpedido.php">
-                    mis pedidos 
-                </a>
-            </li>
         </ul>
 
     </nav>
