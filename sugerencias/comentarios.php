@@ -8,7 +8,7 @@ $archivo = 'mensajes.txt';
   <meta charset="UTF-8"> 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publicaciones</title> 
- 
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style> 
     * {
       box-sizing: border-box;
@@ -99,7 +99,20 @@ $archivo = 'mensajes.txt';
 </head> 
  
 <body> 
- 
+ <script>
+<?php
+if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
+?>
+    Swal.fire({
+        icon: 'success',
+        title: '¡Comentario guardado!',
+        text: 'Tu comentario se guardó correctamente.',
+        confirmButtonText: 'Aceptar'
+    });
+<?php
+}
+?>
+</script>
   <div class="contenedor">
 
     <h1>Publicaciones</h1>
