@@ -262,7 +262,7 @@ body{
 
 }
 /* =========================
-   ✨ ANIMACIONES ABOUT DIVINE
+    ANIMACIONES ABOUT DIVINE
 ========================= */
 
 /* estado inicial */
