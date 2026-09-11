@@ -1461,7 +1461,6 @@ function confirmarEliminacion(codigo) {
     }
 
 ?>
-
 </script>
 </body>
 </html>
