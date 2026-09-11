@@ -28,7 +28,7 @@ $conn->set_charset("utf8");
    ========================================================= */
 
 if (!isset($_SESSION['rol'])) {
-    header("Location: ../SESIONES/loginform.php");
+    header("Location: ../SESIONES/loginformcliente.php");
     exit();
 }
 
