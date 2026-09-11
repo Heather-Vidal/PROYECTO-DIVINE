@@ -1,87 +1,107 @@
-<?php 
-$archivo = 'mensajes.txt'; 
-?> 
- 
-<!DOCTYPE html> 
-<html lang="es"> 
-<head> 
-  <meta charset="UTF-8"> 
+<?php
+$archivo = 'mensajes.txt';
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicaciones</title> 
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style> 
+
+  <title>Publicaciones</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    body { 
-      font-family: "Georgia", "Times New Roman", serif;
-      margin: 0;
-      padding: 50px 20px;
+    body {
+      font-family: Georgia, "Times New Roman", serif;
       min-height: 100vh;
+      padding: 50px 20px;
 
       background:
         linear-gradient(
-          rgba(255, 240, 246, 0.88),
-          rgba(242, 232, 245, 0.94)
+          rgba(255, 237, 246, 0.90),
+          rgba(239, 226, 243, 0.95)
         ),
         url("../imagenes/mezcla.jpg");
 
-      background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
 
-      color: #654b59;
+      color: #634b58;
     }
 
-    /* CONTENEDOR PRINCIPAL */
+    /* CONTENEDOR */
+
     .contenedor {
       width: 100%;
-      max-width: 900px;
+      max-width: 1050px;
       margin: auto;
+
       padding: 45px 50px;
 
-      background: rgba(255, 252, 253, 0.97);
-      border: 1px solid rgba(218, 174, 193, 0.45);
-      border-radius: 30px;
+      background: rgba(255, 253, 254, 0.97);
+
+      border: 1px solid rgba(216, 170, 192, 0.45);
+
+      border-radius: 32px;
 
       box-shadow:
-        0 20px 60px rgba(126, 82, 105, 0.18),
-        0 5px 18px rgba(126, 82, 105, 0.08);
+        0 25px 70px rgba(111, 70, 93, 0.18),
+        0 8px 25px rgba(111, 70, 93, 0.08);
 
       position: relative;
       overflow: hidden;
     }
 
-    /* DECORACIÓN */
     .contenedor::before {
       content: "♡";
+
       position: absolute;
-      top: -35px;
+      top: -45px;
       right: 20px;
-      font-size: 130px;
-      color: rgba(221, 170, 192, 0.10);
+
+      font-size: 150px;
+
+      color: rgba(207, 147, 173, 0.09);
+
       font-family: Arial, sans-serif;
     }
 
     .contenedor::after {
       content: "✿";
+
       position: absolute;
-      bottom: -35px;
+      bottom: -50px;
       left: 20px;
-      font-size: 100px;
-      color: rgba(221, 170, 192, 0.08);
+
+      font-size: 130px;
+
+      color: rgba(207, 147, 173, 0.08);
     }
 
-    /* TÍTULO */
-    h1 { 
+    /* TITULO */
+
+    h1 {
       text-align: center;
-      color: #a8758b;
-      font-size: 40px;
+
+      color: #a66f87;
+
+      font-size: 42px;
+
       font-weight: normal;
+
       letter-spacing: 1px;
-      margin: 0 0 8px;
+
+      margin-bottom: 8px;
 
       position: relative;
       z-index: 2;
@@ -89,78 +109,98 @@ $archivo = 'mensajes.txt';
 
     h1::after {
       content: "♡  ✦  ♡";
+
       display: block;
+
+      margin-top: 12px;
+
+      color: #d49bb3;
+
       font-family: Arial, sans-serif;
+
       font-size: 17px;
-      letter-spacing: 5px;
-      color: #d5a0b5;
-      margin-top: 10px;
+
+      letter-spacing: 6px;
     }
 
-    /* SUBTÍTULO */
+    /* SUBTITULO */
+
     .subtitulo {
       text-align: center;
-      color: #a58b98;
+
+      color: #9b7d8c;
+
       font-family: Arial, sans-serif;
+
       font-size: 15px;
-      letter-spacing: 0.3px;
-      margin: 0 0 28px;
+
+      margin: 10px auto 30px;
 
       position: relative;
       z-index: 2;
     }
 
-    /* BOTÓN COMENTAR */
+    /* BOTON */
+
     .volver {
       display: block;
+
       width: fit-content;
+
       margin: auto;
+
+      padding: 14px 32px;
 
       text-decoration: none;
 
-      background: linear-gradient(
-        135deg,
-        #e9c4d3,
-        #d8a5ba
-      );
-
-      color: #684957;
-
-      padding: 13px 30px;
-      border-radius: 30px;
+      color: #674655;
 
       font-family: Arial, sans-serif;
+
       font-size: 14px;
+
       font-weight: bold;
 
-      box-shadow:
-        0 6px 18px rgba(174, 119, 142, 0.22);
+      background: linear-gradient(
+        135deg,
+        #efcedb,
+        #d9a7bd
+      );
 
-      transition: all 0.3s ease;
+      border-radius: 50px;
+
+      box-shadow:
+        0 8px 22px rgba(174, 119, 142, 0.22);
+
+      transition: 0.3s ease;
 
       position: relative;
-      z-index: 2;
+      z-index: 3;
     }
 
     .volver:hover {
-      background: linear-gradient(
-        135deg,
-        #d9afc1,
-        #c997ad
-      );
+      transform: translateY(-4px);
 
       color: white;
 
-      transform: translateY(-4px);
+      background: linear-gradient(
+        135deg,
+        #d9a7bd,
+        #bd819d
+      );
 
       box-shadow:
-        0 10px 25px rgba(174, 119, 142, 0.30);
+        0 12px 30px rgba(174, 119, 142, 0.30);
     }
 
-    /* LÍNEA */
+    /* LINEA */
+
     hr {
       border: none;
+
       height: 1px;
+
+      margin: 40px 0 30px;
 
       background: linear-gradient(
         to right,
@@ -168,79 +208,61 @@ $archivo = 'mensajes.txt';
         #dfb9c9,
         transparent
       );
-
-      margin: 38px 0 30px;
     }
 
-    /* CONTENEDOR DE COMENTARIOS */
+    /* PUBLICACIONES */
+
     .publicaciones {
       display: flex;
+
       flex-direction: column;
-      gap: 20px;
+
+      gap: 22px;
 
       position: relative;
+
       z-index: 2;
     }
 
-    /* CADA COMENTARIO */
-    .post { 
-      position: relative;
+    /* PUBLICACION */
 
-      padding: 24px 28px 24px 58px;
+    .post {
+      display: grid;
+
+      grid-template-columns: 250px 1fr;
+
+      gap: 18px;
+
+      padding: 18px;
 
       background:
         linear-gradient(
           135deg,
-          rgba(255, 249, 251, 0.98),
-          rgba(250, 240, 246, 0.98)
+          #fffafb,
+          #f9eef5
         );
 
-      border: 1px solid #ecd3df;
-      border-radius: 20px;
+      border: 1px solid #ecd2df;
 
-      color: #6e5260;
-
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-      line-height: 1.7;
+      border-radius: 24px;
 
       box-shadow:
-        0 7px 20px rgba(126, 82, 105, 0.08);
+        0 8px 25px rgba(126, 82, 105, 0.08);
 
-      transition: all 0.3s ease;
+      position: relative;
 
       overflow: hidden;
+
+      transition: all 0.3s ease;
     }
 
-    /* Corazón de cada comentario */
+    /* LINEA SUPERIOR */
+
     .post::before {
-      content: "♡";
-
-      position: absolute;
-      left: 20px;
-      top: 22px;
-
-      width: 27px;
-      height: 27px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #f1d5e0;
-      color: #bd829b;
-
-      border-radius: 50%;
-
-      font-size: 17px;
-      font-family: Arial, sans-serif;
-    }
-
-    /* Detalle superior */
-    .post::after {
       content: "";
 
       position: absolute;
+
       top: 0;
       left: 0;
 
@@ -249,45 +271,181 @@ $archivo = 'mensajes.txt';
 
       background: linear-gradient(
         to right,
-        #d9a9bc,
-        #efcbd9,
-        #d9a9bc
+        #d29bb2,
+        #f1cedd,
+        #d29bb2
       );
     }
 
-    /* EFECTO AL PASAR EL MOUSE */
     .post:hover {
       transform: translateY(-5px);
 
-      background:
-        linear-gradient(
-          135deg,
-          #fffafd,
-          #fdf1f6
-        );
-
-      border-color: #dcb2c4;
+      border-color: #d8adbf;
 
       box-shadow:
-        0 12px 28px rgba(126, 82, 105, 0.14);
+        0 15px 35px rgba(126, 82, 105, 0.14);
     }
 
-    .post:hover::before {
-      background: #dfb4c7;
-      color: white;
-      transform: scale(1.08);
+    /* CAJA ROSA DEL CLIENTE */
+
+    .usuario {
+      min-height: 120px;
+
+      padding: 16px 18px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f5dce7,
+          #eed1df
+        );
+
+      border: 1px solid #e3bdcd;
+
+      border-radius: 20px;
+
+      display: flex;
+
+      flex-direction: row;
+
+      align-items: center;
+
+      justify-content: flex-start;
+
+      text-align: left;
+
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.8);
     }
 
-    /* TEXTO DEL COMENTARIO */
-    .post-texto {
+    /* CIRCULO CON INICIAL */
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+
+      min-width: 50px;
+
+      border-radius: 50%;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      margin-right: 13px;
+
+      background: #fff8fb;
+
+      color: #b47791;
+
+      font-family: Georgia, serif;
+
+      font-size: 22px;
+
+      font-weight: bold;
+
+      box-shadow:
+        0 5px 15px rgba(128, 77, 101, 0.12);
+    }
+
+    /* NOMBRE */
+
+    .nombre {
+      color: #70485a;
+
+      font-family: Georgia, "Times New Roman", serif;
+
+      font-size: 18px;
+
+      font-weight: bold;
+
+      line-height: 1.2;
+
+      word-break: break-word;
+
+      margin-bottom: 4px;
+    }
+
+    /* FECHA */
+
+    .fecha {
+      color: #a78393;
+
+      font-family: Arial, sans-serif;
+
+      font-size: 9px;
+
+      letter-spacing: 0.3px;
+
+      opacity: 0.85;
+    }
+
+    /* CAJA COMENTARIO */
+
+    .comentario {
+      min-height: 120px;
+
+      padding: 25px 30px;
+
+      display: flex;
+
+      align-items: center;
+
+      background: rgba(255,255,255,0.82);
+
+      border: 1px solid #ead4df;
+
+      border-radius: 20px;
+
       position: relative;
-      z-index: 2;
     }
 
-    /* CUANDO NO HAY PUBLICACIONES */
+    /* COMILLA */
+
+    .comentario::before {
+      content: "“";
+
+      position: absolute;
+
+      top: 5px;
+      left: 20px;
+
+      font-family: Georgia, serif;
+
+      font-size: 55px;
+
+      line-height: 1;
+
+      color: #e4bdce;
+
+      opacity: 0.8;
+    }
+
+    /* TEXTO */
+
+    .post-texto {
+      width: 100%;
+
+      padding-left: 22px;
+
+      color: #705765;
+
+      font-family: Arial, sans-serif;
+
+      font-size: 15px;
+
+      line-height: 1.8;
+
+      word-break: break-word;
+    }
+
+    /* SIN PUBLICACIONES */
+
     .sin-publicaciones {
       text-align: center;
-      padding: 40px 25px;
+
+      padding: 50px 25px;
 
       background:
         linear-gradient(
@@ -296,30 +454,32 @@ $archivo = 'mensajes.txt';
           #f8eef5
         );
 
-      border: 1px dashed #ddb8c8;
-      border-radius: 20px;
+      border: 1px dashed #dcb3c5;
+
+      border-radius: 22px;
 
       color: #a17c8e;
 
       font-family: Arial, sans-serif;
-      font-size: 15px;
 
-      position: relative;
-      z-index: 2;
+      font-size: 15px;
     }
 
     .sin-publicaciones::before {
       content: "♡";
+
       display: block;
 
-      font-size: 35px;
+      font-size: 45px;
+
       color: #d5a0b5;
 
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     /* RESPONSIVE */
-    @media (max-width: 600px) {
+
+    @media (max-width: 700px) {
 
       body {
         padding: 25px 12px;
@@ -327,99 +487,259 @@ $archivo = 'mensajes.txt';
 
       .contenedor {
         padding: 30px 18px;
-        border-radius: 23px;
+
+        border-radius: 24px;
       }
 
       h1 {
-        font-size: 31px;
+        font-size: 32px;
       }
 
       .subtitulo {
         font-size: 14px;
+
         line-height: 1.5;
+
         padding: 0 10px;
       }
 
       .volver {
-        padding: 11px 24px;
+        padding: 12px 25px;
       }
+
+      /* PUBLICACION */
 
       .post {
-        padding: 22px 18px 22px 52px;
-        font-size: 14px;
-        line-height: 1.6;
-        border-radius: 17px;
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+
+        padding: 14px;
+
+        border-radius: 20px;
       }
 
-      .post::before {
-        left: 17px;
-        top: 20px;
+      /* CAJA ROSA */
+
+      .usuario {
+        min-height: 75px;
+
+        padding: 12px 15px;
+
+        flex-direction: row;
+
+        justify-content: flex-start;
+
+        text-align: left;
+      }
+
+      /* CIRCULO */
+
+      .avatar {
+        width: 45px;
+        height: 45px;
+
+        min-width: 45px;
+
+        font-size: 20px;
+
+        margin-right: 12px;
+      }
+
+      /* NOMBRE */
+
+      .nombre {
+        font-size: 17px;
+
+        margin-bottom: 3px;
+      }
+
+      /* FECHA */
+
+      .fecha {
+        font-size: 9px;
+      }
+
+      /* COMENTARIO */
+
+      .comentario {
+        min-height: 110px;
+
+        padding: 20px 18px;
+      }
+
+      .post-texto {
+        padding-left: 15px;
+
+        font-size: 14px;
       }
     }
-  </style> 
-</head> 
- 
-<body> 
- <script>
+
+  </style>
+</head>
+
+<body>
+
 <?php
+
 if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
+
 ?>
-    Swal.fire({
-        icon: 'success',
-        title: '¡Comentario guardado!',
-        text: 'Tu comentario se guardó correctamente.',
-        confirmButtonText: 'Aceptar'
-    });
-<?php
-}
-?>
+
+<script>
+
+Swal.fire({
+
+    icon: 'success',
+
+    title: '¡Comentario guardado!',
+
+    text: 'Tu comentario se guardó correctamente.',
+
+    confirmButtonText: 'Aceptar',
+
+    confirmButtonColor: '#c98da8',
+
+    background: '#fffafd',
+
+    color: '#684957'
+
+});
+
 </script>
-  <div class="contenedor">
 
-    <h1>Publicaciones</h1>
+<?php
 
-    <p class="subtitulo">
-      Comentarios y sugerencias de nuestros clientes
-    </p>
+}
 
-    <a class="volver" href="publicar.php">
-      ♡ Comentar
-    </a> 
+?>
 
-    <hr> 
- 
-    <div class="publicaciones">
+<div class="contenedor">
 
-      <?php 
-      if (file_exists($archivo)) { 
+  <h1>Publicaciones</h1>
 
-          $lineas = file(
-              $archivo, 
-              FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-          ); 
+  <p class="subtitulo">
+    Comentarios y sugerencias de nuestros clientes
+  </p>
 
-          $lineas = array_reverse($lineas); 
- 
-          foreach ($lineas as $linea) { 
-              echo '<div class="post">';
-              echo '<div class="post-texto">';
-              echo htmlspecialchars($linea);
-              echo '</div>';
-              echo '</div>';
-          } 
+  <a class="volver" href="publicar.php">
+    ♡ Comentar
+  </a>
 
-      } else { 
+  <hr>
 
-          echo '<div class="sin-publicaciones">';
-          echo 'No hay publicaciones aún.';
-          echo '</div>';
+  <div class="publicaciones">
 
-      } 
-      ?> 
+<?php
 
-    </div>
+if (file_exists($archivo)) {
+
+    $lineas = file(
+        $archivo,
+        FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+    );
+
+    $lineas = array_reverse($lineas);
+
+    foreach ($lineas as $linea) {
+
+        /*
+         * FORMATO:
+         * Nombre|Comentario|Fecha
+         */
+
+        $datos = explode('|', $linea, 3);
+
+        if (count($datos) >= 2) {
+
+            $nombre = trim($datos[0]);
+
+            $comentario = trim($datos[1]);
+
+            if (isset($datos[2]) && trim($datos[2]) != '') {
+
+                $fecha = trim($datos[2]);
+
+            } else {
+
+                $fecha = 'Fecha no disponible';
+
+            }
+
+        } else {
+
+            $nombre = 'Cliente';
+
+            $comentario = trim($linea);
+
+            $fecha = 'Fecha no disponible';
+        }
+
+        /*
+         * INICIAL DEL NOMBRE
+         */
+
+        $inicial = mb_strtoupper(
+            mb_substr($nombre, 0, 1, 'UTF-8'),
+            'UTF-8'
+        );
+
+        echo '<div class="post">';
+
+        /*
+         * CAJA ROSA DEL CLIENTE
+         */
+
+        echo '<div class="usuario">';
+
+            echo '<div class="avatar">';
+                echo htmlspecialchars($inicial);
+            echo '</div>';
+
+            echo '<div>';
+
+                echo '<div class="nombre">';
+                    echo htmlspecialchars($nombre);
+                echo '</div>';
+
+                echo '<div class="fecha">';
+                    echo htmlspecialchars($fecha);
+                echo '</div>';
+
+            echo '</div>';
+
+        echo '</div>';
+
+        /*
+         * CAJA DEL COMENTARIO
+         */
+
+        echo '<div class="comentario">';
+
+            echo '<div class="post-texto">';
+                echo htmlspecialchars($comentario);
+            echo '</div>';
+
+        echo '</div>';
+
+        echo '</div>';
+    }
+
+} else {
+
+    echo '<div class="sin-publicaciones">';
+
+        echo 'No hay publicaciones aún.<br>';
+        echo '¡Sé la primera persona en dejar un comentario!';
+
+    echo '</div>';
+}
+
+?>
 
   </div>
- 
-</body> 
+
+</div>
+
+</body>
 </html>

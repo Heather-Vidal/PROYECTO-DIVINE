@@ -36,11 +36,6 @@ $sql = "SELECT
         WHERE MONTH(pe.fecha) = MONTH(CURDATE())
         AND YEAR(pe.fecha) = YEAR(CURDATE())
         GROUP BY p.codigo, p.nombre
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
         ORDER BY total_vendido DESC";
 
 $resultado = $conn->query($sql);
@@ -78,34 +73,18 @@ $sqlStock = "SELECT
 
             ORDER BY stock ASC";
 
-<<<<<<< HEAD
 
 $resultadoStock = $conn->query($sqlStock);
-=======
-$resultadoStock =
-    $conn->query($sqlStock);
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 $nombresStock = [];
 $cantidadesStock = [];
 
 if ($resultadoStock) {
 
-<<<<<<< HEAD
     while ($fila = $resultadoStock->fetch_assoc()) {
 
         $nombresStock[] = $fila["nombre"];
         $cantidadesStock[] = $fila["stock"];
-=======
-    while ($fila =
-        $resultadoStock->fetch_assoc()) {
-
-        $nombresStock[] =
-            $fila["nombre"];
-
-        $cantidadesStock[] =
-            (int)$fila["stock"];
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
     }
 
@@ -182,7 +161,6 @@ $cantidadTop =
 <html lang="es">
 
 <head>
-<<<<<<< HEAD
 
     <meta charset="UTF-8">
 
@@ -194,17 +172,12 @@ $cantidadTop =
 
 
     <style>
-=======
-
-<meta charset="UTF-8">
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
 
-<<<<<<< HEAD
         body {
             min-height: 100vh;
 
@@ -255,19 +228,6 @@ $cantidadTop =
 
             width: 100%;
             height: 400px;
-=======
-<title>
-    DIVINE | Dashboard
-</title>
-
-
-<link rel="preconnect"
-      href="https://fonts.googleapis.com">
-
-<link rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin>
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
@@ -1943,18 +1903,14 @@ body {
 
 <body>
 
-<<<<<<< HEAD
 
     <!-- =====================================================
          PRODUCTO MÁS VENDIDO DEL MES
          ===================================================== -->
-=======
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 <div class="dashboard">
 
 
-<<<<<<< HEAD
         <div class="grafico">
 
             <canvas id="graficoVentas"></canvas>
@@ -1984,55 +1940,6 @@ body {
 
 
     <script>
-=======
-<!-- =====================================================
-     HEADER
-     ===================================================== -->
-
-<header class="header">
-
-
-    <div class="brand">
-
-
-        <div class="logo">
-            D
-        </div>
-
-
-        <div>
-
-            <div class="brand-name">
-                DIVINE
-            </div>
-
-            <span class="brand-sub">
-                Beauty & Elegance
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-    <div class="header-right">
-
-
-        <div class="status">
-
-            <span class="status-dot"></span>
-
-            Sistema activo
-
-        </div>
-
-
-    </div>
-
-
-</header>
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 
 
@@ -2045,7 +1952,6 @@ body {
 
     <div class="hero-left">
 
-<<<<<<< HEAD
             type: 'bar',
 
             data: {
@@ -2081,799 +1987,11 @@ body {
                     legend: {
 
                         display: true
-=======
-
-        <small>
-            Dashboard · Analytics
-        </small>
-
-
-        <h1>
-
-            Ventas
-            <em>&</em>
-            inventario
-
-        </h1>
-
-
-        <p>
-
-            Una mirada elegante y precisa al rendimiento
-            de tus productos, las ventas del mes y el
-            estado actual de tu inventario.
-
-        </p>
-
-
-    </div>
-
-
-    <div class="hero-feature">
-
-
-        <div class="feature-label">
-            Producto destacado
-        </div>
-
-
-        <div class="feature-title">
-
-            <?php
-
-            echo htmlspecialchars(
-                $productoTop
-            );
-
-            ?>
-
-        </div>
-
-
-        <div class="feature-value">
-
-            <?php echo $cantidadTop; ?>
-
-            unidades vendidas este mes
-
-        </div>
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     KPI
-     ===================================================== -->
-
-<section class="kpis">
-
-
-    <div class="kpi">
-
-
-        <div class="kpi-top">
-
-            <span class="kpi-label">
-                Productos
-            </span>
-
-            <span class="kpi-icon">
-                ♡
-            </span>
-
-        </div>
-
-
-        <div class="kpi-number">
-
-            <?php
-            echo $totalProductos;
-            ?>
-
-        </div>
-
-
-        <div class="kpi-description">
-
-            Productos registrados en el panel
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="kpi">
-
-
-        <div class="kpi-top">
-
-            <span class="kpi-label">
-                Ventas del mes
-            </span>
-
-            <span class="kpi-icon">
-                ✦
-            </span>
-
-        </div>
-
-
-        <div class="kpi-number">
-
-            <?php
-            echo $totalVendido;
-            ?>
-
-        </div>
-
-
-        <div class="kpi-description">
-
-            Unidades vendidas durante este mes
-
-        </div>
-
-
-    </div>
-
-
-
-    <div class="kpi">
-
-
-        <div class="kpi-top">
-
-            <span class="kpi-label">
-                Atención
-            </span>
-
-            <span class="kpi-icon">
-                !
-            </span>
-
-        </div>
-
-
-        <div class="kpi-number">
-
-            <?php
-            echo $totalBajoStock;
-            ?>
-
-        </div>
-
-
-        <div class="kpi-description">
-
-            Productos que necesitan reposición
-
-        </div>
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     GRÁFICAS PRINCIPALES
-     ===================================================== -->
-
-<section class="main-grid">
-
-
-    <!-- =================================================
-         GRÁFICA VENTAS
-         ================================================= -->
-
-    <div class="panel">
-
-
-        <div class="panel-head">
-
-
-            <div>
-
-                <div class="panel-kicker">
-                    Rendimiento
-                </div>
-
-                <div class="panel-title">
-                    Productos más vendidos
-                </div>
-
-                <div class="panel-description">
-
-                    Comparativa de unidades vendidas
-                    durante el mes actual.
-
-                </div>
-
-            </div>
-
-
-            <div class="panel-badge">
-                Mensual
-            </div>
-
-
-        </div>
-
-
-        <div class="chart">
-
-            <canvas
-                id="graficoVentas">
-            </canvas>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =================================================
-         PANEL TOP PRODUCT
-         ================================================= -->
-
-    <aside class="side-panel">
-
-
-        <div class="side-kicker">
-            Ranking #1
-        </div>
-
-
-        <div class="side-title">
-            Favorito de DIVINE
-        </div>
-
-
-        <div class="side-sub">
-
-            El producto que lidera las ventas
-            durante el periodo seleccionado.
-
-        </div>
-
-
-        <div class="top-product">
-
-
-            <div class="crown">
-                ♛
-            </div>
-
-
-            <h3>
-
-                <?php
-
-                echo htmlspecialchars(
-                    $productoTop
-                );
-
-                ?>
-
-            </h3>
-
-
-            <p>
-                Producto más vendido
-            </p>
-
-
-            <div class="top-number">
-
-
-                <strong>
-
-                    <?php
-                    echo $cantidadTop;
-                    ?>
-
-                </strong>
-
-
-                <span>
-                    unidades vendidas
-                </span>
-
-
-            </div>
-
-
-        </div>
-
-
-    </aside>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     BAJO STOCK
-     ===================================================== -->
-
-<section
-    class="panel"
-    style="margin-top:20px;"
->
-
-
-    <div class="panel-head">
-
-
-        <div>
-
-            <div class="panel-kicker">
-                Inventario
-            </div>
-
-            <div class="panel-title">
-                Productos con bajo stock
-            </div>
-
-            <div class="panel-description">
-
-                Productos que actualmente cuentan
-                con cinco unidades o menos.
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="panel-badge"
-            style="
-                background:#f9e9e6;
-                color:#bd655b;
-            "
-        >
-
-            <?php
-            echo $totalBajoStock;
-            ?>
-            alertas
-
-        </div>
-
-
-    </div>
-
-
-    <div
-        class="chart"
-        style="height:330px;"
-    >
-
-        <canvas
-            id="graficoStock">
-        </canvas>
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     INVENTARIO
-     ===================================================== -->
-
-<section class="stock-section">
-
-
-    <div class="stock-heading">
-
-
-        <div>
-
-            <h2>
-                Inventario actual
-            </h2>
-
-            <p>
-                Vista rápida del stock disponible por producto.
-            </p>
-
-        </div>
-
-
-        <span>
-            10 productos
-        </span>
-
-
-    </div>
-
-
-    <div class="products">
-
-
-        <?php if (
-            count($productos) > 0
-        ): ?>
-
-
-            <?php foreach (
-                $productos
-                as $indice => $producto
-            ): ?>
-
-
-                <?php
-
-                $stock =
-                    $producto["stock"];
-
-                $porcentaje =
-                    min(
-                        ($stock / 20) * 100,
-                        100
-                    );
-
-                $bajo =
-                    $stock <= 5;
-
-                ?>
-
-
-                <article class="product">
-
-
-                    <div class="product-code">
-
-                        Código
-                        <?php
-                        echo htmlspecialchars(
-                            $producto["codigo"]
-                        );
-                        ?>
-
-                    </div>
-
-
-                    <div class="product-name">
-
-                        <?php
-
-                        echo htmlspecialchars(
-                            $producto["nombre"]
-                        );
-
-                        ?>
-
-                    </div>
-
-
-                    <div class="product-line">
-                    </div>
-
-
-                    <div class="product-stock-label">
-
-                        Stock disponible
-
-                    </div>
-
-
-                    <div class="product-stock">
-
-
-                        <strong>
-
-                            <?php
-                            echo $stock;
-                            ?>
-
-                        </strong>
-
-
-                        <span
-                            class="stock-status
-                            <?php
-                            echo $bajo
-                                ? 'low'
-                                : '';
-                            ?>"
-                        >
-
-                            <?php
-
-                            echo $bajo
-                                ? 'Bajo'
-                                : 'Disponible';
-
-                            ?>
-
-                        </span>
-
-
-                    </div>
-
-
-                    <div class="bar">
-
-
-                        <div
-                            class="bar-fill
-                            <?php
-                            echo $bajo
-                                ? 'low'
-                                : '';
-                            ?>"
-                            style="
-                                width:
-                                <?php
-                                echo $porcentaje;
-                                ?>%;
-                            "
-                        >
-                        </div>
-
-
-                    </div>
-
-
-                </article>
-
-
-            <?php endforeach; ?>
-
-
-        <?php else: ?>
-
-
-            <p>
-                No existen productos registrados.
-            </p>
-
-
-        <?php endif; ?>
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- =====================================================
-     FOOTER
-     ===================================================== -->
-
-<footer class="footer">
-
-    <b>DIVINE</b>
-
-    &nbsp;·&nbsp;
-
-    Beauty & Elegance
-
-    &nbsp;·&nbsp;
-
-    Panel administrativo
-
-</footer>
-
-
-</div>
-
-
-
-<script>
-
-
-/* =========================================================
-   DATOS PHP → JAVASCRIPT
-   ========================================================= */
-
-const nombres =
-    <?php
-
-    echo json_encode(
-        $nombres,
-        JSON_UNESCAPED_UNICODE
-    );
-
-    ?>;
-
-
-const cantidades =
-    <?php
-
-    echo json_encode(
-        $veces
-    );
-
-    ?>;
-
-
-const nombresStock =
-    <?php
-
-    echo json_encode(
-        $nombresStock,
-        JSON_UNESCAPED_UNICODE
-    );
-
-    ?>;
-
-
-const cantidadesStock =
-    <?php
-
-    echo json_encode(
-        $cantidadesStock
-    );
-
-    ?>;
-
-
-/* =========================================================
-   GRÁFICA DE VENTAS
-   ========================================================= */
-
-const ctxVentas =
-    document.getElementById(
-        "graficoVentas"
-    );
-
-
-new Chart(
-    ctxVentas,
-    {
-
-        type:
-            "bar",
-
-        data: {
-
-            labels:
-                nombres,
-
-            datasets: [{
-
-                data:
-                    cantidades,
-
-                backgroundColor:
-                    function(context) {
-
-                        const chart =
-                            context.chart;
-
-                        const {
-                            ctx,
-                            chartArea
-                        } =
-                            chart;
-
-                        if (!chartArea) {
-
-                            return "#9b617b";
-
-                        }
-
-                        const gradient =
-                            ctx.createLinearGradient(
-                                0,
-                                chartArea.bottom,
-                                0,
-                                chartArea.top
-                            );
-
-                        gradient.addColorStop(
-                            0,
-                            "#c991a5"
-                        );
-
-                        gradient.addColorStop(
-                            1,
-                            "#603447"
-                        );
-
-                        return gradient;
-
-                    },
-
-                borderWidth:
-                    0,
-
-                borderRadius:
-                    5,
-
-                borderSkipped:
-                    false,
-
-                barPercentage:
-                    .55,
-
-                categoryPercentage:
-                    .70
-
-            }]
-
-        },
-
-
-        options: {
-
-            responsive:
-                true,
-
-            maintainAspectRatio:
-                false,
-
-
-            animation: {
-
-                duration:
-                    1100,
-
-                easing:
-                    "easeOutQuart"
-
-            },
-
-
-            scales: {
-
-                y: {
-
-                    beginAtZero:
-                        true,
-
-                    ticks: {
-
-                        stepSize:
-                            1,
-
-                        color:
-                            "#9d8d95",
-
-                        font: {
-
-                            family:
-                                "DM Sans",
-
-                            size:
-                                10
-
-                        }
-
-                    },
-
-                    grid: {
-
-                        color:
-                            "rgba(84,44,61,.07)",
-
-                        drawBorder:
-                            false
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
                 },
 
-<<<<<<< HEAD
                 scales: {
 
                     y: {
@@ -2891,32 +2009,11 @@ new Chart(
                             display: true,
 
                             text: 'Cantidad vendida'
-=======
-
-                x: {
-
-                    ticks: {
-
-                        color:
-                            "#705865",
-
-                        font: {
-
-                            family:
-                                "DM Sans",
-
-                            size:
-                                10,
-
-                            weight:
-                                "500"
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                         }
 
                     },
 
-<<<<<<< HEAD
                     x: {
 
                         title: {
@@ -2926,17 +2023,10 @@ new Chart(
                             text: 'Productos'
 
                         }
-=======
-                    grid: {
-
-                        display:
-                            false
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
                 }
-<<<<<<< HEAD
 
             }
 
@@ -3027,75 +2117,6 @@ new Chart(
                             text: 'Productos'
 
                         }
-=======
-
-            },
-
-
-            plugins: {
-
-                legend: {
-
-                    display:
-                        false
-
-                },
-
-
-                tooltip: {
-
-                    backgroundColor:
-                        "#3d202d",
-
-                    titleColor:
-                        "#fff",
-
-                    bodyColor:
-                        "#ead7de",
-
-                    padding:
-                        13,
-
-                    cornerRadius:
-                        3,
-
-                    displayColors:
-                        false,
-
-                    titleFont: {
-
-                        family:
-                            "Cormorant Garamond",
-
-                        size:
-                            17
-
-                    },
-
-                    bodyFont: {
-
-                        family:
-                            "DM Sans",
-
-                        size:
-                            11
-
-                    },
-
-
-                    callbacks: {
-
-                        label:
-                            function(context) {
-
-                                return (
-                                    "✦ " +
-                                    context.raw +
-                                    " unidades vendidas"
-                                );
-
-                            }
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
                     }
 
@@ -3103,216 +2124,9 @@ new Chart(
 
             }
 
-<<<<<<< HEAD
         });
 
     </script>
-=======
-        }
-
-    }
-);
-
-
-/* =========================================================
-   GRÁFICA STOCK
-   ========================================================= */
-
-const ctxStock =
-    document.getElementById(
-        "graficoStock"
-    );
-
-
-new Chart(
-    ctxStock,
-    {
-
-        type:
-            "bar",
-
-        data: {
-
-            labels:
-                nombresStock,
-
-            datasets: [{
-
-                data:
-                    cantidadesStock,
-
-                backgroundColor:
-                    "#d28a80",
-
-                borderWidth:
-                    0,
-
-                borderRadius:
-                    5,
-
-                borderSkipped:
-                    false,
-
-                barPercentage:
-                    .55,
-
-                categoryPercentage:
-                    .70
-
-            }]
-
-        },
-
-
-        options: {
-
-            responsive:
-                true,
-
-            maintainAspectRatio:
-                false,
-
-
-            animation: {
-
-                duration:
-                    1000,
-
-                easing:
-                    "easeOutQuart"
-
-            },
-
-
-            scales: {
-
-                y: {
-
-                    beginAtZero:
-                        true,
-
-                    ticks: {
-
-                        stepSize:
-                            1,
-
-                        color:
-                            "#9d8d95",
-
-                        font: {
-
-                            family:
-                                "DM Sans",
-
-                            size:
-                                10
-
-                        }
-
-                    },
-
-                    grid: {
-
-                        color:
-                            "rgba(84,44,61,.07)",
-
-                        drawBorder:
-                            false
-
-                    }
-
-                },
-
-
-                x: {
-
-                    ticks: {
-
-                        color:
-                            "#705865",
-
-                        font: {
-
-                            family:
-                                "DM Sans",
-
-                            size:
-                                10
-
-                        }
-
-                    },
-
-                    grid: {
-
-                        display:
-                            false
-
-                    }
-
-                }
-
-            },
-
-
-            plugins: {
-
-                legend: {
-
-                    display:
-                        false
-
-                },
-
-
-                tooltip: {
-
-                    backgroundColor:
-                        "#3d202d",
-
-                    titleColor:
-                        "#fff",
-
-                    bodyColor:
-                        "#ead7de",
-
-                    padding:
-                        13,
-
-                    cornerRadius:
-                        3,
-
-                    displayColors:
-                        false,
-
-
-                    callbacks: {
-
-                        label:
-                            function(context) {
-
-                                return (
-                                    "⚠ " +
-                                    context.raw +
-                                    " unidades disponibles"
-                                );
-
-                            }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-    }
-);
-
-</script>
-
->>>>>>> 8d8211b851797b7924f15609b5123ddced00ee7b
 
 </body>
 
