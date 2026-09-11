@@ -81,15 +81,15 @@ $nombreSeguro = $conn->real_escape_string($nombreUsuario);
 //
 // IMPORTANTE:
 //
-// 1. VENTAS debe estar COMPLETADO
-// 2. PEDIDOS debe estar COMPLETADO
+// 1. VENTAS no se filtra por su estado
+// 2. PEDIDOS debe estar ACEPTADO
 //
 // VENDEDOR:
 // Solo ventas cuyo PEDIDOS.nombrevendedor
 // sea igual al usuario de la sesión.
 //
 // ADMINISTRADOR:
-// Puede ver todas las ventas completadas.
+// Puede ver todas las ventas.
 // =====================================================
 
 
@@ -98,7 +98,7 @@ if ($rol == "vendedor") {
 
     // =================================================
     // VENDEDOR
-    // SOLO SUS VENTAS COMPLETADAS
+    // SOLO SUS VENTAS CON PEDIDO ACEPTADO
     // =================================================
 
     $sql = "
@@ -121,9 +121,7 @@ if ($rol == "vendedor") {
 
         WHERE
 
-            LOWER(TRIM(VENTAS.estado)) = 'completado'
-
-            AND LOWER(TRIM(PEDIDOS.estado)) = 'completado'
+            LOWER(TRIM(PEDIDOS.estado)) = 'aceptado'
 
             AND PEDIDOS.nombrevendedor = '$nombreSeguro'
 
@@ -143,7 +141,7 @@ if ($rol == "vendedor") {
 
     // =================================================
     // ADMINISTRADOR
-    // TODAS LAS VENTAS COMPLETADAS
+    // TODAS LAS VENTAS CON PEDIDO ACEPTADO
     // =================================================
 
     $sql = "
@@ -166,9 +164,7 @@ if ($rol == "vendedor") {
 
         WHERE
 
-            LOWER(TRIM(VENTAS.estado)) = 'completado'
-
-            AND LOWER(TRIM(PEDIDOS.estado)) = 'completado'
+            LOWER(TRIM(PEDIDOS.estado)) = 'aceptado'
 
         ORDER BY
 
@@ -237,7 +233,7 @@ $error = $_GET['error'] ?? '';
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>Ventas completadas</title>
+<title>Ventas</title>
 
 
 <style>
@@ -1378,7 +1374,7 @@ td{
 
                 <h1>
 
-                    Ventas completadas
+                    Ventas
 
                 </h1>
 
@@ -1407,7 +1403,7 @@ td{
 
             ?>
 
-            ventas completadas
+            ventas
 
         </div>
 
@@ -1428,7 +1424,7 @@ td{
 
             <strong>Vendedor:</strong>
 
-            Mostrando únicamente tus ventas completadas.
+            Mostrando únicamente tus ventas.
 
             <br>
 
@@ -1450,7 +1446,7 @@ td{
 
             <strong>Administrador:</strong>
 
-            Mostrando todas las ventas completadas del sistema.
+            Mostrando todas las ventas del sistema.
 
         <?php } ?>
 
@@ -1812,7 +1808,7 @@ td{
 
             <h2>
 
-                No hay ventas completadas
+                No hay ventas
 
             </h2>
 
@@ -1821,11 +1817,11 @@ td{
 
                 <?php if ($rol == "vendedor") { ?>
 
-                    Todavía no tienes ventas completadas registradas.
+                    Todavía no tienes ventas registradas con pedidos Aceptados.
 
                 <?php } else { ?>
 
-                    Todavía no existen ventas completadas en el sistema.
+                    Todavía no existen ventas en el sistema.
 
                 <?php } ?>
 

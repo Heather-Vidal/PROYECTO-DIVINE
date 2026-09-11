@@ -1401,104 +1401,69 @@ if (
     =========================================== -->
 
     <div class="volver">
-
-
         <a
-
             href="javascript:history.back()"
-
             class="btn-volver"
-
         >
-
             ← Volver atrás
-
         </a>
-
-
         <a
-
             href="formularioprodu.php"
-
             class="btn-registrar"
-
         >
-
             ＋ Registrar producto
-
         </a>
-
-
     </div>
-
-
 </div>
-
-
-<!-- ==========================================
-     JAVASCRIPT ELIMINAR
-========================================== -->
-
+/*javascript eliminar*/
 <script>
-
-
 function confirmarEliminacion(codigo) {
-
-
     Swal.fire({
-
         title: "¿Eliminar producto?",
-
         text: "Esta acción no se puede deshacer.",
-
         icon: "warning",
-
         showCancelButton: true,
-
         confirmButtonColor: "#a65b71",
-
         cancelButtonColor: "#532e4e",
-
         confirmButtonText: "Sí, eliminar",
-
         cancelButtonText: "Cancelar",
-
         reverseButtons: true
-
     }).then((result) => {
-
-
         if (
-
             result.isConfirmed
-
         ) {
-
-
             window.location.href =
 
                 "deleteprodu.php?codigo=" +
 
                 encodeURIComponent(codigo);
-
-
         }
-
     });
-
-}
-
-</script>
-
-
-</body>
-
-</html>
-
-
+};
 <?php
+   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 3";
+   $resultadoBajos = $conn->query($bajos);
+   $arrayBajos = [];
+   while ($filaBajos = $resultadoBajos->fetch_assoc()) {
+       $arrayBajos[] = $filaBajos['nombre'];
+   }
+    if (count($arrayBajos) > 0) {
+        $nombresBajos = implode(", ", $arrayBajos);
+        echo "window.onload = function() {
+            Swal.fire({
+                title: '¡Atención!',
+                html: 'Los siguientes productos tienen stock bajo: <br><strong>$nombresBajos</strong>',
+                icon: 'warning',
+                confirmButtonColor: '#a65b71',
+                confirmButtonText: 'Aceptar'
+            });
+        };";
+    }
 
-
+?>
+</script>
+</body>
+</html>
+<?php
 $conn->close();
-
 ?>

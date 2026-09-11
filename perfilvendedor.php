@@ -76,8 +76,8 @@ $sqlVentas = "
     INNER JOIN PEDIDOS p
         ON v.PEDIDOS_ID = p.ID
     WHERE p.nombrevendedor = '$nombreVendedor'
-      AND LOWER(TRIM(v.estado)) = 'completado'
-      AND LOWER(TRIM(p.estado)) = 'completado'
+       
+      AND LOWER(TRIM(p.estado)) = 'Aceptado'
 ";
 
 $resultadoVentas = $conn->query($sqlVentas);
