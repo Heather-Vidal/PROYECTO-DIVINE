@@ -315,8 +315,8 @@ nav{
                     Contacto
                 </a>
             </li>
-            <a href=".CONSULTA-pedido/formreadpedido.php">
-                    mis pedidos 
+            <a href="./CONSULTA-pedido/formreadpedido.php">
+                    Mis Pedidos 
                 </a>
             <li>
                 

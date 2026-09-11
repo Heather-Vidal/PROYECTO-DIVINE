@@ -12,41 +12,31 @@ $conn = new mysqli(
     $nombreBD
 );
 
-
 if($conn->connect_error){
-
     echo "OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
-
 }
- 
 
 // =====================================================
 // RECIBIR CÓDIGO
 // =====================================================
 
-$codigo = $_GET['codigo'];
-
+$codigo = $_GET['codigo'] ?? null;
 
 // =====================================================
 // CONSULTAR PRODUCTO
 // =====================================================
 
 $sql = "SELECT * FROM PRODUCTO WHERE codigo=$codigo";
-
 $resultado = $conn->query($sql);
 
-
-if($resultado->num_rows > 0){
-
+if($resultado && $resultado->num_rows > 0){
 
 // =====================================================
 // BUSCAR IMAGEN DEL PRODUCTO
 // =====================================================
 
 $nombreArchivo = "p-" . $codigo;
-
 $directorio = "../PRODUCTO-img/";
-
 
 $extensiones = [
     "jpg",
@@ -55,137 +45,80 @@ $extensiones = [
     "gif"
 ];
 
-
 $imagenProducto = null;
 
-
 foreach($extensiones as $extension){
-
-    $ruta =
-
-        $directorio
-        . $nombreArchivo
-        . "."
-        . $extension;
-
+    $ruta = $directorio . $nombreArchivo . "." . $extension;
 
     if(file_exists($ruta)){
-
         $imagenProducto = $ruta;
-
         break;
-
     }
-
 }
 
-
 // =====================================================
-// SI NO ENCUENTRA IMAGEN
-// USA UNA IMAGEN DE RESPALDO
+// SI NO ENCUENTRA IMAGEN USA UNA DE RESPALDO
 // =====================================================
 
 if($imagenProducto === null){
-
-    $imagenProducto =
-        "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
-
+    $imagenProducto = "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
 }
-
 
 ?>
 
 <!DOCTYPE html>
-
 <html lang="es">
-
 
 <head>
 
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
+<title>Detalle del Producto - DIVINE</title>
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet"/>
 
-
-<title>
-    Detalle del Producto - DIVINE
-</title>
-
-
-<link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap"
-    rel="stylesheet"
-/>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 
+/* =====================================================
+   VARIABLES - PALETA ROSA PASTEL
+   ===================================================== */
 
-body {
-
-    font-family:
-        "Playfair Display",
-        serif;
-
-    background:
-        #f5e9d8;
-
-    display:
-        flex;
-
-    justify-content:
-        center;
-
-    align-items:
-        center;
-
-    min-height:
-        100vh;
-
-    margin:
-        0;
-
-    color:
-        #2b2b2b;
-
+:root {
+    --rosa-principal: #f8a5c2;
+    --rosa-claro: #fde8ed;
+    --rosa-fondo: #fff0f3;
+    --rosa-oscuro: #d87093;
+    --texto-oscuro: #5c3c48;
+    --gris-suave: #a4b0be;
+    --borde: #f3d1dc;
+    --blanco: #ffffff;
 }
 
+body {
+    font-family: "Playfair Display", serif;
+    background: linear-gradient(135deg, #fff0f3 0%, #fde8ed 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--texto-oscuro);
+}
 
 .contenedor {
-
-    background:
-        #e9e5dd;
-
-    padding:
-        40px;
-
-    border-radius:
-        25px;
-
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.3);
-
-    width:
-        90%;
-
-    max-width:
-        700px;
-
-    display:
-        grid;
-
-    grid-template-columns:
-        1fr;
-
-    grid-gap:
-        25px;
-
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 25px;
+    border: 1px solid var(--borde);
+    box-shadow: 0 15px 35px rgba(248, 165, 194, 0.2);
+    width: 90%;
+    max-width: 700px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 25px;
 }
 
 
@@ -194,25 +127,13 @@ body {
    ===================================================== */
 
 .imagen {
-
-    background-image:
-        url('<?php echo htmlspecialchars($imagenProducto); ?>');
-
-    background-position:
-        center center;
-
-    background-size:
-        cover;
-
-    background-repeat:
-        no-repeat;
-
-    border-radius:
-        20px;
-
-    min-height:
-        300px;
-
+    background-image: url('<?php echo htmlspecialchars($imagenProducto); ?>');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 20px;
+    min-height: 300px;
+    border: 1px solid var(--borde);
 }
 
 
@@ -221,40 +142,17 @@ body {
    ===================================================== */
 
 .titulo {
-
-    text-align:
-        center;
-
-    color:
-        #364e63;
-
-    font-size:
-        32px;
-
-    font-weight:
-        700;
-
-    margin:
-        0;
-
-    letter-spacing:
-        2px;
-
-    border-bottom:
-        3px solid #c5a46d;
-
-    padding-bottom:
-        10px;
-
-    width:
-        fit-content;
-
-    margin-left:
-        auto;
-
-    margin-right:
-        auto;
-
+    text-align: center;
+    color: var(--rosa-oscuro);
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 2px;
+    border-bottom: 3px solid var(--rosa-principal);
+    padding-bottom: 10px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
@@ -263,56 +161,27 @@ body {
    ===================================================== */
 
 .item {
-
-    background:
-        #f5e9d8;
-
-    padding:
-        25px;
-
-    border-radius:
-        20px;
-
-    box-shadow:
-        0 4px 10px
-        rgba(54,78,99,0.25);
-
-    transition:
-        transform 0.3s ease;
-
+    background: var(--rosa-fondo);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid var(--borde);
+    box-shadow: 0 4px 15px rgba(248, 165, 194, 0.15);
+    transition: transform 0.3s ease;
 }
-
 
 .item:hover {
-
-    transform:
-        translateY(-5px);
-
+    transform: translateY(-3px);
 }
-
 
 .item p {
-
-    margin:
-        8px 0;
-
-    color:
-        #2b2b2b;
-
-    font-size:
-        17px;
-
+    margin: 10px 0;
+    color: var(--texto-oscuro);
+    font-size: 17px;
 }
 
-
 .item span {
-
-    font-weight:
-        bold;
-
-    color:
-        #364e63;
-
+    font-weight: bold;
+    color: var(--rosa-oscuro);
 }
 
 
@@ -321,69 +190,39 @@ body {
    ===================================================== */
 
 .botones {
-
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
-    display:
-        flex;
-
-    justify-content:
-        center;
-
-    gap:
-        15px;
-
+    margin-top: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
-
 
 .boton {
-
-    background:
-        #364e63;
-
-    color:
-        #c5a46d;
-
-    padding:
-        10px 22px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        16px;
-
-    font-weight:
-        700;
-
-    text-decoration:
-        none;
-
-    transition:
-        0.3s ease;
-
+    background: var(--rosa-principal);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 28px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s ease;
 }
 
-
 .boton:hover {
+    background: var(--rosa-oscuro);
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(216, 112, 147, 0.4);
+}
 
-    background:
-        #c5a46d;
+.boton-eliminar {
+    background: #880c73;
+}
 
-    color:
-        #364e63;
-
-    transform:
-        scale(1.05);
-
-    box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
-
+.boton-eliminar:hover {
+    background: #7a456f;
 }
 
 
@@ -392,69 +231,29 @@ body {
    ===================================================== */
 
 .navegacion {
-
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
-    display:
-        flex;
-
-    flex-direction:
-        column;
-
-    gap:
-        12px;
-
+    margin-top: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
-
 
 .boton2 {
-
-    background:
-        #364e63;
-
-    color:
-        #c5a46d;
-
-    padding:
-        12px 28px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        17px;
-
-    font-weight:
-        700;
-
-    text-decoration:
-        none;
-
-    transition:
-        0.3s ease;
-
+    background: white;
+    color: var(--rosa-oscuro);
+    border: 1px solid var(--borde);
+    padding: 12px 28px;
+    border-radius: 28px;
+    font-size: 17px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: 0.3s ease;
 }
 
-
 .boton2:hover {
-
-    background:
-        #c5a46d;
-
-    color:
-        #364e63;
-
-    transform:
-        scale(1.04);
-
-    box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
-
+    background: var(--rosa-claro);
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(248, 165, 194, 0.3);
 }
 
 
@@ -463,300 +262,98 @@ body {
    ===================================================== */
 
 @media (max-width: 768px) {
-
     .contenedor {
-
-        padding:
-            25px;
-
+        padding: 25px;
     }
-
 
     .imagen {
-
-        min-height:
-            200px;
-
+        min-height: 200px;
     }
-
 }
-
 
 </style>
 
-
 </head>
-
 
 <body>
 
-
 <div class="contenedor">
-
-
-    <!-- =================================================
-         IMAGEN DEL PRODUCTO
-         ================================================= -->
 
     <div class="imagen"></div>
 
-
-    <!-- =================================================
-         TÍTULO
-         ================================================= -->
-
     <h2 class="titulo">
-
         DETALLE DEL PRODUCTO
-
     </h2>
-
-
-    <!-- =================================================
-         DATOS DEL PRODUCTO
-         ================================================= -->
 
     <div class="item">
 
-
 <?php
-
-
-while(
-    $fila =
-    $resultado->fetch_assoc()
-){
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Nombre:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['nombre']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Descripción:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['descripcion']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-
-
-    
-    echo "
-
-        <p>
-
-            <span>
-                Categoría:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['categoria']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Precio:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['precio']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Costo:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['costo']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Stock:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['stock']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Código:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['codigo']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    $codigo =
-        $fila['codigo'];
-
-
+while($fila = $resultado->fetch_assoc()){
+?>
+        <p><span>Nombre:</span> <?php echo htmlspecialchars($fila['nombre']); ?></p>
+        <p><span>Descripción:</span> <?php echo htmlspecialchars($fila['descripcion']); ?></p>
+        <p><span>Categoría:</span> <?php echo htmlspecialchars($fila['categoria']); ?></p>
+        <p><span>Precio:</span> Bs. <?php echo htmlspecialchars($fila['precio']); ?></p>
+        <p><span>Costo:</span> Bs. <?php echo htmlspecialchars($fila['costo']); ?></p>
+        <p><span>Stock:</span> <?php echo htmlspecialchars($fila['stock']); ?></p>
+        <p><span>Código:</span> <?php echo htmlspecialchars($fila['codigo']); ?></p>
+<?php
+    $codigo = $fila['codigo'];
 }
-
-
 ?>
 
-
     </div>
-
-
-    <!-- =================================================
-         BOTONES
-         ================================================= -->
 
     <div class="botones">
 
-
-        <a
-            href="updateformprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
-
+        <a href="updateformprodu.php?codigo=<?php echo $codigo; ?>" class="boton">
             Editar
-
         </a>
 
-
-        <a
-            href="deleteprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
-
+        <button type="button" class="boton boton-eliminar" onclick="confirmarEliminacion('<?php echo $codigo; ?>')">
             Eliminar
-
-        </a>
-
+        </button>
 
     </div>
-
-
-    <!-- =================================================
-         NAVEGACIÓN
-         ================================================= -->
 
     <div class="navegacion">
 
-
-        <a
-            href="readtodoprodu.php"
-            class="boton2"
-        >
-
+        <a href="readtodoprodu.php" class="boton2">
             Ver productos
-
         </a>
 
-
-        <a
-            href="../totu.php"
-            class="boton2"
-        >
-
+        <a href="../totu.php" class="boton2">
             ⬅ Volver al inicio
-
         </a>
-
 
     </div>
 
-
 </div>
 
+<script>
+function confirmarEliminacion(codigo) {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "No podrás revertir esta acción",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d87093",
+        cancelButtonColor: "#a4b0be",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location = "deleteprodu.php?codigo=" + codigo;
+        }
+    });
+}
+</script>
 
 </body>
-
 </html>
 
-
 <?php
-
 }
 
-
 $conn->close();
-
 ?>
