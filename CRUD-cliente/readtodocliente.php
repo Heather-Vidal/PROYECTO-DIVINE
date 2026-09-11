@@ -303,7 +303,7 @@ body {
   <!-- TITULO -->
 
   <h2 class="titulo">
-    LISTA DE CLIENTES
+    LISTA DE USUARIOS
   </h2>
 
 

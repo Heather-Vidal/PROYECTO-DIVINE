@@ -809,12 +809,12 @@ footer{
             </li>
 
             <li>
-                <a href="#consulta">
+                <a href="../CONSULTA-pedido/formreadpedido.php">
                     Consulta Personal
                 </a>
             </li>
              <li>
-                <a href="./sugerencias/comentarios.php">
+                <a href="../sugerencias/comentarios.php">
                     Sugerencias
                 </a>
             </li>
