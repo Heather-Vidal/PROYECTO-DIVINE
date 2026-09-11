@@ -1,28 +1,43 @@
-<?php 
-$archivo = 'mensajes.txt'; 
- 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
-    $autor = trim($_POST['autor']); 
-    $contenido = trim($_POST['contenido']); 
- 
-    $fecha = date("Y-m-d H:i:s"); 
-    $entrada = "$fecha | $autor: $contenido" . PHP_EOL; 
- 
-    $f = fopen($archivo, 'a'); 
-    fwrite($f, $entrada); 
-    fclose($f); 
- 
-    // Redirige a la página donde se muestran los comentarios
-    header("Location: comentarios.php"); 
+<?php  
+$archivo = 'mensajes.txt';  
+  
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
+    $autor = trim($_POST['autor']);  
+    $contenido = trim($_POST['contenido']);  
+  
+    $fecha = date("Y-m-d H:i:s");  
+    $entrada = "$fecha | $autor: $contenido" . PHP_EOL;  
+  
+    // Intentar abrir el archivo
+    $f = fopen($archivo, 'a');  
+
+    if ($f === false) {
+        // Si no se pudo abrir el archivo
+        header("Location: publicarcomentario.php?error=1");
+        exit;
+    }
+
+    // Intentar guardar el comentario
+    if (fwrite($f, $entrada) === false) {
+        fclose($f);
+        header("Location: comentarios.php?error=2");
+        exit;
+    }
+
+    fclose($f);  
+  
+    // Si todo salió correctamente
+    header("Location: comentarios.php?guardado=1");
     exit;
-} 
-?> 
+}  
+?>
  
 <!DOCTYPE html> 
 <html lang="es"> 
 <head> 
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Publicar comentario</title>
     <style>
         * {
@@ -106,6 +121,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     </style> 
+    <script>
+<?php
+if (isset($_GET['error'])) {
+?>
+    Swal.fire({
+        icon: 'error',
+        title: '¡No se pudo guardar!',
+        text: 'Ocurrió un problema al guardar tu comentario. Por favor, inténtalo nuevamente.',
+        confirmButtonText: 'Aceptar'
+    });
+<?php
+}
+?>
+</script>
 </head> 
 
 <body> 
