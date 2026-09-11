@@ -809,8 +809,8 @@ footer{
             </li>
 
             <li>
-                <a href="../CONSULTA-pedido/formreadpedido.php">
-                    Consulta Personal
+                <a href="./CONSULTA-pedido/formreadpedido.php">
+                    Mis Pedidos
                 </a>
             </li>
              <li>
