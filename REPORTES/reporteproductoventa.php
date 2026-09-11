@@ -1,17 +1,14 @@
 <?php
 session_start();
-
 $servidor = "localhost";
 $usuario = "root";
 $contrasena = "";
 $bd = "DIVINE";
 
 $conn = new mysqli($servidor, $usuario, $contrasena, $bd);
-
 if ($conn->connect_error) {
     die("Error de conexión");
 }
-
 
 /* =========================================================
    PRODUCTO MÁS VENDIDO DEL MES
@@ -33,20 +30,15 @@ $sql = "SELECT
         ORDER BY total_vendido DESC";
 
 $resultado = $conn->query($sql);
-
 $nombres = [];
 $veces = [];
 
 if ($resultado) {
-
     while ($fila = $resultado->fetch_assoc()) {
-
         $nombres[] = $fila["nombre"];
-
         $veces[] = (int)$fila["total_vendido"];
     }
 }
-
 
 /* =========================================================
    PRODUCTOS CON BAJO STOCK
@@ -61,7 +53,6 @@ $sqlStock = "SELECT
             ORDER BY stock ASC";
 
 $resultadoStock = $conn->query($sqlStock);
-
 $nombresStock = [];
 $cantidadesStock = [];
 
@@ -70,7 +61,6 @@ if ($resultadoStock) {
     while ($fila = $resultadoStock->fetch_assoc()) {
 
         $nombresStock[] = $fila["nombre"];
-
         $cantidadesStock[] = (int)$fila["stock"];
     }
 }
@@ -102,54 +92,35 @@ $productos = [];
 if ($resultadoProductos) {
 
     while ($fila = $resultadoProductos->fetch_assoc()) {
-
         $productos[] = [
-
             "codigo" => $fila["codigo"],
-
             "nombre" => $fila["nombre"],
-
             "stock" => (int)$fila["stock"]
-
         ];
     }
 }
 
 ?>
-
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
     >
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <title>Ventas e Inventario</title>
 
-
     <style>
-
-
         /* =====================================================
            CONFIGURACIÓN GENERAL
            ===================================================== */
 
         * {
-
             margin: 0;
-
             padding: 0;
-
             box-sizing: border-box;
-
             font-family:
                 'Segoe UI',
                 'Poppins',
@@ -164,9 +135,7 @@ if ($resultadoProductos) {
         body {
 
             min-height: 100vh;
-
             padding: 45px 35px;
-
             background:
 
                 radial-gradient(
@@ -189,7 +158,6 @@ if ($resultadoProductos) {
                 );
 
             color: #5f4650;
-
             overflow-x: hidden;
         }
 
@@ -897,7 +865,7 @@ if ($resultadoProductos) {
         new Chart(ctx, {
 
 
-            type: 'pie',
+            type: 'bar',
 
 
             data: {
