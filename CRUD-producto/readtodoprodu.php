@@ -5,6 +5,11 @@ $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
+
+/* ==========================================
+   CONEXIÓN A LA BASE DE DATOS
+========================================== */
+
 $conn = new mysqli(
     $servidor,
     $usuario,
@@ -12,39 +17,64 @@ $conn = new mysqli(
     $nombreBD
 );
 
+
 if ($conn->connect_error) {
+
     die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS.");
+
 }
 
-/* CONSULTAR TODOS LOS PRODUCTOS */
+
+/* ==========================================
+   CONSULTAR TODOS LOS PRODUCTOS
+========================================== */
+
 $sql = "SELECT * FROM PRODUCTO";
+
 $resultado = $conn->query($sql);
+
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+<title>
 
-<title>Productos DIVINE</title>
+    Productos DIVINE
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</title>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/sweetalert2@11"
+></script>
+
 
 <style>
 
-/* ==============================
+
+/* ==========================================
    ESTILOS GENERALES
-================================= */
+========================================== */
 
 * {
+
     box-sizing: border-box;
+
 }
+
 
 body {
 
@@ -59,12 +89,13 @@ body {
     color: #4a3f43;
 
     padding: 40px 20px;
+
 }
 
 
-/* ==============================
+/* ==========================================
    CONTENEDOR PRINCIPAL
-================================= */
+========================================== */
 
 .contenedor {
 
@@ -86,9 +117,9 @@ body {
 }
 
 
-/* ==============================
+/* ==========================================
    ENCABEZADO
-================================= */
+========================================== */
 
 .encabezado {
 
@@ -103,6 +134,7 @@ body {
     margin-bottom: 30px;
 
     flex-wrap: wrap;
+
 }
 
 
@@ -117,6 +149,7 @@ body {
     margin: 0;
 
     letter-spacing: 1px;
+
 }
 
 
@@ -127,12 +160,13 @@ body {
     color: #8b777d;
 
     font-size: 14px;
+
 }
 
 
-/* ==============================
+/* ==========================================
    BOTÓN AÑADIR PRODUCTO
-================================= */
+========================================== */
 
 .btn-agregar {
 
@@ -160,6 +194,7 @@ body {
         0 5px 15px rgba(166, 91, 113, 0.30);
 
     transition: all 0.3s ease;
+
 }
 
 
@@ -171,12 +206,13 @@ body {
 
     box-shadow:
         0 8px 20px rgba(200, 117, 136, 0.35);
+
 }
 
 
-/* ==============================
+/* ==========================================
    DECORACIÓN
-================================= */
+========================================== */
 
 .decoracion {
 
@@ -189,12 +225,13 @@ body {
     border-radius: 10px;
 
     margin-bottom: 30px;
+
 }
 
 
-/* ==============================
+/* ==========================================
    LISTA DE PRODUCTOS
-================================= */
+========================================== */
 
 .lista {
 
@@ -203,12 +240,13 @@ body {
     flex-direction: column;
 
     gap: 18px;
+
 }
 
 
-/* ==============================
+/* ==========================================
    TARJETA PRODUCTO
-================================= */
+========================================== */
 
 .item {
 
@@ -224,6 +262,15 @@ body {
         0 5px 15px rgba(166, 91, 113, 0.08);
 
     transition: all 0.3s ease;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 30px;
+
 }
 
 
@@ -235,12 +282,22 @@ body {
 
     box-shadow:
         0 10px 25px rgba(166, 91, 113, 0.15);
+
 }
 
 
-/* ==============================
-   INFORMACIÓN
-================================= */
+/* ==========================================
+   INFORMACIÓN DEL PRODUCTO
+========================================== */
+
+.info-producto {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
 
 .item p {
 
@@ -249,6 +306,7 @@ body {
     font-size: 15px;
 
     color: #5a4e53;
+
 }
 
 
@@ -257,12 +315,102 @@ body {
     font-weight: 600;
 
     color: #a65b71;
+
+}
+
+/* ESTILO PARA STOCK BAJO */
+.stock-bajo {
+    color: #d9534f !important;
+    font-weight: 700;
 }
 
 
-/* ==============================
+/* ==========================================
+   IMAGEN DEL PRODUCTO
+========================================== */
+
+.imagen-producto {
+
+    width: 190px;
+
+    height: 190px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: white;
+
+    border-radius: 18px;
+
+    border: 1px solid #ead3d8;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 15px rgba(166, 91, 113, 0.10);
+
+}
+
+
+.imagen-producto img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.3s ease;
+
+}
+
+
+.item:hover .imagen-producto img {
+
+    transform: scale(1.05);
+
+}
+
+
+/* ==========================================
+   CUANDO NO EXISTE IMAGEN
+========================================== */
+
+.imagen-no-disponible {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    color: #a65b71;
+
+    font-size: 13px;
+
+    text-align: center;
+
+    background: #f8eff1;
+
+}
+
+
+/* ==========================================
    BOTONES PRODUCTO
-================================= */
+========================================== */
 
 .botones {
 
@@ -273,12 +421,14 @@ body {
     gap: 10px;
 
     flex-wrap: wrap;
+
 }
 
 
 .botones a {
 
     text-decoration: none;
+
 }
 
 
@@ -301,57 +451,73 @@ body {
     font-weight: 500;
 
     transition: all 0.3s ease;
+
 }
 
 
-/* DETALLES */
+/* ==========================================
+   DETALLES
+========================================== */
 
 .btn-detalles {
 
     background: #a65b71;
+
 }
+
 
 .btn-detalles:hover {
 
     background: #8f4c61;
 
     transform: translateY(-2px);
+
 }
 
 
-/* EDITAR */
+/* ==========================================
+   EDITAR
+========================================== */
 
 .btn-editar {
 
     background: #c87588;
+
 }
+
 
 .btn-editar:hover {
 
     background: #a65b71;
 
     transform: translateY(-2px);
+
 }
 
 
-/* ELIMINAR */
+/* ==========================================
+   ELIMINAR
+========================================== */
 
 .btn-eliminar {
 
     background: #7d4b56;
+
 }
+
 
 .btn-eliminar:hover {
 
     background: #532e4e;
 
     transform: translateY(-2px);
+
 }
 
 
-/* ==============================
+/* ==========================================
    MENSAJE SIN PRODUCTOS
-================================= */
+========================================== */
 
 .sin-productos {
 
@@ -366,6 +532,7 @@ body {
     padding: 55px 30px;
 
     margin-top: 10px;
+
 }
 
 
@@ -374,6 +541,7 @@ body {
     font-size: 55px;
 
     margin-bottom: 10px;
+
 }
 
 
@@ -386,6 +554,7 @@ body {
     font-size: 25px;
 
     margin: 10px 0;
+
 }
 
 
@@ -396,12 +565,13 @@ body {
     font-size: 14px;
 
     margin-bottom: 25px;
+
 }
 
 
-/* ==============================
+/* ==========================================
    BOTÓN PRIMER PRODUCTO
-================================= */
+========================================== */
 
 .btn-primer-producto {
 
@@ -425,6 +595,7 @@ body {
         0 5px 15px rgba(200, 117, 136, 0.30);
 
     transition: all 0.3s ease;
+
 }
 
 
@@ -436,12 +607,13 @@ body {
 
     box-shadow:
         0 8px 20px rgba(166, 91, 113, 0.35);
+
 }
 
 
-/* ==============================
+/* ==========================================
    BOTONES INFERIORES
-================================= */
+========================================== */
 
 .volver {
 
@@ -460,6 +632,7 @@ body {
     padding-top: 25px;
 
     border-top: 1px solid #ead9dd;
+
 }
 
 
@@ -476,6 +649,7 @@ body {
     font-weight: 500;
 
     transition: all 0.3s ease;
+
 }
 
 
@@ -484,6 +658,7 @@ body {
     background: #f3e2e6;
 
     color: #a65b71;
+
 }
 
 
@@ -492,6 +667,7 @@ body {
     background: #e8cbd2;
 
     transform: translateY(-2px);
+
 }
 
 
@@ -500,6 +676,7 @@ body {
     background: #a65b71;
 
     color: white;
+
 }
 
 
@@ -508,18 +685,21 @@ body {
     background: #c87588;
 
     transform: translateY(-2px);
+
 }
 
 
-/* ==============================
+/* ==========================================
    RESPONSIVE
-================================= */
+========================================== */
 
 @media (max-width: 768px) {
+
 
     body {
 
         padding: 20px 10px;
+
     }
 
 
@@ -530,6 +710,7 @@ body {
         padding: 25px;
 
         border-radius: 22px;
+
     }
 
 
@@ -540,18 +721,21 @@ body {
         align-items: stretch;
 
         text-align: center;
+
     }
 
 
     .titulo {
 
         font-size: 27px;
+
     }
 
 
     .btn-agregar {
 
         justify-content: center;
+
     }
 
 
@@ -560,30 +744,74 @@ body {
         margin-left: auto;
 
         margin-right: auto;
+
     }
 
+
+    /* ======================================
+       TARJETA EN CELULAR
+    ====================================== */
+
+    .item {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    /* ======================================
+       IMAGEN EN CELULAR
+    ====================================== */
+
+    .imagen-producto {
+
+        width: 100%;
+
+        height: 250px;
+
+        order: -1;
+
+    }
+
+
+    .info-producto {
+
+        width: 100%;
+
+    }
+
+
+    /* ======================================
+       BOTONES
+    ====================================== */
 
     .botones {
 
         flex-direction: column;
+
     }
 
 
     .botones a {
 
         width: 100%;
+
     }
 
 
     .botones button {
 
         width: 100%;
+
     }
 
 
     .volver {
 
         flex-direction: column;
+
     }
 
 
@@ -592,6 +820,7 @@ body {
         width: 100%;
 
         text-align: center;
+
     }
 
 }
@@ -607,35 +836,47 @@ body {
 <div class="contenedor">
 
 
-    <!-- ==============================
+    <!-- ==========================================
          ENCABEZADO
-    ================================= -->
+    =========================================== -->
 
     <div class="encabezado">
 
+
         <div>
 
+
             <h2 class="titulo">
+
                 LISTA DE PRODUCTOS DIVINE
+
             </h2>
 
+
             <p class="subtitulo">
+
                 Administra y controla tus productos
+
             </p>
+
 
         </div>
 
 
-        <!-- BOTÓN AÑADIR PRODUCTO -->
+        <!-- BOTÓN AÑADIR -->
 
         <a
+
             href="formularioprodu.php"
+
             class="btn-agregar"
+
         >
 
             ＋ Añadir producto
 
         </a>
+
 
     </div>
 
@@ -643,134 +884,431 @@ body {
     <div class="decoracion"></div>
 
 
-    <!-- ==============================
-         LISTA DE PRODUCTOS
-    ================================= -->
+    <!-- ==========================================
+         LISTA
+    =========================================== -->
 
     <div class="lista">
 
 
 <?php
 
+
 /* ==========================================
-   SI EXISTEN PRODUCTOS
+   COMPROBAR PRODUCTOS
 ========================================== */
 
-if ($resultado && $resultado->num_rows > 0) {
+if (
+
+    $resultado &&
+
+    $resultado->num_rows > 0
+
+) {
 
 
-    while ($fila = $resultado->fetch_assoc()) {
+    while (
+
+        $fila = $resultado->fetch_assoc()
+
+    ) {
 
 
-        $nombre = htmlspecialchars($fila['nombre']);
+        /* ==========================================
+           DATOS DEL PRODUCTO
+        ========================================== */
 
-        $descripcion = htmlspecialchars($fila['descripcion']);
+        $nombre = htmlspecialchars(
 
-        $categoria = htmlspecialchars($fila['categoria']);
+            $fila['nombre']
 
-        $precio = htmlspecialchars($fila['precio']);
+        );
 
-        $costo = htmlspecialchars($fila['costo']);
 
-        $stock = htmlspecialchars($fila['stock']);
+        $descripcion = htmlspecialchars(
 
-        $codigo = htmlspecialchars($fila['codigo']);
+            $fila['descripcion']
+
+        );
+
+
+        $categoria = htmlspecialchars(
+
+            $fila['categoria']
+
+        );
+
+
+        $precio = htmlspecialchars(
+
+            $fila['precio']
+
+        );
+
+
+        $costo = htmlspecialchars(
+
+            $fila['costo']
+
+        );
+
+
+        $stock = htmlspecialchars(
+
+            $fila['stock']
+
+        );
+
+
+        $codigo = htmlspecialchars(
+
+            $fila['codigo']
+
+        );
+
+
+        /* ==========================================
+           BUSCAR IMAGEN SEGÚN EL CÓDIGO
+
+           EJEMPLOS:
+
+           p-21.jpg
+           p-21.jpeg
+           p-21.png
+           p-21.gif
+
+           CARPETA:
+
+           ../PRODUCTO-img/
+        ========================================== */
+
+        $directorio = "../PRODUCTO-img/";
+
+
+        $nombreArchivo = "p-" . $fila['codigo'];
+
+
+        $extensiones = [
+
+            "jpg",
+
+            "jpeg",
+
+            "png",
+
+            "gif"
+
+        ];
+
+
+        $imagenProducto = null;
+
+
+        foreach (
+
+            $extensiones as $extension
+
+        ) {
+
+
+            $ruta =
+
+                $directorio .
+
+                $nombreArchivo .
+
+                "." .
+
+                $extension;
+
+
+            if (
+
+                file_exists($ruta)
+
+            ) {
+
+
+                $imagenProducto = $ruta;
+
+
+                break;
+
+            }
+
+        }
 
 
 ?>
 
 
-        <!-- ==============================
-             TARJETA DEL PRODUCTO
-        ================================= -->
+        <!-- ==========================================
+             TARJETA
+        =========================================== -->
 
         <div class="item">
 
 
-            <p>
-                <span>Nombre:</span>
-                <?= $nombre ?>
-            </p>
+            <!-- ======================================
+                 INFORMACIÓN
+            ======================================= -->
+
+            <div class="info-producto">
 
 
-            <p>
-                <span>Descripción:</span>
-                <?= $descripcion ?>
-            </p>
+                <p>
+
+                    <span>
+
+                        Nombre:
+
+                    </span>
+
+                    <?= $nombre ?>
+
+                </p>
 
 
-            <p>
-                <span>Categoría:</span>
-                <?= $categoria ?>
-            </p>
+                <p>
+
+                    <span>
+
+                        Descripción:
+
+                    </span>
+
+                    <?= $descripcion ?>
+
+                </p>
 
 
-            <p>
-                <span>Precio:</span>
-                Bs. <?= $precio ?>
-            </p>
+                <p>
+
+                    <span>
+
+                        Categoría:
+
+                    </span>
+
+                    <?= $categoria ?>
+
+                </p>
 
 
-            <p>
-                <span>Costo:</span>
-                Bs. <?= $costo ?>
-            </p>
+                <p>
+
+                    <span>
+
+                        Precio:
+
+                    </span>
+
+                    Bs. <?= $precio ?>
+
+                </p>
 
 
             <p>
                 <span>Stock:</span>
-                <?= $stock ?>
+                <strong class="<?= ($stock <= 5) ? 'stock-bajo' : '' ?>">
+                    <?= $stock ?>
+                </strong>
             </p>
 
 
-            <p>
-                <span>Código:</span>
-                <?= $codigo ?>
-            </p>
+                <p>
+
+                    <span>
+
+                        Stock:
+
+                    </span>
+
+                    <?= $stock ?>
+
+                </p>
 
 
-            <!-- BOTONES -->
+                <p>
 
-            <div class="botones">
+                    <span>
+
+                        Código:
+
+                    </span>
+
+                    <?= $codigo ?>
+
+                </p>
 
 
-                <a href="readunoprodu.php?codigo=<?= urlencode($fila['codigo']) ?>">
+                <!-- ==================================
+                     BOTONES
+                =================================== -->
 
-                    <button
-                        type="button"
-                        class="btn-detalles"
+                <div class="botones">
+
+
+                    <!-- DETALLES -->
+
+                    <a
+
+                        href="readunoprodu.php?codigo=<?= urlencode($fila['codigo']) ?>"
+
                     >
-                        👁 Detalles
-                    </button>
 
-                </a>
+                        <button
+
+                            type="button"
+
+                            class="btn-detalles"
+
+                        >
+
+                            👁 Detalles
+
+                        </button>
+
+                    </a>
 
 
-                <a href="updateformprodu.php?codigo=<?= urlencode($fila['codigo']) ?>">
+                    <!-- EDITAR -->
 
-                    <button
-                        type="button"
-                        class="btn-editar"
+                    <a
+
+                        href="updateformprodu.php?codigo=<?= urlencode($fila['codigo']) ?>"
+
                     >
-                        ✏ Editar
-                    </button>
 
-                </a>
+                        <button
+
+                            type="button"
+
+                            class="btn-editar"
+
+                        >
+
+                            ✏ Editar
+
+                        </button>
+
+                    </a>
 
 
-                <a
-                    href="#"
-                    onclick="confirmarEliminacion('<?= htmlspecialchars($fila['codigo'], ENT_QUOTES) ?>'); return false;"
+                    <!-- ELIMINAR -->
+
+                    <a
+
+                        href="#"
+
+                        onclick="
+
+                            confirmarEliminacion(
+
+                                '<?= htmlspecialchars(
+
+                                    $fila['codigo'],
+
+                                    ENT_QUOTES
+
+                                ) ?>'
+
+                            );
+
+                            return false;
+
+                        "
+
+                    >
+
+                        <button
+
+                            type="button"
+
+                            class="btn-eliminar"
+
+                        >
+
+                            🗑 Eliminar
+
+                        </button>
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ======================================
+                 IMAGEN DEL PRODUCTO
+            ======================================= -->
+
+            <div class="imagen-producto">
+
+
+<?php
+
+
+            /* ======================================
+               SI ENCONTRÓ LA IMAGEN
+            ======================================= */
+
+            if (
+
+                $imagenProducto !== null
+
+            ) {
+
+
+?>
+
+
+                <img
+
+                    src="<?= htmlspecialchars(
+
+                        $imagenProducto
+
+                    ) ?>"
+
+                    alt="<?= $nombre ?>"
+
                 >
 
-                    <button
-                        type="button"
-                        class="btn-eliminar"
-                    >
-                        🗑 Eliminar
-                    </button>
 
-                </a>
+<?php
+
+
+            } else {
+
+
+                /* ==================================
+                   SI NO ENCONTRÓ LA IMAGEN
+                =================================== */
+
+?>
+
+
+                <div class="imagen-no-disponible">
+
+                    📷
+
+                    <br>
+
+                    Imagen no disponible
+
+                </div>
+
+
+<?php
+
+            }
+
+
+?>
 
 
             </div>
@@ -781,44 +1319,54 @@ if ($resultado && $resultado->num_rows > 0) {
 
 <?php
 
+
     }
 
 
 } else {
 
 
-    /* ==========================================
-       CUANDO NO EXISTEN PRODUCTOS
-    ========================================== */
-
 ?>
 
+
+        <!-- ==========================================
+             NO HAY PRODUCTOS
+        =========================================== -->
 
         <div class="sin-productos">
 
 
             <div class="icono-vacio">
+
                 📦
+
             </div>
 
 
             <h3>
+
                 No hay productos registrados
+
             </h3>
 
 
             <p>
+
                 Todavía no tienes productos en tu catálogo.
+
                 <br>
+
                 ¡Agrega tu primer producto para comenzar!
+
             </p>
 
 
-            <!-- BOTÓN PARA AÑADIR EL PRIMER PRODUCTO -->
-
             <a
+
                 href="formularioprodu.php"
+
                 class="btn-primer-producto"
+
             >
 
                 ＋ Añadir primer producto
@@ -839,96 +1387,73 @@ if ($resultado && $resultado->num_rows > 0) {
     </div>
 
 
-    <!-- ==============================
+    <!-- ==========================================
          BOTONES INFERIORES
-    ================================= -->
+    =========================================== -->
 
     <div class="volver">
-
-
         <a
             href="javascript:history.back()"
             class="btn-volver"
         >
-
             ← Volver atrás
-
         </a>
-
-
         <a
             href="formularioprodu.php"
             class="btn-registrar"
         >
-
             ＋ Registrar producto
-
         </a>
-
-
     </div>
-
-
 </div>
-
-
-<!-- ==============================
-     JAVASCRIPT ELIMINAR
-================================= -->
-
 <script>
-
 function confirmarEliminacion(codigo) {
-
-
     Swal.fire({
-
         title: "¿Eliminar producto?",
-
         text: "Esta acción no se puede deshacer.",
-
         icon: "warning",
-
         showCancelButton: true,
-
         confirmButtonColor: "#a65b71",
-
         cancelButtonColor: "#532e4e",
-
         confirmButtonText: "Sí, eliminar",
-
         cancelButtonText: "Cancelar",
-
         reverseButtons: true
-
     }).then((result) => {
-
-
-        if (result.isConfirmed) {
-
-
+        if (
+            result.isConfirmed
+        ) {
             window.location.href =
+
                 "deleteprodu.php?codigo=" +
+
                 encodeURIComponent(codigo);
-
-
         }
-
     });
-
-}
-
-</script>
-
-
-</body>
-
-</html>
-
-
+};
 <?php
-
-$conn->close();
+   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 3";
+   $resultadoBajos = $conn->query($bajos);
+   $arrayBajos = [];
+   while ($filaBajos = $resultadoBajos->fetch_assoc()) {
+       $arrayBajos[] = $filaBajos['nombre'];
+   }
+    if (count($arrayBajos) > 0) {
+        $nombresBajos = implode(", ", $arrayBajos);
+        echo "window.onload = function() {
+            Swal.fire({
+                title: '¡Atención!',
+                html: 'Los siguientes productos tienen stock bajo: <br><strong>$nombresBajos</strong>',
+                icon: 'warning',
+                confirmButtonColor: '#a65b71',
+                confirmButtonText: 'Aceptar'
+            });
+        };";
+    }
 
 ?>
- 
+</script>
+</body>
+</html>
+<?php
+$conn->close();
+?>

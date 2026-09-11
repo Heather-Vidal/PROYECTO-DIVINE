@@ -78,7 +78,7 @@ if ($stmt->execute()) {
     // SI EL PEDIDO FUE ACEPTADO
     // ==================================================
 
-    if ($estado == "En proceso") {
+    if ($estado == "Aceptado") {
 
 
         // ==================================================

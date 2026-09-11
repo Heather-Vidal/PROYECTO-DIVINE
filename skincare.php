@@ -23,11 +23,13 @@ if ($conn->connect_error) {
     );
 }
 
+$conn->set_charset("utf8mb4");
+
 /* ==================================================
    CONSULTAR PRODUCTOS SKINCARE
 ================================================== */
 
-$sql = "SELECT * FROM producto WHERE categoria='SkinCare'";
+$sql = "SELECT * FROM producto WHERE categoria = 'SkinCare'";
 
 $resultado = $conn->query($sql);
 
@@ -391,8 +393,7 @@ body {
 
     border-radius: 20px;
 
-    background:
-        rgba(255,250,248,.92);
+    background: rgba(255,250,248,.92);
 
     color: var(--rosa-oscuro);
 
@@ -442,6 +443,31 @@ body {
 
 .card:hover .imagen-producto img {
     transform: scale(1.07);
+}
+
+/* ==================================================
+   PLACEHOLDER
+================================================== */
+
+.placeholder {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: var(--rosa);
+
+    font-family: Georgia, serif;
+    font-size: 1rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8e9ed,
+            #fffaf8
+        );
 }
 
 /* ==================================================
@@ -776,7 +802,6 @@ body {
 
 <body>
 
-
 <?php
 include 'submenuespecial.php';
 ?>
@@ -893,7 +918,7 @@ include 'submenuespecial.php';
 
 
     <!-- ==================================================
-         GRID
+         GRID PRODUCTOS
     ================================================== -->
 
     <div class="grid">
@@ -905,48 +930,52 @@ if ($resultado->num_rows > 0) {
     while ($fila = $resultado->fetch_assoc()) {
 
         $codigo = $fila['codigo'];
+
         $stock = (int)$fila['stock'];
 
 
         /* ==================================================
-           IMAGEN DEL PRODUCTO
+           BUSCAR IMAGEN
 
-           Si existe "imagen", la utiliza.
-           Si está vacía, utiliza la predeterminada.
+           EXACTAMENTE IGUAL AL OTRO CÓDIGO
+
+           CARPETA:
+           ./PRODUCTO-img/
+
+           NOMBRES:
+           p-CODIGO.jpg
+           p-CODIGO.jpeg
+           p-CODIGO.png
+           p-CODIGO.gif
         ================================================== */
 
-        $imagen = "";
+        $directorio = "./PRODUCTO-img/";
 
-        if (isset($fila['imagen'])) {
-            $imagen = trim($fila['imagen']);
-        }
+        $nombreArchivo = "p-" . $codigo;
 
-        if ($imagen == "") {
+        $extensiones = [
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+        ];
 
-            $imagen = "./imagenes/producto-predeterminado.jpg";
+        $imagenProducto = null;
 
-        }
+        foreach ($extensiones as $extension) {
 
+            $ruta =
+                $directorio .
+                $nombreArchivo .
+                "." .
+                $extension;
 
-        /*
-         * Si en la BD solamente tienes el nombre
-         * de la imagen, por ejemplo:
-         *
-         * crema.jpg
-         *
-         * se agrega automáticamente ./imagenes/
-         */
+            if (file_exists($ruta)) {
 
-        if (
-            $imagen != "" &&
-            strpos($imagen, "http://") !== 0 &&
-            strpos($imagen, "https://") !== 0 &&
-            strpos($imagen, "./") !== 0 &&
-            strpos($imagen, "../") !== 0
-        ) {
+                $imagenProducto = $ruta;
 
-            $imagen = "./imagenes/" . $imagen;
-
+                break;
+            }
         }
 
 ?>
@@ -971,11 +1000,44 @@ if ($resultado->num_rows > 0) {
 
             <div class="imagen-producto">
 
+<?php
+
+if ($imagenProducto !== null) {
+
+?>
+
                 <img
-                    src="<?php echo htmlspecialchars($imagen); ?>"
-                    alt="<?php echo htmlspecialchars($fila['nombre']); ?>"
-                    onerror="this.onerror=null;this.src='./imagenes/producto-predeterminado.jpg';"
+                    src="<?php
+                    echo htmlspecialchars(
+                        $imagenProducto,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>"
+                    alt="<?php
+                    echo htmlspecialchars(
+                        $fila['nombre'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>"
                 >
+
+<?php
+
+} else {
+
+?>
+
+                <div class="placeholder">
+                    Imagen del producto
+                </div>
+
+<?php
+
+}
+
+?>
 
             </div>
 
@@ -986,27 +1048,34 @@ if ($resultado->num_rows > 0) {
 
             <div class="info">
 
-
                 <div class="categoria">
                     Cuidado facial
                 </div>
 
 
                 <h3>
+
                     <?php
                     echo htmlspecialchars(
-                        $fila['nombre']
+                        $fila['nombre'],
+                        ENT_QUOTES,
+                        'UTF-8'
                     );
                     ?>
+
                 </h3>
 
 
                 <p class="descripcion">
+
                     <?php
                     echo htmlspecialchars(
-                        $fila['descripcion']
+                        $fila['descripcion'],
+                        ENT_QUOTES,
+                        'UTF-8'
                     );
                     ?>
+
                 </p>
 
 
@@ -1016,13 +1085,14 @@ if ($resultado->num_rows > 0) {
 
                 <div class="info-final">
 
-
                     <div class="precio">
 
                         Bs.
                         <?php
                         echo htmlspecialchars(
-                            $fila['precio']
+                            $fila['precio'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
                         ?>
 

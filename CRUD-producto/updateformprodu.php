@@ -125,11 +125,13 @@ if ($imagenProducto === null) {
         border-box;
 }
 body {
+       background-image: url("../imagenes/fondito.jpg");
+                   background-repeat: no-repeat;
+                  background-size:140%;    
     font-family:
         'Inter',
         sans-serif;
-    background:
-        #e9e5dd;
+
     display:
         flex;
     justify-content:
@@ -149,13 +151,13 @@ body {
 
 form {
     background:
-        #f5e9d8;
+        #eb76a7;
     padding:
         50px;
     border-radius:
         25px;
     border:
-        2px solid #c5a46d;
+        2px solid #fa46a0;
     box-shadow:
         0 15px 40px
         rgba(8,8,8,0.15);
@@ -209,7 +211,7 @@ form {
         420px;
 
     border:
-        3px solid #c5a46d;
+        3px solid #f741a5;
 
     box-shadow:
 
@@ -241,7 +243,7 @@ h2 {
         36px;
 
     color:
-        #364e63;
+        #3d202c;
 
     font-family:
         "Playfair Display",
@@ -251,7 +253,7 @@ h2 {
         1px;
 
     border-bottom:
-        3px solid #c5a46d;
+        3px solid #c56da0;
 
     padding-bottom:
         8px;
@@ -269,7 +271,7 @@ legend {
     font-weight:
         bold;
     color:
-        #c5a46d;
+        #270d18;
     font-size:
         18px;
     font-family:
@@ -291,7 +293,7 @@ legend {
 }
 label {
     color:
-        #364e63;
+        #df80ac;
     font-size:
         15px;
     font-weight:
@@ -304,9 +306,9 @@ input[type="number"] {
     border-radius:
         12px;
     border:
-        1.5px solid #c5a46d;
+        1.5px solid #29101e;
     background:
-        #ffffff;
+        #daa6bc;
     font-size:
         15px;
     outline:
@@ -317,11 +319,11 @@ input[type="number"] {
 input[type="text"]:focus,
 input[type="number"]:focus {
     border-color:
-        #364e63;
+        #cf6d9e;
 
     box-shadow:
         0 0 12px
-        rgba(54,78,99,0.30);
+        rgba(255, 62, 168, 0.3);
 
 }
 /* =====================================================
@@ -359,7 +361,7 @@ input[type="number"]:focus {
     background:
         rgba(255,255,255,0.55);
     border:
-        1px solid #c5a46d;
+        1px solid #ca5b93;
     border-radius:
         15px;
 }
@@ -373,7 +375,7 @@ input[type="number"]:focus {
     object-fit:
         cover;
     border:
-        2px solid #c5a46d;
+        2px solid #da62ac;
 }
 .info-imagen {
     display:
@@ -395,6 +397,7 @@ input[type="number"]:focus {
     color:
         #777;
     font-size:
+    
         13px;
     word-break:
         break-all;

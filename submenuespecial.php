@@ -709,8 +709,6 @@ nav{
 
             </li>
 
-
-
             <li>
 
                 <a href="#ofertas">
@@ -720,8 +718,6 @@ nav{
                 </a>
 
             </li>
-
-
 
             <li>
 
@@ -733,25 +729,15 @@ nav{
 
             </li>
 
-
-
-            <li>
-
-                <a href="#consulta">
-
-                    Consulta Personal
-
-                </a>
-
             </li>
-
+            <a href="CONSULTA-pedido/formreadpedido.php">
+                    Mis Pedidos
+                </a>
+            <li>
 
         </ul>
 
-
     </nav>
-
-
 
     <!-- ==================================================
          ICONOS
@@ -772,26 +758,6 @@ nav{
  
 <img   src="./imagenes/lupa-removebg-preview.png" alt="Buscar" >
 </button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             </div>
