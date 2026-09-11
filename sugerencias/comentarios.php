@@ -15,85 +15,346 @@ $archivo = 'mensajes.txt';
     }
 
     body { 
-      font-family: Arial, sans-serif; 
+      font-family: "Georgia", "Times New Roman", serif;
       margin: 0;
-      padding: 40px 20px;
-   background-image: url("../imagenes/mezcla.jpg");
-                  background-repeat: no-repeat;
-                  background-size:140%;     
+      padding: 50px 20px;
       min-height: 100vh;
+
+      background:
+        linear-gradient(
+          rgba(255, 240, 246, 0.88),
+          rgba(242, 232, 245, 0.94)
+        ),
+        url("../imagenes/mezcla.jpg");
+
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+
+      color: #654b59;
     }
 
+    /* CONTENEDOR PRINCIPAL */
     .contenedor {
-      max-width: 850px;
+      width: 100%;
+      max-width: 900px;
       margin: auto;
-      background: #4b2b38;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(190, 80, 120, 0.18);
+      padding: 45px 50px;
+
+      background: rgba(255, 252, 253, 0.97);
+      border: 1px solid rgba(218, 174, 193, 0.45);
+      border-radius: 30px;
+
+      box-shadow:
+        0 20px 60px rgba(126, 82, 105, 0.18),
+        0 5px 18px rgba(126, 82, 105, 0.08);
+
+      position: relative;
+      overflow: hidden;
     }
 
-     
+    /* DECORACIÓN */
+    .contenedor::before {
+      content: "♡";
+      position: absolute;
+      top: -35px;
+      right: 20px;
+      font-size: 130px;
+      color: rgba(221, 170, 192, 0.10);
+      font-family: Arial, sans-serif;
+    }
+
+    .contenedor::after {
+      content: "✿";
+      position: absolute;
+      bottom: -35px;
+      left: 20px;
+      font-size: 100px;
+      color: rgba(221, 170, 192, 0.08);
+    }
+
+    /* TÍTULO */
     h1 { 
       text-align: center;
-      color: #c2185b;
-      font-size: 32px;
-      margin-bottom: 10px;
+      color: #a8758b;
+      font-size: 40px;
+      font-weight: normal;
+      letter-spacing: 1px;
+      margin: 0 0 8px;
+
+      position: relative;
+      z-index: 2;
     }
 
+    h1::after {
+      content: "♡  ✦  ♡";
+      display: block;
+      font-family: Arial, sans-serif;
+      font-size: 17px;
+      letter-spacing: 5px;
+      color: #d5a0b5;
+      margin-top: 10px;
+    }
+
+    /* SUBTÍTULO */
     .subtitulo {
       text-align: center;
-      color: #9c5873;
-      margin-bottom: 25px;
+      color: #a58b98;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      margin: 0 0 28px;
+
+      position: relative;
+      z-index: 2;
     }
 
+    /* BOTÓN COMENTAR */
     .volver {
-      display: inline-block;
+      display: block;
+      width: fit-content;
+      margin: auto;
+
       text-decoration: none;
-      background: #c78299;
-      color: black;
-      padding: 10px 18px;
-      border-radius: 25px;
+
+      background: linear-gradient(
+        135deg,
+        #e9c4d3,
+        #d8a5ba
+      );
+
+      color: #684957;
+
+      padding: 13px 30px;
+      border-radius: 30px;
+
+      font-family: Arial, sans-serif;
+      font-size: 14px;
       font-weight: bold;
-      transition: 0.3s;
+
+      box-shadow:
+        0 6px 18px rgba(174, 119, 142, 0.22);
+
+      transition: all 0.3s ease;
+
+      position: relative;
+      z-index: 2;
     }
 
     .volver:hover {
-      background: #e46ea1;
-      transform: translateY(-2px);
+      background: linear-gradient(
+        135deg,
+        #d9afc1,
+        #c997ad
+      );
+
+      color: white;
+
+      transform: translateY(-4px);
+
+      box-shadow:
+        0 10px 25px rgba(174, 119, 142, 0.30);
     }
 
+    /* LÍNEA */
     hr {
       border: none;
-      height: 2px;
-      background: #f8bbd0;
-      margin: 25px 0;
+      height: 1px;
+
+      background: linear-gradient(
+        to right,
+        transparent,
+        #dfb9c9,
+        transparent
+      );
+
+      margin: 38px 0 30px;
     }
 
+    /* CONTENEDOR DE COMENTARIOS */
+    .publicaciones {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      position: relative;
+      z-index: 2;
+    }
+
+    /* CADA COMENTARIO */
     .post { 
-      margin-bottom: 15px; 
-      padding: 16px 20px; 
-      background: #ce728e;
-      border: 1px solid #f3b6ca;
-      border-left: 5px solid #c75b7f;
-      border-radius: 12px;
-      color: #542c3b;
-      box-shadow: 0 3px 10px rgba(233, 30, 99, 0.08);
-      transition: 0.3s;
+      position: relative;
+
+      padding: 24px 28px 24px 58px;
+
+      background:
+        linear-gradient(
+          135deg,
+          rgba(255, 249, 251, 0.98),
+          rgba(250, 240, 246, 0.98)
+        );
+
+      border: 1px solid #ecd3df;
+      border-radius: 20px;
+
+      color: #6e5260;
+
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+
+      box-shadow:
+        0 7px 20px rgba(126, 82, 105, 0.08);
+
+      transition: all 0.3s ease;
+
+      overflow: hidden;
     }
 
+    /* Corazón de cada comentario */
+    .post::before {
+      content: "♡";
+
+      position: absolute;
+      left: 20px;
+      top: 22px;
+
+      width: 27px;
+      height: 27px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #f1d5e0;
+      color: #bd829b;
+
+      border-radius: 50%;
+
+      font-size: 17px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Detalle superior */
+    .post::after {
+      content: "";
+
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 4px;
+
+      background: linear-gradient(
+        to right,
+        #d9a9bc,
+        #efcbd9,
+        #d9a9bc
+      );
+    }
+
+    /* EFECTO AL PASAR EL MOUSE */
     .post:hover {
-      background: #ff699d;
-      transform: translateX(4px);
+      transform: translateY(-5px);
+
+      background:
+        linear-gradient(
+          135deg,
+          #fffafd,
+          #fdf1f6
+        );
+
+      border-color: #dcb2c4;
+
+      box-shadow:
+        0 12px 28px rgba(126, 82, 105, 0.14);
     }
 
+    .post:hover::before {
+      background: #dfb4c7;
+      color: white;
+      transform: scale(1.08);
+    }
+
+    /* TEXTO DEL COMENTARIO */
+    .post-texto {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* CUANDO NO HAY PUBLICACIONES */
     .sin-publicaciones {
       text-align: center;
-      padding: 25px;
-      background: #fff0f5;
-      border-radius: 12px;
-      color: #a05270;
-      font-size: 16px;
+      padding: 40px 25px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #fff7fa,
+          #f8eef5
+        );
+
+      border: 1px dashed #ddb8c8;
+      border-radius: 20px;
+
+      color: #a17c8e;
+
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+
+      position: relative;
+      z-index: 2;
+    }
+
+    .sin-publicaciones::before {
+      content: "♡";
+      display: block;
+
+      font-size: 35px;
+      color: #d5a0b5;
+
+      margin-bottom: 8px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+
+      body {
+        padding: 25px 12px;
+      }
+
+      .contenedor {
+        padding: 30px 18px;
+        border-radius: 23px;
+      }
+
+      h1 {
+        font-size: 31px;
+      }
+
+      .subtitulo {
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 0 10px;
+      }
+
+      .volver {
+        padding: 11px 24px;
+      }
+
+      .post {
+        padding: 22px 18px 22px 52px;
+        font-size: 14px;
+        line-height: 1.6;
+        border-radius: 17px;
+      }
+
+      .post::before {
+        left: 17px;
+        top: 20px;
+      }
     }
   </style> 
 </head> 
@@ -103,24 +364,47 @@ $archivo = 'mensajes.txt';
   <div class="contenedor">
 
     <h1>Publicaciones</h1>
-    <p class="subtitulo">Comentarios y sugerencias de nuestros clientes</p>
 
-    <a class="volver" href="publicar.php">← Volver a comentar</a> 
+    <p class="subtitulo">
+      Comentarios y sugerencias de nuestros clientes
+    </p>
+
+    <a class="volver" href="publicar.php">
+      ♡ Comentar
+    </a> 
 
     <hr> 
  
-    <?php 
-    if (file_exists($archivo)) { 
-        $lineas = file($archivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES); 
-        $lineas = array_reverse($lineas); 
+    <div class="publicaciones">
+
+      <?php 
+      if (file_exists($archivo)) { 
+
+          $lineas = file(
+              $archivo, 
+              FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+          ); 
+
+          $lineas = array_reverse($lineas); 
  
-        foreach ($lineas as $linea) { 
-            echo '<div class="post">' . htmlspecialchars($linea) . '</div>'; 
-        } 
-    } else { 
-        echo '<div class="sin-publicaciones">💌 No hay publicaciones aún.</div>'; 
-    } 
-    ?> 
+          foreach ($lineas as $linea) { 
+              echo '<div class="post">';
+              echo '<div class="post-texto">';
+              echo htmlspecialchars($linea);
+              echo '</div>';
+              echo '</div>';
+          } 
+
+      } else { 
+
+          echo '<div class="sin-publicaciones">';
+          echo 'No hay publicaciones aún.';
+          echo '</div>';
+
+      } 
+      ?> 
+
+    </div>
 
   </div>
  

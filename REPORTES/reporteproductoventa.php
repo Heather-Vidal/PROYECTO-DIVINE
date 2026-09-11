@@ -1,17 +1,26 @@
 <?php
+
 session_start();
+
 $servidor = "localhost";
 $usuario = "root";
 $contrasena = "";
 $bd = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contrasena, $bd);
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contrasena,
+    $bd
+);
+
 if ($conn->connect_error) {
     die("Error de conexión");
 }
 
+
 /* =========================================================
-   PRODUCTO MÁS VENDIDO DEL MES
+   PRODUCTOS MÁS VENDIDOS DEL MES
    ========================================================= */
 
 $sql = "SELECT
@@ -30,15 +39,24 @@ $sql = "SELECT
         ORDER BY total_vendido DESC";
 
 $resultado = $conn->query($sql);
+
 $nombres = [];
 $veces = [];
 
 if ($resultado) {
+
     while ($fila = $resultado->fetch_assoc()) {
-        $nombres[] = $fila["nombre"];
-        $veces[] = (int)$fila["total_vendido"];
+
+        $nombres[] =
+            $fila["nombre"];
+
+        $veces[] =
+            (int)$fila["total_vendido"];
+
     }
+
 }
+
 
 /* =========================================================
    PRODUCTOS CON BAJO STOCK
@@ -52,29 +70,30 @@ $sqlStock = "SELECT
             WHERE stock <= 5
             ORDER BY stock ASC";
 
-$resultadoStock = $conn->query($sqlStock);
+$resultadoStock =
+    $conn->query($sqlStock);
+
 $nombresStock = [];
 $cantidadesStock = [];
 
 if ($resultadoStock) {
 
-    while ($fila = $resultadoStock->fetch_assoc()) {
+    while ($fila =
+        $resultadoStock->fetch_assoc()) {
 
-        $nombresStock[] = $fila["nombre"];
-        $cantidadesStock[] = (int)$fila["stock"];
+        $nombresStock[] =
+            $fila["nombre"];
+
+        $cantidadesStock[] =
+            (int)$fila["stock"];
+
     }
+
 }
 
 
 /* =========================================================
-   OBTENER LOS 10 PRODUCTOS
-   =========================================================
-
-   El stock actual se obtiene desde PRODUCTO.stock.
-
-   Las gráficas se generan automáticamente.
-   Si existen 10 productos, aparecerán 10 gráficas.
-
+   PRODUCTOS
    ========================================================= */
 
 $sqlProductos = "SELECT
@@ -85,610 +104,1752 @@ $sqlProductos = "SELECT
                  ORDER BY codigo ASC
                  LIMIT 10";
 
-$resultadoProductos = $conn->query($sqlProductos);
+$resultadoProductos =
+    $conn->query($sqlProductos);
 
 $productos = [];
 
 if ($resultadoProductos) {
 
-    while ($fila = $resultadoProductos->fetch_assoc()) {
+    while ($fila =
+        $resultadoProductos->fetch_assoc()) {
+
         $productos[] = [
-            "codigo" => $fila["codigo"],
-            "nombre" => $fila["nombre"],
-            "stock" => (int)$fila["stock"]
+
+            "codigo" =>
+                $fila["codigo"],
+
+            "nombre" =>
+                $fila["nombre"],
+
+            "stock" =>
+                (int)$fila["stock"]
+
         ];
+
     }
+
 }
 
+
+/* =========================================================
+   ESTADÍSTICAS
+   ========================================================= */
+
+$totalProductos =
+    count($productos);
+
+$totalBajoStock =
+    count($nombresStock);
+
+$totalVendido =
+    array_sum($veces);
+
+$productoTop =
+    count($nombres) > 0
+        ? $nombres[0]
+        : "Sin datos";
+
+$cantidadTop =
+    count($veces) > 0
+        ? $veces[0]
+        : 0;
+
 ?>
+
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Ventas e Inventario</title>
 
-    <style>
-        /* =====================================================
-           CONFIGURACIÓN GENERAL
-           ===================================================== */
+<meta charset="UTF-8">
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family:
-                'Segoe UI',
-                'Poppins',
-                sans-serif;
-        }
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
+<title>
+    DIVINE | Dashboard
+</title>
 
-        /* =====================================================
-           CUERPO PRINCIPAL
-           ===================================================== */
 
-        body {
+<link rel="preconnect"
+      href="https://fonts.googleapis.com">
 
-            min-height: 100vh;
-            padding: 45px 35px;
-            background:
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
 
-                radial-gradient(
-                    circle at top left,
-                    rgba(255, 255, 255, 0.95),
-                    transparent 40%
-                ),
+<link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+>
 
-                radial-gradient(
-                    circle at bottom right,
-                    rgba(232, 154, 170, 0.25),
-                    transparent 45%
-                ),
 
-                linear-gradient(
-                    135deg,
-                    #fff7f9 0%,
-                    #fce9ee 45%,
-                    #f7dce4 100%
-                );
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js">
+</script>
 
-            color: #5f4650;
-            overflow-x: hidden;
-        }
 
+<style>
 
-        /* =====================================================
-           CONTENEDOR DE LAS DOS GRÁFICAS PRINCIPALES
-           ===================================================== */
+/* =========================================================
+   RESET
+   ========================================================= */
 
-        .contenedores-principales {
+* {
 
-            width: 100%;
+    margin: 0;
 
-            max-width: 1250px;
+    padding: 0;
 
-            margin: 0 auto 35px auto;
+    box-sizing: border-box;
 
-            display: grid;
+}
 
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
 
-            gap: 30px;
-        }
+/* =========================================================
+   VARIABLES
+   ========================================================= */
 
+:root {
 
-        /* =====================================================
-           TARJETAS PRINCIPALES
-           ===================================================== */
+    --vino:
+        #542c3d;
 
-        .contenedor {
+    --vino-dark:
+        #3d202d;
 
-            width: 100%;
+    --vino-light:
+        #81556a;
 
-            max-width: none;
+    --rosa:
+        #c48a9e;
 
-            min-width: 0;
+    --rosa-soft:
+        #ead7de;
 
-            background:
-                rgba(255, 255, 255, 0.38);
+    --crema:
+        #f8f3ed;
 
-            backdrop-filter: blur(18px);
+    --marfil:
+        #fffdfa;
 
-            -webkit-backdrop-filter: blur(18px);
+    --dorado:
+        #b79662;
 
-            padding: 30px;
+    --texto:
+        #55434b;
 
-            border-radius: 24px;
+    --gris:
+        #9c8d94;
 
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.70);
+    --linea:
+        #eadfe2;
 
-            box-shadow:
+}
 
-                0 20px 45px
-                rgba(191, 116, 133, 0.16),
 
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.75);
+/* =========================================================
+   BODY
+   ========================================================= */
 
-            margin-bottom: 0;
+body {
 
-            transition:
-                transform 0.3s ease,
-                box-shadow 0.3s ease;
-        }
+    min-height:
+        100vh;
 
+    background:
 
-        .contenedor:hover {
+        radial-gradient(
+            circle at 5% 0%,
+            rgba(216,178,192,.28),
+            transparent 25%
+        ),
 
-            transform:
-                translateY(-4px);
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(183,150,98,.10),
+            transparent 25%
+        ),
 
-            box-shadow:
+        var(--crema);
 
-                0 25px 55px
-                rgba(191, 116, 133, 0.22),
+    color:
+        var(--texto);
 
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.85);
-        }
+    font-family:
+        "DM Sans",
+        sans-serif;
 
+}
 
-        /* =====================================================
-           TÍTULOS
-           ===================================================== */
 
-        h2 {
+/* =========================================================
+   CONTENEDOR GENERAL
+   ========================================================= */
 
-            text-align: center;
+.dashboard {
 
-            color: #b96579;
+    width:
+        min(1440px, 94%);
 
-            margin-bottom: 25px;
+    margin:
+        auto;
 
-            font-size: 25px;
+}
 
-            font-weight: 600;
 
-            letter-spacing: 0.3px;
-        }
+/* =========================================================
+   HEADER
+   ========================================================= */
 
+.header {
 
-        .titulo-productos {
+    min-height:
+        105px;
 
-            text-align: center;
+    display:
+        flex;
 
-            color: #b96579;
+    align-items:
+        center;
 
-            margin-bottom: 28px;
+    justify-content:
+        space-between;
 
-            font-size: 27px;
+    border-bottom:
+        1px solid var(--linea);
 
-            font-weight: 600;
-        }
+}
 
 
-        /* =====================================================
-           GRÁFICAS GRANDES
-           ===================================================== */
+/* =========================================================
+   BRAND
+   ========================================================= */
 
-        .grafico {
+.brand {
 
-            width: 100%;
+    display:
+        flex;
 
-            height: 420px;
+    align-items:
+        center;
 
-            position: relative;
-        }
+    gap:
+        14px;
 
+}
 
-        /* =====================================================
-           CONTENEDOR DE LAS 10 GRÁFICAS
-           ===================================================== */
 
-        .contenedor-productos {
+.logo {
 
-            width: 100%;
+    width:
+        48px;
 
-            max-width: 1250px;
+    height:
+        48px;
 
-            margin: 0 auto 30px auto;
+    border-radius:
+        50%;
 
-            background:
-                rgba(255, 255, 255, 0.30);
+    background:
+        var(--vino);
 
-            backdrop-filter: blur(20px);
+    color:
+        white;
 
-            -webkit-backdrop-filter: blur(20px);
+    display:
+        flex;
 
-            padding: 32px;
+    align-items:
+        center;
 
-            border-radius: 26px;
+    justify-content:
+        center;
 
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.70);
+    font-family:
+        "Cormorant Garamond",
+        serif;
 
-            box-shadow:
+    font-size:
+        27px;
 
-                0 20px 50px
-                rgba(191, 116, 133, 0.15),
+    box-shadow:
+        0 8px 20px
+        rgba(84,44,61,.18);
 
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.75);
-        }
+}
 
 
-        /* =====================================================
-           GRID DE LAS 10 GRÁFICAS
-           ===================================================== */
+.brand-name {
 
-        .grid-productos {
+    color:
+        var(--vino);
 
-            display: grid;
+    font-family:
+        "Cormorant Garamond",
+        serif;
 
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
+    font-size:
+        25px;
 
-            gap: 25px;
-        }
+    font-weight:
+        600;
 
+    letter-spacing:
+        2px;
 
-        /* =====================================================
-           TARJETA DE CADA PRODUCTO
-           ===================================================== */
+}
 
-        .producto-grafica {
 
-            position: relative;
+.brand-sub {
 
-            background:
-                rgba(255, 255, 255, 0.20);
+    color:
+        var(--rosa);
 
-            backdrop-filter: blur(15px);
+    display:
+        block;
 
-            -webkit-backdrop-filter: blur(15px);
+    font-size:
+        9px;
 
-            border:
-                1px solid
-                rgba(255, 255, 255, 0.60);
+    text-transform:
+        uppercase;
 
-            border-radius: 20px;
+    letter-spacing:
+        3px;
 
-            padding: 20px;
+}
 
-            box-shadow:
 
-                0 10px 30px
-                rgba(191, 116, 133, 0.10),
+/* =========================================================
+   HEADER RIGHT
+   ========================================================= */
 
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.65);
+.header-right {
 
-            transition:
+    display:
+        flex;
 
-                transform 0.3s ease,
+    align-items:
+        center;
 
-                box-shadow 0.3s ease,
+    gap:
+        15px;
 
-                background 0.3s ease;
+}
 
-            overflow: hidden;
-        }
 
+.status {
 
-        /* =====================================================
-           BRILLO DECORATIVO
-           ===================================================== */
+    display:
+        flex;
 
-        .producto-grafica::before {
+    align-items:
+        center;
 
-            content: "";
+    gap:
+        7px;
 
-            position: absolute;
+    font-size:
+        10px;
 
-            top: -60px;
+    text-transform:
+        uppercase;
 
-            right: -60px;
+    letter-spacing:
+        1.5px;
 
-            width: 130px;
+    color:
+        #88777e;
 
-            height: 130px;
+}
 
-            border-radius: 50%;
 
-            background:
-                rgba(232, 154, 170, 0.12);
+.status-dot {
 
-            pointer-events: none;
-        }
+    width:
+        7px;
 
+    height:
+        7px;
 
-        /* =====================================================
-           EFECTO HOVER
-           ===================================================== */
+    background:
+        #9bba8d;
 
-        .producto-grafica:hover {
+    border-radius:
+        50%;
 
-            transform:
-                translateY(-5px);
+    box-shadow:
+        0 0 0 4px
+        rgba(155,186,141,.12);
 
-            background:
-                rgba(255, 255, 255, 0.35);
+}
 
-            box-shadow:
 
-                0 18px 35px
-                rgba(191, 116, 133, 0.18),
+/* =========================================================
+   HERO
+   ========================================================= */
 
-                inset 0 1px 0
-                rgba(255, 255, 255, 0.80);
-        }
+.hero {
 
+    display:
+        grid;
 
-        /* =====================================================
-           NOMBRE DEL PRODUCTO
-           ===================================================== */
+    grid-template-columns:
+        1fr 390px;
 
-        .producto-grafica h3 {
+    gap:
+        30px;
 
-            position: relative;
+    padding:
+        48px 0 35px;
 
-            z-index: 2;
+}
 
-            text-align: center;
 
-            color: #b96579;
+.hero-left small {
 
-            font-size: 18px;
+    color:
+        var(--dorado);
 
-            font-weight: 600;
+    font-size:
+        10px;
 
-            margin-bottom: 15px;
+    font-weight:
+        700;
 
-            min-height: 45px;
+    letter-spacing:
+        4px;
 
-            display: flex;
+    text-transform:
+        uppercase;
 
-            align-items: center;
+}
 
-            justify-content: center;
 
-            padding: 0 10px;
-        }
+.hero-left h1 {
 
+    font-family:
+        "Cormorant Garamond",
+        serif;
 
-        /* =====================================================
-           GRÁFICAS PEQUEÑAS
-           ===================================================== */
+    color:
+        var(--vino);
 
-        .grafico-producto {
+    font-size:
+        clamp(48px, 6vw, 76px);
 
-            width: 100%;
+    font-weight:
+        500;
 
-            height: 230px;
+    line-height:
+        .92;
 
-            position: relative;
+    margin-top:
+        8px;
 
-            z-index: 2;
-        }
+}
 
 
-        /* =====================================================
-           INFORMACIÓN DEL STOCK
-           ===================================================== */
+.hero-left h1 em {
 
-        .stock-info {
+    color:
+        var(--rosa);
 
-            position: relative;
+    font-weight:
+        400;
 
-            z-index: 2;
+}
 
-            text-align: center;
 
-            margin-top: 12px;
+.hero-left p {
 
-            padding-top: 12px;
+    max-width:
+        580px;
 
-            border-top:
-                1px solid
-                rgba(191, 116, 133, 0.12);
+    margin-top:
+        18px;
 
-            font-size: 14px;
+    color:
+        var(--gris);
 
-            color: #866c75;
+    font-size:
+        13px;
 
-            letter-spacing: 0.2px;
-        }
+    line-height:
+        1.7;
 
+}
 
-        .stock-numero {
 
-            display: inline-block;
+/* =========================================================
+   HERO FEATURE
+   ========================================================= */
 
-            margin: 0 4px;
+.hero-feature {
 
-            color: #c45f77;
+    position:
+        relative;
 
-            font-size: 21px;
+    overflow:
+        hidden;
 
-            font-weight: 700;
-        }
+    background:
+        var(--vino);
 
+    color:
+        white;
 
-        /* =====================================================
-           CANVAS TRANSPARENTE
-           ===================================================== */
+    border-radius:
+        3px;
 
-        canvas {
+    padding:
+        27px;
 
-            background:
-                transparent !important;
-        }
+    min-height:
+        175px;
 
+    box-shadow:
+        0 18px 35px
+        rgba(84,44,61,.15);
 
-        /* =====================================================
-           SCROLLBAR
-           ===================================================== */
+}
 
-        ::-webkit-scrollbar {
 
-            width: 9px;
+.hero-feature::before {
 
-            height: 9px;
-        }
+    content:
+        "";
 
+    position:
+        absolute;
 
-        ::-webkit-scrollbar-track {
+    width:
+        190px;
 
-            background:
-                rgba(255, 255, 255, 0.30);
-        }
+    height:
+        190px;
 
+    border:
+        1px solid
+        rgba(255,255,255,.12);
 
-        ::-webkit-scrollbar-thumb {
+    border-radius:
+        50%;
 
-            background:
+    right:
+        -80px;
 
-                linear-gradient(
-                    180deg,
-                    #d98a9d,
-                    #bd687d
-                );
+    top:
+        -85px;
 
-            border-radius: 20px;
-        }
+}
 
 
-        ::-webkit-scrollbar-thumb:hover {
+.hero-feature::after {
 
-            background:
-                #b85e74;
-        }
+    content:
+        "";
 
+    position:
+        absolute;
 
-        /* =====================================================
-           TABLETS
-           ===================================================== */
+    width:
+        120px;
 
-        @media (max-width: 950px) {
+    height:
+        120px;
 
-            body {
+    border:
+        1px solid
+        rgba(255,255,255,.08);
 
-                padding:
-                    30px 20px;
-            }
+    border-radius:
+        50%;
 
+    right:
+        -35px;
 
-            .contenedores-principales {
+    top:
+        -35px;
 
-                grid-template-columns:
-                    1fr;
+}
 
-                max-width: 800px;
-            }
 
+.feature-label {
 
-            .contenedor-productos {
+    color:
+        #d5bda4;
 
-                max-width: 800px;
-            }
+    text-transform:
+        uppercase;
 
+    letter-spacing:
+        2px;
 
-            .grid-productos {
+    font-size:
+        9px;
 
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-            }
-        }
+}
 
 
-        /* =====================================================
-           CELULARES
-           ===================================================== */
+.feature-title {
 
-        @media (max-width: 600px) {
+    font-family:
+        "Cormorant Garamond",
+        serif;
 
-            body {
+    font-size:
+        28px;
 
-                padding:
-                    20px 12px;
-            }
+    margin-top:
+        9px;
 
+    position:
+        relative;
 
-            .contenedor {
+    z-index:
+        2;
 
-                padding: 22px;
+}
 
-                border-radius: 20px;
-            }
 
+.feature-value {
 
-            .contenedor-productos {
+    margin-top:
+        7px;
 
-                padding: 20px;
+    font-size:
+        12px;
 
-                border-radius: 20px;
-            }
+    color:
+        #d7c6cd;
 
+}
 
-            .contenedores-principales {
 
-                gap: 20px;
+/* =========================================================
+   KPI
+   ========================================================= */
 
-                margin-bottom: 25px;
-            }
+.kpis {
 
+    display:
+        grid;
 
-            .grid-productos {
+    grid-template-columns:
+        repeat(3, 1fr);
 
-                grid-template-columns:
-                    1fr;
+    gap:
+        15px;
 
-                gap: 18px;
-            }
+    margin-bottom:
+        20px;
 
+}
 
-            h2 {
 
-                font-size: 21px;
+.kpi {
 
-                margin-bottom: 20px;
-            }
+    background:
+        var(--marfil);
 
+    border:
+        1px solid var(--linea);
 
-            .titulo-productos {
+    padding:
+        22px;
 
-                font-size: 23px;
-            }
+    min-height:
+        135px;
 
+    position:
+        relative;
 
-            .grafico {
+    overflow:
+        hidden;
 
-                height: 320px;
-            }
+}
 
 
-            .grafico-producto {
+.kpi::after {
 
-                height: 220px;
-            }
+    content:
+        "";
 
+    position:
+        absolute;
 
-            .producto-grafica {
+    width:
+        75px;
 
-                padding: 17px;
-            }
-        }
+    height:
+        75px;
 
-    </style>
+    border-radius:
+        50%;
+
+    background:
+        var(--rosa-soft);
+
+    opacity:
+        .5;
+
+    right:
+        -25px;
+
+    top:
+        -25px;
+
+}
+
+
+.kpi-top {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+}
+
+
+.kpi-label {
+
+    color:
+        var(--gris);
+
+    font-size:
+        9px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1.8px;
+
+}
+
+
+.kpi-icon {
+
+    color:
+        var(--rosa);
+
+    font-size:
+        17px;
+
+}
+
+
+.kpi-number {
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        38px;
+
+    color:
+        var(--vino);
+
+    margin-top:
+        8px;
+
+    line-height:
+        1;
+
+}
+
+
+.kpi-description {
+
+    color:
+        #b1a2a8;
+
+    font-size:
+        10px;
+
+    margin-top:
+        7px;
+
+}
+
+
+/* =========================================================
+   MAIN GRID
+   ========================================================= */
+
+.main-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(0, 1.55fr)
+        minmax(300px, .75fr);
+
+    gap:
+        20px;
+
+}
+
+
+/* =========================================================
+   PANEL
+   ========================================================= */
+
+.panel {
+
+    background:
+        var(--marfil);
+
+    border:
+        1px solid var(--linea);
+
+    padding:
+        27px;
+
+}
+
+
+.panel-head {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-start;
+
+    margin-bottom:
+        25px;
+
+}
+
+
+.panel-kicker {
+
+    color:
+        var(--dorado);
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.panel-title {
+
+    color:
+        var(--vino);
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        28px;
+
+    font-weight:
+        600;
+
+    margin-top:
+        3px;
+
+}
+
+
+.panel-description {
+
+    color:
+        #aa9ba2;
+
+    font-size:
+        10px;
+
+    margin-top:
+        3px;
+
+}
+
+
+.panel-badge {
+
+    background:
+        #f5e9ee;
+
+    color:
+        var(--vino-light);
+
+    padding:
+        7px 11px;
+
+    font-size:
+        9px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
+.chart {
+
+    height:
+        410px;
+
+    position:
+        relative;
+
+}
+
+
+/* =========================================================
+   SIDE PANEL
+   ========================================================= */
+
+.side-panel {
+
+    background:
+        var(--vino);
+
+    color:
+        white;
+
+    padding:
+        28px;
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+}
+
+
+.side-panel::before {
+
+    content:
+        "";
+
+    position:
+        absolute;
+
+    width:
+        280px;
+
+    height:
+        280px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.07);
+
+    border-radius:
+        50%;
+
+    right:
+        -150px;
+
+    bottom:
+        -130px;
+
+}
+
+
+.side-kicker {
+
+    color:
+        #d2af7c;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        3px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.side-title {
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        32px;
+
+    line-height:
+        1;
+
+    margin-top:
+        8px;
+
+}
+
+
+.side-sub {
+
+    color:
+        #cdbbc3;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.6;
+
+    margin-top:
+        10px;
+
+}
+
+
+/* =========================================================
+   TOP PRODUCT
+   ========================================================= */
+
+.top-product {
+
+    margin-top:
+        35px;
+
+    padding-top:
+        25px;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.12);
+
+}
+
+
+.crown {
+
+    width:
+        52px;
+
+    height:
+        52px;
+
+    border:
+        1px solid
+        rgba(214,175,124,.5);
+
+    color:
+        #d6af7c;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        21px;
+
+    margin-bottom:
+        15px;
+
+}
+
+
+.top-product h3 {
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        31px;
+
+    font-weight:
+        500;
+
+    word-break:
+        break-word;
+
+}
+
+
+.top-product p {
+
+    color:
+        #c7b5bd;
+
+    font-size:
+        10px;
+
+    margin-top:
+        4px;
+
+}
+
+
+.top-number {
+
+    display:
+        flex;
+
+    align-items:
+        baseline;
+
+    gap:
+        8px;
+
+    margin-top:
+        24px;
+
+}
+
+
+.top-number strong {
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        45px;
+
+    font-weight:
+        500;
+
+    color:
+        #e2c495;
+
+}
+
+
+.top-number span {
+
+    color:
+        #c5b2ba;
+
+    font-size:
+        10px;
+
+}
+
+
+/* =========================================================
+   STOCK SECTION
+   ========================================================= */
+
+.stock-section {
+
+    margin-top:
+        20px;
+
+    background:
+        var(--marfil);
+
+    border:
+        1px solid var(--linea);
+
+    padding:
+        28px;
+
+}
+
+
+.stock-heading {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-end;
+
+    margin-bottom:
+        24px;
+
+}
+
+
+.stock-heading h2 {
+
+    color:
+        var(--vino);
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        30px;
+
+    font-weight:
+        600;
+
+}
+
+
+.stock-heading p {
+
+    color:
+        #a6949c;
+
+    font-size:
+        10px;
+
+    margin-top:
+        3px;
+
+}
+
+
+.stock-heading span {
+
+    color:
+        var(--dorado);
+
+    font-size:
+        9px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1.5px;
+
+}
+
+
+/* =========================================================
+   PRODUCTS
+   ========================================================= */
+
+.products {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap:
+        12px;
+
+}
+
+
+.product {
+
+    border:
+        1px solid var(--linea);
+
+    background:
+        #fff;
+
+    padding:
+        16px;
+
+    min-height:
+        170px;
+
+    transition:
+        .25s ease;
+
+}
+
+
+.product:hover {
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(84,44,61,.08);
+
+    border-color:
+        #d8bcc7;
+
+}
+
+
+.product-code {
+
+    color:
+        #c3a4b0;
+
+    font-size:
+        8px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.product-name {
+
+    color:
+        var(--vino);
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        19px;
+
+    line-height:
+        1.05;
+
+    min-height:
+        42px;
+
+    margin-top:
+        9px;
+
+    font-weight:
+        600;
+
+}
+
+
+.product-line {
+
+    height:
+        1px;
+
+    background:
+        #eee5e8;
+
+    margin:
+        13px 0;
+
+}
+
+
+.product-stock-label {
+
+    color:
+        #a899a0;
+
+    font-size:
+        8px;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.product-stock {
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    margin-top:
+        3px;
+
+}
+
+
+.product-stock strong {
+
+    color:
+        var(--vino);
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size:
+        29px;
+
+    font-weight:
+        600;
+
+}
+
+
+.stock-status {
+
+    font-size:
+        8px;
+
+    padding:
+        5px 7px;
+
+    background:
+        #edf5ea;
+
+    color:
+        #6f9065;
+
+}
+
+
+.stock-status.low {
+
+    background:
+        #f9e9e6;
+
+    color:
+        #bd655b;
+
+}
+
+
+/* =========================================================
+   STOCK BAR
+   ========================================================= */
+
+.bar {
+
+    height:
+        4px;
+
+    background:
+        #eee7e9;
+
+    margin-top:
+        12px;
+
+}
+
+
+.bar-fill {
+
+    height:
+        100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #d5a9b9,
+            #82536a
+        );
+
+}
+
+
+.bar-fill.low {
+
+    background:
+        linear-gradient(
+            90deg,
+            #dfa59d,
+            #bd665c
+        );
+
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+
+    padding:
+        28px 0 35px;
+
+    text-align:
+        center;
+
+    color:
+        #b19da5;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.footer b {
+
+    color:
+        var(--vino);
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 1100
+   ========================================================= */
+
+@media(max-width:1100px) {
+
+    .products {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 900
+   ========================================================= */
+
+@media(max-width:900px) {
+
+    .hero {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .main-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .side-panel {
+
+        min-height:
+            auto;
+
+    }
+
+
+    .kpis {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 650
+   ========================================================= */
+
+@media(max-width:650px) {
+
+    .dashboard {
+
+        width:
+            92%;
+
+    }
+
+
+    .header {
+
+        min-height:
+            80px;
+
+    }
+
+
+    .header-right {
+
+        display:
+            none;
+
+    }
+
+
+    .hero {
+
+        padding:
+            35px 0 25px;
+
+    }
+
+
+    .hero-left h1 {
+
+        font-size:
+            51px;
+
+    }
+
+
+    .hero-feature {
+
+        padding:
+            23px;
+
+    }
+
+
+    .kpis {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .panel {
+
+        padding:
+            20px;
+
+    }
+
+
+    .panel-head {
+
+        margin-bottom:
+            15px;
+
+    }
+
+
+    .panel-title {
+
+        font-size:
+            25px;
+
+    }
+
+
+    .chart {
+
+        height:
+            330px;
+
+    }
+
+
+    .stock-section {
+
+        padding:
+            20px;
+
+    }
+
+
+    .products {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .stock-heading {
+
+        display:
+            block;
+
+    }
+
+
+    .stock-heading span {
+
+        display:
+            block;
+
+        margin-top:
+            7px;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE 420
+   ========================================================= */
+
+@media(max-width:420px) {
+
+    .products {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .hero-left h1 {
+
+        font-size:
+            44px;
+
+    }
+
+
+    .hero-feature {
+
+        min-height:
+            155px;
+
+    }
+
+
+    .chart {
+
+        height:
+            290px;
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -696,47 +1857,167 @@ if ($resultadoProductos) {
 <body>
 
 
-    <!-- =====================================================
-         GRÁFICAS PRINCIPALES
-         ===================================================== -->
-
-    <div class="contenedores-principales">
+<div class="dashboard">
 
 
-        <!-- =================================================
-             PRODUCTO MÁS VENDIDO
-             ================================================= -->
+<!-- =====================================================
+     HEADER
+     ===================================================== -->
 
-        <div class="contenedor">
+<header class="header">
 
-            <h2>
-                Producto más vendido del mes
-            </h2>
 
-            <div class="grafico">
+    <div class="brand">
 
-                <canvas id="graficoVentas"></canvas>
 
+        <div class="logo">
+            D
+        </div>
+
+
+        <div>
+
+            <div class="brand-name">
+                DIVINE
             </div>
+
+            <span class="brand-sub">
+                Beauty & Elegance
+            </span>
 
         </div>
 
 
-        <!-- =================================================
-             PRODUCTOS CON BAJO STOCK
-             ================================================= -->
+    </div>
 
-        <div class="contenedor">
 
-            <h2>
-                Productos con bajo stock
-            </h2>
+    <div class="header-right">
 
-            <div class="grafico">
 
-                <canvas id="graficoStock"></canvas>
+        <div class="status">
 
-            </div>
+            <span class="status-dot"></span>
+
+            Sistema activo
+
+        </div>
+
+
+    </div>
+
+
+</header>
+
+
+
+<!-- =====================================================
+     HERO
+     ===================================================== -->
+
+<section class="hero">
+
+
+    <div class="hero-left">
+
+
+        <small>
+            Dashboard · Analytics
+        </small>
+
+
+        <h1>
+
+            Ventas
+            <em>&</em>
+            inventario
+
+        </h1>
+
+
+        <p>
+
+            Una mirada elegante y precisa al rendimiento
+            de tus productos, las ventas del mes y el
+            estado actual de tu inventario.
+
+        </p>
+
+
+    </div>
+
+
+    <div class="hero-feature">
+
+
+        <div class="feature-label">
+            Producto destacado
+        </div>
+
+
+        <div class="feature-title">
+
+            <?php
+
+            echo htmlspecialchars(
+                $productoTop
+            );
+
+            ?>
+
+        </div>
+
+
+        <div class="feature-value">
+
+            <?php echo $cantidadTop; ?>
+
+            unidades vendidas este mes
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     KPI
+     ===================================================== -->
+
+<section class="kpis">
+
+
+    <div class="kpi">
+
+
+        <div class="kpi-top">
+
+            <span class="kpi-label">
+                Productos
+            </span>
+
+            <span class="kpi-icon">
+                ♡
+            </span>
+
+        </div>
+
+
+        <div class="kpi-number">
+
+            <?php
+            echo $totalProductos;
+            ?>
+
+        </div>
+
+
+        <div class="kpi-description">
+
+            Productos registrados en el panel
 
         </div>
 
@@ -745,227 +2026,787 @@ if ($resultadoProductos) {
 
 
 
-    <!-- =====================================================
-         10 GRÁFICAS DINÁMICAS
-         ===================================================== -->
-
-    <div class="contenedor-productos">
+    <div class="kpi">
 
 
-        <h2 class="titulo-productos">
+        <div class="kpi-top">
 
-            Stock de productos
+            <span class="kpi-label">
+                Ventas del mes
+            </span>
 
-        </h2>
+            <span class="kpi-icon">
+                ✦
+            </span>
 
-
-        <div class="grid-productos">
-
-
-            <?php if (count($productos) > 0): ?>
-
-
-                <?php foreach ($productos as $indice => $producto): ?>
+        </div>
 
 
-                    <div class="producto-grafica">
+        <div class="kpi-number">
+
+            <?php
+            echo $totalVendido;
+            ?>
+
+        </div>
 
 
-                        <h3>
+        <div class="kpi-description">
+
+            Unidades vendidas durante este mes
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="kpi">
+
+
+        <div class="kpi-top">
+
+            <span class="kpi-label">
+                Atención
+            </span>
+
+            <span class="kpi-icon">
+                !
+            </span>
+
+        </div>
+
+
+        <div class="kpi-number">
+
+            <?php
+            echo $totalBajoStock;
+            ?>
+
+        </div>
+
+
+        <div class="kpi-description">
+
+            Productos que necesitan reposición
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     GRÁFICAS PRINCIPALES
+     ===================================================== -->
+
+<section class="main-grid">
+
+
+    <!-- =================================================
+         GRÁFICA VENTAS
+         ================================================= -->
+
+    <div class="panel">
+
+
+        <div class="panel-head">
+
+
+            <div>
+
+                <div class="panel-kicker">
+                    Rendimiento
+                </div>
+
+                <div class="panel-title">
+                    Productos más vendidos
+                </div>
+
+                <div class="panel-description">
+
+                    Comparativa de unidades vendidas
+                    durante el mes actual.
+
+                </div>
+
+            </div>
+
+
+            <div class="panel-badge">
+                Mensual
+            </div>
+
+
+        </div>
+
+
+        <div class="chart">
+
+            <canvas
+                id="graficoVentas">
+            </canvas>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         PANEL TOP PRODUCT
+         ================================================= -->
+
+    <aside class="side-panel">
+
+
+        <div class="side-kicker">
+            Ranking #1
+        </div>
+
+
+        <div class="side-title">
+            Favorito de DIVINE
+        </div>
+
+
+        <div class="side-sub">
+
+            El producto que lidera las ventas
+            durante el periodo seleccionado.
+
+        </div>
+
+
+        <div class="top-product">
+
+
+            <div class="crown">
+                ♛
+            </div>
+
+
+            <h3>
+
+                <?php
+
+                echo htmlspecialchars(
+                    $productoTop
+                );
+
+                ?>
+
+            </h3>
+
+
+            <p>
+                Producto más vendido
+            </p>
+
+
+            <div class="top-number">
+
+
+                <strong>
+
+                    <?php
+                    echo $cantidadTop;
+                    ?>
+
+                </strong>
+
+
+                <span>
+                    unidades vendidas
+                </span>
+
+
+            </div>
+
+
+        </div>
+
+
+    </aside>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     BAJO STOCK
+     ===================================================== -->
+
+<section
+    class="panel"
+    style="margin-top:20px;"
+>
+
+
+    <div class="panel-head">
+
+
+        <div>
+
+            <div class="panel-kicker">
+                Inventario
+            </div>
+
+            <div class="panel-title">
+                Productos con bajo stock
+            </div>
+
+            <div class="panel-description">
+
+                Productos que actualmente cuentan
+                con cinco unidades o menos.
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="panel-badge"
+            style="
+                background:#f9e9e6;
+                color:#bd655b;
+            "
+        >
+
+            <?php
+            echo $totalBajoStock;
+            ?>
+            alertas
+
+        </div>
+
+
+    </div>
+
+
+    <div
+        class="chart"
+        style="height:330px;"
+    >
+
+        <canvas
+            id="graficoStock">
+        </canvas>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     INVENTARIO
+     ===================================================== -->
+
+<section class="stock-section">
+
+
+    <div class="stock-heading">
+
+
+        <div>
+
+            <h2>
+                Inventario actual
+            </h2>
+
+            <p>
+                Vista rápida del stock disponible por producto.
+            </p>
+
+        </div>
+
+
+        <span>
+            10 productos
+        </span>
+
+
+    </div>
+
+
+    <div class="products">
+
+
+        <?php if (
+            count($productos) > 0
+        ): ?>
+
+
+            <?php foreach (
+                $productos
+                as $indice => $producto
+            ): ?>
+
+
+                <?php
+
+                $stock =
+                    $producto["stock"];
+
+                $porcentaje =
+                    min(
+                        ($stock / 20) * 100,
+                        100
+                    );
+
+                $bajo =
+                    $stock <= 5;
+
+                ?>
+
+
+                <article class="product">
+
+
+                    <div class="product-code">
+
+                        Código
+                        <?php
+                        echo htmlspecialchars(
+                            $producto["codigo"]
+                        );
+                        ?>
+
+                    </div>
+
+
+                    <div class="product-name">
+
+                        <?php
+
+                        echo htmlspecialchars(
+                            $producto["nombre"]
+                        );
+
+                        ?>
+
+                    </div>
+
+
+                    <div class="product-line">
+                    </div>
+
+
+                    <div class="product-stock-label">
+
+                        Stock disponible
+
+                    </div>
+
+
+                    <div class="product-stock">
+
+
+                        <strong>
+
+                            <?php
+                            echo $stock;
+                            ?>
+
+                        </strong>
+
+
+                        <span
+                            class="stock-status
+                            <?php
+                            echo $bajo
+                                ? 'low'
+                                : '';
+                            ?>"
+                        >
 
                             <?php
 
-                            echo htmlspecialchars(
-                                $producto["nombre"]
-                            );
+                            echo $bajo
+                                ? 'Bajo'
+                                : 'Disponible';
 
                             ?>
 
-                        </h3>
+                        </span>
 
 
-                        <div class="grafico-producto">
+                    </div>
 
 
-                            <canvas
-                                id="graficoProducto<?php echo $indice; ?>"
-                            >
-                            </canvas>
+                    <div class="bar">
 
 
-                        </div>
-
-
-                        <div class="stock-info">
-
-                            Stock actual:
-
-                            <span class="stock-numero">
-
+                        <div
+                            class="bar-fill
+                            <?php
+                            echo $bajo
+                                ? 'low'
+                                : '';
+                            ?>"
+                            style="
+                                width:
                                 <?php
-
-                                echo $producto["stock"];
-
-                                ?>
-
-                            </span>
-
-                            unidades
-
+                                echo $porcentaje;
+                                ?>%;
+                            "
+                        >
                         </div>
 
 
                     </div>
 
 
-                <?php endforeach; ?>
+                </article>
 
 
-            <?php else: ?>
+            <?php endforeach; ?>
 
 
-                <p>
-
-                    No existen productos registrados.
-
-                </p>
+        <?php else: ?>
 
 
-            <?php endif; ?>
+            <p>
+                No existen productos registrados.
+            </p>
 
 
-        </div>
+        <?php endif; ?>
 
 
     </div>
 
 
-
-    <script>
-
-
-        /* =====================================================
-           GRÁFICO PRODUCTO MÁS VENDIDO DEL MES
-           ===================================================== */
-
-        const nombres =
-            <?php echo json_encode($nombres); ?>;
+</section>
 
 
-        const veces =
-            <?php echo json_encode($veces); ?>;
+
+<!-- =====================================================
+     FOOTER
+     ===================================================== -->
+
+<footer class="footer">
+
+    <b>DIVINE</b>
+
+    &nbsp;·&nbsp;
+
+    Beauty & Elegance
+
+    &nbsp;·&nbsp;
+
+    Panel administrativo
+
+</footer>
 
 
-        const ctx =
-            document.getElementById(
-                'graficoVentas'
-            );
+</div>
 
 
-        new Chart(ctx, {
+
+<script>
 
 
-            type: 'bar',
+/* =========================================================
+   DATOS PHP → JAVASCRIPT
+   ========================================================= */
+
+const nombres =
+    <?php
+
+    echo json_encode(
+        $nombres,
+        JSON_UNESCAPED_UNICODE
+    );
+
+    ?>;
 
 
-            data: {
+const cantidades =
+    <?php
+
+    echo json_encode(
+        $veces
+    );
+
+    ?>;
 
 
-                labels: nombres,
+const nombresStock =
+    <?php
+
+    echo json_encode(
+        $nombresStock,
+        JSON_UNESCAPED_UNICODE
+    );
+
+    ?>;
 
 
-                datasets: [{
+const cantidadesStock =
+    <?php
 
-                    label:
-                        'Cantidad de productos vendidos',
+    echo json_encode(
+        $cantidadesStock
+    );
 
-                    data:
-                        veces,
+    ?>;
 
-                    backgroundColor:
-                        '#c96f84',
 
-                    borderColor:
-                        '#b45d72',
+/* =========================================================
+   GRÁFICA DE VENTAS
+   ========================================================= */
 
-                    borderWidth:
-                        1,
+const ctxVentas =
+    document.getElementById(
+        "graficoVentas"
+    );
 
-                    borderRadius:
-                        8
 
-                }]
+new Chart(
+    ctxVentas,
+    {
+
+        type:
+            "bar",
+
+        data: {
+
+            labels:
+                nombres,
+
+            datasets: [{
+
+                data:
+                    cantidades,
+
+                backgroundColor:
+                    function(context) {
+
+                        const chart =
+                            context.chart;
+
+                        const {
+                            ctx,
+                            chartArea
+                        } =
+                            chart;
+
+                        if (!chartArea) {
+
+                            return "#9b617b";
+
+                        }
+
+                        const gradient =
+                            ctx.createLinearGradient(
+                                0,
+                                chartArea.bottom,
+                                0,
+                                chartArea.top
+                            );
+
+                        gradient.addColorStop(
+                            0,
+                            "#c991a5"
+                        );
+
+                        gradient.addColorStop(
+                            1,
+                            "#603447"
+                        );
+
+                        return gradient;
+
+                    },
+
+                borderWidth:
+                    0,
+
+                borderRadius:
+                    5,
+
+                borderSkipped:
+                    false,
+
+                barPercentage:
+                    .55,
+
+                categoryPercentage:
+                    .70
+
+            }]
+
+        },
+
+
+        options: {
+
+            responsive:
+                true,
+
+            maintainAspectRatio:
+                false,
+
+
+            animation: {
+
+                duration:
+                    1100,
+
+                easing:
+                    "easeOutQuart"
 
             },
 
 
-            options: {
+            scales: {
 
+                y: {
 
-                responsive:
-                    true,
+                    beginAtZero:
+                        true,
 
+                    ticks: {
 
-                maintainAspectRatio:
-                    false,
+                        stepSize:
+                            1,
 
+                        color:
+                            "#9d8d95",
 
-                plugins: {
+                        font: {
 
+                            family:
+                                "DM Sans",
 
-                    legend: {
+                            size:
+                                10
 
-                        display:
-                            true
+                        }
+
+                    },
+
+                    grid: {
+
+                        color:
+                            "rgba(84,44,61,.07)",
+
+                        drawBorder:
+                            false
 
                     }
 
                 },
 
 
-                scales: {
+                x: {
 
+                    ticks: {
 
-                    y: {
+                        color:
+                            "#705865",
 
+                        font: {
 
-                        beginAtZero:
-                            true,
+                            family:
+                                "DM Sans",
 
+                            size:
+                                10,
 
-                        ticks: {
-
-                            stepSize:
-                                1
-
-                        },
-
-
-                        title: {
-
-                            display:
-                                true,
-
-                            text:
-                                'Cantidad vendida'
+                            weight:
+                                "500"
 
                         }
 
                     },
 
+                    grid: {
 
-                    x: {
+                        display:
+                            false
+
+                    }
+
+                }
+
+            },
 
 
-                        title: {
+            plugins: {
 
-                            display:
-                                true,
+                legend: {
 
-                            text:
-                                'Productos'
+                    display:
+                        false
 
-                        }
+                },
+
+
+                tooltip: {
+
+                    backgroundColor:
+                        "#3d202d",
+
+                    titleColor:
+                        "#fff",
+
+                    bodyColor:
+                        "#ead7de",
+
+                    padding:
+                        13,
+
+                    cornerRadius:
+                        3,
+
+                    displayColors:
+                        false,
+
+                    titleFont: {
+
+                        family:
+                            "Cormorant Garamond",
+
+                        size:
+                            17
+
+                    },
+
+                    bodyFont: {
+
+                        family:
+                            "DM Sans",
+
+                        size:
+                            11
+
+                    },
+
+
+                    callbacks: {
+
+                        label:
+                            function(context) {
+
+                                return (
+                                    "✦ " +
+                                    context.raw +
+                                    " unidades vendidas"
+                                );
+
+                            }
 
                     }
 
@@ -973,139 +2814,196 @@ if ($resultadoProductos) {
 
             }
 
-        });
+        }
+
+    }
+);
 
 
+/* =========================================================
+   GRÁFICA STOCK
+   ========================================================= */
 
-        /* =====================================================
-           GRÁFICO PRODUCTOS CON BAJO STOCK
-           ===================================================== */
-
-        const nombresStock =
-            <?php echo json_encode($nombresStock); ?>;
-
-
-        const cantidadesStock =
-            <?php echo json_encode($cantidadesStock); ?>;
+const ctxStock =
+    document.getElementById(
+        "graficoStock"
+    );
 
 
-        const ctxStock =
-            document.getElementById(
-                'graficoStock'
-            );
+new Chart(
+    ctxStock,
+    {
+
+        type:
+            "bar",
+
+        data: {
+
+            labels:
+                nombresStock,
+
+            datasets: [{
+
+                data:
+                    cantidadesStock,
+
+                backgroundColor:
+                    "#d28a80",
+
+                borderWidth:
+                    0,
+
+                borderRadius:
+                    5,
+
+                borderSkipped:
+                    false,
+
+                barPercentage:
+                    .55,
+
+                categoryPercentage:
+                    .70
+
+            }]
+
+        },
 
 
-        new Chart(ctxStock, {
+        options: {
+
+            responsive:
+                true,
+
+            maintainAspectRatio:
+                false,
 
 
-            type: 'bar',
+            animation: {
 
+                duration:
+                    1000,
 
-            data: {
-
-
-                labels:
-                    nombresStock,
-
-
-                datasets: [{
-
-
-                    label:
-                        'Cantidad disponible',
-
-
-                    data:
-                        cantidadesStock,
-
-
-                    backgroundColor:
-                        '#e89aaa',
-
-
-                    borderColor:
-                        '#c96f84',
-
-
-                    borderWidth:
-                        1,
-
-
-                    borderRadius:
-                        8
-
-                }]
+                easing:
+                    "easeOutQuart"
 
             },
 
 
-            options: {
+            scales: {
 
+                y: {
 
-                responsive:
-                    true,
+                    beginAtZero:
+                        true,
 
+                    ticks: {
 
-                maintainAspectRatio:
-                    false,
+                        stepSize:
+                            1,
 
+                        color:
+                            "#9d8d95",
 
-                plugins: {
+                        font: {
 
+                            family:
+                                "DM Sans",
 
-                    legend: {
+                            size:
+                                10
 
-                        display:
-                            true
+                        }
+
+                    },
+
+                    grid: {
+
+                        color:
+                            "rgba(84,44,61,.07)",
+
+                        drawBorder:
+                            false
 
                     }
 
                 },
 
 
-                scales: {
+                x: {
 
+                    ticks: {
 
-                    y: {
+                        color:
+                            "#705865",
 
+                        font: {
 
-                        beginAtZero:
-                            true,
+                            family:
+                                "DM Sans",
 
-
-                        ticks: {
-
-                            stepSize:
-                                1
-
-                        },
-
-
-                        title: {
-
-                            display:
-                                true,
-
-                            text:
-                                'Cantidad en stock'
+                            size:
+                                10
 
                         }
 
                     },
 
+                    grid: {
 
-                    x: {
+                        display:
+                            false
+
+                    }
+
+                }
+
+            },
 
 
-                        title: {
+            plugins: {
 
-                            display:
-                                true,
+                legend: {
 
-                            text:
-                                'Productos'
+                    display:
+                        false
 
-                        }
+                },
+
+
+                tooltip: {
+
+                    backgroundColor:
+                        "#3d202d",
+
+                    titleColor:
+                        "#fff",
+
+                    bodyColor:
+                        "#ead7de",
+
+                    padding:
+                        13,
+
+                    cornerRadius:
+                        3,
+
+                    displayColors:
+                        false,
+
+
+                    callbacks: {
+
+                        label:
+                            function(context) {
+
+                                return (
+                                    "⚠ " +
+                                    context.raw +
+                                    " unidades disponibles"
+                                );
+
+                            }
 
                     }
 
@@ -1113,193 +3011,12 @@ if ($resultadoProductos) {
 
             }
 
-        });
+        }
 
+    }
+);
 
-
-        /* =====================================================
-           10 GRÁFICAS DINÁMICAS DE STOCK
-           ===================================================== */
-
-        const productos =
-            <?php echo json_encode($productos); ?>;
-
-
-        productos.forEach(
-
-            function(producto, indice) {
-
-
-                const canvas =
-                    document.getElementById(
-                        'graficoProducto' +
-                        indice
-                    );
-
-
-                if (!canvas) {
-
-                    return;
-
-                }
-
-
-                new Chart(canvas, {
-
-
-                    type: 'bar',
-
-
-                    data: {
-
-
-                        labels:
-                            ['Stock disponible'],
-
-
-                        datasets: [{
-
-
-                            label:
-                                producto.nombre,
-
-
-                            data:
-                                [producto.stock],
-
-
-                            backgroundColor:
-                                '#d98295',
-
-
-                            borderColor:
-                                '#b45d72',
-
-
-                            borderWidth:
-                                1,
-
-
-                            borderRadius:
-                                8,
-
-
-                            barThickness:
-                                55
-
-                        }]
-
-                    },
-
-
-                    options: {
-
-
-                        responsive:
-                            true,
-
-
-                        maintainAspectRatio:
-                            false,
-
-
-                        plugins: {
-
-
-                            legend: {
-
-                                display:
-                                    false
-
-                            },
-
-
-                            tooltip: {
-
-
-                                callbacks: {
-
-
-                                    label:
-                                        function(context) {
-
-
-                                            return (
-                                                ' Stock: ' +
-                                                context.raw +
-                                                ' unidades'
-                                            );
-
-                                        }
-
-                                }
-
-                            }
-
-                        },
-
-
-                        scales: {
-
-
-                            y: {
-
-
-                                beginAtZero:
-                                    true,
-
-
-                                ticks: {
-
-                                    stepSize:
-                                        1
-
-                                },
-
-
-                                title: {
-
-
-                                    display:
-                                        true,
-
-
-                                    text:
-                                        'Unidades'
-
-                                }
-
-                            },
-
-
-                            x: {
-
-
-                                title: {
-
-
-                                    display:
-                                        true,
-
-
-                                    text:
-                                        'Estado del producto'
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                });
-
-            }
-
-        );
-
-    </script>
+</script>
 
 
 </body>
