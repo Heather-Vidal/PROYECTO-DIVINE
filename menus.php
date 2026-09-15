@@ -589,11 +589,11 @@ nav{
 
     <div class="logo">
 
-        <a href="./pagintrof.php">
+        <a href="../pagintrof.php">
 
             <img
 
-                src="./imagenes/DIVINE-removebg-preview.png"
+                src="../imagenes/DIVINE-removebg-preview.png"
 
                 alt="Logo DIVINE"
   width="145"
@@ -649,7 +649,7 @@ nav{
 
             <li>
 
-                <a href="./totu.php">
+                <a href="../totu.php">
 
                     Inicio
 
@@ -661,7 +661,7 @@ nav{
 
             <li>
 
-                <a href="./produccomp.php">
+                <a href="../produccomp.php">
 
                     Productos
 
@@ -673,7 +673,7 @@ nav{
 
                     <li>
 
-                        <a href="./skincare.php">
+                        <a href="../skincare.php">
 
                             Skin Care
 
@@ -684,7 +684,7 @@ nav{
 
                     <li>
 
-                        <a href="./mascarillas.php">
+                        <a href="../mascarillas.php">
 
                             Mascarillas
 
@@ -701,7 +701,7 @@ nav{
 
             <li>
 
-                <a href="./mision-vision.php">
+                <a href="../mision-vision.php">
 
                     Historia
 
@@ -746,7 +746,7 @@ nav{
             </li>
             <li>
 
-                <a href="./sugerencias/comentarios.php">
+                <a href="../sugerencias/comentarios.php">
 
                     Sugerencias
 
@@ -779,7 +779,7 @@ nav{
 
 <button class="boton-buscar" onclick="buscar()"  type="button">
  
-<img   src="./imagenes/lupa-removebg-preview.png" alt="Buscar" >
+<img   src="../imagenes/lupa-removebg-preview.png" alt="Buscar" >
 </button>
 
 
@@ -797,11 +797,11 @@ nav{
 
         <!-- CARRITO -->
 
-        <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
+        <a href="../CRUD-CARRITO-PEDIDO/formpedido.php">
 
             <img
 
-                src="./imagenes/carrito.png"
+                src="../imagenes/carrito.png"
 
                 alt="Carrito"
 
@@ -813,9 +813,9 @@ nav{
 
         <!-- PERFIL -->
 
-        <a href="./SESIONES/loginformcliente.php">
+        <a href="../SESIONES/loginformcliente.php">
 
-            <img src="./imagenes/persona.png" alt="Perfil">
+            <img src="../imagenes/persona.png" alt="Perfil">
         </a>
     </div>
 </header>

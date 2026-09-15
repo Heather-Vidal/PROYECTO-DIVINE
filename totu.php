@@ -908,9 +908,9 @@ footer{
         >
 
 
-        <a href="produccomp.php">
+        <a href="./CONSULTA-pedido/formreadpedido.php">
 
-        DESCUBRE
+       CONSULTA TU PEDIDO AQUÍ!!!!
 
         </a>
 
