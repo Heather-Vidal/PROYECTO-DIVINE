@@ -633,6 +633,7 @@ nav{
                 </a>
 
             </li>
+<<<<<<< HEAD
 
 
             <!-- MIS PEDIDOS -->
@@ -643,6 +644,12 @@ nav{
                     Mis Pedidos
                 </a>
 
+=======
+            <a href=".CONSULTA-pedido/formreadpedido.php">
+consulta personal                </a>
+            <li>
+                
+>>>>>>> 293c97a9fb704da34b4eec7167bc24bfe59d405f
             </li>
 
 

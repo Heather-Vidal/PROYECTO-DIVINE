@@ -801,7 +801,10 @@ nav{
             </li>
 
 
+<<<<<<< HEAD
             <!-- OFERTAS -->
+=======
+>>>>>>> 293c97a9fb704da34b4eec7167bc24bfe59d405f
 
             <li>
 
@@ -812,7 +815,10 @@ nav{
             </li>
 
 
+<<<<<<< HEAD
             <!-- CONTACTO -->
+=======
+>>>>>>> 293c97a9fb704da34b4eec7167bc24bfe59d405f
 
             <li>
 
@@ -823,6 +829,7 @@ nav{
             </li>
 
 
+<<<<<<< HEAD
             <!-- MIS PEDIDOS -->
 
             <li>
@@ -833,12 +840,30 @@ nav{
 
             </li>
 
+=======
+
+            <li>
+>>>>>>> 293c97a9fb704da34b4eec7167bc24bfe59d405f
+
+                <a href="./CONSULTA-pedido/formreadpedido.php">
+
+                    Consulta 
+
+                </a>
+
+            </li>
+
 
         </ul>
+
 
     </nav>
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 293c97a9fb704da34b4eec7167bc24bfe59d405f
     <!-- ==================================================
          ICONOS DERECHA
     ================================================== -->
@@ -871,6 +896,26 @@ nav{
                     >
 
                 </button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             </div>
 
