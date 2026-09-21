@@ -910,7 +910,7 @@ footer{
 
         <a href="./CONSULTA-pedido/formreadpedido.php">
 
-       CONSULTA TU PEDIDO AQUÍ!!!!
+       ¡CONSULTA TU PEDIDO AQUÍ!
 
         </a>
 
