@@ -790,29 +790,16 @@ footer{
                 </a>
             </li>
 
-            <li>
-                <a href="mision-vision.php">
-                    Nosotros
-                </a>
-            </li>
+           
 
+         
             <li>
-                <a href="#ofertas">
-                    Ofertas
-                </a>
-            </li>
-
-            <li>
-                <a href="#contacto">
+                <a href="contactanos.php">
                     Contacto
                 </a>
             </li>
 
-            <li>
-                <a href="#consulta">
-                    Consulta Personal
-                </a>
-            </li>
+            
              <li>
                 <a href="./sugerencias/comentarios.php">
                     Sugerencias
@@ -825,17 +812,7 @@ footer{
 
 
     <div class="iconos-derecha">
-
-        <a href="#">
-
-            <img
-                src="./imagenes/lupa-removebg-preview.png"
-                alt="Buscar"
-                width="25"
-            >
-
-        </a>
-
+ 
         <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
 
             <img

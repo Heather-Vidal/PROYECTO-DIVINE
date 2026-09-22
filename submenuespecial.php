@@ -709,22 +709,11 @@ nav{
             </li>
 
 
+ 
 
             <li>
 
-                <a href="#ofertas">
-
-                    Ofertas
-
-                </a>
-
-            </li>
-
-
-
-            <li>
-
-                <a href="#contacto">
+                <a href="contactanos.php">
 
                     Contacto
 
