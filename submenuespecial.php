@@ -801,22 +801,12 @@ nav{
             </li>
 
 
-            <!-- OFERTAS -->
+ 
 
             <li>
 
-                <a href="#ofertas">
-                    Ofertas
-                </a>
+                <a href="contactanos.php">
 
-            </li>
-
-
-            <!-- CONTACTO -->
-
-            <li>
-
-                <a href="#contacto">
                     Contacto
                 </a>
 
