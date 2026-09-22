@@ -910,7 +910,11 @@ footer{
 
         <a href="produccomp.php">
 
+<<<<<<< HEAD
         DESCUBRE
+=======
+       ¡CONSULTA TU PEDIDO AQUÍ!
+>>>>>>> 77763f454521bd92f59c1b5c2614059f5324c035
 
         </a>
 
