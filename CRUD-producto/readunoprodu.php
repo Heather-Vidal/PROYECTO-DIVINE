@@ -1,9 +1,9 @@
 <?php
 
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
 
 $conn = new mysqli(
     $servidor,
@@ -12,31 +12,33 @@ $conn = new mysqli(
     $nombreBD
 );
 
-
-if($conn->connect_error){
-
-    echo "OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
-
+if ($conn->connect_error) {
+    die("Ocurrió un error al conectar con la base de datos.");
 }
- 
+
 
 // =====================================================
 // RECIBIR CÓDIGO
 // =====================================================
 
-$codigo = $_GET['codigo'];
+$codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : 0;
 
 
 // =====================================================
 // CONSULTAR PRODUCTO
 // =====================================================
 
-$sql = "SELECT * FROM PRODUCTO WHERE codigo=$codigo";
+$stmt = $conn->prepare(
+    "SELECT * FROM PRODUCTO WHERE codigo = ?"
+);
 
-$resultado = $conn->query($sql);
+$stmt->bind_param("i", $codigo);
+$stmt->execute();
+
+$resultado = $stmt->get_result();
 
 
-if($resultado->num_rows > 0){
+if ($resultado->num_rows > 0) {
 
 
 // =====================================================
@@ -47,7 +49,6 @@ $nombreArchivo = "p-" . $codigo;
 
 $directorio = "../PRODUCTO-img/";
 
-
 $extensiones = [
     "jpg",
     "jpeg",
@@ -55,43 +56,35 @@ $extensiones = [
     "gif"
 ];
 
-
 $imagenProducto = null;
 
 
-foreach($extensiones as $extension){
+foreach ($extensiones as $extension) {
 
     $ruta =
+        $directorio .
+        $nombreArchivo .
+        "." .
+        $extension;
 
-        $directorio
-        . $nombreArchivo
-        . "."
-        . $extension;
-
-
-    if(file_exists($ruta)){
+    if (file_exists($ruta)) {
 
         $imagenProducto = $ruta;
 
         break;
-
     }
-
 }
 
 
 // =====================================================
-// SI NO ENCUENTRA IMAGEN
-// USA UNA IMAGEN DE RESPALDO
+// IMAGEN DE RESPALDO
 // =====================================================
 
-if($imagenProducto === null){
+if ($imagenProducto === null) {
 
     $imagenProducto =
         "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
-
 }
-
 
 ?>
 
@@ -99,107 +92,195 @@ if($imagenProducto === null){
 
 <html lang="es">
 
-
 <head>
 
-
 <meta charset="UTF-8">
-
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
 >
 
-
 <title>
-    Detalle del Producto - DIVINE
+    Producto | DIVINE
 </title>
 
 
+<!-- FUENTES -->
+
 <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet"
-/>
+>
 
 
 <style>
 
+/* =====================================================
+   VARIABLES
+   ===================================================== */
 
-body {
+:root {
 
-    font-family:
-        "Playfair Display",
-        serif;
+    --rosa: #d99aaa;
+    --rosa-claro: #f6dfe4;
+    --rosa-muy-claro: #fff7f8;
 
-    background:
-        #f5e9d8;
+    --crema: #fffaf5;
 
-    display:
-        flex;
+    --dorado: #c8a56a;
+    --dorado-claro: #e8d1a4;
 
-    justify-content:
-        center;
+    --vino: #744653;
 
-    align-items:
-        center;
+    --texto: #40343a;
 
-    min-height:
-        100vh;
+    --blanco: #ffffff;
 
-    margin:
-        0;
-
-    color:
-        #2b2b2b;
-
+    --sombra:
+        0 20px 50px rgba(116, 70, 83, 0.15);
 }
 
 
-.contenedor {
+/* =====================================================
+   RESET
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    color: var(--texto);
 
     background:
-        #e9e5dd;
 
-    padding:
-        40px;
+        radial-gradient(
+            circle at top left,
+            #f9dce4 0%,
+            transparent 35%
+        ),
 
-    border-radius:
-        25px;
+        radial-gradient(
+            circle at bottom right,
+            #f0dfc0 0%,
+            transparent 30%
+        ),
 
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.3);
+        linear-gradient(
+            135deg,
+            #fff8f5,
+            #f7e8e5
+        );
 
-    width:
-        90%;
+    display: flex;
 
-    max-width:
-        700px;
+    justify-content: center;
 
-    display:
-        grid;
+    align-items: center;
 
-    grid-template-columns:
-        1fr;
-
-    grid-gap:
-        25px;
+    padding: 40px 20px;
 
 }
 
 
 /* =====================================================
-   IMAGEN REAL DEL PRODUCTO
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+.contenedor {
+
+    width: 100%;
+
+    max-width: 1050px;
+
+    background:
+        rgba(255, 255, 255, 0.88);
+
+    backdrop-filter:
+        blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,0.8);
+
+    border-radius:
+        35px;
+
+    box-shadow:
+        var(--sombra);
+
+    padding:
+        35px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        0.95fr 1.05fr;
+
+    gap:
+        45px;
+
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+}
+
+
+/* decoración */
+
+.contenedor::before {
+
+    content: "♡";
+
+    position: absolute;
+
+    top: -25px;
+
+    right: 35px;
+
+    font-size: 130px;
+
+    color:
+        rgba(217,154,170,0.10);
+
+    font-family:
+        Georgia,
+        serif;
+
+}
+
+
+/* =====================================================
+   IMAGEN
    ===================================================== */
 
 .imagen {
+
+    min-height:
+        520px;
+
+    border-radius:
+        28px;
 
     background-image:
         url('<?php echo htmlspecialchars($imagenProducto); ?>');
 
     background-position:
-        center center;
+        center;
 
     background-size:
         cover;
@@ -207,11 +288,95 @@ body {
     background-repeat:
         no-repeat;
 
-    border-radius:
-        20px;
+    box-shadow:
+        0 15px 35px
+        rgba(116,70,83,0.20);
 
-    min-height:
-        300px;
+    position:
+        relative;
+
+    overflow:
+        hidden;
+
+    transition:
+        transform 0.4s ease;
+
+}
+
+
+.imagen:hover {
+
+    transform:
+        scale(1.02);
+
+}
+
+
+/* capa sobre la imagen */
+
+.imagen::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(70,35,45,0.20),
+            transparent 45%
+        );
+
+}
+
+
+/* =====================================================
+   INFORMACIÓN
+   ===================================================== */
+
+.informacion {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        center;
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+}
+
+
+/* pequeño encabezado */
+
+.subtitulo {
+
+    color:
+        var(--rosa);
+
+    font-size:
+        13px;
+
+    font-weight:
+        600;
+
+    letter-spacing:
+        4px;
+
+    text-transform:
+        uppercase;
+
+    margin-bottom:
+        10px;
 
 }
 
@@ -222,96 +387,182 @@ body {
 
 .titulo {
 
-    text-align:
-        center;
+    font-family:
+        "Playfair Display",
+        serif;
 
     color:
-        #364e63;
+        var(--vino);
 
     font-size:
-        32px;
+        clamp(34px, 5vw, 52px);
 
-    font-weight:
-        700;
+    line-height:
+        1.1;
 
     margin:
-        0;
+        0 0 15px;
 
-    letter-spacing:
-        2px;
+    font-weight:
+        600;
 
-    border-bottom:
-        3px solid #c5a46d;
+}
 
-    padding-bottom:
-        10px;
+
+.linea {
 
     width:
-        fit-content;
+        70px;
 
-    margin-left:
-        auto;
+    height:
+        3px;
 
-    margin-right:
-        auto;
+    background:
+        linear-gradient(
+            90deg,
+            var(--rosa),
+            var(--dorado)
+        );
+
+    border-radius:
+        20px;
+
+    margin-bottom:
+        30px;
 
 }
 
 
 /* =====================================================
-   INFORMACIÓN
+   TARJETA DE DATOS
    ===================================================== */
 
 .item {
 
     background:
-        #f5e9d8;
+        rgba(255,248,248,0.9);
+
+    border:
+        1px solid
+        rgba(217,154,170,0.25);
+
+    border-radius:
+        24px;
 
     padding:
         25px;
 
-    border-radius:
-        20px;
-
     box-shadow:
-        0 4px 10px
-        rgba(54,78,99,0.25);
-
-    transition:
-        transform 0.3s ease;
+        0 10px 30px
+        rgba(116,70,83,0.08);
 
 }
 
 
-.item:hover {
-
-    transform:
-        translateY(-5px);
-
-}
-
+/* =====================================================
+   DATOS
+   ===================================================== */
 
 .item p {
 
     margin:
-        8px 0;
+        0;
 
-    color:
-        #2b2b2b;
+    padding:
+        14px 0;
+
+    border-bottom:
+        1px solid
+        rgba(200,165,106,0.18);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    gap:
+        20px;
 
     font-size:
-        17px;
+        15px;
+
+    line-height:
+        1.5;
+
+}
+
+
+.item p:last-child {
+
+    border-bottom:
+        none;
 
 }
 
 
 .item span {
 
+    color:
+        var(--vino);
+
     font-weight:
-        bold;
+        600;
+
+    min-width:
+        110px;
+
+}
+
+
+.item p {
 
     color:
-        #364e63;
+        #66565d;
+
+}
+
+
+/* =====================================================
+   PRECIO
+   ===================================================== */
+
+.item p:nth-of-type(4) {
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff1f4,
+            #fffaf5
+        );
+
+    margin:
+        5px -10px;
+
+    padding:
+        15px 10px;
+
+    border-radius:
+        12px;
+
+}
+
+
+.item p:nth-of-type(4) span {
+
+    color:
+        var(--rosa);
+
+}
+
+
+.item p:nth-of-type(4) {
+
+    font-size:
+        18px;
+
+    font-weight:
+        600;
 
 }
 
@@ -322,67 +573,104 @@ body {
 
 .botones {
 
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
     display:
         flex;
 
-    justify-content:
-        center;
-
     gap:
-        15px;
+        12px;
+
+    margin-top:
+        25px;
 
 }
 
 
 .boton {
 
-    background:
-        #364e63;
+    flex:
+        1;
 
-    color:
-        #c5a46d;
-
-    padding:
-        10px 22px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        16px;
-
-    font-weight:
-        700;
+    text-align:
+        center;
 
     text-decoration:
         none;
 
+    padding:
+        13px 20px;
+
+    border-radius:
+        30px;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
     transition:
-        0.3s ease;
+        all 0.3s ease;
 
 }
 
 
-.boton:hover {
+/* editar */
+
+.boton:first-child {
 
     background:
-        #c5a46d;
+        var(--vino);
 
     color:
-        #364e63;
+        white;
+
+    border:
+        1px solid var(--vino);
+
+}
+
+
+.boton:first-child:hover {
+
+    background:
+        var(--rosa);
+
+    border-color:
+        var(--rosa);
 
     transform:
-        scale(1.05);
+        translateY(-3px);
 
     box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
+        0 8px 20px
+        rgba(217,154,170,0.35);
+
+}
+
+
+/* eliminar */
+
+.boton:last-child {
+
+    background:
+        transparent;
+
+    color:
+        #a45b69;
+
+    border:
+        1px solid #d9a3ad;
+
+}
+
+
+.boton:last-child:hover {
+
+    background:
+        #f9e1e5;
+
+    transform:
+        translateY(-3px);
 
 }
 
@@ -393,67 +681,122 @@ body {
 
 .navegacion {
 
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
     display:
         flex;
 
-    flex-direction:
-        column;
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    margin-top:
+        20px;
 
     gap:
-        12px;
+        15px;
 
 }
 
 
 .boton2 {
 
-    background:
-        #364e63;
-
-    color:
-        #c5a46d;
-
-    padding:
-        12px 28px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        17px;
-
-    font-weight:
-        700;
-
     text-decoration:
         none;
 
+    color:
+        var(--vino);
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+    padding:
+        10px 5px;
+
     transition:
-        0.3s ease;
+        all 0.3s ease;
 
 }
 
 
 .boton2:hover {
 
-    background:
-        #c5a46d;
-
     color:
-        #364e63;
+        var(--rosa);
 
     transform:
-        scale(1.04);
+        translateX(-3px);
 
-    box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
+}
+
+
+.boton2:first-child:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =====================================================
+   DETALLE DORADO
+   ===================================================== */
+
+.decoracion {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin:
+        20px 0;
+
+    color:
+        var(--dorado);
+
+    font-size:
+        18px;
+
+}
+
+
+.decoracion::before,
+.decoracion::after {
+
+    content: "";
+
+    height:
+        1px;
+
+    flex:
+        1;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--dorado-claro)
+        );
+
+}
+
+
+.decoracion::after {
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--dorado-claro),
+            transparent
+        );
 
 }
 
@@ -462,11 +805,51 @@ body {
    RESPONSIVE
    ===================================================== */
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
+
+    .contenedor {
+
+        grid-template-columns:
+            1fr;
+
+        max-width:
+            600px;
+
+        padding:
+            25px;
+
+        gap:
+            30px;
+
+    }
+
+
+    .imagen {
+
+        min-height:
+            380px;
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    body {
+
+        padding:
+            20px 12px;
+
+    }
+
 
     .contenedor {
 
         padding:
+            18px;
+
+        border-radius:
             25px;
 
     }
@@ -475,15 +858,62 @@ body {
     .imagen {
 
         min-height:
-            200px;
+            300px;
+
+        border-radius:
+            20px;
+
+    }
+
+
+    .titulo {
+
+        font-size:
+            35px;
+
+    }
+
+
+    .item {
+
+        padding:
+            18px;
+
+    }
+
+
+    .item p {
+
+        flex-direction:
+            column;
+
+        gap:
+            4px;
+
+    }
+
+
+    .botones {
+
+        flex-direction:
+            column;
+
+    }
+
+
+    .navegacion {
+
+        flex-direction:
+            column;
+
+        align-items:
+            center;
 
     }
 
 }
 
-
 </style>
-
 
 </head>
 
@@ -495,254 +925,204 @@ body {
 
 
     <!-- =================================================
-         IMAGEN DEL PRODUCTO
+         IMAGEN
          ================================================= -->
 
-    <div class="imagen"></div>
+    <div
+        class="imagen"
+        aria-label="Imagen del producto"
+    ></div>
 
 
     <!-- =================================================
-         TÍTULO
+         INFORMACIÓN
          ================================================= -->
 
-    <h2 class="titulo">
-
-        DETALLE DEL PRODUCTO
-
-    </h2>
+    <div class="informacion">
 
 
-    <!-- =================================================
-         DATOS DEL PRODUCTO
-         ================================================= -->
+        <div class="subtitulo">
+            DIVINE · COLLECTION
+        </div>
 
-    <div class="item">
+
+        <h1 class="titulo">
+            Detalle del producto
+        </h1>
+
+
+        <div class="linea"></div>
+
+
+        <div class="item">
 
 
 <?php
 
-
-while(
-    $fila =
-    $resultado->fetch_assoc()
-){
-
+while ($fila = $resultado->fetch_assoc()) {
 
     echo "
 
         <p>
 
             <span>
-                Nombre:
+                Nombre
             </span>
 
             "
-            . htmlspecialchars(
-                $fila['nombre']
-            )
+            . htmlspecialchars($fila['nombre'])
             . "
 
         </p>
 
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Descripción:
+                Descripción
             </span>
 
             "
-            . htmlspecialchars(
-                $fila['descripcion']
-            )
+            . htmlspecialchars($fila['descripcion'])
             . "
 
         </p>
 
-
-    ";
-
-
-
-
-    
-    echo "
 
         <p>
 
             <span>
-                Categoría:
+                Categoría
             </span>
 
             "
-            . htmlspecialchars(
-                $fila['categoria']
-            )
+            . htmlspecialchars($fila['categoria'])
             . "
 
         </p>
 
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Precio:
+                Precio
             </span>
 
-            "
-            . htmlspecialchars(
-                $fila['precio']
-            )
+            $"
+            . htmlspecialchars($fila['precio'])
             . "
 
         </p>
 
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Costo:
+                Costo
             </span>
 
-            "
-            . htmlspecialchars(
-                $fila['costo']
-            )
+            $"
+            . htmlspecialchars($fila['costo'])
             . "
 
         </p>
 
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Stock:
+                Stock
             </span>
 
             "
-            . htmlspecialchars(
-                $fila['stock']
-            )
+            . htmlspecialchars($fila['stock'])
             . "
 
         </p>
 
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Código:
+                Código
             </span>
 
-            "
-            . htmlspecialchars(
-                $fila['codigo']
-            )
+            #"
+            . htmlspecialchars($fila['codigo'])
             . "
 
         </p>
 
-
     ";
 
-
-    $codigo =
-        $fila['codigo'];
-
-
+    $codigo = $fila['codigo'];
 }
-
 
 ?>
 
 
+        </div>
+
+
+        <div class="decoracion">
+            ♡
+        </div>
+
+
+        <!-- =================================================
+             BOTONES
+             ================================================= -->
+
+        <div class="botones">
+
+
+            <a
+                href="updateformprodu.php?codigo=<?php echo $codigo; ?>"
+                class="boton"
+            >
+                ✦ Editar producto
+            </a>
+
+
+            <a
+                href="deleteprodu.php?codigo=<?php echo $codigo; ?>"
+                class="boton"
+                onclick="return confirm('¿Estás segura de que deseas eliminar este producto?');"
+            >
+                ♡ Eliminar
+            </a>
+
+
+        </div>
+
+
+        <!-- =================================================
+             NAVEGACIÓN
+             ================================================= -->
+
+        <div class="navegacion">
+
+
+            <a
+                href="readtodoprodu.php"
+                class="boton2"
+            >
+                ← Ver productos
+            </a>
+
+
+            <a
+                href="../totu.php"
+                class="boton2"
+            >
+                Volver al inicio
+            </a>
+
+
+        </div>
+
+
     </div>
-
-
-    <!-- =================================================
-         BOTONES
-         ================================================= -->
-
-    <div class="botones">
-
-
-        <a
-            href="updateformprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
-
-            Editar
-
-        </a>
-
-
-        <a
-            href="deleteprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
-
-            Eliminar
-
-        </a>
-
-
-    </div>
-
-
-    <!-- =================================================
-         NAVEGACIÓN
-         ================================================= -->
-
-    <div class="navegacion">
-
-
-        <a
-            href="readtodoprodu.php"
-            class="boton2"
-        >
-
-            Ver productos
-
-        </a>
-
-
-        <a
-            href="../totu.php"
-            class="boton2"
-        >
-
-            ⬅ Volver al inicio
-
-        </a>
-
-
-    </div>
-
 
 </div>
 
@@ -754,8 +1134,31 @@ while(
 
 <?php
 
+} else {
+
+    echo "
+
+        <div style='
+            font-family:Arial;
+            text-align:center;
+            padding:50px;
+        '>
+
+            <h2>
+                Producto no encontrado ♡
+            </h2>
+
+            <a href='readtodoprodu.php'>
+                Volver a productos
+            </a>
+
+        </div>
+
+    ";
 }
 
+
+$stmt->close();
 
 $conn->close();
 
