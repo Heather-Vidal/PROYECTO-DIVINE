@@ -613,36 +613,16 @@ nav{
             </li>
 
 
-            <!-- OFERTAS -->
+             <li>
 
-            <li>
+                <a href="contactanos.php">
 
-                <a href="#ofertas">
-                    Ofertas
-                </a>
-
-            </li>
-
-
-            <!-- CONTACTO -->
-
-            <li>
-
-                <a href="#contacto">
                     Contacto
                 </a>
 
             </li>
-            <a href=".CONSULTA-pedido/formreadpedido.php">
-consulta personal                </a>
-            <li>
-                
-            </li>
 
 
-            <!-- SUGERENCIAS -->
-
-            <li>
 
                 <a href="sugerencias.php">
                     Sugerencias

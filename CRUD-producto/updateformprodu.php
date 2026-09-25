@@ -4,38 +4,41 @@ $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
+
 $conn = new mysqli(
     $servidor,
     $usuario,
     $contraseña,
     $nombreBD
 );
+
 if ($conn->connect_error) {
-
-    echo "OCURRIÓ UN ERROR SORRYYYYYYYYYYYY UnU";
-
+    echo "Ocurrió un error al conectar con la base de datos.";
     exit();
-
 }
+
 /* =====================================================
    RECIBIR CÓDIGO
    ===================================================== */
+
 $codigo = $_GET['codigo'] ?? null;
 
 if ($codigo === null) {
-
     echo "No se recibió el código del producto.";
-
     exit();
-
 }
+
 /* =====================================================
    BUSCAR PRODUCTO
    ===================================================== */
+
 $sql = "SELECT * FROM PRODUCTO WHERE codigo=$codigo";
 $resultado = $conn->query($sql);
+
 if ($resultado->num_rows > 0) {
+
     while ($fila = $resultado->fetch_assoc()) {
+
         $nombre = $fila['nombre'];
         $descripcion = $fila['descripcion'];
         $categoria = $fila['categoria'];
@@ -44,145 +47,380 @@ if ($resultado->num_rows > 0) {
         $stock = $fila['stock'];
         $codigo = $fila['codigo'];
     }
+
 } else {
+
     echo "Producto no encontrado.";
     exit();
+
 }
+
 /* =====================================================
-   BUSCAR IMAGEN ACTUAL DEL PRODUCTO
+   BUSCAR IMAGEN ACTUAL
    ===================================================== */
+
 $nombreArchivo = "p-" . $codigo;
-/*
-    IMPORTANTE:
-    LA CARPETA AHORA ES PRODUCTO-img
-*/
+
 $directorio = "../PRODUCTO-img/";
+
 $extensiones = [
     "jpg",
     "jpeg",
     "png",
     "gif"
 ];
+
 $imagenProducto = null;
 $nombreImagenActual = null;
-/* =====================================================
-   BUSCAR LA EXTENSIÓN QUE REALMENTE EXISTE
-   ===================================================== */
+
 foreach ($extensiones as $extension) {
+
     $ruta =
-       $directorio
-        . $nombreArchivo
-        . "."
-        . $extension;
+        $directorio .
+        $nombreArchivo .
+        "." .
+        $extension;
+
     if (file_exists($ruta)) {
+
         $imagenProducto = $ruta;
+
         $nombreImagenActual =
-            $nombreArchivo
-            . "."
-            . $extension;
+            $nombreArchivo .
+            "." .
+            $extension;
+
         break;
     }
 }
+
 /* =====================================================
-   SI NO ENCUENTRA IMAGEN
+   IMAGEN POR DEFECTO
    ===================================================== */
+
 if ($imagenProducto === null) {
+
     $imagenProducto =
         "https://i.pinimg.com/736x/23/fd/c5/23fdc5871b591de154e3e9b889036562.jpg";
+
     $nombreImagenActual =
         "No hay imagen cargada";
 }
+
 ?>
+
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
+
 <title>
-    Modificar Producto DIVINE
+    Editar producto | DIVINE
 </title>
 
+<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
-<script
-    src="https://code.jquery.com/jquery-3.6.3.min.js">
-</script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js">
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+
 <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet"
 >
+
 <style>
-/* ====================================================
-   GENERAL
+
+/* =====================================================
+   PALETA
+   =====================================================
+
+   Rosa empolvado:
+   #D8A7B1
+
+   Rosa claro:
+   #F5E5E8
+
+   Crema:
+   #FFF9F5
+
+   Champagne:
+   #D8B58A
+
+   Vino:
+   #6D3948
+
+   Café:
+   #49343A
+
    ===================================================== */
+
+
+/* =====================================================
+   RESET
+   ===================================================== */
+
 * {
-    box-sizing:
-        border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
+
+
+/* =====================================================
+   BODY
+   ===================================================== */
+
 body {
-       background-image: url("../imagenes/fondito.jpg");
-                   background-repeat: no-repeat;
-                  background-size:140%;    
+
+    min-height: 100vh;
+
     font-family:
-        'Inter',
+        "DM Sans",
         sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff9f5 0%,
+            #f8e8eb 45%,
+            #f3dce2 100%
+        );
+
+    color:
+        #49343A;
+
+    padding:
+        40px 20px;
+
+    position:
+        relative;
+
+    overflow-x:
+        hidden;
+}
+
+
+/* =====================================================
+   DECORACIONES DEL FONDO
+   ===================================================== */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    width: 400px;
+
+    height: 400px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(216,167,177,0.18);
+
+    top: -150px;
+
+    left: -150px;
+
+    filter:
+        blur(10px);
+
+    z-index: -1;
+}
+
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    width: 350px;
+
+    height: 350px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(216,181,138,0.13);
+
+    right: -120px;
+
+    bottom: -120px;
+
+    filter:
+        blur(10px);
+
+    z-index: -1;
+}
+
+
+/* =====================================================
+   CONTENEDOR PRINCIPAL
+   ===================================================== */
+
+.contenedor {
+
+    width:
+        100%;
+
+    max-width:
+        1150px;
+
+    margin:
+        auto;
+
+}
+
+
+/* =====================================================
+   ENCABEZADO
+   ===================================================== */
+
+.encabezado {
+
+    text-align:
+        center;
+
+    margin-bottom:
+        30px;
+
+}
+
+
+.marca {
+
+    font-size:
+        14px;
+
+    letter-spacing:
+        5px;
+
+    color:
+        #A76D7B;
+
+    font-weight:
+        700;
+
+    text-transform:
+        uppercase;
+
+    margin-bottom:
+        8px;
+
+}
+
+
+.encabezado h1 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        clamp(32px, 5vw, 48px);
+
+    color:
+        #6D3948;
+
+    font-weight:
+        600;
+
+}
+
+
+.subtitulo {
+
+    margin-top:
+        8px;
+
+    color:
+        #8B7078;
+
+    font-size:
+        14px;
+
+}
+
+
+/* =====================================================
+   TARJETA PRINCIPAL
+   ===================================================== */
+
+.formulario {
+
+    background:
+        rgba(255,255,255,0.82);
+
+    backdrop-filter:
+        blur(15px);
+
+    -webkit-backdrop-filter:
+        blur(15px);
+
+    border:
+        1px solid rgba(216,167,177,0.35);
+
+    border-radius:
+        32px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(109,57,72,0.13);
+
+    padding:
+        35px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        0.85fr 1.15fr;
+
+    gap:
+        38px;
+
+}
+
+
+/* =====================================================
+   PANEL DE IMAGEN
+   ===================================================== */
+
+.panel-imagen {
 
     display:
         flex;
-    justify-content:
-        center;
-    align-items:
-        center;
-    min-height:
-        100vh;
-    margin:
-        0;
-    padding:
-        30px;
+
+    flex-direction:
+        column;
+
+    gap:
+        18px;
+
 }
+
+
 /* =====================================================
-   FORMULARIO
+   IMAGEN PRINCIPAL
    ===================================================== */
 
-form {
-    background:
-        #eb76a7;
-    padding:
-        50px;
+.imagen-principal {
+
+    min-height:
+        530px;
+
     border-radius:
-        25px;
-    border:
-        2px solid #fa46a0;
-    box-shadow:
-        0 15px 40px
-        rgba(8,8,8,0.15);
-    max-width:
-        850px;
-    width:
-        100%;
-    display:
-        grid;
-    grid-template-columns:
-        1fr 1fr;
-    gap:
-        30px;
-    grid-template-areas:
-        "imagen titulo"
-        "imagen leyenda"
-        "imagen campos"
-        "imagen boton";
-}
-/* =====================================================
-   IMAGEN ACTUAL GRANDE
-   ===================================================== */
-.imagen {
-    grid-area:
-        imagen;
+        26px;
+
     background-image:
         url(
             '<?php
@@ -191,7 +429,6 @@ form {
                 ENT_QUOTES,
                 'UTF-8'
             );
-
             ?>'
         );
 
@@ -204,627 +441,949 @@ form {
     background-repeat:
         no-repeat;
 
-    border-radius:
-        20px;
-
-    min-height:
-        420px;
-
     border:
-        3px solid #f741a5;
+        1px solid
+        rgba(255,255,255,0.8);
 
     box-shadow:
+        0 18px 40px
+        rgba(109,57,72,0.18);
 
-        inset 0 0 20px
-        rgba(0,0,0,0.10),
+    position:
+        relative;
 
-        0 10px 25px
-        rgba(54,78,99,0.20);
+    overflow:
+        hidden;
 
     transition:
-        0.3s ease;
+        0.4s ease;
+
+}
+
+
+.imagen-principal:hover {
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 25px 50px
+        rgba(109,57,72,0.22);
 
 }
 
 
 /* =====================================================
-   TÍTULO
+   ETIQUETA SOBRE IMAGEN
    ===================================================== */
 
-h2 {
+.badge-imagen {
 
-    grid-area:
-        titulo;
+    position:
+        absolute;
 
-    margin:
-        0 0 8px;
+    top:
+        18px;
 
-    font-size:
-        36px;
+    left:
+        18px;
+
+    background:
+        rgba(255,249,245,0.9);
 
     color:
-        #3d202c;
+        #6D3948;
 
-    font-family:
-        "Playfair Display",
-        serif;
+    padding:
+        9px 15px;
+
+    border-radius:
+        30px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
 
     letter-spacing:
         1px;
 
-    border-bottom:
-        3px solid #c56da0;
+    text-transform:
+        uppercase;
 
-    padding-bottom:
-        8px;
-
-    width:
-        fit-content;
+    box-shadow:
+        0 5px 15px
+        rgba(0,0,0,0.08);
 
 }
+
+
 /* =====================================================
-   LEYENDA
+   INFORMACIÓN DE IMAGEN
    ===================================================== */
-legend {
-    grid-area:
-        leyenda;
-    font-weight:
-        bold;
-    color:
-        #270d18;
-    font-size:
+
+.imagen-actual {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        14px;
+
+    padding:
+        13px;
+
+    background:
+        #FFF9F5;
+
+    border:
+        1px solid #E8D3D8;
+
+    border-radius:
         18px;
+
+}
+
+
+.miniatura-actual {
+
+    width:
+        62px;
+
+    height:
+        62px;
+
+    border-radius:
+        14px;
+
+    object-fit:
+        cover;
+
+    border:
+        2px solid #D8A7B1;
+
+}
+
+
+.info-imagen {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+    min-width:
+        0;
+
+}
+
+
+.info-titulo {
+
+    font-size:
+        11px;
+
+    letter-spacing:
+        1.5px;
+
+    font-weight:
+        700;
+
+    color:
+        #A76D7B;
+
+}
+
+
+.info-nombre {
+
+    font-size:
+        13px;
+
+    color:
+        #725961;
+
+    word-break:
+        break-all;
+
+}
+
+
+/* =====================================================
+   PANEL FORMULARIO
+   ===================================================== */
+
+.panel-formulario {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+}
+
+
+/* =====================================================
+   CABECERA DEL FORMULARIO
+   ===================================================== */
+
+.titulo-formulario {
+
+    margin-bottom:
+        25px;
+
+}
+
+
+.titulo-formulario span {
+
+    color:
+        #B88996;
+
+    font-size:
+        12px;
+
+    letter-spacing:
+        2px;
+
+    text-transform:
+        uppercase;
+
+    font-weight:
+        700;
+
+}
+
+
+.titulo-formulario h2 {
+
     font-family:
         "Playfair Display",
         serif;
-}
-/* =====================================================
-   CAMPOS
-   ===================================================== */
-.grupo-campos {
-    grid-area:
-        campos;
-    display:
-        flex;
-    flex-direction:
-        column;
-    gap:
-        14px;
-}
-label {
+
     color:
-        #df80ac;
+        #6D3948;
+
     font-size:
-        15px;
+        30px;
+
     font-weight:
         600;
+
+    margin-top:
+        6px;
+
 }
-input[type="text"],
-input[type="number"] {
-    padding:
-        14px 16px;
-    border-radius:
-        12px;
-    border:
-        1.5px solid #29101e;
+
+
+/* =====================================================
+   SEPARADOR
+   ===================================================== */
+
+.separador {
+
+    width:
+        55px;
+
+    height:
+        3px;
+
     background:
-        #daa6bc;
+        #D8B58A;
+
+    border-radius:
+        10px;
+
+    margin-top:
+        10px;
+
+}
+
+
+/* =====================================================
+   GRUPO DE CAMPOS
+   ===================================================== */
+
+.grupo-campos {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        17px;
+
+}
+
+
+.campo {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        7px;
+
+}
+
+
+.campo-completo {
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+.campo label {
+
+    color:
+        #6D3948;
+
     font-size:
-        15px;
+        13px;
+
+    font-weight:
+        600;
+
+}
+
+
+.campo label::after {
+
+    content:
+        " ✦";
+
+    color:
+        #D8B58A;
+
+    font-size:
+        9px;
+
+}
+
+
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.campo input,
+.campo select {
+
+    width:
+        100%;
+
+    height:
+        48px;
+
+    padding:
+        0 15px;
+
+    border:
+        1px solid #E3CDD2;
+
+    border-radius:
+        13px;
+
+    background:
+        #FFFDFC;
+
+    color:
+        #49343A;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    font-size:
+        14px;
+
     outline:
         none;
+
     transition:
-        0.35s ease;
+        all 0.3s ease;
+
 }
-input[type="text"]:focus,
-input[type="number"]:focus {
+
+
+.campo input:hover,
+.campo select:hover {
+
     border-color:
-        #cf6d9e;
+        #D8A7B1;
+
+}
+
+
+.campo input:focus,
+.campo select:focus {
+
+    border-color:
+        #B77C8B;
+
+    background:
+        #FFFFFF;
 
     box-shadow:
-        0 0 12px
-        rgba(255, 62, 168, 0.3);
+        0 0 0 4px
+        rgba(216,167,177,0.15);
 
 }
+
+
 /* =====================================================
-   BLOQUE DE IMAGEN
+   SECCIÓN IMAGEN
    ===================================================== */
 
 .carga-imagen {
 
-    display:
-        flex;
+    grid-column:
+        1 / -1;
 
-    flex-direction:
-        column;
-
-    gap:
-        10px;
-
-    margin-top:
-        10px;
-
-}
-/* =====================================================
-   IMAGEN ACTUAL
-   ===================================================== */
-
-.imagen-actual {
-    display:
-        flex;
-    align-items:
-        center;
-    gap:
-        12px;
-    padding:
-        10px;
-    background:
-        rgba(255,255,255,0.55);
-    border:
-        1px solid #ca5b93;
-    border-radius:
-        15px;
-}
-.miniatura-actual {
-    width:
-        65px;
-    height:
-        65px;
-    border-radius:
-        12px;
-    object-fit:
-        cover;
-    border:
-        2px solid #da62ac;
-}
-.info-imagen {
-    display:
-        flex;
-    flex-direction:
-        column;
-    gap:
-        4px;
-}
-.info-titulo {
-    color:
-        #364e63;
-    font-size:
-        12px;
-    font-weight:
-        700;
-}
-.info-nombre {
-    color:
-        #777;
-    font-size:
-    
-        13px;
-    word-break:
-        break-all;
-}
-/* =====================================================
-   INPUT FILE
-   ===================================================== */
-input[type="file"] {
-    display:
-        none;
-}
-/* =====================================================
-   SELECTOR DE NUEVA IMAGEN
-   ===================================================== */
-.selector-archivo {
-    width:
-        100%;
-    min-height:
-        120px;
-    border:
-        2px dashed #c5a46d;
-    border-radius:
-        18px;
-    background:
-        rgba(255,255,255,0.55);
-    display:
-        flex;
-    flex-direction:
-        column;
-    align-items:
-        center;
-    justify-content:
-        center;
-    text-align:
-        center;
-    cursor:
-        pointer;
-    padding:
-        18px;
-    transition:
-        0.3s ease;
-}
-.selector-archivo:hover {
-    background:
-        #fff8ed;
-    border-color:
-        #364e63;
-    transform:
-        translateY(-2px);
-    box-shadow:
-        0 8px 20px
-        rgba(54,78,99,0.15);
-}
-/* =====================================================
-   ICONO
-   ===================================================== */
-.icono-archivo {
-    font-size:
-        34px;
-    margin-bottom:
-        6px;
-}
-/* =====================================================
-   TEXTO
-   ===================================================== */
-.texto-archivo {
-    color:
-        #364e63;
-    font-weight:
-        700;
-    font-size:
-        16px;
-}
-.texto-secundario {
-    color:
-        #777;
-    font-size:
-        12px;
     margin-top:
         5px;
+
+    padding-top:
+        20px;
+
+    border-top:
+        1px solid #EBDDE0;
+
 }
-/* =====================================================
-   NUEVA IMAGEN SELECCIONADA
-   ===================================================== */
-.nueva-imagen {
-    display:
-        none;
-    align-items:
-        center;
-    gap:
-        12px;
-    padding:
-        10px;
-    background:
-        rgba(197,164,109,0.15);
-    border:
-        1px solid #c5a46d;
-    border-radius:
-        15px;
-}
-.miniatura-nueva {
-    width:
-        65px;
-    height:
-        65px;
-    object-fit:
-        cover;
-    border-radius:
-        12px;
-    border:
-        2px solid #364e63;
-}
-.info-nueva {
-    display:
-        flex;
-    flex-direction:
-        column;
-    gap:
-        4px;
-}
-.nueva-titulo {
+
+
+.titulo-imagen {
+
     color:
-        #364e63;
-    font-size:
-        12px;
-    font-weight:
-        700;
-}
-.nueva-nombre {
-    color:
-        #777;
+        #6D3948;
+
     font-size:
         13px;
-    word-break:
-        break-all;
+
+    font-weight:
+        600;
+
+    margin-bottom:
+        10px;
+
 }
+
+
 /* =====================================================
-   BOTÓN ACTUALIZAR
+   SELECTOR DE ARCHIVO
    ===================================================== */
-input[type="submit"] {
-    grid-area:
-        boton;
-    margin-top:
-        15px;
-    padding:
-        16px;
-    background:
-        #364e63;
-    color:
-        #f5e9d8;
+
+.selector-archivo {
+
+    width:
+        100%;
+
+    min-height:
+        115px;
+
     border:
-        2px solid #364e63;
+        2px dashed #D8A7B1;
+
     border-radius:
-        14px;
-    font-size:
-        19px;
-    font-family:
-        "Playfair Display",
-        serif;
+        18px;
+
+    background:
+        #FFF9F7;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
     cursor:
         pointer;
+
     transition:
-        0.35s ease;
+        0.3s ease;
+
+}
+
+
+.selector-archivo:hover {
+
+    border-color:
+        #B77C8B;
+
+    background:
+        #FDF1F3;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.icono-archivo {
+
+    width:
+        45px;
+
+    height:
+        45px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        50%;
+
+    background:
+        #F5E2E6;
+
+    color:
+        #9D6170;
+
+    font-size:
+        22px;
+
+    margin-bottom:
+        7px;
+
+}
+
+
+.texto-archivo {
+
+    color:
+        #6D3948;
+
+    font-size:
+        14px;
+
     font-weight:
         700;
+
 }
-input[type="submit"]:hover {
-    background:
-        #c5a46d;
+
+
+.texto-secundario {
+
     color:
-        #364e63;
-    border-color:
-        #c5a46d;
-    transform:
-        scale(1.04);
+        #9A8188;
+
+    font-size:
+        11px;
+
+    margin-top:
+        4px;
+
 }
+
+
+input[type="file"] {
+
+    display:
+        none;
+
+}
+
+
+/* =====================================================
+   NUEVA IMAGEN
+   ===================================================== */
+
+.nueva-imagen {
+
+    display:
+        none;
+
+    align-items:
+        center;
+
+    gap:
+        13px;
+
+    padding:
+        10px;
+
+    margin-top:
+        12px;
+
+    background:
+        #FDF3F5;
+
+    border:
+        1px solid #E3C5CC;
+
+    border-radius:
+        15px;
+
+}
+
+
+.miniatura-nueva {
+
+    width:
+        60px;
+
+    height:
+        60px;
+
+    object-fit:
+        cover;
+
+    border-radius:
+        12px;
+
+    border:
+        2px solid #C8919E;
+
+}
+
+
+.info-nueva {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        4px;
+
+}
+
+
+.nueva-titulo {
+
+    color:
+        #9D6170;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        1px;
+
+}
+
+
+.nueva-nombre {
+
+    color:
+        #786169;
+
+    font-size:
+        12px;
+
+    word-break:
+        break-all;
+
+}
+
+
+/* =====================================================
+   BOTÓN
+   ===================================================== */
+
+.boton-actualizar {
+
+    margin-top:
+        25px;
+
+    width:
+        100%;
+
+    height:
+        55px;
+
+    border:
+        none;
+
+    border-radius:
+        15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8C4F61,
+            #B87383
+        );
+
+    color:
+        white;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    font-size:
+        15px;
+
+    font-weight:
+        700;
+
+    letter-spacing:
+        0.5px;
+
+    cursor:
+        pointer;
+
+    box-shadow:
+        0 10px 25px
+        rgba(140,79,97,0.25);
+
+    transition:
+        all 0.3s ease;
+
+}
+
+
+.boton-actualizar:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 15px 30px
+        rgba(140,79,97,0.32);
+
+}
+
+
+.boton-actualizar:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
 /* =====================================================
    ERRORES
    ===================================================== */
+
 .error {
+
     color:
-        #b94b4b;
+        #B04D5F;
+
     font-size:
-        13px;
+        11px;
+
+    margin-top:
+        2px;
+
 }
+
+
 /* =====================================================
    RESPONSIVE
    ===================================================== */
-@media (max-width:768px) {
-    form {
+
+@media (max-width: 900px) {
+
+    .formulario {
+
         grid-template-columns:
             1fr;
-        grid-template-areas:
-            "imagen"
-            "titulo"
-            "leyenda"
-            "campos"
-            "boton";
-        padding:
-            25px;
+
     }
-    .imagen {
+
+    .imagen-principal {
+
         min-height:
-            250px;
+            400px;
+
     }
-    h2 {
-        text-align:
-            center;
-        width:
-            100%;
+
+}
+
+
+@media (max-width: 600px) {
+
+    body {
+
+        padding:
+            20px 12px;
+
+    }
+
+    .formulario {
+
+        padding:
+            20px;
+
+        border-radius:
+            24px;
+
+    }
+
+    .grupo-campos {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+    .campo-completo,
+    .carga-imagen {
+
+        grid-column:
+            auto;
+
+    }
+
+    .imagen-principal {
+
+        min-height:
+            330px;
+
+    }
+
+    .encabezado h1 {
+
         font-size:
-            28px;
+            34px;
+
     }
+
 }
 
 
-/* CONTENEDOR DE LOS CAMPOS */
-label {
-    display: block;
-    margin-top: 15px;
-    margin-bottom: 7px;
-    font-weight: 600;
-    color: #6b4b4b;
-    font-size: 15px;
+/* =====================================================
+   ANIMACIÓN
+   ===================================================== */
+
+@keyframes aparecer {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(15px);
+
+    }
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+
+    }
+
 }
 
-/* INPUT DESCRIPCIÓN Y SELECT CATEGORÍA */
-input[name="descripcion"],
-select[name="categoria"] {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #d8b8b8;
-    border-radius: 10px;
-    background-color: #fffafa;
-    color: #5a4141;
-    font-size: 14px;
-    outline: none;
-    box-sizing: border-box;
-    transition: 0.3s;
+
+.formulario {
+
+    animation:
+        aparecer 0.6s ease;
+
 }
 
-/* EFECTO AL SELECCIONAR */
-input[name="descripcion"]:focus,
-select[name="categoria"]:focus {
-    border-color: #b76e79;
-    box-shadow: 0 0 6px rgba(183, 110, 121, 0.25);
-    background-color: #ffffff;
-}
-
-/* OPCIONES DEL SELECT */
-select[name="categoria"] {
-    cursor: pointer;
-}
-
-/* TEXTO DE LA OPCIÓN INICIAL */
-select[name="categoria"] option:first-child {
-    color: #999;
-}
 </style>
+
 </head>
+
 <body>
-<form
-    action="updateprodu.php"
-    method="POST"
-    enctype="multipart/form-data"
->
+
+
+<div class="contenedor">
+
+
     <!-- =================================================
-         IMAGEN GRANDE ACTUAL
+         ENCABEZADO
          ================================================= -->
-    <div
-        class="imagen"
-        id="imagenPrincipal"
-    ></div>
+
+    <div class="encabezado">
+
+        <div class="marca">
+            DIVINE
+        </div>
+
+        <h1>
+            Editar producto
+        </h1>
+
+        <p class="subtitulo">
+            Actualiza la información y apariencia de tu producto
+        </p>
+
+    </div>
+
+
     <!-- =================================================
-         TÍTULO
+         FORMULARIO
          ================================================= -->
-    <h2>
-        MODIFICACIÓN DE PRODUCTO DIVINE
-    </h2>
-    <legend>
-        PRODUCTO A MODIFICAR:
-    </legend>
-    <div class="grupo-campos">
-        <!-- =================================================
-             NOMBRE
-             ================================================= -->
-        <label>
-            Nombre:
-        </label>
 
-        <input
-            type="text"
-            name="nombre"
-            value="<?= htmlspecialchars($nombre) ?>"
-            required
-        >
+    <form
+        class="formulario"
+        action="updateprodu.php"
+        method="POST"
+        enctype="multipart/form-data"
+    >
 
 
         <!-- =================================================
-             DESCRIPCIÓN
+             PANEL DE IMAGEN
              ================================================= -->
 
-        <label>
-
-            Descripción:
-
-        </label>
-
-        <input
-            type="text"
-            name="descripcion"
-            value="<?= htmlspecialchars($descripcion) ?>"
-            required
-        >
-
- 
- 
- <label>
-
-            Categoría:
-
-        </label>
-<select id="categoria" name="categoria">
-
-    <option value="SkinCare" <?= $categoria == "SkinCare" ? "selected" : "" ?>>
-        SkinCare
-    </option>
-
-    <option value="SkinHair" <?= $categoria == "SkinHair" ? "selected" : "" ?>>
-        SkinHair
-    </option>
-
-</select>
- 
- 
-  <!-- =================================================
-             PRECIO
-             ================================================= -->
-
-        <label>
-
-            Precio:
-
-        </label>
-
-        <input
-            type="number"
-            name="precio"
-            value="<?= htmlspecialchars($precio) ?>"
-            required
-        >
+        <div class="panel-imagen">
 
 
-        <!-- =================================================
-             COSTO
-             ================================================= -->
+            <div
+                class="imagen-principal"
+                id="imagenPrincipal"
+            >
 
-        <label>
+                <div class="badge-imagen">
+                    Producto DIVINE
+                </div>
 
-            Costo:
-
-        </label>
-
-        <input
-            type="number"
-            name="costo"
-            value="<?= htmlspecialchars($costo) ?>"
-            required
-        >
+            </div>
 
 
-        <!-- =================================================
-             STOCK
-             ================================================= -->
-
-        <label>
-
-            Stock:
-
-        </label>
-
-        <input
-            type="number"
-            name="stock"
-            value="<?= htmlspecialchars($stock) ?>"
-            required
-        >
-
-
-        <!-- =================================================
-             CÓDIGO
-             ================================================= -->
-
-        <label>
-
-            Código:
-
-        </label>
-
-        <input
-            type="number"
-            name="codigo"
-            value="<?= htmlspecialchars($codigo) ?>"
-            required
-        >
-
-
-        <!-- =================================================
-             IMAGEN
-             ================================================= -->
-
-        <div class="carga-imagen">
-
-
-            <label>
-
-                Imagen del producto:
-
-            </label>
-
-
-            <!-- =============================================
+            <!-- =================================================
                  IMAGEN ACTUAL
-                 ============================================= -->
+                 ================================================= -->
 
             <div class="imagen-actual">
-
 
                 <img
                     src="<?php
@@ -840,16 +1399,11 @@ select[name="categoria"] option:first-child {
                     id="miniaturaActual"
                 >
 
-
                 <div class="info-imagen">
 
-
                     <div class="info-titulo">
-
                         IMAGEN ACTUAL
-
                     </div>
-
 
                     <div
                         class="info-nombre"
@@ -866,112 +1420,286 @@ select[name="categoria"] option:first-child {
 
                     </div>
 
-
                 </div>
-
 
             </div>
-
-
-            <!-- =============================================
-                 SELECTOR DE NUEVA IMAGEN
-                 ============================================= -->
-
-            <label
-                for="fileToUpload"
-                class="selector-archivo"
-            >
-
-
-                <div class="icono-archivo">
-
-                    📷
-
-                </div>
-
-
-                <div class="texto-archivo">
-
-                    Seleccionar nueva imagen
-
-                </div>
-
-
-                <div class="texto-secundario">
-
-                    Haz clic aquí para reemplazarla
-
-                </div>
-
-
-            </label>
-
-
-            <input
-                type="file"
-                id="fileToUpload"
-                name="fileToUpload"
-                accept="image/*"
-            >
-
-
-            <!-- =============================================
-                 PREVIEW DE LA NUEVA IMAGEN
-                 ============================================= -->
-
-            <div
-                class="nueva-imagen"
-                id="nuevaImagen"
-            >
-
-
-                <img
-                    class="miniatura-nueva"
-                    id="miniaturaNueva"
-                >
-
-
-                <div class="info-nueva">
-
-
-                    <div class="nueva-titulo">
-
-                        NUEVA IMAGEN SELECCIONADA
-
-                    </div>
-
-
-                    <div
-                        class="nueva-nombre"
-                        id="nombreNuevaImagen"
-                    >
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
 
         </div>
 
 
-    </div>
+        <!-- =================================================
+             PANEL DEL FORMULARIO
+             ================================================= -->
+
+        <div class="panel-formulario">
 
 
-    <!-- =================================================
-         BOTÓN ACTUALIZAR
-         ================================================= -->
+            <div class="titulo-formulario">
 
-    <input
-        type="submit"
-        value="Actualizar"
-    >
+                <span>
+                    Información del producto
+                </span>
+
+                <h2>
+                    Detalles de tu producto
+                </h2>
+
+                <div class="separador"></div>
+
+            </div>
 
 
-</form>
+            <div class="grupo-campos">
+
+
+                <!-- =================================================
+                     NOMBRE
+                     ================================================= -->
+
+                <div class="campo campo-completo">
+
+                    <label for="nombre">
+                        Nombre del producto
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value="<?= htmlspecialchars($nombre) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     DESCRIPCIÓN
+                     ================================================= -->
+
+                <div class="campo campo-completo">
+
+                    <label for="descripcion">
+                        Descripción
+                    </label>
+
+                    <input
+                        type="text"
+                        id="descripcion"
+                        name="descripcion"
+                        value="<?= htmlspecialchars($descripcion) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     CATEGORÍA
+                     ================================================= -->
+
+                <div class="campo campo-completo">
+
+                    <label for="categoria">
+                        Categoría
+                    </label>
+
+                    <select
+                        id="categoria"
+                        name="categoria"
+                    >
+
+                        <option
+                            value="SkinCare"
+                            <?= $categoria == "SkinCare" ? "selected" : "" ?>
+                        >
+                            SkinCare
+                        </option>
+
+                        <option
+                            value="SkinHair"
+                            <?= $categoria == "SkinHair" ? "selected" : "" ?>
+                        >
+                            SkinHair
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =================================================
+                     PRECIO
+                     ================================================= -->
+
+                <div class="campo">
+
+                    <label for="precio">
+                        Precio
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio"
+                        name="precio"
+                        value="<?= htmlspecialchars($precio) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     COSTO
+                     ================================================= -->
+
+                <div class="campo">
+
+                    <label for="costo">
+                        Costo
+                    </label>
+
+                    <input
+                        type="number"
+                        id="costo"
+                        name="costo"
+                        value="<?= htmlspecialchars($costo) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     STOCK
+                     ================================================= -->
+
+                <div class="campo">
+
+                    <label for="stock">
+                        Stock disponible
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        value="<?= htmlspecialchars($stock) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     CÓDIGO
+                     ================================================= -->
+
+                <div class="campo">
+
+                    <label for="codigo">
+                        Código
+                    </label>
+
+                    <input
+                        type="number"
+                        id="codigo"
+                        name="codigo"
+                        value="<?= htmlspecialchars($codigo) ?>"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- =================================================
+                     IMAGEN
+                     ================================================= -->
+
+                <div class="carga-imagen">
+
+                    <div class="titulo-imagen">
+                        Imagen del producto
+                    </div>
+
+
+                    <label
+                        for="fileToUpload"
+                        class="selector-archivo"
+                    >
+
+                        <div class="icono-archivo">
+                            ♡
+                        </div>
+
+                        <div class="texto-archivo">
+                            Seleccionar nueva imagen
+                        </div>
+
+                        <div class="texto-secundario">
+                            Haz clic para reemplazar la imagen actual
+                        </div>
+
+                    </label>
+
+
+                    <input
+                        type="file"
+                        id="fileToUpload"
+                        name="fileToUpload"
+                        accept="image/*"
+                    >
+
+
+                    <!-- =================================================
+                         PREVIEW NUEVA IMAGEN
+                         ================================================= -->
+
+                    <div
+                        class="nueva-imagen"
+                        id="nuevaImagen"
+                    >
+
+                        <img
+                            class="miniatura-nueva"
+                            id="miniaturaNueva"
+                        >
+
+                        <div class="info-nueva">
+
+                            <div class="nueva-titulo">
+                                NUEVA IMAGEN
+                            </div>
+
+                            <div
+                                class="nueva-nombre"
+                                id="nombreNuevaImagen"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 BOTÓN
+                 ================================================= -->
+
+            <input
+                type="submit"
+                class="boton-actualizar"
+                value="Guardar cambios  ✦"
+            >
+
+        </div>
+
+    </form>
+
+</div>
 
 
 <script>
@@ -986,22 +1714,18 @@ document
         "change",
         function () {
 
-
             const archivo =
                 this.files[0];
-
 
             const nuevaImagen =
                 document.getElementById(
                     "nuevaImagen"
                 );
 
-
             const miniaturaNueva =
                 document.getElementById(
                     "miniaturaNueva"
                 );
-
 
             const nombreNuevaImagen =
                 document.getElementById(
@@ -1010,7 +1734,6 @@ document
 
 
             if (archivo) {
-
 
                 /*
                     MOSTRAR NOMBRE
@@ -1039,18 +1762,12 @@ document
                 lector.onload =
                     function (evento) {
 
-
-                        /*
-                            MINIATURA
-                        */
-
                         miniaturaNueva.src =
                             evento.target.result;
 
 
                         /*
-                            CAMBIAR TEMPORALMENTE
-                            LA IMAGEN GRANDE
+                            CAMBIAR IMAGEN PRINCIPAL
                         */
 
                         document
@@ -1061,7 +1778,6 @@ document
                             "url('" +
                             evento.target.result +
                             "')";
-
 
                     };
 
@@ -1075,10 +1791,6 @@ document
         }
     );
 
-</script>
-
-
-<script>
 
 /* =====================================================
    VALIDACIÓN
@@ -1086,20 +1798,15 @@ document
 
 $(document).ready(function() {
 
-
     $("form").validate({
 
-
         rules: {
-
 
             nombre:
                 "required",
 
-
             descripcion:
                 "required",
-
 
             precio: {
 
@@ -1114,7 +1821,6 @@ $(document).ready(function() {
 
             },
 
-
             costo: {
 
                 required:
@@ -1128,7 +1834,6 @@ $(document).ready(function() {
 
             },
 
-
             stock: {
 
                 required:
@@ -1141,7 +1846,6 @@ $(document).ready(function() {
                     2
 
             },
-
 
             codigo: {
 
@@ -1161,14 +1865,11 @@ $(document).ready(function() {
 
         messages: {
 
-
             nombre:
                 "Por favor, ingresa el nombre del producto.",
 
-
             descripcion:
                 "Por favor, ingresa la descripción del producto.",
-
 
             precio: {
 
@@ -1176,13 +1877,12 @@ $(document).ready(function() {
                     "Por favor, ingresa el precio del producto.",
 
                 number:
-                    "Por favor, ingresa un número válido para el precio.",
+                    "Por favor, ingresa un número válido.",
 
                 min:
-                    "El precio no puede ser negativo."
+                    "El precio debe ser mayor o igual a 2."
 
             },
-
 
             costo: {
 
@@ -1190,27 +1890,25 @@ $(document).ready(function() {
                     "Por favor, ingresa el costo del producto.",
 
                 number:
-                    "Por favor, ingresa un número válido para el costo.",
+                    "Por favor, ingresa un número válido.",
 
                 min:
-                    "El costo no puede ser negativo."
+                    "El costo debe ser mayor o igual a 2."
 
             },
-
 
             stock: {
 
                 required:
-                    "Por favor, ingresa la cantidad en stock del producto.",
+                    "Por favor, ingresa la cantidad en stock.",
 
                 number:
-                    "Por favor, ingresa un número válido para el stock.",
+                    "Por favor, ingresa un número válido.",
 
                 min:
-                    "El stock no puede ser negativo."
+                    "El stock debe ser mayor o igual a 2."
 
             },
-
 
             codigo: {
 
@@ -1218,17 +1916,28 @@ $(document).ready(function() {
                     "Por favor, ingresa el código del producto.",
 
                 number:
-                    "Por favor, ingresa un número válido para el código.",
+                    "Por favor, ingresa un número válido.",
 
                 min:
-                    "El código no puede ser negativo."
+                    "El código debe ser mayor o igual a 5."
+
             }
+
         }
+
     });
+
 });
+
 </script>
+
+
 </body>
+
 </html>
+
 <?php
+
 $conn->close();
+
 ?>
