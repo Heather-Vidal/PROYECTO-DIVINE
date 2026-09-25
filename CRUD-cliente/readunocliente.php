@@ -1,220 +1,859 @@
-  <?php
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+<?php
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
 
-$conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);                 
- 
-if($conn->connect_error){
-  echo"OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
+$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
+
+if ($conn->connect_error) {
+    die("Error de conexión.");
 }
 
-$CI=$_GET['CI'];
-$sql="SELECT * FROM CLIENTE WHERE CI=$CI";
-$resultado=$conn-> query($sql);
+$CI = $_GET['CI'] ?? '';
+$CI = $conn->real_escape_string($CI);
 
-if($resultado->num_rows > 0){
+$sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";
+$resultado = $conn->query($sql);
+
+if ($resultado && $resultado->num_rows > 0) {
+
+    $fila = $resultado->fetch_assoc();
+
+    $CI = $fila['CI'];
+    $estado = $fila['estado'];
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Detalle del Cliente - DIVINE</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+<title>DIVINE | Cliente</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
-body {
-  font-family: "Playfair Display", serif;
-   background-image:url('../imagenes/dudu.png');
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #ffffff;
+
+/* =========================
+   GENERAL
+========================= */
+
+* {
+    box-sizing: border-box;
 }
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family: "Montserrat", sans-serif;
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(35, 20, 29, .92),
+            rgba(82, 43, 57, .82)
+        ),
+        url("../imagenes/dudu.png") center / cover fixed;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    color: #fff;
+
+}
+
+
+/* =========================
+   CONTENEDOR
+========================= */
 
 .contenedor {
-  background: #ff8b8bc9;
-  padding: 40px;
-  border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-  width: 90%;
-  max-width: 600px;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 30px;
+
+    width: 100%;
+
+    max-width: 950px;
+
+    min-height: 580px;
+
+    display: grid;
+
+    grid-template-columns: 35% 65%;
+
+    background: rgba(42, 25, 34, .94);
+
+    border: 1px solid rgba(220, 176, 144, .45);
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.55);
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    position: relative;
+
 }
+
+
+/* =========================
+   LADO IZQUIERDO
+========================= */
+
+.lado-izquierdo {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(105, 54, 73, .95),
+            rgba(45, 26, 36, .98)
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 45px 30px;
+
+    border-right: 1px solid rgba(218, 170, 136, .35);
+
+}
+
+
+.marca {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 21px;
+
+    letter-spacing: 8px;
+
+    color: #dcb090;
+
+    margin-bottom: 35px;
+
+}
+
+
 .imagen {
-  background: url("../imagenes/persona.png") center / contain no-repeat;
-  border-radius: 20px;
-  min-height: 200px;  
+
+    width: 190px;
+
+    height: 190px;
+
+    border-radius: 50%;
+
+    background:
+        url("../imagenes/persona.png") center / contain no-repeat,
+        linear-gradient(
+            145deg,
+            #b8758b,
+            #5a3344
+        );
+
+    border: 1px solid #dcb090;
+
+    box-shadow:
+        0 0 0 10px rgba(220,176,144,.06),
+        0 15px 40px rgba(0,0,0,.4);
+
+    margin-bottom: 30px;
+
 }
+
+
+.frase {
+
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 22px;
+
+    color: #ead6cb;
+
+    line-height: 1.5;
+
+}
+
+
+.decoracion {
+
+    width: 55px;
+
+    height: 1px;
+
+    background: #dcb090;
+
+    margin: 20px auto;
+
+}
+
+
+/* =========================
+   LADO DERECHO
+========================= */
+
+.lado-derecho {
+
+    padding: 50px 55px;
+
+    background: #fffaf8;
+
+    color: #442b35;
+
+}
+
+
+.pequeno-titulo {
+
+    color: #a36b7d;
+
+    font-size: 11px;
+
+    letter-spacing: 4px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 8px;
+
+}
+
 
 .titulo {
-  text-align: center;
-  color: #4b3441;
-  font-size: 30px;
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: 2px;
 
-  border-bottom: 3px solid #a01c1c;
-  width: fit-content;
-  margin: 0 auto;
-  padding-bottom: 6px;
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 46px;
+
+    font-weight: 600;
+
+    color: #472c38;
+
+    margin: 0;
+
 }
+
+
+.linea {
+
+    width: 70px;
+
+    height: 2px;
+
+    background: #b57a68;
+
+    margin: 15px 0 35px;
+
+}
+
+
+/* =========================
+   INFORMACIÓN
+========================= */
+
+.informacion {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 16px;
+
+}
+
+
 .item {
-  background: #97383896;
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(211, 0, 0, 0.37);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    background: #f8eeed;
+
+    border: 1px solid #ead8d7;
+
+    padding: 18px 20px;
+
+    border-radius: 4px;
+
+    transition: .3s;
+
 }
 
-/* Hover */
+
 .item:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 22px rgba(255, 0, 0, 0.38);
+
+    transform: translateY(-3px);
+
+    border-color: #c79691;
+
+    box-shadow:
+        0 8px 20px rgba(82,43,57,.10);
+
 }
 
-.item p {
-  margin: 10px 0;
-  font-size: 17px;
-  color: #462b33;
+
+.etiqueta {
+
+    display: block;
+
+    color: #a36b7d;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 7px;
+
 }
 
-.item span {
-  font-weight: 700;
-  color: #351c25;
+
+.valor {
+
+    color: #472c38;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    word-break: break-word;
+
 }
 
-/* Botones tipo PRODUCTO */
+
+/* =========================
+   ESTADO
+========================= */
+
+.estado {
+
+    display: inline-block;
+
+    padding: 5px 12px;
+
+    border-radius: 2px;
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+    font-weight: 600;
+
+}
+
+
+.activo {
+
+    background: #dce9df;
+
+    color: #45634e;
+
+}
+
+
+.inactivo {
+
+    background: #ead5d8;
+
+    color: #824b57;
+
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
 .botones {
-  margin-top: 20px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 30px;
+
 }
+
 
 .boton {
-  background: #97383896;;
-  color: #571731;
-  padding: 10px 22px;
-  border-radius: 28px;
-  font-size: 16px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: 0.3s ease;
+
+    text-decoration: none;
+
+    border: none;
+
+    padding: 12px 19px;
+
+    font-family: "Montserrat", sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    font-weight: 600;
+
+    border-radius: 3px;
+
+    cursor: pointer;
+
+    transition: .3s;
+
 }
 
-.boton:hover {
-  background: #9b5c61;
-  color: #422b35;
-  transform: scale(1.05);
-  box-shadow: 0 5px 20px rgba(207, 64, 64, 0.7);
+
+/* Editar */
+
+.editar {
+
+    background: #7d465b;
+
+    color: white;
+
 }
+
+
+.editar:hover {
+
+    background: #5f3044;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* Eliminar */
+
+.eliminar {
+
+    background: #ead8d8;
+
+    color: #743c49;
+
+}
+
+
+.eliminar:hover {
+
+    background: #ddc0c2;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* Bloquear */
+
+.bloquear {
+
+    background: #b2876d;
+
+    color: white;
+
+}
+
+
+.bloquear:hover {
+
+    background: #91684f;
+
+}
+
+
+/* Desbloquear */
+
+.desbloquear {
+
+    background: #718875;
+
+    color: white;
+
+}
+
+
+.desbloquear:hover {
+
+    background: #536b58;
+
+}
+
+
+/* =========================
+   NAVEGACIÓN
+========================= */
 
 .navegacion {
-  margin-top: 20px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 30px;
+
+    padding-top: 22px;
+
+    border-top: 1px solid #ead8d7;
+
 }
+
 
 .boton2 {
-  background: #97383896;;
-  color: #493039;
-  padding: 12px 28px;
-  border-radius: 28px;
-  font-size: 17px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: 0.3s ease;
+
+    text-decoration: none;
+
+    color: #8b596b;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+    transition: .3s;
+
 }
+
 
 .boton2:hover {
-  background: #773838;
-  color: #2b1515;
-  transform: scale(1.04);
-  box-shadow: 0 5px 20px rgba(27, 15, 16, 0.7);
+
+    color: #472c38;
+
 }
 
-@media (max-width: 768px) {
-  .contenedor {
-    padding: 25px;
-  }
-  .imagen {
-    min-height: 200px;
-  }
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 750px) {
+
+    .contenedor {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .lado-izquierdo {
+
+        padding: 35px 20px;
+
+    }
+
+    .imagen {
+
+        width: 140px;
+
+        height: 140px;
+
+    }
+
+    .lado-derecho {
+
+        padding: 35px 25px;
+
+    }
+
+    .titulo {
+
+        font-size: 38px;
+
+    }
+
 }
+
+
+@media (max-width: 500px) {
+
+    body {
+
+        padding: 15px;
+
+    }
+
+    .informacion {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .boton {
+
+        flex: 1;
+
+        text-align: center;
+
+    }
+
+    .navegacion {
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+}
+
 </style>
+
 </head>
 
+
 <body>
-  <div class="contenedor">
-    <div class="imagen"></div>
-
-    <h2 class="titulo">DETALLE DEL CLIENTE</h2>
-
-    <div class="item">
-<?php
-while($fila=$resultado->fetch_assoc()){
-  echo "<p><span>CI:</span> ".$fila['CI']."</p>";
-  echo "<p><span>Nombre:</span> ".$fila['nombre']."</p>";
-  echo "<p><span>Direccion:</span> ".$fila['direccion']."</p>";
-  echo "<p><span>Telefono:</span> ".$fila['celular']."</p>";
-  echo "<p><span>Rol:</span> ".$fila['rol']."</p>";
-  echo "<p><span>Estado:</span> ".$fila['estado']."</p>";
-
-  $CI=$fila['CI'];
 
 
-$estado = $fila['estado'];
+<div class="contenedor">
 
 
+    <!-- =========================
+         LADO IZQUIERDO
+    ========================== -->
+
+    <div class="lado-izquierdo">
+
+        <div class="marca">
+            DIVINE
+        </div>
 
 
-
-}
-?>
-    </div>
-
-    <!-- ACCIONES DEL CLIENTE -->
-    <div class="botones">
-      <a class="boton" href="updateformcliente.php?CI=<?php echo $CI; ?>">Editar</a>
-      <a class="boton" href="deletecliente.php?CI=<?php echo $CI; ?>">Eliminar</a>
+        <div class="imagen"></div>
 
 
-    <?php
-    if ($estado == 'ACTIVO') {
-        echo '<a class="boton" href="../BLOQUEOS-usuario/bloquear.php?CI=' . $CI . '">Bloquear</a>';
-    } else {
-        echo '<a class="boton" href="../BLOQUEOS-usuario/desbloquear.php?CI=' . $CI . '">Desbloquear</a>';
-    }
-    ?>
+        <div class="decoracion"></div>
+
+
+        <div class="frase">
+            "Elegancia en cada detalle."
+        </div>
 
     </div>
 
-    <!-- NAVEGACIÓN GLOBAL -->
-    <div class="navegacion">
-      <a class="boton2" href="readtodocliente.php">Ver clientes</a>
-    
-<button class="boton2" type="button" onclick="history.back()">⬅ Volver atrás</button>
+
+
+    <!-- =========================
+         LADO DERECHO
+    ========================== -->
+
+    <div class="lado-derecho">
+
+
+        <div class="pequeno-titulo">
+            Perfil del cliente
+        </div>
+
+
+        <h1 class="titulo">
+            Información
+        </h1>
+
+
+        <div class="linea"></div>
+
+
+
+        <div class="informacion">
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Identificación
+                </span>
+
+                <span class="valor">
+                    <?php echo htmlspecialchars($fila['CI']); ?>
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Nombre completo
+                </span>
+
+                <span class="valor">
+                    <?php echo htmlspecialchars($fila['nombre']); ?>
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Dirección
+                </span>
+
+                <span class="valor">
+                    <?php echo htmlspecialchars($fila['direccion']); ?>
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Teléfono
+                </span>
+
+                <span class="valor">
+                    <?php echo htmlspecialchars($fila['celular']); ?>
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Rol
+                </span>
+
+                <span class="valor">
+                    <?php echo htmlspecialchars($fila['rol']); ?>
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <span class="etiqueta">
+                    Estado
+                </span>
+
+                <?php if ($estado == 'ACTIVO') { ?>
+
+                    <span class="estado activo">
+                        ACTIVO
+                    </span>
+
+                <?php } else { ?>
+
+                    <span class="estado inactivo">
+                        <?php echo htmlspecialchars($estado); ?>
+                    </span>
+
+                <?php } ?>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ACCIONES -->
+
+        <div class="botones">
+
+
+            <a
+                class="boton editar"
+                href="updateformcliente.php?CI=<?php echo urlencode($CI); ?>"
+            >
+                EDITAR
+            </a>
+
+
+            <a
+                class="boton eliminar"
+                href="deletecliente.php?CI=<?php echo urlencode($CI); ?>"
+                onclick="return confirm('¿Deseas eliminar este cliente?');"
+            >
+                ELIMINAR
+            </a>
+
+
+            <?php
+
+            if ($estado == 'ACTIVO') {
+
+                echo '
+                <a
+                    class="boton bloquear"
+                    href="../BLOQUEOS-usuario/bloquear.php?CI=' . urlencode($CI) . '"
+                >
+                    BLOQUEAR
+                </a>';
+
+            } else {
+
+                echo '
+                <a
+                    class="boton desbloquear"
+                    href="../BLOQUEOS-usuario/desbloquear.php?CI=' . urlencode($CI) . '"
+                >
+                    DESBLOQUEAR
+                </a>';
+
+            }
+
+            ?>
+
+
+        </div>
+
+
+
+        <!-- NAVEGACIÓN -->
+
+        <div class="navegacion">
+
+            <a
+                class="boton2"
+                href="readtodocliente.php"
+            >
+                ← VER TODOS LOS CLIENTES
+            </a>
+
+
+            <button
+                class="boton2"
+                type="button"
+                onclick="history.back()"
+            >
+                VOLVER ATRÁS →
+            </button>
+
+        </div>
+
 
     </div>
 
-  </div>
+
+</div>
+
+
 </body>
+
 </html>
 
+
 <?php
+
+} else {
+
+    echo "Cliente no encontrado.";
+
 }
+
 $conn->close();
+
 ?>
