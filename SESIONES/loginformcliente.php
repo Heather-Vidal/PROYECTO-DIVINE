@@ -1,3 +1,25 @@
+ 
+ <?php 
+session_start(); 
+ 
+if (isset($_SESSION['rol'])) { 
+ 
+    if ($_SESSION['rol'] == 'administrador') { 
+        header("Location: ../admin.php"); 
+        exit(); 
+ 
+    } elseif ($_SESSION['rol'] == 'vendedor') { 
+        header("Location: ../perfilvendedor.php"); 
+        exit(); 
+    } 
+} 
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+ 
+ 
+ 
  <!DOCTYPE html>
 
 <html lang="es">

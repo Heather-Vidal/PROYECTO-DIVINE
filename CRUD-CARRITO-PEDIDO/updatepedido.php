@@ -1,11 +1,6 @@
-  <?php
+<?php
 
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
-
-$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
+require_once "conexion.php";
 
 ?>
 
@@ -134,35 +129,71 @@ body {
 
 <?php
 
-if ($conn->connect_error) {
-    echo '<div class="mensaje error">❌ ERROR DE CONEXIÓN CON BD</div>';
+/* ==========================================
+   VALIDAR Y RECIBIR DATOS DEL FORMULARIO
+========================================== */
+
+$idPedidoCrudo = trim($_POST['idPedido'] ?? '');
+
+if ($idPedidoCrudo === '' || !is_numeric($idPedidoCrudo)) {
+    echo '<div class="mensaje error">❌ PEDIDO NO VÁLIDO</div>';
+    $conn->close();
+    exit();
 }
 
-$idPedido = $_POST['idPedido'];
-$nombre = $_POST['nombre'];
-$fecha = $_POST['fecha'];
-$telefono = $_POST['telefono'];
-$direccion = $_POST['direccion'];
-$estado = $_POST['estado'];
-$nombrevendedor = $_POST['nombrevendedor'];
+$idPedido       = (int) $idPedidoCrudo;
+$nombre         = trim($_POST['nombre']         ?? "");
+$fecha          = trim($_POST['fecha']          ?? "");
+$telefono       = trim($_POST['telefono']       ?? "");
+$direccion      = trim($_POST['direccion']      ?? "");
+$estado         = trim($_POST['estado']         ?? "");
+$nombrevendedor = trim($_POST['nombrevendedor'] ?? "");
+
+/* Whitelist para el estado */
+$estadosValidos = ["pendiente", "rechazado", "completado"];
+if (!in_array($estado, $estadosValidos, true)) {
+    echo '<div class="mensaje error">❌ ESTADO NO VÁLIDO</div>';
+    $conn->close();
+    exit();
+}
+
+/* ==========================================
+   UPDATE CON PREPARED STATEMENT
+========================================== */
 
 $sql = "UPDATE PEDIDOS SET
-        nombre='$nombre',
-        fecha='$fecha',
-        estado='$estado',  
-         telefono='$telefono',
-           direccion='$direccion',
-        nombrevendedor='$nombrevendedor'
-        WHERE ID='$idPedido'";
+        nombre = ?,
+        fecha = ?,
+        estado = ?,
+        telefono = ?,
+        direccion = ?,
+        nombrevendedor = ?
+        WHERE ID = ?";
 
-if ($conn->query($sql) === TRUE) {
+$stmt = $conn->prepare($sql);
 
-    echo '<div class="mensaje exito">✔ PEDIDO ACTUALIZADO EXITOSAMENTE</div>';
-
+if ($stmt === false) {
+    echo '<div class="mensaje error">⚠ ERROR AL PREPARAR LA CONSULTA</div>';
 } else {
 
-    echo '<div class="mensaje error">⚠ ERROR AL ACTUALIZAR PEDIDO</div>';
+    $stmt->bind_param(
+        "ssssssi",
+        $nombre,
+        $fecha,
+        $estado,
+        $telefono,
+        $direccion,
+        $nombrevendedor,
+        $idPedido
+    );
 
+    if ($stmt->execute()) {
+        echo '<div class="mensaje exito">✔ PEDIDO ACTUALIZADO EXITOSAMENTE</div>';
+    } else {
+        echo '<div class="mensaje error">⚠ ERROR AL ACTUALIZAR PEDIDO</div>';
+    }
+
+    $stmt->close();
 }
 
 $conn->close();
