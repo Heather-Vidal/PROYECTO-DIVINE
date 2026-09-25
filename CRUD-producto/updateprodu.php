@@ -21,7 +21,6 @@ $conn = new mysqli(
 if ($conn->connect_error) {
 
     $mensaje = "NO TE PUDISTE CONECTAR CON LA BD UnU";
-
     $tipoMensaje = "error";
 
 } else {
@@ -29,6 +28,8 @@ if ($conn->connect_error) {
     $mensaje = "";
     $tipoMensaje = "";
 
+    // Usar UTF-8 correctamente
+    $conn->set_charset("utf8mb4");
 }
 
 
@@ -43,44 +44,33 @@ if (!$conn->connect_error) {
        RECIBIR DATOS DEL FORMULARIO
        ================================================= */
 
-    $nombre =
-        $_POST['nombre']
-        ?? '';
+    $nombre = trim($_POST['nombre'] ?? '');
 
-    $descripcion =
-        $_POST['descripcion']
-        ?? '';
+    $descripcion = trim($_POST['descripcion'] ?? '');
 
-    $precio =
-        $_POST['precio']
-        ?? '';
+    $categoria = trim($_POST['categoria'] ?? '');
 
+    $precio = $_POST['precio'] ?? '';
 
-          $categoria =
-        $_POST['categoria']
-        ?? '';
+    $costo = $_POST['costo'] ?? '';
 
-    $costo =
-        $_POST['costo']
-        ?? '';
+    $stock = $_POST['stock'] ?? '';
 
-    $stock =
-        $_POST['stock']
-        ?? '';
-
-    $codigo =
-        $_POST['codigo']
-        ?? '';
+    $codigo = filter_input(
+        INPUT_POST,
+        'codigo',
+        FILTER_VALIDATE_INT
+    );
 
 
     /* =================================================
        VALIDAR CÓDIGO
        ================================================= */
 
-    if ($codigo === '') {
+    if ($codigo === false || $codigo === null) {
 
         $mensaje =
-            "No se recibió el código del producto.";
+            "El código del producto no es válido.";
 
         $tipoMensaje =
             "error";
@@ -88,134 +78,137 @@ if (!$conn->connect_error) {
     } else {
 
 
-        /* =============================================
-           ACTUALIZAR DATOS DEL PRODUCTO
-           ============================================= */
+        /* =================================================
+           VALIDAR DATOS
+           ================================================= */
 
-        $sql = "UPDATE PRODUCTO
-                SET
-                    nombre='$nombre',
-                    descripcion='$descripcion',
-                      categoria='$categoria',
-                    precio='$precio',
-                    costo='$costo',
-                    stock='$stock'
-                WHERE codigo=$codigo";
+        if ($nombre === '') {
 
+            $mensaje =
+                "El nombre del producto es obligatorio.";
 
-        if ($conn->query($sql) === TRUE) {
+            $tipoMensaje =
+                "error";
 
+        } elseif (!is_numeric($precio)) {
 
-            /* =============================================
-               COMPROBAR SI SE SELECCIONÓ UNA NUEVA IMAGEN
-               ============================================= */
+            $mensaje =
+                "El precio no es válido.";
 
-            if (
-                isset($_FILES['fileToUpload'])
-                &&
-                $_FILES['fileToUpload']['error']
-                    !== UPLOAD_ERR_NO_FILE
-            ) {
+            $tipoMensaje =
+                "error";
 
+        } elseif (!is_numeric($costo)) {
 
-                /* =========================================
-                   COMPROBAR SI HUBO ERROR EN LA CARGA
-                   ========================================= */
+            $mensaje =
+                "El costo no es válido.";
 
-                if (
-                    $_FILES['fileToUpload']['error']
-                    !== UPLOAD_ERR_OK
-                ) {
+            $tipoMensaje =
+                "error";
 
-                    $mensaje =
-                        "El producto se actualizó, pero ocurrió un error al cargar la nueva imagen.";
+        } elseif (
+            filter_var(
+                $stock,
+                FILTER_VALIDATE_INT
+            ) === false
+        ) {
 
-                    $tipoMensaje =
-                        "error";
+            $mensaje =
+                "El stock no es válido.";
 
-                } else {
+            $tipoMensaje =
+                "error";
+
+        } else {
 
 
-                    /* =====================================
-                       INFORMACIÓN DEL ARCHIVO
-                       ===================================== */
+            /* =================================================
+               CONVERTIR TIPOS
+               ================================================= */
 
-                    $archivo =
-                        $_FILES['fileToUpload'];
+            $precio = (float)$precio;
 
+            $costo = (float)$costo;
 
-                    $nombreOriginal =
-                        $archivo['name'];
-
-
-                    $tmp =
-                        $archivo['tmp_name'];
+            $stock = (int)$stock;
 
 
-                    $tamaño =
-                        $archivo['size'];
+            /* =================================================
+               ACTUALIZAR PRODUCTO
+               CONSULTA PREPARADA
+               ================================================= */
+
+            $sql = "UPDATE PRODUCTO
+                    SET
+                        nombre = ?,
+                        descripcion = ?,
+                        categoria = ?,
+                        precio = ?,
+                        costo = ?,
+                        stock = ?
+                    WHERE codigo = ?";
 
 
-                    /* =====================================
-                       EXTENSIÓN
-                       ===================================== */
-
-                    $extension =
-                        strtolower(
-                            pathinfo(
-                                $nombreOriginal,
-                                PATHINFO_EXTENSION
-                            )
-                        );
+            $stmt = $conn->prepare($sql);
 
 
-                    /* =====================================
-                       EXTENSIONES PERMITIDAS
-                       ===================================== */
+            if ($stmt === false) {
 
-                    $extensionesPermitidas = [
+                $mensaje =
+                    "No se pudo preparar la actualización.";
 
-                        'jpg',
+                $tipoMensaje =
+                    "error";
 
-                        'jpeg',
+            } else {
 
-                        'png',
 
-                        'gif'
+                /* =================================================
+                   ASIGNAR PARÁMETROS
+                   ================================================= */
 
-                    ];
+                $stmt->bind_param(
+                    "sssddii",
+                    $nombre,
+                    $descripcion,
+                    $categoria,
+                    $precio,
+                    $costo,
+                    $stock,
+                    $codigo
+                );
 
+
+                /* =================================================
+                   EJECUTAR ACTUALIZACIÓN
+                   ================================================= */
+
+                if ($stmt->execute()) {
+
+
+                    /* =================================================
+                       COMPROBAR SI SE SELECCIONÓ UNA NUEVA IMAGEN
+                       ================================================= */
 
                     if (
-                        !in_array(
-                            $extension,
-                            $extensionesPermitidas
-                        )
+                        isset($_FILES['fileToUpload'])
+                        &&
+                        $_FILES['fileToUpload']['error']
+                        !== UPLOAD_ERR_NO_FILE
                     ) {
 
-                        $mensaje =
-                            "El producto se actualizó, pero la imagen no es válida. Usa JPG, JPEG, PNG o GIF.";
 
-                        $tipoMensaje =
-                            "error";
-
-                    } else {
-
-
-                        /* =================================
-                           COMPROBAR QUE SEA UNA IMAGEN
-                           ================================= */
-
-                        $informacionImagen =
-                            getimagesize($tmp);
-
+                        /* =================================================
+                           COMPROBAR ERROR DE CARGA
+                           ================================================= */
 
                         if (
-                            $informacionImagen === false
+                            $_FILES['fileToUpload']['error']
+                            !== UPLOAD_ERR_OK
                         ) {
 
                             $mensaje =
-                                "El producto se actualizó, pero el archivo seleccionado no es una imagen válida.";
+                                "El producto se actualizó, pero ocurrió un error al cargar la nueva imagen.";
 
                             $tipoMensaje =
                                 "error";
@@ -223,181 +216,289 @@ if (!$conn->connect_error) {
                         } else {
 
 
-                            /* =================================
-                               CARPETA DE IMÁGENES
-                               ================================= */
+                            /* =================================================
+                               INFORMACIÓN DEL ARCHIVO
+                               ================================================= */
 
-                            $directorio =
-                                "../PRODUCTO-img/";
+                            $archivo =
+                                $_FILES['fileToUpload'];
 
+                            $nombreOriginal =
+                                $archivo['name'];
 
-                            /*
-                                Si por alguna razón la carpeta
-                                no existe, intentamos crearla.
-                            */
+                            $tmp =
+                                $archivo['tmp_name'];
 
-                            if (
-                                !is_dir(
-                                    $directorio
-                                )
-                            ) {
-
-                                mkdir(
-                                    $directorio,
-                                    0755,
-                                    true
-                                );
-
-                            }
+                            $tamaño =
+                                $archivo['size'];
 
 
-                            /* =================================
-                               NOMBRE BASE DE LA IMAGEN
-                               ================================= */
+                            /* =================================================
+                               COMPROBAR TAMAÑO
+                               Máximo: 5 MB
+                               ================================================= */
 
-                            $nombreBase =
-                                "p-" . $codigo;
-
-
-                            /* =================================
-                               BUSCAR IMAGEN ANTERIOR
-                               ================================= */
-
-                            $extensionesAnteriores = [
-
-                                'jpg',
-
-                                'jpeg',
-
-                                'png',
-
-                                'gif'
-
-                            ];
+                            $tamañoMaximo =
+                                5 * 1024 * 1024;
 
 
-                            foreach (
-                                $extensionesAnteriores
-                                as $extensionAnterior
-                            ) {
-
-
-                                $imagenAnterior =
-
-                                    $directorio
-                                    .
-                                    $nombreBase
-                                    .
-                                    "."
-                                    .
-                                    $extensionAnterior;
-
-
-                                if (
-                                    file_exists(
-                                        $imagenAnterior
-                                    )
-                                ) {
-
-
-                                    /*
-                                        ELIMINAMOS LA IMAGEN
-                                        ANTERIOR
-                                    */
-
-                                    unlink(
-                                        $imagenAnterior
-                                    );
-
-                                }
-
-                            }
-
-
-                            /* =================================
-                               NUEVO NOMBRE
-                               ================================= */
-
-                            $nuevoNombre =
-
-                                $directorio
-                                .
-                                $nombreBase
-                                .
-                                "."
-                                .
-                                $extension;
-
-
-                            /* =================================
-                               MOVER NUEVA IMAGEN
-                               ================================= */
-
-                            if (
-                                move_uploaded_file(
-                                    $tmp,
-                                    $nuevoNombre
-                                )
-                            ) {
+                            if ($tamaño > $tamañoMaximo) {
 
                                 $mensaje =
-                                    "¡Producto e imagen actualizados correctamente!";
-
-                                $tipoMensaje =
-                                    "exito";
-
-                            } else {
-
-                                $mensaje =
-                                    "El producto se actualizó, pero no se pudo guardar la nueva imagen.";
+                                    "El producto se actualizó, pero la imagen supera el tamaño máximo permitido de 5 MB.";
 
                                 $tipoMensaje =
                                     "error";
 
-                            }
+                            } else {
 
+
+                                /* =================================================
+                                   EXTENSIÓN
+                                   ================================================= */
+
+                                $extension =
+                                    strtolower(
+                                        pathinfo(
+                                            $nombreOriginal,
+                                            PATHINFO_EXTENSION
+                                        )
+                                    );
+
+
+                                /* =================================================
+                                   EXTENSIONES PERMITIDAS
+                                   ================================================= */
+
+                                $extensionesPermitidas = [
+
+                                    'jpg',
+                                    'jpeg',
+                                    'png',
+                                    'gif'
+
+                                ];
+
+
+                                if (
+                                    !in_array(
+                                        $extension,
+                                        $extensionesPermitidas,
+                                        true
+                                    )
+                                ) {
+
+                                    $mensaje =
+                                        "El producto se actualizó, pero la imagen no es válida. Usa JPG, JPEG, PNG o GIF.";
+
+                                    $tipoMensaje =
+                                        "error";
+
+                                } else {
+
+
+                                    /* =================================================
+                                       COMPROBAR QUE SEA REALMENTE UNA IMAGEN
+                                       ================================================= */
+
+                                    $informacionImagen =
+                                        getimagesize($tmp);
+
+
+                                    if (
+                                        $informacionImagen === false
+                                    ) {
+
+                                        $mensaje =
+                                            "El producto se actualizó, pero el archivo seleccionado no es una imagen válida.";
+
+                                        $tipoMensaje =
+                                            "error";
+
+                                    } else {
+
+
+                                        /* =================================================
+                                           COMPROBAR MIME REAL
+                                           ================================================= */
+
+                                        $mimePermitidos = [
+
+                                            'image/jpeg',
+                                            'image/png',
+                                            'image/gif'
+
+                                        ];
+
+
+                                        if (
+                                            !in_array(
+                                                $informacionImagen['mime'],
+                                                $mimePermitidos,
+                                                true
+                                            )
+                                        ) {
+
+                                            $mensaje =
+                                                "El producto se actualizó, pero el tipo de imagen no está permitido.";
+
+                                            $tipoMensaje =
+                                                "error";
+
+                                        } else {
+
+
+                                            /* =================================================
+                                               CARPETA DE IMÁGENES
+                                               ================================================= */
+
+                                            $directorio =
+                                                "../PRODUCTO-img/";
+
+
+                                            if (
+                                                !is_dir(
+                                                    $directorio
+                                                )
+                                            ) {
+
+                                                mkdir(
+                                                    $directorio,
+                                                    0755,
+                                                    true
+                                                );
+                                            }
+
+
+                                            /* =================================================
+                                               NOMBRE BASE
+                                               ================================================= */
+
+                                            $nombreBase =
+                                                "p-" . $codigo;
+
+
+                                            /* =================================================
+                                               BUSCAR IMAGEN ANTERIOR
+                                               ================================================= */
+
+                                            $extensionesAnteriores = [
+
+                                                'jpg',
+                                                'jpeg',
+                                                'png',
+                                                'gif'
+
+                                            ];
+
+
+                                            foreach (
+                                                $extensionesAnteriores
+                                                as $extensionAnterior
+                                            ) {
+
+                                                $imagenAnterior =
+                                                    $directorio
+                                                    .
+                                                    $nombreBase
+                                                    .
+                                                    "."
+                                                    .
+                                                    $extensionAnterior;
+
+
+                                                if (
+                                                    file_exists(
+                                                        $imagenAnterior
+                                                    )
+                                                ) {
+
+                                                    unlink(
+                                                        $imagenAnterior
+                                                    );
+                                                }
+                                            }
+
+
+                                            /* =================================================
+                                               GENERAR NUEVO NOMBRE
+                                               ================================================= */
+
+                                            $nuevoNombre =
+                                                $directorio
+                                                .
+                                                $nombreBase
+                                                .
+                                                "."
+                                                .
+                                                $extension;
+
+
+                                            /* =================================================
+                                               MOVER IMAGEN
+                                               ================================================= */
+
+                                            if (
+                                                move_uploaded_file(
+                                                    $tmp,
+                                                    $nuevoNombre
+                                                )
+                                            ) {
+
+                                                $mensaje =
+                                                    "¡Producto e imagen actualizados correctamente!";
+
+                                                $tipoMensaje =
+                                                    "exito";
+
+                                            } else {
+
+                                                $mensaje =
+                                                    "El producto se actualizó, pero no se pudo guardar la nueva imagen.";
+
+                                                $tipoMensaje =
+                                                    "error";
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
+                    } else {
+
+
+                        /* =================================================
+                           NO SE CAMBIÓ LA IMAGEN
+                           ================================================= */
+
+                        $mensaje =
+                            "¡Producto actualizado correctamente! La imagen anterior se conservó.";
+
+                        $tipoMensaje =
+                            "exito";
                     }
 
+
+                } else {
+
+
+                    /* =================================================
+                       ERROR EN LA ACTUALIZACIÓN
+                       ================================================= */
+
+                    $mensaje =
+                        "No se pudo actualizar el producto.";
+
+                    $tipoMensaje =
+                        "error";
                 }
 
 
-            } else {
-
-
-                /* =========================================
-                   NO SE CAMBIÓ LA IMAGEN
-                   ========================================= */
-
-                $mensaje =
-                    "¡Producto actualizado correctamente! La imagen anterior se conservó.";
-
-                $tipoMensaje =
-                    "exito";
-
+                $stmt->close();
             }
-
-
-        } else {
-
-
-            /* =============================================
-               ERROR EN LA ACTUALIZACIÓN
-               ============================================= */
-
-            $mensaje =
-                "ERROR AL ACTUALIZAR EL PRODUCTO: "
-                .
-                $conn->error;
-
-            $tipoMensaje =
-                "error";
-
         }
-
     }
-
 }
 
 ?>
@@ -407,22 +508,17 @@ if (!$conn->connect_error) {
 
 <html lang="es">
 
-
 <head>
 
 <meta charset="UTF-8">
-
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1"
 >
 
-
 <title>
-
     Producto Modificado - DIVINE
-
 </title>
 
 
@@ -430,6 +526,7 @@ if (!$conn->connect_error) {
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap"
     rel="stylesheet"
 />
+
 
 <style>
 
@@ -443,16 +540,23 @@ if (!$conn->connect_error) {
     box-sizing:border-box;
 }
 
+
 body{
+
     font-family:'Segoe UI',sans-serif;
+
     background:#f8eef0;
+
     color:#333;
 
     display:flex;
+
     justify-content:center;
+
     align-items:center;
 
     min-height:100vh;
+
     padding:40px 20px;
 }
 
@@ -462,7 +566,9 @@ body{
 ========================= */
 
 .contenedor{
+
     width:85%;
+
     max-width:750px;
 
     background:white;
@@ -471,13 +577,16 @@ body{
 
     border-radius:30px;
 
-    box-shadow:0 20px 40px rgba(0,0,0,.10);
+    box-shadow:
+        0 20px 40px
+        rgba(0,0,0,.10);
 
     display:grid;
 
     grid-template-columns:1fr;
 
     grid-template-areas:
+
         "encabezado"
         "contenido"
         "botones";
@@ -486,7 +595,20 @@ body{
 
     text-align:center;
 
-    animation:contenedorEntrada 1s ease-out;
+    animation:
+        contenedorEntrada
+        1s
+        ease-out;
+
+    transition:.4s ease;
+}
+
+
+.contenedor:hover{
+
+    box-shadow:
+        0 25px 50px
+        rgba(0,0,0,.13);
 }
 
 
@@ -495,6 +617,7 @@ body{
 ========================= */
 
 .encabezado{
+
     grid-area:encabezado;
 
     font-family:Georgia,serif;
@@ -511,7 +634,9 @@ body{
 
     padding-bottom:20px;
 
-    border-bottom:3px solid #d89aa7;
+    border-bottom:
+        3px solid
+        #d89aa7;
 }
 
 
@@ -520,6 +645,7 @@ body{
 ========================= */
 
 .contenido{
+
     grid-area:contenido;
 
     background:#f8eef0;
@@ -528,9 +654,13 @@ body{
 
     border-radius:25px;
 
-    border-left:8px solid #d89aa7;
+    border-left:
+        8px solid
+        #d89aa7;
 
-    box-shadow:0 12px 25px rgba(0,0,0,.08);
+    box-shadow:
+        0 12px 25px
+        rgba(0,0,0,.08);
 
     font-size:18px;
 
@@ -538,7 +668,10 @@ body{
 
     color:#666;
 
-    animation:contenidoEntrada .8s ease-out;
+    animation:
+        contenidoEntrada
+        .8s
+        ease-out;
 }
 
 
@@ -547,6 +680,7 @@ body{
 ========================= */
 
 .mensaje{
+
     padding:25px;
 
     border-radius:20px;
@@ -557,22 +691,29 @@ body{
 
     line-height:1.7;
 
-    box-shadow:0 8px 20px rgba(0,0,0,.10);
+    box-shadow:
+        0 8px 20px
+        rgba(0,0,0,.10);
 
-    animation:mensajeEntrada .7s ease-out;
+    animation:
+        mensajeEntrada
+        .7s
+        ease-out;
 }
 
 
 /* =========================
-   MENSAJE DE ÉXITO
+   ÉXITO
 ========================= */
 
 .exito{
-    background:linear-gradient(
-        135deg,
-        #ebbcc6,
-        #c7909d
-    );
+
+    background:
+        linear-gradient(
+            135deg,
+            #ebbcc6,
+            #c7909d
+        );
 
     color:white;
 
@@ -583,10 +724,11 @@ body{
 
 
 /* =========================
-   MENSAJE DE ERROR
+   ERROR
 ========================= */
 
 .error{
+
     background:#b45d72;
 
     color:white;
@@ -602,6 +744,7 @@ body{
 ========================= */
 
 .botones{
+
     grid-area:botones;
 
     display:flex;
@@ -617,10 +760,11 @@ body{
 
 
 /* =========================
-   BOTÓN DIVINE
+   BOTÓN
 ========================= */
 
 .boton{
+
     display:inline-flex;
 
     align-items:center;
@@ -649,14 +793,12 @@ body{
 }
 
 
-/* =========================
-   HOVER BOTÓN
-========================= */
-
 .boton:hover{
+
     background:#b45d72;
 
-    transform:translateY(-3px);
+    transform:
+        translateY(-3px);
 
     box-shadow:
         0 12px 25px
@@ -671,60 +813,60 @@ body{
 @keyframes contenedorEntrada{
 
     from{
+
         opacity:0;
-        transform:scale(1.04);
+
+        transform:
+            scale(1.04);
     }
 
     to{
-        opacity:1;
-        transform:scale(1);
-    }
 
+        opacity:1;
+
+        transform:
+            scale(1);
+    }
 }
 
 
 @keyframes contenidoEntrada{
 
     from{
+
         opacity:0;
-        transform:translateY(35px);
+
+        transform:
+            translateY(35px);
     }
 
     to{
-        opacity:1;
-        transform:translateY(0);
-    }
 
+        opacity:1;
+
+        transform:
+            translateY(0);
+    }
 }
 
 
 @keyframes mensajeEntrada{
 
     from{
+
         opacity:0;
-        transform:translateY(20px);
+
+        transform:
+            translateY(20px);
     }
 
     to{
+
         opacity:1;
-        transform:translateY(0);
+
+        transform:
+            translateY(0);
     }
-
-}
-
-
-/* =========================
-   EFECTO SUAVE DEL CONTENEDOR
-========================= */
-
-.contenedor{
-    transition:.4s ease;
-}
-
-.contenedor:hover{
-    box-shadow:
-        0 25px 50px
-        rgba(0,0,0,.13);
 }
 
 
@@ -735,30 +877,38 @@ body{
 @media(max-width:900px){
 
     .contenedor{
+
         width:90%;
+
         padding:40px 30px;
     }
-
 }
 
 
 @media(max-width:600px){
 
     body{
-        padding:20px 15px;
+
+        padding:
+            20px 15px;
     }
 
+
     .contenedor{
+
         width:100%;
 
-        padding:30px 20px;
+        padding:
+            30px 20px;
 
         border-radius:25px;
 
         gap:25px;
     }
 
+
     .encabezado{
+
         font-size:30px;
 
         letter-spacing:3px;
@@ -766,33 +916,45 @@ body{
         padding-bottom:15px;
     }
 
+
     .contenido{
-        padding:25px 20px;
+
+        padding:
+            25px 20px;
 
         font-size:16px;
     }
+
 
     .mensaje{
-        padding:20px 15px;
+
+        padding:
+            20px 15px;
 
         font-size:16px;
     }
 
+
     .botones{
+
         flex-direction:column;
 
         width:100%;
     }
 
+
     .boton{
+
         width:100%;
 
-        padding:14px 20px;
+        padding:
+            14px 20px;
     }
 
 }
 
 </style>
+
 </head>
 
 
@@ -802,9 +964,9 @@ body{
 <div class="contenedor">
 
 
-    <!-- =================================================
+    <!-- =========================
          ENCABEZADO
-         ================================================= -->
+    ========================== -->
 
     <div class="encabezado">
 
@@ -813,32 +975,32 @@ body{
     </div>
 
 
-    <!-- =================================================
-         MENSAJE
-         ================================================= -->
+    <!-- =========================
+         CONTENIDO
+    ========================== -->
 
     <div class="contenido">
 
 
         <?php
 
-        if (
-            $mensaje !== ''
-        ) {
+        if ($mensaje !== '') {
 
         ?>
 
             <div
                 class="mensaje <?php
-                    echo $tipoMensaje;
+                    echo htmlspecialchars(
+                        $tipoMensaje,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
                 ?>"
             >
 
                 <?php
 
-                if (
-                    $tipoMensaje === "exito"
-                ) {
+                if ($tipoMensaje === "exito") {
 
                     echo "✔ ";
 
@@ -850,7 +1012,9 @@ body{
 
 
                 echo htmlspecialchars(
-                    $mensaje
+                    $mensaje,
+                    ENT_QUOTES,
+                    'UTF-8'
                 );
 
                 ?>
@@ -867,9 +1031,9 @@ body{
     </div>
 
 
-    <!-- =================================================
+    <!-- =========================
          BOTONES
-         ================================================= -->
+    ========================== -->
 
     <div class="botones">
 

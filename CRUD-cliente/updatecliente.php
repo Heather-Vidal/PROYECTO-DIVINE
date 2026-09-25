@@ -173,7 +173,7 @@ if ($conn->query($sql)=== TRUE){
     </div>
 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
+      <a href="../admin.php" class="boton">⬅ Volver al inicio</a>
       <a href="readtodocliente.php" class="boton">Ver clientes ➡</a>
     </div>
 
