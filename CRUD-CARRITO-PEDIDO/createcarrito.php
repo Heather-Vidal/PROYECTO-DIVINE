@@ -1,4 +1,5 @@
- <?php
+```php
+<?php
 
 $servidor = "localhost";
 $usuario = "root";
@@ -8,9 +9,15 @@ $bd = "DIVINE";
 $conn = new mysqli($servidor, $usuario, $contrasena, $bd);
 
 if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+    die("Error de conexión");
 }
 
+$conn->set_charset("utf8mb4");
+
+
+/* ==============================
+   RECIBIR Y VALIDAR DATOS
+   ============================== */
 
 $codigo = $_POST["codigo"] ?? null;
 $idpedido = $_POST["idpedido"] ?? null;
@@ -18,88 +25,152 @@ $cantidad = $_POST["cantidad"] ?? 0;
 $precio = $_POST["precio"] ?? 0;
 
 
-if(!$codigo || !$idpedido){
+/* Verificar datos obligatorios */
+
+if ($codigo === null || $idpedido === null) {
     die("Datos incompletos");
 }
 
 
-// evitar cantidad 0
-if($cantidad <= 0){
-    header("location: formcarrito.php?idPedido=".$idpedido);
-    exit();
+/* Validar que código e ID tengan el formato esperado */
+
+$codigo = trim($codigo);
+
+if ($codigo === "") {
+    die("Código de producto inválido");
+}
+
+if (!filter_var($idpedido, FILTER_VALIDATE_INT) || $idpedido <= 0) {
+    die("ID de pedido inválido");
 }
 
 
-/* Revisar si el producto ya existe EN ESTE PEDIDO */
-$check = "SELECT cantidad 
+/* Validar cantidad */
+
+if (!is_numeric($cantidad) || $cantidad <= 0) {
+    header("Location: formcarrito.php?idPedido=" . urlencode($idpedido));
+    exit();
+}
+
+$cantidad = (int)$cantidad;
+
+
+/* Validar precio */
+
+if (!is_numeric($precio) || $precio < 0) {
+    die("Precio inválido");
+}
+
+$precio = (float)$precio;
+
+
+/* ==============================
+   BUSCAR SI EL PRODUCTO YA EXISTE
+   ============================== */
+
+$check = "SELECT cantidad
           FROM CARRITO
-          WHERE PRODUCTO_codigo='$codigo'
-          AND PEDIDOS_ID='$idpedido'";
+          WHERE PRODUCTO_codigo = ?
+          AND PEDIDOS_ID = ?";
+
+$stmt = $conn->prepare($check);
+
+if (!$stmt) {
+    die("Error al preparar la consulta");
+}
+
+$stmt->bind_param("si", $codigo, $idpedido);
+$stmt->execute();
+
+$result = $stmt->get_result();
 
 
-$result = $conn->query($check);
+/* ==============================
+   SI EL PRODUCTO YA EXISTE
+   ============================== */
 
-
-
-if($result->num_rows > 0){
-
-
-    // ya existe, aumentamos cantidad
+if ($result->num_rows > 0) {
 
     $row = $result->fetch_assoc();
 
-    $nuevaCantidad = $row["cantidad"] + $cantidad;
+    $nuevaCantidad = (int)$row["cantidad"] + $cantidad;
 
     $nuevoTotal = $precio * $nuevaCantidad;
 
 
     $update = "UPDATE CARRITO
-               SET cantidad='$nuevaCantidad',
-               costototal='$nuevoTotal'
-               WHERE PRODUCTO_codigo='$codigo'
-               AND PEDIDOS_ID='$idpedido'";
+               SET cantidad = ?,
+                   costototal = ?
+               WHERE PRODUCTO_codigo = ?
+               AND PEDIDOS_ID = ?";
+
+    $stmtUpdate = $conn->prepare($update);
+
+    if (!$stmtUpdate) {
+        die("Error al preparar la actualización");
+    }
+
+    $stmtUpdate->bind_param(
+        "idsi",
+        $nuevaCantidad,
+        $nuevoTotal,
+        $codigo,
+        $idpedido
+    );
+
+    $stmtUpdate->execute();
+
+    $stmtUpdate->close();
 
 
-    $conn->query($update);
+/* ==============================
+   SI EL PRODUCTO ES NUEVO
+   ============================== */
 
-
-
-}else{
-
-
-    // producto nuevo en este pedido
+} else {
 
     $total = $precio * $cantidad;
 
 
     $sql = "INSERT INTO CARRITO
-    (
-        PRODUCTO_codigo,
-        PEDIDOS_ID,
-        cantidad,
-        costototal
-    )
-    VALUES
-    (
-        '$codigo',
-        '$idpedido',
-        '$cantidad',
-        '$total'
-    )";
+            (
+                PRODUCTO_codigo,
+                PEDIDOS_ID,
+                cantidad,
+                costototal
+            )
+            VALUES
+            (?, ?, ?, ?)";
 
+    $stmtInsert = $conn->prepare($sql);
 
-    $conn->query($sql);
+    if (!$stmtInsert) {
+        die("Error al preparar el registro");
+    }
 
+    $stmtInsert->bind_param(
+        "siid",
+        $codigo,
+        $idpedido,
+        $cantidad,
+        $total
+    );
+
+    $stmtInsert->execute();
+
+    $stmtInsert->close();
 }
 
 
+/* ==============================
+   CERRAR Y REDIRIGIR
+   ============================== */
 
- header("Location: formcarrito.php?idPedido=".$idpedido);
- 
-
-exit();
-
-
+$stmt->close();
 $conn->close();
 
+header("Location: formcarrito.php?idPedido=" . urlencode($idpedido));
+exit();
+
 ?>
+```
