@@ -257,33 +257,49 @@ type="button"
 on
 class="btn-crear"
 onclick="window.location.href='../CRUD-cliente/formcliente.php'">
+
 Crear cuenta
 </button>
+
 </div>
+
 </form>
+
 <script>
+
 $("#Form").validate({
+
 rules:{
+
 nombre:{
 required:true,
 minlength:4
 },
+
 CI:{
 required:true,
 minlength:6
 }
+
 },
+
 messages:{
+
 nombre:{
 required:"Ingrese su usuario",
 minlength:"Mínimo 4 caracteres"
 },
+
 CI:{
 required:"Ingrese su contraseña",
 minlength:"Mínimo 6 caracteres"
 }
+
 }
+
 });
+
 </script>
+
 </body>
 </html>

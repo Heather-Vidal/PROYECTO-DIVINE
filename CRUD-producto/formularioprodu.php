@@ -769,75 +769,138 @@ document
 ===================================================== -->
 
 <script>
+
 $(document).ready(function(){
+
     $("#formprodu").validate({
+
         rules: {
+
             nombre: {
+
                 required: true
+
             },
+
             descripcion: {
+
                 required: true
+
             },
+
             categoria: {
+
                 required: true
+
             },
+
             precio: {
+
                 required: true,
+
                 number: true
+
             },
+
             costo: {
+
                 required: true,
+
                 number: true
+
             },
+
             stock: {
+
                 required: true,
+
                 number: true
+
             },
+
             codigo: {
+
                 required: true,
+
                 number: true
+
             }
+
         },
+
+
         messages: {
+
             nombre: {
+
                 required:
                     "Ingrese el nombre del producto"
+
             },
+
             descripcion: {
+
                 required:
                     "Ingrese la descripción"
+
             },
+
             categoria: {
+
                 required:
                     "Seleccione una categoría"
+
             },
+
             precio: {
+
                 required:
-                  "Ingrese el precio",
+                    "Ingrese el precio",
+
                 number:
                     "Solo se permiten números"
+
             },
+
             costo: {
+
                 required:
                     "Ingrese el costo",
+
                 number:
                     "Solo se permiten números"
+
             },
+
             stock: {
+
                 required:
                     "Ingrese el stock",
+
                 number:
                     "Solo se permiten números"
+
             },
+
             codigo: {
+
                 required:
                     "Ingrese el código",
+
                 number:
                     "Solo se permiten números"
+
             }
+
         }
+
     });
+
 });
+
 </script>
+
+
 </body>
+
 </html>

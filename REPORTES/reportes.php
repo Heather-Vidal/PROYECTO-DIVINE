@@ -28,7 +28,7 @@ $conn->set_charset("utf8");
    ========================================================= */
 
 if (!isset($_SESSION['rol'])) {
-    header("Location: ../SESIONES/loginformcliente.php");
+    header("Location: ../SESIONES/loginform.php");
     exit();
 }
 
@@ -37,6 +37,16 @@ $nombre = isset($_SESSION['nombre']) ? $_SESSION['nombre'] : "";
 
 /* =========================================================
    CONSULTA DE VENTAS
+   =========================================================
+   IMPORTANTE:
+   - Se mantienen los nombres de las tablas y columnas del archivo:
+       VENTAS, PEDIDOS
+       v.id, v.estado, v.metodo, v.costototal, v.PEDIDOS_ID, v.fecha
+       p.ID, p.estado, p.nombrevendedor
+   - El WHERE queda SOLO con:
+       p.estado = 'Aceptado'
+   - Se ordena para que HOY aparezca primero y después
+     todas las ventas de otros días.
    ========================================================= */
 
 $sql = "
@@ -58,13 +68,17 @@ $sql = "
         v.fecha DESC,
         v.id DESC
 ";
+
 $resultado = $conn->query($sql);
+
 if (!$resultado) {
     die("Error al consultar las ventas: " . $conn->error);
 }
+
 /* =========================================================
    DATOS DE LAS VENTAS DE HOY
    ========================================================= */
+
 $sqlHoy = "
     SELECT
         COUNT(v.id) AS cantidad,
@@ -75,16 +89,21 @@ $sqlHoy = "
     WHERE p.estado = 'Aceptado'
       AND DATE(v.fecha) = CURDATE()
 ";
+
 $resultadoHoy = $conn->query($sqlHoy);
+
 if (!$resultadoHoy) {
     die("Error al calcular las ventas de hoy: " . $conn->error);
 }
+
 $filaHoy = $resultadoHoy->fetch_assoc();
 $cantidadHoy = isset($filaHoy['cantidad']) ? (int)$filaHoy['cantidad'] : 0;
 $totalHoy = isset($filaHoy['total']) ? (float)$filaHoy['total'] : 0;
+
 /* =========================================================
    TOTAL GENERAL
    ========================================================= */
+
 $sqlTotal = "
     SELECT
         COUNT(v.id) AS cantidad,
@@ -94,16 +113,21 @@ $sqlTotal = "
         ON p.ID = v.PEDIDOS_ID
     WHERE p.estado = 'Aceptado'
 ";
+
 $resultadoTotal = $conn->query($sqlTotal);
+
 if (!$resultadoTotal) {
     die("Error al calcular el total general: " . $conn->error);
 }
+
 $filaTotal = $resultadoTotal->fetch_assoc();
 $cantidadTotal = isset($filaTotal['cantidad']) ? (int)$filaTotal['cantidad'] : 0;
 $totalGeneral = isset($filaTotal['total']) ? (float)$filaTotal['total'] : 0;
+
 /* =========================================================
    TOTAL ÚLTIMOS 7 DÍAS
    ========================================================= */
+
 $sqlSemana = "
     SELECT
         COALESCE(SUM(v.costototal), 0) AS total
@@ -114,15 +138,20 @@ $sqlSemana = "
       AND DATE(v.fecha) >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
       AND DATE(v.fecha) <= CURDATE()
 ";
+
 $resultadoSemana = $conn->query($sqlSemana);
+
 if (!$resultadoSemana) {
     die("Error al calcular las ventas de los últimos 7 días: " . $conn->error);
 }
+
 $filaSemana = $resultadoSemana->fetch_assoc();
 $totalSemana = isset($filaSemana['total']) ? (float)$filaSemana['total'] : 0;
+
 /* =========================================================
    TOTAL ÚLTIMOS 30 DÍAS
    ========================================================= */
+
 $sqlMes = "
     SELECT
         COALESCE(SUM(v.costototal), 0) AS total
@@ -180,704 +209,634 @@ $anguloSemana = ($porDia + $porSemana) * 3.6;
 $anguloMes = ($porDia + $porSemana + $porMes) * 3.6;
 ?>
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ventas - DIVINE</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root {
-    --rosa-principal: #e094b0;
-    --rosa-fuerte: #d67096;
-    --rosa-oscuro: #8c3b5d;
-    --rosa-claro: #fbebf1;
-    --rosa-palido: #fff8fa;
-    --rosa-gradiente-1: #f8c2d4;
-    --rosa-gradiente-2: #eed5e1;
-    --blanco: #ffffff;
-    --texto: #4a3840;
-    --gris: #88727c;
-    --borde: #f0d5df;
-    --sombra: 0 16px 40px rgba(140, 59, 93, 0.09);
-    --sombra-hover: 0 22px 50px rgba(140, 59, 93, 0.18);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Plus Jakarta Sans', Arial, Helvetica, sans-serif;
-    min-height: 100vh;
-    background: 
-        radial-gradient(circle at 10% 10%, rgba(248, 194, 212, 0.35), transparent 45%),
-        radial-gradient(circle at 90% 80%, rgba(251, 235, 241, 0.7), transparent 45%),
-        linear-gradient(135deg, #fffafd, #fdf4f7);
-    color: var(--texto);
-    padding-bottom: 50px;
-}
-
-.contenedor {
-    width: 94%;
-    max-width: 1320px;
-    margin: 35px auto 0;
-}
-
-/* Encabezado */
-.encabezado {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    padding: 20px 30px;
-    border-radius: 24px;
-    border: 1px solid var(--borde);
-    box-shadow: var(--sombra);
-}
-
-.izquierda-cabecera {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.menu-icono {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa-principal));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 8px 20px rgba(214, 112, 150, 0.35);
-}
-
-.titulo {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--rosa-oscuro);
-    letter-spacing: -0.5px;
-}
-
-.subtitulo {
-    color: var(--gris);
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.usuario {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.usuario-info {
-    text-align: right;
-}
-
-.usuario-nombre {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--texto);
-}
-
-.usuario-rol {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--rosa-fuerte);
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
+:root{
+    --rosa:#eeb0c6;
+    --rosa-fuerte:#d985a3;
+    --rosa-oscuro:#a95676;
+    --rosa-claro:#f8dfe8;
+    --rosa-palido:#fff4f7;
+    --rosa-suave:#fdebf1;
+    --blanco:#ffffff;
+    --texto:#5d4650;
+    --gris:#8b7b81;
+    --borde:#f0d8e0;
+    --sombra:0 10px 30px rgba(169,86,118,.12);
 }
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(238,176,198,.35), transparent 25%),
+        radial-gradient(circle at 95% 10%, rgba(248,223,232,.7), transparent 25%),
+        linear-gradient(135deg,#fff8fa,#fff1f5);
+    color:var(--texto);
+}
+
+.contenedor{
+    width:94%;
+    max-width:1250px;
+    margin:32px auto 50px;
+}
+
+.encabezado{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:25px;
+}
+
+.izquierda-cabecera{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.menu-icono{
+    width:46px;
+    height:46px;
+    border-radius:14px;
+    background:linear-gradient(135deg,var(--rosa-fuerte),var(--rosa));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    box-shadow:0 7px 18px rgba(169,86,118,.2);
+}
+
+.titulo{
+    font-size:25px;
+    font-weight:800;
+    color:var(--rosa-oscuro);
+    letter-spacing:-.7px;
+}
+
+.subtitulo{
+    color:var(--gris);
+    font-size:11px;
+    margin-top:3px;
+}
+
+.usuario{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.usuario-info{
+    text-align:right;
+}
+
+.usuario-nombre{
+    font-size:11px;
+    font-weight:700;
+    color:var(--texto);
+}
+
+.usuario-rol{
+    font-size:8px;
+    color:var(--gris);
+    text-transform:uppercase;
+    margin-top:2px;
+}
+
+.avatar{
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--rosa),var(--rosa-fuerte));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:800;
+    font-size:15px;
+    box-shadow:0 6px 16px rgba(169,86,118,.18);
+}
 
-.avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--rosa-principal), var(--rosa-fuerte));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 18px;
-    box-shadow: 0 6px 16px rgba(214, 112, 150, 0.3);
-    border: 3px solid white;
+.dashboard-titulo{
+    margin-bottom:18px;
 }
 
-.dashboard-titulo {
-    margin-bottom: 28px;
+.dashboard-titulo h1{
+    font-size:21px;
+    color:var(--rosa-oscuro);
 }
 
-.dashboard-titulo h1 {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--rosa-oscuro);
-    letter-spacing: -0.6px;
-}
-
-.dashboard-titulo p {
-    font-size: 14px;
-    color: var(--gris);
-    margin-top: 6px;
-    font-weight: 500;
+.dashboard-titulo p{
+    font-size:10px;
+    color:var(--gris);
+    margin-top:5px;
 }
-
-/* Tarjetas Principales Agrandadas */
-.resumen-principal {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-bottom: 28px;
+
+.resumen-principal{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:16px;
 }
-
-.tarjeta-grande {
-    padding: 36px 32px;
-    border-radius: 28px;
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: var(--sombra);
-    position: relative;
-    overflow: hidden;
-    transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.tarjeta-grande:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--sombra-hover);
-}
-
-.tarjeta-grande::after {
-    content: "";
-    position: absolute;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    right: -40px;
-    bottom: -60px;
-    background: rgba(255, 255, 255, 0.22);
-    pointer-events: none;
-}
 
-.tarjeta-hoy {
-    background: linear-gradient(135deg, #f7b1c8, #e08ea8);
+.tarjeta-grande{
+    padding:21px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.9);
+    box-shadow:var(--sombra);
+    position:relative;
+    overflow:hidden;
 }
 
-.tarjeta-general {
-    background: linear-gradient(135deg, #e4c4d4, #c988a3);
-}
+.tarjeta-grande::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    right:-35px;
+    bottom:-55px;
+    background:rgba(255,255,255,.3);
+}
 
-.etiqueta-grande {
-    font-size: 12px;
-    font-weight: 800;
-    color: #5c1e34;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+.tarjeta-hoy{
+    background:linear-gradient(135deg,#f6c4d5,#efb0c7);
 }
 
-.monto-grande {
-    font-size: 42px;
-    font-weight: 800;
-    color: #4a1327;
-    margin: 14px 0 8px;
-    letter-spacing: -1.2px;
+.tarjeta-general{
+    background:linear-gradient(135deg,#f9dfe8,#f3c7d6);
 }
 
-.cantidad-grande {
-    font-size: 14px;
-    color: #5c1e34;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.etiqueta-grande{
+    font-size:10px;
+    font-weight:800;
+    color:#8e4e68;
+    letter-spacing:.6px;
 }
 
-.detalle-grande {
-    font-size: 12px;
-    color: #6e2a44;
-    margin-top: 14px;
-    font-weight: 500;
-    line-height: 1.4;
+.monto-grande{
+    font-size:29px;
+    font-weight:800;
+    color:#873e5c;
+    margin:10px 0 6px;
 }
 
-/* Grid de Estadísticas Agrandado */
-.estadisticas {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 28px;
+.cantidad-grande{
+    font-size:10px;
+    color:#96556f;
+    font-weight:700;
 }
 
-.card {
-    padding: 28px 24px;
-    border-radius: 24px;
-    background: white;
-    border: 1px solid var(--borde);
-    box-shadow: var(--sombra);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-    min-height: 150px;
+.detalle-grande{
+    font-size:9px;
+    color:#a16b80;
+    margin-top:7px;
 }
 
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--sombra-hover);
-    border-color: var(--rosa-principal);
+.estadisticas{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
+    margin-bottom:16px;
 }
 
-.card-arriba {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+.card{
+    min-height:125px;
+    padding:16px;
+    border-radius:18px;
+    background:white;
+    border:1px solid var(--borde);
+    box-shadow:var(--sombra);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    transition:.25s ease;
 }
 
-.card-icono {
-    width: 44px;
-    height: 44px;
-    border-radius: 14px;
-    background: var(--rosa-claro);
-    color: var(--rosa-oscuro);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: 800;
+.card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 30px rgba(169,86,118,.16);
 }
 
-.card-menu {
-    color: #c7aab5;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.card-titulo {
-    font-size: 13px;
-    color: var(--gris);
-    font-weight: 600;
+.card-arriba{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.card-valor {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--rosa-oscuro);
-    margin-top: 6px;
-    letter-spacing: -0.5px;
+.card-icono{
+    width:29px;
+    height:29px;
+    border-radius:9px;
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:800;
 }
 
-.card-cambio {
-    font-size: 12px;
-    color: #9a7d88;
-    margin-top: 6px;
-    font-weight: 500;
+.card-menu{
+    color:#c7aab5;
+    font-size:12px;
 }
 
-/* Gráficos Agrandados */
-.graficas {
-    display: grid;
-    grid-template-columns: 1fr 1.15fr;
-    gap: 24px;
-    margin-bottom: 28px;
+.card-titulo{
+    margin-top:8px;
+    font-size:9px;
+    color:var(--gris);
+    font-weight:700;
 }
 
-.panel {
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid var(--borde);
-    border-radius: 26px;
-    padding: 28px;
-    box-shadow: var(--sombra);
+.card-valor{
+    font-size:21px;
+    font-weight:800;
+    color:var(--rosa-oscuro);
 }
 
-.panel-cabecera {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.card-cambio{
+    font-size:8px;
+    color:#aa8793;
+    margin-top:3px;
 }
 
-.panel-titulo {
-    color: var(--rosa-oscuro);
-    font-size: 17px;
-    font-weight: 800;
+.graficas{
+    display:grid;
+    grid-template-columns:1fr 1.15fr;
+    gap:16px;
+    margin-bottom:16px;
 }
 
-.panel-subtitulo {
-    font-size: 12px;
-    color: var(--gris);
-    margin-top: 3px;
-    font-weight: 500;
+.panel{
+    background:rgba(255,255,255,.9);
+    border:1px solid var(--borde);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:var(--sombra);
 }
 
-.filtro {
-    background: var(--rosa-claro);
-    border: 1px solid var(--borde);
-    padding: 6px 14px;
-    border-radius: 20px;
-    color: var(--rosa-oscuro);
-    font-size: 12px;
-    font-weight: 700;
+.panel-cabecera{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
 }
-
-.donut-contenedor {
-    min-height: 230px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 36px;
-    padding: 10px 0;
+
+.panel-titulo{
+    color:var(--rosa-oscuro);
+    font-size:13px;
+    font-weight:800;
 }
 
-.donut {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 24px rgba(140, 59, 93, 0.12);
-    transition: transform 0.3s ease;
+.panel-subtitulo{
+    font-size:8px;
+    color:var(--gris);
+    margin-top:3px;
 }
 
-.donut:hover {
-    transform: scale(1.04);
+.filtro{
+    background:var(--rosa-palido);
+    border:1px solid var(--borde);
+    padding:7px 10px;
+    border-radius:9px;
+    color:var(--rosa-oscuro);
+    font-size:8px;
 }
 
-.donut::before {
-    content: "";
-    width: 114px;
-    height: 114px;
-    border-radius: 50%;
-    background: white;
-    position: absolute;
+.donut-contenedor{
+    min-height:205px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:25px;
 }
 
-.donut-centro {
-    position: relative;
-    z-index: 2;
-    text-align: center;
+.donut{
+    width:165px;
+    height:165px;
+    border-radius:50%;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 8px 20px rgba(169,86,118,.12);
 }
 
-.donut-centro small {
-    display: block;
-    font-size: 11px;
-    color: var(--gris);
-    font-weight: 600;
-    text-transform: uppercase;
+.donut::before{
+    content:"";
+    width:105px;
+    height:105px;
+    border-radius:50%;
+    background:white;
+    position:absolute;
 }
 
-.donut-centro strong {
-    display: block;
-    font-size: 18px;
-    color: var(--rosa-oscuro);
-    font-weight: 800;
-    margin-top: 2px;
+.donut-centro{
+    position:relative;
+    z-index:2;
+    text-align:center;
 }
 
-.leyenda {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.donut-centro small{
+    display:block;
+    font-size:8px;
+    color:var(--gris);
 }
 
-.leyenda-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--texto);
-    font-weight: 600;
+.donut-centro strong{
+    display:block;
+    font-size:17px;
+    color:var(--rosa-oscuro);
+    margin-top:3px;
 }
 
-.punto {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
+.leyenda{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
 }
 
-.punto.rosa1 { background: #d67096; }
-.punto.rosa2 { background: #e094b0; }
-.punto.rosa3 { background: #f3c9d8; }
-.punto.rosa4 { background: #aa5073; }
+.leyenda-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:8px;
+    color:var(--gris);
+}
 
-.grafico-barras {
-    height: 230px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    gap: 18px;
-    padding: 20px 10px 0;
+.punto{
+    width:8px;
+    height:8px;
+    border-radius:50%;
 }
+
+.punto.rosa1{background:#d985a3}
+.punto.rosa2{background:#efb0c7}
+.punto.rosa3{background:#f3c9d8}
+.punto.rosa4{background:#c56f91}
 
-.columna {
-    height: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
+.grafico-barras{
+    height:220px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-around;
+    gap:15px;
+    padding:10px 5px 0;
 }
 
-.valor-barra {
-    font-size: 11px;
-    color: var(--rosa-oscuro);
-    font-weight: 700;
-    white-space: nowrap;
+.columna{
+    height:100%;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    align-items:center;
+    gap:7px;
 }
 
-.barrita {
-    width: 44px;
-    max-width: 85%;
-    border-radius: 10px 10px 4px 4px;
-    min-height: 10px;
-    animation: subir 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-    transition: opacity 0.2s ease;
+.valor-barra{
+    font-size:7px;
+    color:var(--gris);
+    white-space:nowrap;
 }
 
-.barrita:hover {
-    opacity: 0.85;
+.barrita{
+    width:42px;
+    max-width:80%;
+    border-radius:12px 12px 5px 5px;
+    min-height:8px;
+    animation:subir .8s ease both;
 }
 
-.barrita.rosa1 { background: #f3b0c3; }
-.barrita.rosa2 { background: #e08ea8; }
-.barrita.rosa3 { background: #d67096; }
-.barrita.rosa4 { background: #b04e73; }
+.barrita.rosa1{background:#efc4d3}
+.barrita.rosa2{background:#d99ab1}
+.barrita.rosa3{background:#efb0c7}
+.barrita.rosa4{background:#c97d99}
+
+.nombre-barra{
+    font-size:8px;
+    color:var(--gris);
+}
 
-.nombre-barra {
-    font-size: 12px;
-    color: var(--gris);
-    font-weight: 600;
+@keyframes subir{
+    from{transform:scaleY(0);transform-origin:bottom}
+    to{transform:scaleY(1);transform-origin:bottom}
 }
 
-@keyframes subir {
-    from { transform: scaleY(0); transform-origin: bottom; }
-    to { transform: scaleY(1); transform-origin: bottom; }
+.contenedor-tabla{
+    background:white;
+    border:1px solid var(--borde);
+    border-radius:22px;
+    padding:21px;
+    box-shadow:var(--sombra);
+    overflow-x:auto;
 }
 
-/* Tabla de Ventas */
-.contenedor-tabla {
-    background: white;
-    border: 1px solid var(--borde);
-    border-radius: 26px;
-    padding: 28px;
-    box-shadow: var(--sombra);
-    overflow-x: auto;
+.titulo-tabla{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
 }
 
-.titulo-tabla {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 22px;
+.titulo-tabla h2{
+    color:var(--rosa-oscuro);
+    font-size:19px;
 }
 
-.titulo-tabla h2 {
-    color: var(--rosa-oscuro);
-    font-size: 20px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.registros{
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:8px;
+    font-weight:800;
 }
 
-.registros {
-    background: var(--rosa-claro);
-    color: var(--rosa-oscuro);
-    padding: 7px 16px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
+table{
+    width:100%;
+    min-width:720px;
+    border-collapse:collapse;
 }
 
-table {
-    width: 100%;
-    min-width: 700px;
-    border-collapse: separate;
-    border-spacing: 0;
+th{
+    text-align:center;
+    padding:12px 10px;
+    color:#a48b95;
+    font-size:8px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    border-bottom:1px solid var(--borde);
+    background:#fffafd;
 }
 
-th {
-    text-align: center;
-    padding: 16px 14px;
-    color: var(--gris);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 700;
-    border-bottom: 2px solid var(--rosa-claro);
-    background: #fffcfd;
+td{
+    padding:13px 10px;
+    text-align:center;
+    border-bottom:1px solid #f7e8ed;
+    font-size:11px;
+    color:#6c5961;
 }
 
-td {
-    padding: 16px 14px;
-    text-align: center;
-    border-bottom: 1px solid #f9ebf0;
-    font-size: 14px;
-    color: var(--texto);
-    font-weight: 500;
+tbody tr{
+    transition:.2s ease;
 }
 
-tbody tr {
-    transition: background-color 0.2s ease;
+tbody tr:hover{
+    background:var(--rosa-palido);
 }
 
-tbody tr:not(.separador-ventas):hover {
-    background-color: var(--rosa-palido);
+.venta-hoy{
+    background:rgba(253,235,241,.65);
 }
 
-.venta-hoy {
-    background-color: rgba(251, 235, 241, 0.45);
+.venta-hoy td{
+    border-bottom:1px solid var(--rosa-claro);
 }
 
-td:first-child strong {
-    color: var(--rosa-oscuro);
+td:first-child{
+    color:var(--rosa-oscuro);
+    font-weight:800;
 }
 
-.precio {
-    color: var(--rosa-oscuro) !important;
-    font-weight: 800 !important;
-    font-size: 15px !important;
+.precio{
+    color:var(--rosa-oscuro)!important;
+    font-weight:800;
 }
 
-.estado {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 20px;
-    background: #fbebf1;
-    color: #b04e73;
-    font-size: 12px;
-    font-weight: 700;
+.estado{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:6px 10px;
+    border-radius:20px;
+    background:#f7e0e8;
+    color:#a65374;
+    font-size:8px;
+    font-weight:800;
 }
 
-.estado::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--rosa-fuerte);
+.estado::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#d985a3;
 }
 
-.separador-ventas td {
-    padding: 0;
-    border: none;
-    background: transparent;
+.separador-ventas td{
+    padding:0;
+    border:none;
+    background:white;
 }
 
-.separador-hoy-contenido {
-    margin: 22px 0 12px;
-    padding: 14px 20px;
-    text-align: left;
-    background: linear-gradient(90deg, var(--rosa-claro), white);
-    border-left: 5px solid var(--rosa-fuerte);
-    border-radius: 12px;
-    color: var(--rosa-oscuro);
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+.separador-hoy-contenido{
+    margin:23px 0 12px;
+    padding:13px 16px;
+    text-align:left;
+    background:linear-gradient(90deg,var(--rosa-claro),#fff);
+    border-left:6px solid var(--rosa-fuerte);
+    border-radius:13px;
+    color:var(--rosa-oscuro);
+    font-size:15px;
+    font-weight:800;
+    letter-spacing:.7px;
 }
 
-.separador-anteriores-contenido {
-    margin: 26px 0 12px;
-    padding: 14px 20px;
-    text-align: left;
-    background: linear-gradient(90deg, #f7edf2, white);
-    border-left: 5px solid #b88699;
-    border-radius: 12px;
-    color: #7d5464;
-    font-size: 14px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+.separador-anteriores-contenido{
+    margin:28px 0 12px;
+    padding:13px 16px;
+    text-align:left;
+    background:linear-gradient(90deg,#fff0f4,#fff);
+    border-left:6px solid #c98aa0;
+    border-radius:13px;
+    color:#8c6070;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.5px;
 }
 
-.indicador-hoy {
-    display: inline-block;
-    margin-top: 4px;
-    padding: 3px 10px;
-    border-radius: 12px;
-    background: var(--rosa-fuerte);
-    color: white;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
+.indicador-hoy{
+    display:inline-block;
+    margin-top:5px;
+    padding:4px 9px;
+    border-radius:15px;
+    background:var(--rosa-claro);
+    color:var(--rosa-oscuro);
+    font-size:8px;
+    font-weight:800;
 }
 
-.sin-ventas {
-    padding: 60px 20px;
-    text-align: center;
-    color: var(--gris);
+.sin-ventas{
+    padding:55px 20px;
+    text-align:center;
+    color:var(--gris);
 }
 
-.sin-ventas .emoji {
-    font-size: 48px;
-    margin-bottom: 14px;
+.sin-ventas .emoji{
+    font-size:45px;
+    margin-bottom:10px;
 }
 
-.sin-ventas h3 {
-    color: var(--rosa-oscuro);
-    margin-bottom: 6px;
-    font-weight: 700;
+.sin-ventas h3{
+    color:var(--rosa-oscuro);
+    margin-bottom:7px;
 }
 
-.volver {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 24px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, var(--rosa-fuerte), var(--rosa-oscuro));
-    color: white;
-    text-decoration: none;
-    border-radius: 16px;
-    font-weight: 700;
-    font-size: 13px;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 16px rgba(140, 59, 93, 0.25);
+.volver{
+    display:inline-block;
+    margin-top:18px;
+    padding:11px 23px;
+    background:linear-gradient(135deg,var(--rosa-fuerte),var(--rosa-oscuro));
+    color:white;
+    text-decoration:none;
+    border-radius:20px;
+    font-weight:800;
+    font-size:10px;
+    transition:.25s;
 }
 
-.volver:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(140, 59, 93, 0.35);
+.volver:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(169,86,118,.22);
 }
 
-/* Responsivo */
-@media(max-width: 950px) {
-    .estadisticas { grid-template-columns: 1fr 1fr; }
-    .graficas { grid-template-columns: 1fr; }
+@media(max-width:950px){
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .graficas{grid-template-columns:1fr}
 }
 
-@media(max-width: 650px) {
-    .contenedor { width: 94%; margin-top: 20px; }
-    .usuario-info { display: none; }
-    .titulo { font-size: 20px; }
-    .resumen-principal { grid-template-columns: 1fr; }
-    .estadisticas { grid-template-columns: 1fr 1fr; }
-    .donut-contenedor { flex-direction: column; gap: 24px; }
-    .leyenda { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+@media(max-width:650px){
+    .contenedor{width:94%;margin-top:20px}
+    .usuario-info{display:none}
+    .titulo{font-size:20px}
+    .resumen-principal{grid-template-columns:1fr}
+    .estadisticas{grid-template-columns:1fr 1fr}
+    .donut-contenedor{flex-direction:column;gap:15px}
+    .leyenda{flex-direction:row;flex-wrap:wrap;justify-content:center}
 }
 
-@media(max-width: 420px) {
-    .estadisticas { grid-template-columns: 1fr; }
-    .avatar { width: 40px; height: 40px; }
+@media(max-width:400px){
+    .estadisticas{grid-template-columns:1fr}
+    .avatar{width:37px;height:37px}
 }
 </style>
 </head>
 
 <body>
-    <?php include '../menus.php'; ?>
-
 <div class="contenedor">
 
     <div class="encabezado">
@@ -907,19 +866,19 @@ td:first-child strong {
 
     <section class="resumen-principal">
         <div class="tarjeta-grande tarjeta-hoy">
-            <div class="etiqueta-grande"> VENTAS DE HOY </div>
+            <div class="etiqueta-grande">✨ VENTAS DE HOY ✨</div>
             <div class="monto-grande">Bs <?= number_format($totalHoy, 2) ?></div>
             <div class="cantidad-grande">
-                <span>💗</span> <?= $cantidadHoy ?> <?= $cantidadHoy == 1 ? 'VENTA HOY' : 'VENTAS HOY' ?>
+                💗 <?= $cantidadHoy ?> <?= $cantidadHoy == 1 ? 'VENTA HOY' : 'VENTAS HOY' ?>
             </div>
             <div class="detalle-grande">Pedidos cuyo estado es "Aceptado" y cuya venta corresponde a hoy.</div>
         </div>
 
         <div class="tarjeta-grande tarjeta-general">
-            <div class="etiqueta-grande"> TOTAL DE VENTAS</div>
+            <div class="etiqueta-grande">📊 TOTAL DE VENTAS</div>
             <div class="monto-grande">Bs <?= number_format($totalGeneral, 2) ?></div>
             <div class="cantidad-grande">
-                <span>✨</span> <?= $cantidadTotal ?> <?= $cantidadTotal == 1 ? 'VENTA REGISTRADA' : 'VENTAS REGISTRADAS' ?>
+                ✨ <?= $cantidadTotal ?> <?= $cantidadTotal == 1 ? 'VENTA REGISTRADA' : 'VENTAS REGISTRADAS' ?>
             </div>
             <div class="detalle-grande">Todas las ventas relacionadas con pedidos en estado "Aceptado".</div>
         </div>
@@ -930,7 +889,7 @@ td:first-child strong {
             <div>
                 <div class="card-arriba">
                     <div class="card-icono">♡</div>
-
+                    <div class="card-menu">•••</div>
                 </div>
                 <div class="card-titulo">Ventas de hoy</div>
             </div>
@@ -944,7 +903,7 @@ td:first-child strong {
             <div>
                 <div class="card-arriba">
                     <div class="card-icono">7</div>
-                  
+                    <div class="card-menu">•••</div>
                 </div>
                 <div class="card-titulo">Últimos 7 días</div>
             </div>
@@ -958,7 +917,7 @@ td:first-child strong {
             <div>
                 <div class="card-arriba">
                     <div class="card-icono">30</div>
-                  
+                    <div class="card-menu">•••</div>
                 </div>
                 <div class="card-titulo">Últimos 30 días</div>
             </div>
@@ -970,7 +929,10 @@ td:first-child strong {
 
         <article class="card">
             <div>
-            
+                <div class="card-arriba">
+                    <div class="card-icono">✦</div>
+                    <div class="card-menu">•••</div>
+                </div>
                 <div class="card-titulo">Total general</div>
             </div>
             <div>
@@ -994,10 +956,10 @@ td:first-child strong {
                 <div
                     class="donut"
                     style="background:conic-gradient(
-                        #d67096 0deg <?= $anguloDia ?>deg,
-                        #e094b0 <?= $anguloDia ?>deg <?= $anguloSemana ?>deg,
+                        #d985a3 0deg <?= $anguloDia ?>deg,
+                        #efb0c7 <?= $anguloDia ?>deg <?= $anguloSemana ?>deg,
                         #f3c9d8 <?= $anguloSemana ?>deg <?= $anguloMes ?>deg,
-                        #aa5073 <?= $anguloMes ?>deg 360deg
+                        #c56f91 <?= $anguloMes ?>deg 360deg
                     );"
                 >
                     <div class="donut-centro">
@@ -1027,25 +989,25 @@ td:first-child strong {
             <div class="grafico-barras">
                 <div class="columna">
                     <div class="valor-barra">Bs <?= number_format($valorDia,0) ?></div>
-                    <div class="barrita rosa1" style="height:<?= max(10,$barraDia*1.5) ?>px;"></div>
+                    <div class="barrita rosa1" style="height:<?= max(8,$barraDia*1.55) ?>px;"></div>
                     <div class="nombre-barra">Hoy</div>
                 </div>
 
                 <div class="columna">
                     <div class="valor-barra">Bs <?= number_format($valorSemana,0) ?></div>
-                    <div class="barrita rosa2" style="height:<?= max(10,$barraSemana*1.5) ?>px;"></div>
+                    <div class="barrita rosa2" style="height:<?= max(8,$barraSemana*1.55) ?>px;"></div>
                     <div class="nombre-barra">7 días</div>
                 </div>
 
                 <div class="columna">
                     <div class="valor-barra">Bs <?= number_format($valorMes,0) ?></div>
-                    <div class="barrita rosa3" style="height:<?= max(10,$barraMes*1.5) ?>px;"></div>
+                    <div class="barrita rosa3" style="height:<?= max(8,$barraMes*1.55) ?>px;"></div>
                     <div class="nombre-barra">30 días</div>
                 </div>
 
                 <div class="columna">
                     <div class="valor-barra">Bs <?= number_format($valorTotal,0) ?></div>
-                    <div class="barrita rosa4" style="height:<?= max(10,$barraTotal*1.5) ?>px;"></div>
+                    <div class="barrita rosa4" style="height:<?= max(8,$barraTotal*1.55) ?>px;"></div>
                     <div class="nombre-barra">Total</div>
                 </div>
             </div>
@@ -1054,7 +1016,7 @@ td:first-child strong {
 
     <div class="contenedor-tabla">
         <div class="titulo-tabla">
-            <h2><span>💗</span> Ventas registradas</h2>
+            <h2>💗 Ventas registradas</h2>
             <div class="registros"><?= $totalRegistros ?> registros</div>
         </div>
 
@@ -1091,7 +1053,7 @@ td:first-child strong {
                     <tr class="separador-ventas">
                         <td colspan="6">
                             <div class="separador-hoy-contenido">
-                                VENTAS DE HOY 
+                                💗 ✨ VENTAS DE HOY ✨ 💗
                             </div>
                         </td>
                     </tr>
@@ -1102,7 +1064,7 @@ td:first-child strong {
                     <tr class="separador-ventas">
                         <td colspan="6">
                             <div class="separador-anteriores-contenido">
-                                 VENTAS DE OTROS DÍAS
+                                📋 VENTAS DE OTROS DÍAS
                             </div>
                         </td>
                     </tr>

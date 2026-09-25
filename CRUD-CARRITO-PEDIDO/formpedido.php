@@ -247,46 +247,63 @@ input[type="submit"]:hover{
 </div>
 
 <script>
+
 $(function(){
+
     $("form").validate({
+
         rules:{
+
             nombre:{
                 required:true,
                 minlength:3
             },
+
             telefono:{
                 required:true,
                 digits:true,
                 minlength:8
             },
+
             direccion:{
                 required:true,
                 minlength:5
             },
+
             fecha:{
                 required:true
             }
+
         },
+
         messages:{
+
             nombre:{
                 required:"Ingrese el nombre.",
                 minlength:"Mínimo 3 caracteres."
             },
+
             telefono:{
                 required:"Ingrese el teléfono.",
                 digits:"Solo números.",
                 minlength:"Debe tener al menos 8 dígitos."
             },
+
             direccion:{
                 required:"Ingrese la dirección.",
                 minlength:"La dirección es muy corta."
             },
+
             fecha:{
                 required:"Seleccione una fecha."
             }
+
         }
+
     });
+
 });
+
 </script>
 
 </body>

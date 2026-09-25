@@ -66,11 +66,8 @@ $sqlStock = "SELECT
                 codigo,
                 nombre,
                 stock
-
             FROM PRODUCTO
-
             WHERE stock <= 5
-
             ORDER BY stock ASC";
 
 $resultadoStock =
