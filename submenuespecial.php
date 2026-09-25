@@ -818,21 +818,22 @@ nav{
             <li>
 
                 <a href="CONSULTA-pedido/formreadpedido.php">
-                    Mis Pedidos
+                 Consulta
                 </a>
 
             </li>
 
 
-                <a href="./CONSULTA-pedido/formreadpedido.php">
+                
+            </li>
 
-                    Consulta 
+<li>
 
+                <a href="formulario.pdf">
+                   Gestión Ambiental
                 </a>
 
             </li>
-
-
         </ul>
 
 
