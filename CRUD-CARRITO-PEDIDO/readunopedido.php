@@ -61,14 +61,10 @@ $sqlProductos = "SELECT
                     PRODUCTO.precio,
                     CARRITO.cantidad,
                     CARRITO.costototal
-
                  FROM CARRITO
-
                  INNER JOIN PRODUCTO
                     ON CARRITO.PRODUCTO_codigo = PRODUCTO.codigo
-
                  WHERE CARRITO.PEDIDOS_ID = '$id_pedido'";
-
 
 $resultadoProductos = $conn->query($sqlProductos);
 
@@ -78,9 +74,7 @@ $resultadoProductos = $conn->query($sqlProductos);
 ================================================== */
 
 $totalGeneral = 0;
-
 $productos = array();
-
 
 if ($resultadoProductos) {
 
@@ -94,31 +88,20 @@ if ($resultadoProductos) {
 
 
 /* ==================================================
-   INFORMACIÓN PARA EL QR
+   INFORMACIÓN PARA EL QR DEL PEDIDO
 ================================================== */
 
 $textoQR = "DIVINE\n";
-
 $textoQR .= "DETALLE DEL PEDIDO\n";
-
 $textoQR .= "-------------------------\n";
-
 $textoQR .= "Pedido: #" . $id_pedido . "\n";
-
 $textoQR .= "Cliente: " . $pedido['nombre'] . "\n";
-
 $textoQR .= "Fecha: " . $pedido['fecha'] . "\n";
-
 $textoQR .= "Telefono: " . $pedido['telefono'] . "\n";
-
 $textoQR .= "Direccion: " . $pedido['direccion'] . "\n";
-
 $textoQR .= "Vendedor: " . $pedido['nombrevendedor'] . "\n";
-
 $textoQR .= "Estado: " . $pedido['estado'] . "\n";
-
 $textoQR .= "-------------------------\n";
-
 $textoQR .= "PRODUCTOS\n";
 
 
@@ -157,7 +140,7 @@ $textoQR .= "TOTAL: Bs. " .
 
 
 /* ==================================================
-   CREAR QR
+   CREAR QR DEL PEDIDO
 ================================================== */
 
 $qrData = rawurlencode($textoQR);
@@ -168,15 +151,7 @@ $qrURL =
 
 
 /* ==================================================
-   ==================================================
    CONTROL DEL BOTÓN SEGÚN ROL
-   ==================================================
-   
-   ADMINISTRADOR Y VENDEDOR:
-   → Ver pedidos
-   
-   CLIENTE / SESIÓN SIN ROL:
-   → Volver al perfil
 ================================================== */
 
 $rol = $_SESSION['rol'] ?? null;
@@ -203,12 +178,12 @@ $puedeVerPedidos = (
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>
-DIVINE | Detalle del Pedido
+    DIVINE | Detalle del Pedido
 </title>
 
 
@@ -221,21 +196,13 @@ DIVINE | Detalle del Pedido
 :root{
 
     --rosa:#b86f80;
-
     --rosa-claro:#d9a6b2;
-
     --rosa-palido:#f7e9ec;
-
     --crema:#fffaf8;
-
     --texto:#57494c;
-
     --gris:#817679;
-
     --borde:#e3c5cd;
-
     --vino:#8f5362;
-
     --vino-oscuro:#713d4d;
 
 }
@@ -248,9 +215,7 @@ DIVINE | Detalle del Pedido
 *{
 
     margin:0;
-
     padding:0;
-
     box-sizing:border-box;
 
 }
@@ -268,19 +233,16 @@ body{
 
     color:var(--texto);
 
-
     background:
 
     linear-gradient(
 
         rgba(255,250,248,.80),
-
         rgba(247,233,236,.92)
 
     ),
 
     url("../imagenes/fondote.png");
-
 
     background-size:cover;
 
@@ -301,27 +263,22 @@ body{
 
     padding:45px 20px 35px;
 
-
     background:
 
     linear-gradient(
 
         rgba(184,111,128,.90),
-
         rgba(143,83,98,.95)
 
     );
 
-
     color:white;
-
 
     box-shadow:
 
     0 10px 35px
 
     rgba(100,70,80,.20);
-
 
     animation:
 
@@ -652,7 +609,6 @@ body{
         135deg,
 
         #fff0f3,
-
         #f5dce2
 
     );
@@ -935,10 +891,10 @@ body{
 
 
 /* ==================================================
-   QR
+   CONTENEDOR DE LOS DOS QR
 ================================================== */
 
-.qr-seccion{
+.qr-contenedor{
 
     margin-top:40px;
 
@@ -946,13 +902,38 @@ body{
 
     border-top:1px solid var(--borde);
 
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:30px;
+
+}
+
+
+/* ==================================================
+   QR DEL PEDIDO
+================================================== */
+
+.qr-seccion{
+
     display:flex;
 
     align-items:center;
 
     justify-content:space-between;
 
-    gap:30px;
+    gap:20px;
+
+    padding:25px;
+
+    background:rgba(247,233,236,.45);
+
+    border:1px solid rgba(184,111,128,.18);
+
+    border-radius:20px;
+
+    min-height:210px;
 
 }
 
@@ -970,7 +951,7 @@ body{
 
     color:var(--vino-oscuro);
 
-    font-size:1.5rem;
+    font-size:1.35rem;
 
     font-weight:400;
 
@@ -983,20 +964,20 @@ body{
 
     color:var(--gris);
 
-    font-size:.88rem;
+    font-size:.82rem;
 
     line-height:1.7;
-
-    max-width:500px;
 
 }
 
 
 .qr-box{
 
+    flex-shrink:0;
+
     background:white;
 
-    padding:12px;
+    padding:10px;
 
     border-radius:15px;
 
@@ -1015,9 +996,105 @@ body{
 
     display:block;
 
-    width:150px;
+    width:135px;
 
-    height:150px;
+    height:135px;
+
+    object-fit:contain;
+
+}
+
+
+/* ==================================================
+   QR DE PAGO
+================================================== */
+
+.qr-pago{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:25px;
+
+    background:rgba(247,233,236,.45);
+
+    border:1px solid rgba(184,111,128,.18);
+
+    border-radius:20px;
+
+    min-height:210px;
+
+}
+
+
+.qr-pago-info{
+
+    flex:1;
+
+}
+
+
+.qr-pago-info h3{
+
+    font-family:Georgia,serif;
+
+    color:var(--vino-oscuro);
+
+    font-size:1.35rem;
+
+    font-weight:400;
+
+    margin-bottom:10px;
+
+}
+
+
+.qr-pago-info p{
+
+    color:var(--gris);
+
+    font-size:.82rem;
+
+    line-height:1.7;
+
+}
+
+
+.qr-pago-box{
+
+    flex-shrink:0;
+
+    background:white;
+
+    padding:10px;
+
+    border-radius:15px;
+
+    border:1px solid var(--borde);
+
+    box-shadow:
+
+    0 8px 25px
+
+    rgba(100,70,80,.10);
+
+}
+
+
+.qr-pago-box img{
+
+    display:block;
+
+    width:135px;
+
+    height:135px;
+
+    object-fit:contain;
 
 }
 
@@ -1252,12 +1329,30 @@ body{
 
     }
 
+
+    .qr-pago-box{
+
+        box-shadow:none;
+
+    }
+
 }
 
 
 /* ==================================================
    RESPONSIVE
 ================================================== */
+
+@media(max-width:900px){
+
+    .qr-contenedor{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
 
 @media(max-width:768px){
 
@@ -1339,7 +1434,8 @@ body{
     }
 
 
-    .qr-seccion{
+    .qr-seccion,
+    .qr-pago{
 
         flex-direction:column;
 
@@ -1348,7 +1444,8 @@ body{
     }
 
 
-    .qr-info p{
+    .qr-info p,
+    .qr-pago-info p{
 
         margin:auto;
 
@@ -1385,16 +1482,12 @@ body{
 <div class="header">
 
     <div class="header-pequeno">
-
         Comprobante de compra
-
     </div>
 
 
     <h1>
-
         DIVINE
-
     </h1>
 
 
@@ -1413,16 +1506,12 @@ body{
     <div class="encabezado">
 
         <div class="encabezado-pequeno">
-
             Detalle del pedido
-
         </div>
 
 
         <h2>
-
             Resumen de tu compra
-
         </h2>
 
 
@@ -1438,227 +1527,202 @@ body{
 <div class="documento">
 
 
-    <!-- CABECERA -->
+<!-- ==================================================
+     CABECERA DEL DOCUMENTO
+================================================== -->
 
-    <div class="documento-header">
-
-
-        <div class="marca">
-
-            DIVINE
-
-            <div class="linea-decorativa"></div>
-
-        </div>
+<div class="documento-header">
 
 
-        <div class="numero-pedido">
+    <div class="marca">
 
-            <small>
+        DIVINE
 
-                Número de pedido
-
-            </small>
-
-
-            <strong>
-
-                #
-
-                <?php
-
-                echo htmlspecialchars($id_pedido);
-
-                ?>
-
-            </strong>
-
-        </div>
-
+        <div class="linea-decorativa"></div>
 
     </div>
 
 
-    <!-- ==================================================
-         INFORMACIÓN DEL PEDIDO
-    ================================================== -->
+    <div class="numero-pedido">
 
-    <div class="informacion">
+        <small>
+            Número de pedido
+        </small>
 
 
-        <div class="dato">
+        <strong>
 
-            <div class="dato-titulo">
+            #
 
-                Cliente
+            <?php
 
-            </div>
+            echo htmlspecialchars($id_pedido);
 
+            ?>
 
-            <div class="dato-valor">
-
-                <?php
-
-                echo htmlspecialchars(
-
-                    $pedido['nombre']
-
-                );
-
-                ?>
-
-            </div>
-
-        </div>
-
-
-        <div class="dato">
-
-            <div class="dato-titulo">
-
-                Fecha
-
-            </div>
-
-
-            <div class="dato-valor">
-
-                <?php
-
-                echo htmlspecialchars(
-
-                    $pedido['fecha']
-
-                );
-
-                ?>
-
-            </div>
-
-        </div>
-
-
-        <div class="dato">
-
-            <div class="dato-titulo">
-
-                Teléfono
-
-            </div>
-
-
-            <div class="dato-valor">
-
-                <?php
-
-                echo htmlspecialchars(
-
-                    $pedido['telefono']
-
-                );
-
-                ?>
-
-            </div>
-
-        </div>
-
-
-        <div class="dato">
-
-            <div class="dato-titulo">
-
-                Dirección
-
-            </div>
-
-
-            <div class="dato-valor">
-
-                <?php
-
-                echo htmlspecialchars(
-
-                    $pedido['direccion']
-
-                );
-
-                ?>
-
-            </div>
-
-        </div>
-
-
-        <div class="dato">
-
-            <div class="dato-titulo">
-
-                Vendedor
-
-            </div>
-
-
-            <div class="dato-valor">
-
-                <?php
-
-                echo htmlspecialchars(
-
-                    $pedido['nombrevendedor']
-
-                );
-
-                ?>
-
-            </div>
-
-        </div>
-
+        </strong>
 
     </div>
 
 
-    <!-- ==================================================
-         ESTADO
-    ================================================== -->
+</div>
 
-    <div class="estado">
 
-        Estado:
+<!-- ==================================================
+     INFORMACIÓN DEL PEDIDO
+================================================== -->
 
-        <?php
+<div class="informacion">
 
-        echo htmlspecialchars(
 
-            $pedido['estado']
+    <div class="dato">
 
-        );
+        <div class="dato-titulo">
+            Cliente
+        </div>
 
-        ?>
+
+        <div class="dato-valor">
+
+            <?php
+
+            echo htmlspecialchars(
+                $pedido['nombre']
+            );
+
+            ?>
+
+        </div>
 
     </div>
 
 
-    <!-- ==================================================
-         PRODUCTOS
-    ================================================== -->
+    <div class="dato">
 
-    <div class="seccion-productos">
-
-
-        <div class="titulo-seccion">
-
-            <h3>
-
-                Productos del pedido
-
-            </h3>
+        <div class="dato-titulo">
+            Fecha
+        </div>
 
 
-            <div class="titulo-seccion-linea"></div>
+        <div class="dato-valor">
+
+            <?php
+
+            echo htmlspecialchars(
+                $pedido['fecha']
+            );
+
+            ?>
 
         </div>
+
+    </div>
+
+
+    <div class="dato">
+
+        <div class="dato-titulo">
+            Teléfono
+        </div>
+
+
+        <div class="dato-valor">
+
+            <?php
+
+            echo htmlspecialchars(
+                $pedido['telefono']
+            );
+
+            ?>
+
+        </div>
+
+    </div>
+
+
+    <div class="dato">
+
+        <div class="dato-titulo">
+            Dirección
+        </div>
+
+
+        <div class="dato-valor">
+
+            <?php
+
+            echo htmlspecialchars(
+                $pedido['direccion']
+            );
+
+            ?>
+
+        </div>
+
+    </div>
+
+
+    <div class="dato">
+
+        <div class="dato-titulo">
+            Vendedor
+        </div>
+
+
+        <div class="dato-valor">
+
+            <?php
+
+            echo htmlspecialchars(
+                $pedido['nombrevendedor']
+            );
+
+            ?>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- ==================================================
+     ESTADO
+================================================== -->
+
+<div class="estado">
+
+    Estado:
+
+    <?php
+
+    echo htmlspecialchars(
+        $pedido['estado']
+    );
+
+    ?>
+
+</div>
+
+
+<!-- ==================================================
+     PRODUCTOS
+================================================== -->
+
+<div class="seccion-productos">
+
+
+    <div class="titulo-seccion">
+
+        <h3>
+            Productos del pedido
+        </h3>
+
+        <div class="titulo-seccion-linea"></div>
+
+    </div>
 
 
 <?php
@@ -1676,30 +1740,22 @@ if (count($productos) > 0) {
         <tr>
 
             <th>
-
                 Producto
-
             </th>
 
 
             <th>
-
                 Cantidad
-
             </th>
 
 
             <th>
-
                 Precio
-
             </th>
 
 
             <th>
-
                 Subtotal
-
             </th>
 
         </tr>
@@ -1893,67 +1949,116 @@ foreach ($productos as $producto) {
 
 
 <!-- ==================================================
-     QR
+     DOS CÓDIGOS QR EN UNA MISMA CAJA
 ================================================== -->
 
-<div class="qr-seccion">
+<div class="qr-contenedor">
 
 
-    <div class="qr-info">
+    <!-- ==================================================
+         QR DEL PEDIDO
+    ================================================== -->
+
+    <div class="qr-seccion">
 
 
-        <h3>
-
-            Código QR del pedido
-
-        </h3>
+        <div class="qr-info">
 
 
-        <p>
+            <h3>
 
-            Escanea este código para
+                QR del pedido
 
-            identificar la información
-
-            principal de tu pedido DIVINE.
-
-            Este código corresponde
-
-            exclusivamente al pedido
+            </h3>
 
 
-            <strong>
+            <p>
 
-                #
+                Escanea este código para consultar
+                la información principal de tu pedido
+                DIVINE.
 
-                <?php
+                <strong>
 
-                echo htmlspecialchars(
+                    Pedido #
 
-                    $id_pedido
+                    <?php
 
-                );
+                    echo htmlspecialchars(
+                        $id_pedido
+                    );
 
-                ?>
+                    ?>
 
-            </strong>.
+                </strong>
 
-        </p>
+            </p>
+
+
+        </div>
+
+
+        <div class="qr-box">
+
+
+            <img
+
+                src="<?php echo $qrURL; ?>"
+
+                alt="QR del pedido"
+
+            >
+
+
+        </div>
 
 
     </div>
 
 
-    <div class="qr-box">
+    <!-- ==================================================
+         QR DE PAGO
+    ================================================== -->
+
+    <div class="qr-pago">
 
 
-        <img
+        <div class="qr-pago-info">
 
-            src="<?php echo $qrURL; ?>"
 
-            alt="QR del pedido"
+            <h3>
 
-        >
+                QR de pago
+
+            </h3>
+
+
+            <p>
+
+                Escanea este código QR para realizar
+                el pago correspondiente a tu pedido DIVINE.
+                Verifica el monto total antes de realizar
+                la transferencia.
+
+            </p>
+
+
+        </div>
+
+
+        <div class="qr-pago-box">
+
+
+            <img
+
+                src="../imagenes/pagoqr.jpg"
+
+                alt="QR de pago DIVINE"
+
+            >
+
+
+        </div>
 
 
     </div>
@@ -1983,6 +2088,7 @@ if ($puedeVerPedidos) {
 
 ?>
 
+
     <a
 
         href="readtodopedido.php"
@@ -2003,12 +2109,13 @@ if ($puedeVerPedidos) {
 
 /* ==================================================
    CLIENTE / SESIÓN SIN ROL
-   → VOLVER AL PERFIL
+   → VOLVER AL INICIO
 ================================================== */
 
 else {
 
 ?>
+
 
     <a
 
