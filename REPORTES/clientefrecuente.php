@@ -49,11 +49,13 @@ $conexion->close();
 
     <title>Clientes | DIVINE</title>
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -77,13 +79,11 @@ $conexion->close();
                     rgba(239, 192, 214, .45),
                     transparent 28%
                 ),
-
                 radial-gradient(
                     circle at 90% 90%,
                     rgba(213, 190, 228, .40),
                     transparent 30%
                 ),
-
                 linear-gradient(
                     135deg,
                     #fff9fc,
@@ -92,33 +92,46 @@ $conexion->close();
                 );
 
             color: #574450;
+
             padding: 45px 25px;
 
         }
 
         .dashboard {
+
             width: 100%;
+
             max-width: 1250px;
+
             margin: auto;
 
         }
+
+        /* ==========================================
+           ENCABEZADO
+        ========================================== */
+
         .encabezado {
 
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 35px;
 
         }
 
-
         .marca {
+
             display: flex;
+
             align-items: center;
+
             gap: 15px;
 
         }
-
 
         .logo {
 
@@ -129,60 +142,85 @@ $conexion->close();
             border-radius: 50%;
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
 
-            background: linear-gradient(
-                135deg,
-                #d99bb8,
-                #b981a7
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    #d99bb8,
+                    #b981a7
+                );
+
             color: white;
+
             font-family: "Playfair Display", serif;
+
             font-size: 24px;
+
             box-shadow:
-                0 8px 25px rgba(174, 117, 151, .25);
+                0 8px 25px
+                rgba(174, 117, 151, .25);
 
         }
 
-
         .marca-texto h2 {
+
             font-family: "Playfair Display", serif;
+
             font-size: 25px;
+
             color: #704f65;
+
             font-weight: 600;
 
         }
 
-
         .marca-texto span {
+
             color: #aa879f;
+
             font-size: 12px;
+
             letter-spacing: 2px;
+
             text-transform: uppercase;
 
         }
+
         .fecha {
 
             color: #a78b9f;
+
             font-size: 13px;
 
         }
 
+        /* ==========================================
+           TÍTULO
+        ========================================== */
+
         .titulo {
+
             margin-bottom: 28px;
 
         }
 
         .titulo small {
+
             color: #c28baa;
+
             text-transform: uppercase;
+
             letter-spacing: 3px;
+
             font-size: 11px;
+
             font-weight: 600;
 
         }
-
 
         .titulo h1 {
 
@@ -191,7 +229,9 @@ $conexion->close();
             font-size: clamp(38px, 5vw, 58px);
 
             line-height: 1.1;
+
             color: #66495c;
+
             margin-top: 5px;
 
         }
@@ -199,143 +239,231 @@ $conexion->close();
         .titulo p {
 
             margin-top: 10px;
+
             color: #9c8395;
+
             font-size: 14px;
 
         }
+
+        /* ==========================================
+           ESTADÍSTICAS
+        ========================================== */
+
         .estadisticas {
+
             display: grid;
+
             grid-template-columns:
                 repeat(3, 1fr);
+
             gap: 20px;
+
             margin-bottom: 25px;
 
         }
 
-
         .card {
 
             position: relative;
+
             overflow: hidden;
-            background: rgba(255,255,255,.72);
-            border: 1px solid rgba(255,255,255,.85);
+
+            background:
+                rgba(255,255,255,.72);
+
+            border:
+                1px solid rgba(255,255,255,.85);
+
             border-radius: 24px;
+
             padding: 25px;
+
             box-shadow:
-                0 15px 40px rgba(139, 93, 122, .08);
+                0 15px 40px
+                rgba(139, 93, 122, .08);
 
             backdrop-filter: blur(12px);
+
             transition: .3s ease;
 
         }
 
-
         .card:hover {
+
             transform: translateY(-4px);
+
             box-shadow:
-                0 20px 45px rgba(139, 93, 122, .13);
+                0 20px 45px
+                rgba(139, 93, 122, .13);
 
         }
 
-
         .card::after {
+
             content: "";
+
             position: absolute;
+
             width: 100px;
+
             height: 100px;
+
             border-radius: 50%;
-            background: rgba(220,170,200,.15);
+
+            background:
+                rgba(220,170,200,.15);
+
             right: -35px;
+
             top: -35px;
 
         }
 
-
         .card-icon {
+
             width: 45px;
+
             height: 45px;
+
             border-radius: 15px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             background: #f8e7f0;
+
             color: #a96f91;
+
             font-size: 20px;
+
             margin-bottom: 18px;
 
         }
 
-
         .card-label {
+
             color: #a68c9f;
+
             font-size: 12px;
+
             letter-spacing: 1px;
+
             text-transform: uppercase;
+
         }
 
         .card-value {
 
             font-family: "Playfair Display", serif;
+
             font-size: 30px;
+
             color: #694e60;
+
             margin-top: 4px;
 
         }
 
         .card-description {
+
             color: #b197a9;
+
             font-size: 11px;
+
             margin-top: 5px;
 
         }
 
+        /* ==========================================
+           CONTENIDO
+        ========================================== */
+
         .contenido {
+
             display: grid;
-            grid-template-columns: 1fr 300px;
+
+            grid-template-columns:
+                1fr
+                300px;
+
             gap: 25px;
 
         }
 
         .grafico-card {
-            background: rgba(255,255,255,.80);
-            border: 1px solid rgba(255,255,255,.9);
+
+            background:
+                rgba(255,255,255,.80);
+
+            border:
+                1px solid rgba(255,255,255,.9);
+
             border-radius: 28px;
+
             padding: 30px;
+
             box-shadow:
-                0 18px 50px rgba(139, 93, 122, .08);
+                0 18px 50px
+                rgba(139, 93, 122, .08);
+
             min-width: 0;
 
         }
+
         .grafico-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 25px;
 
         }
 
-
         .grafico-header h3 {
+
             font-family: "Playfair Display", serif;
+
             color: #694e60;
+
             font-size: 23px;
 
         }
+
         .grafico-header span {
+
             font-size: 11px;
+
             color: #b18da4;
+
             background: #fbf0f6;
+
             padding: 7px 12px;
+
             border-radius: 20px;
 
         }
 
         .grafico {
+
             position: relative;
+
             height: 430px;
+
         }
 
+        /* ==========================================
+           CLIENTE DESTACADO
+        ========================================== */
+
         .favorito {
+
             background:
                 linear-gradient(
                     145deg,
@@ -348,12 +476,13 @@ $conexion->close();
             padding: 28px;
 
             box-shadow:
-                0 18px 50px rgba(139, 93, 122, .08);
+                0 18px 50px
+                rgba(139, 93, 122, .08);
 
-            border: 1px solid rgba(255,255,255,.9);
+            border:
+                1px solid rgba(255,255,255,.9);
 
         }
-
 
         .favorito-titulo {
 
@@ -368,7 +497,6 @@ $conexion->close();
             margin-bottom: 25px;
 
         }
-
 
         .corona {
 
@@ -386,74 +514,260 @@ $conexion->close();
                 );
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             font-size: 29px;
+
             margin-bottom: 20px;
+
             box-shadow:
-                0 10px 25px rgba(190,145,77,.20);
+                0 10px 25px
+                rgba(190,145,77,.20);
 
         }
+
         .favorito h3 {
+
             font-family: "Playfair Display", serif;
+
             color: #65495b;
+
             font-size: 27px;
+
             word-break: break-word;
 
         }
+
         .favorito p {
+
             color: #a68d9e;
+
             font-size: 13px;
+
             margin-top: 5px;
 
         }
+
         .numero-pedidos {
+
             margin-top: 25px;
+
             padding-top: 20px;
-            border-top: 1px solid #f1e1ea;
+
+            border-top:
+                1px solid #f1e1ea;
 
         }
+
         .numero-pedidos strong {
+
             font-family: "Playfair Display", serif;
+
             font-size: 35px;
+
             color: #ad6f91;
 
         }
+
         .numero-pedidos span {
+
             display: block;
+
             font-size: 11px;
+
             color: #a8909f;
+
             text-transform: uppercase;
+
             letter-spacing: 1px;
 
         }
+
+        /* ==========================================
+           BOTÓN VOLVER
+        ========================================== */
+
+        .volver-contenedor {
+
+            display: flex;
+
+            justify-content: center;
+
+            margin-top: 32px;
+
+        }
+
+        .boton-volver {
+
+            position: relative;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 9px;
+
+            min-width: 170px;
+
+            padding: 13px 28px;
+
+            border-radius: 50px;
+
+            text-decoration: none;
+
+            color: #ffffff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #b981a7,
+                    #956583
+                );
+
+            font-family: "DM Sans", sans-serif;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            letter-spacing: .5px;
+
+            box-shadow:
+                0 10px 25px
+                rgba(149,101,131,.25);
+
+            border:
+                1px solid
+                rgba(255,255,255,.65);
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                background .25s ease;
+
+            overflow: hidden;
+
+        }
+
+        .boton-volver::before {
+
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+
+            left: -120%;
+
+            width: 80%;
+
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,.28),
+                    transparent
+                );
+
+            transform: skewX(-20deg);
+
+            transition: left .55s ease;
+
+        }
+
+        .boton-volver:hover::before {
+
+            left: 140%;
+
+        }
+
+        .boton-volver:hover {
+
+            transform: translateY(-3px);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #c08eb0,
+                    #a06e8e
+                );
+
+            box-shadow:
+                0 15px 30px
+                rgba(149,101,131,.35);
+
+        }
+
+        .boton-volver:active {
+
+            transform: translateY(0);
+
+        }
+
+        .icono-volver {
+
+            font-size: 17px;
+
+            line-height: 1;
+
+        }
+
+        /* ==========================================
+           DETALLE
+        ========================================== */
+
         .detalle {
 
-         text-align: center;
-            margin-top: 35px;
+            text-align: center;
+
+            margin-top: 22px;
+
             color: #c5a7b9;
+
             font-size: 13px;
+
             letter-spacing: 2px;
 
         }
+
         .detalle::before,
         .detalle::after {
+
             content: "✦";
+
             margin: 0 12px;
+
             color: #d5a7c0;
 
         }
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+
         @media(max-width: 900px) {
 
             .contenido {
 
                 grid-template-columns: 1fr;
+
             }
+
         }
+
         @media(max-width: 700px) {
+
             body {
 
-                padding: 25px 15px;
+                padding:
+                    25px 15px;
 
             }
 
@@ -462,9 +776,11 @@ $conexion->close();
                 grid-template-columns: 1fr;
 
             }
+
             .encabezado {
 
                 align-items: flex-start;
+
             }
 
             .fecha {
@@ -474,34 +790,73 @@ $conexion->close();
             }
 
             .grafico-card {
+
                 padding: 20px;
+
             }
+
             .grafico {
+
                 height: 380px;
+
             }
+
+            .boton-volver {
+
+                width: 100%;
+
+                max-width: 320px;
+
+            }
+
         }
+
         @media(max-width: 450px) {
+
             .titulo h1 {
+
                 font-size: 38px;
+
             }
+
             .grafico {
+
                 height: 330px;
 
             }
+
         }
+
     </style>
+
 </head>
 
 <body>
+
 <div class="dashboard">
+
+    <!-- ==========================================
+         ENCABEZADO
+    ========================================== -->
+
     <div class="encabezado">
+
         <div class="marca">
+
             <div class="logo">
                 D
             </div>
+
             <div class="marca-texto">
-                <h2>DIVINE</h2>
-                <span>Beauty & Elegance</span>
+
+                <h2>
+                    DIVINE
+                </h2>
+
+                <span>
+                    Beauty & Elegance
+                </span>
+
             </div>
 
         </div>
@@ -511,19 +866,34 @@ $conexion->close();
         </div>
 
     </div>
+
+
+    <!-- ==========================================
+         TÍTULO
+    ========================================== -->
+
     <div class="titulo">
 
-        <small>Estadísticas</small>
+        <small>
+            Estadísticas
+        </small>
 
-        <h1>Clientes más frecuentes</h1>
+        <h1>
+            Clientes más frecuentes
+        </h1>
 
         <p>
             Conoce a las clientas que hacen de DIVINE parte de su día.
         </p>
 
     </div>
-    <div class="estadisticas">
 
+
+    <!-- ==========================================
+         ESTADÍSTICAS
+    ========================================== -->
+
+    <div class="estadisticas">
 
         <div class="card">
 
@@ -565,6 +935,8 @@ $conexion->close();
             </div>
 
         </div>
+
+
         <div class="card">
 
             <div class="card-icon">
@@ -585,11 +957,21 @@ $conexion->close();
 
         </div>
 
-
     </div>
+
+
+    <!-- ==========================================
+         CONTENIDO
+    ========================================== -->
+
     <div class="contenido">
+
+        <!-- GRÁFICO -->
+
         <div class="grafico-card">
+
             <div class="grafico-header">
+
                 <h3>
                     Frecuencia de pedidos
                 </h3>
@@ -608,6 +990,9 @@ $conexion->close();
 
         </div>
 
+
+        <!-- CLIENTE DESTACADO -->
+
         <div class="favorito">
 
             <div class="favorito-titulo">
@@ -621,6 +1006,7 @@ $conexion->close();
             <h3>
                 <?php echo htmlspecialchars($clienteTop); ?>
             </h3>
+
             <p>
                 Nuestra cliente más frecuente
             </p>
@@ -630,22 +1016,62 @@ $conexion->close();
                 <strong>
                     <?php echo $pedidosTop; ?>
                 </strong>
+
                 <span>
                     pedidos realizados
                 </span>
+
             </div>
+
         </div>
+
     </div>
+
+
+    <!-- ==========================================
+         BOTÓN VOLVER
+    ========================================== -->
+
+    <div class="volver-contenedor">
+
+        <a
+            href="../admin.php"
+            class="boton-volver"
+        >
+
+            <span class="icono-volver">
+                ←
+            </span>
+
+            Volver
+
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         DETALLE
+    ========================================== -->
+
     <div class="detalle">
+
         DIVINE · Elegancia en cada detalle
+
     </div>
+
 </div>
+
+
 <script>
 
 const nombres = <?php echo $nombresJSON; ?>;
+
 const cantidades = <?php echo $cantidadesJSON; ?>;
+
 const ctx =
     document.getElementById("graficoClientes");
+
 new Chart(ctx, {
 
     type: "bar",
@@ -653,10 +1079,15 @@ new Chart(ctx, {
     data: {
 
         labels: nombres,
+
         datasets: [{
+
             label: "Pedidos",
+
             data: cantidades,
+
             backgroundColor: function(context) {
+
                 const chart =
                     context.chart;
 
@@ -664,7 +1095,9 @@ new Chart(ctx, {
                     chart;
 
                 if (!chartArea) {
+
                     return "#d59bb9";
+
                 }
 
                 const gradient =
@@ -686,119 +1119,210 @@ new Chart(ctx, {
                 );
 
                 return gradient;
+
             },
-            borderColor: "#b77f9f",
+
+            borderColor:
+                "#b77f9f",
+
             borderWidth: 1,
+
             borderRadius: 10,
+
             borderSkipped: false,
+
             barPercentage: .62,
+
             categoryPercentage: .72
+
         }]
+
     },
+
     options: {
+
         responsive: true,
+
         maintainAspectRatio: false,
+
         animation: {
+
             duration: 1200,
+
             easing: "easeOutQuart"
+
         },
+
         scales: {
 
             y: {
+
                 beginAtZero: true,
+
                 ticks: {
+
                     stepSize: 1,
+
                     color: "#a18b9a",
+
                     font: {
+
                         family: "DM Sans",
+
                         size: 11
+
                     }
+
                 },
 
                 grid: {
+
                     color:
                         "rgba(180,140,165,.12)",
 
                     drawBorder: false
+
                 },
 
                 title: {
+
                     display: true,
-                    text: "Cantidad de pedidos",
-                    color: "#9b7c90",
+
+                    text:
+                        "Cantidad de pedidos",
+
+                    color:
+                        "#9b7c90",
+
                     font: {
+
                         family: "DM Sans",
+
                         size: 12,
+
                         weight: "500"
+
                     }
 
                 }
 
             },
+
             x: {
+
                 ticks: {
+
                     color: "#806979",
+
                     font: {
+
                         family: "DM Sans",
+
                         size: 11,
+
                         weight: "500"
 
                     }
 
                 },
+
                 grid: {
+
                     display: false
 
                 },
+
                 title: {
+
                     display: true,
+
                     text: "Clientes",
-                    color: "#9b7c90",
+
+                    color:
+                        "#9b7c90",
+
                     font: {
+
                         family: "DM Sans",
+
                         size: 12,
+
                         weight: "500"
 
                     }
+
                 }
+
             }
+
         },
+
         plugins: {
+
             legend: {
+
                 display: false
+
             },
+
             tooltip: {
+
                 backgroundColor:
                     "rgba(92,67,83,.96)",
-                titleColor: "#fff",
-                bodyColor: "#f9eaf2",
-                padding: 14,
-                cornerRadius: 12,
-                displayColors: false,
-                titleFont: {
-                    family: "Playfair Display",
-                    size: 15
-                },
-                bodyFont: {
-                    family: "DM Sans",
-                    size: 12
-                },
-                callbacks: {
-                    label: function(context) {
-                        return "♡ " +
-                            context.raw +
-                            " pedidos";
 
-                    }
+                titleColor:
+                    "#fff",
+
+                bodyColor:
+                    "#f9eaf2",
+
+                padding: 14,
+
+                cornerRadius: 12,
+
+                displayColors: false,
+
+                titleFont: {
+
+                    family:
+                        "Playfair Display",
+
+                    size: 15
+
+                },
+
+                bodyFont: {
+
+                    family:
+                        "DM Sans",
+
+                    size: 12
+
+                },
+
+                callbacks: {
+
+                    label:
+                        function(context) {
+
+                            return "♡ " +
+                                context.raw +
+                                " pedidos";
+
+                        }
 
                 }
 
             }
 
-      }
+        }
 
     }
+
 });
+
 </script>
+
 </body>
+
 </html>
