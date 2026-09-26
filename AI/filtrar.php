@@ -1,21 +1,14 @@
 <?php
 
-// ======================================================
-// CONFIGURACIÓN GENERAL
-// ======================================================
-
-// No mostrar errores PHP como HTML
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
-// Headers para permitir conexión desde el frontend
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Responder correctamente a petición OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit();
@@ -23,54 +16,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 
 // ======================================================
-// MANEJO DE ERRORES FATALES DE PHP
+// API KEY
 // ======================================================
 
-register_shutdown_function(function () {
+// PON AQUÍ TU NUEVA API KEY.
+// NO USES LA API KEY QUE PUBLICASTE ANTES.
 
-    $error = error_get_last();
+$gemini_api_key = "TU_NUEVA_CLAVE_AQUI";
 
-    if (
-        $error !== null &&
-        (
-            $error['type'] === E_ERROR ||
-            $error['type'] === E_PARSE ||
-            $error['type'] === E_COMPILE_ERROR ||
-            $error['type'] === E_CORE_ERROR
-        )
-    ) {
-
-        http_response_code(500);
-
-        echo json_encode([
-            "error" => "Error interno de PHP",
-            "detalle" => $error['message'],
-            "linea" => $error['line']
-        ]);
-
-        exit();
-    }
-});
-
-
-// ======================================================
-// API KEY DE GEMINI
-// ======================================================
-
-// ⚠️ COLOCA AQUÍ TU API KEY REAL DE GOOGLE AI STUDIO
-$gemini_api_key = "AQ.Ab8RN6JlYgfG5BAY_Z3nhVoa3AHjbMzMDc4nAKgrekwvjO45hg";
-
-
-// Comprobar que sí se colocó una API Key
 if (
     empty($gemini_api_key) ||
-    $gemini_api_key === "AQ.Ab8RN6JlYgfG5BAY_Z3nhVoa3AHjbMzMDc4nAKgrekwvjO45hg"
+    $gemini_api_key === "TU_NUEVA_CLAVE_AQUI"
 ) {
-
     http_response_code(500);
 
     echo json_encode([
-        "error" => "No has colocado tu API Key de Gemini en filtrar.php."
+        "error" => "Debes colocar tu nueva API Key de Gemini en filtrar.php."
     ]);
 
     exit();
@@ -78,7 +39,23 @@ if (
 
 
 // ======================================================
-// PRODUCTOS DE EJEMPLO
+// SOLO POST
+// ======================================================
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+
+    http_response_code(405);
+
+    echo json_encode([
+        "error" => "Método no permitido. Usa POST."
+    ]);
+
+    exit();
+}
+
+
+// ======================================================
+// PRODUCTOS
 // ======================================================
 
 $productos = [
@@ -119,44 +96,29 @@ $productos = [
 
 
 // ======================================================
-// SOLO ACEPTAR POST
+// RECIBIR DATOS
 // ======================================================
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+$input = file_get_contents("php://input");
 
-    http_response_code(405);
-
-    echo json_encode([
-        "error" => "Método no permitido. Debes usar POST."
-    ]);
-
-    exit();
-}
-
-
-// ======================================================
-// LEER INFORMACIÓN ENVIADA POR JAVASCRIPT
-// ======================================================
-
-$input_json = file_get_contents("php://input");
-
-if ($input_json === false || empty($input_json)) {
+if ($input === false || trim($input) === "") {
 
     http_response_code(400);
 
     echo json_encode([
-        "error" => "No se recibieron datos desde index.html."
+        "error" => "No se recibieron datos."
     ]);
 
     exit();
 }
 
 
-$input_data = json_decode($input_json, true);
+$datos = json_decode($input, true);
 
-
-// Comprobar JSON
-if (json_last_error() !== JSON_ERROR_NONE) {
+if (
+    json_last_error() !== JSON_ERROR_NONE ||
+    !is_array($datos)
+) {
 
     http_response_code(400);
 
@@ -169,13 +131,11 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 }
 
 
-// Obtener búsqueda
-$busqueda = isset($input_data["busqueda"])
-    ? trim($input_data["busqueda"])
+$busqueda = isset($datos["busqueda"])
+    ? trim((string)$datos["busqueda"])
     : "";
 
 
-// Comprobar búsqueda
 if ($busqueda === "") {
 
     http_response_code(400);
@@ -189,7 +149,7 @@ if ($busqueda === "") {
 
 
 // ======================================================
-// URL CORRECTA DE GEMINI
+// GEMINI
 // ======================================================
 
 $modelo = "gemini-2.5-flash";
@@ -197,52 +157,71 @@ $modelo = "gemini-2.5-flash";
 $url =
     "https://generativelanguage.googleapis.com/v1beta/models/"
     . $modelo
-    . ":generateContent?key="
-    . urlencode($gemini_api_key);
+    . ":generateContent";
 
 
 // ======================================================
-// PROMPT QUE RECIBIRÁ GEMINI
+// PROMPT
 // ======================================================
 
-$prompt = '
-Analiza la búsqueda de un usuario para una tienda.
+$prompt = <<<PROMPT
+Analiza esta búsqueda de productos.
 
-Debes extraer exactamente estos campos:
+Extrae solamente:
 
 categoria:
-- laptop
-- telefono
-- o cadena vacía si no menciona categoría
+- "laptop"
+- "telefono"
+- ""
 
 precio_maximo:
 - número entero
-- 0 si no menciona precio máximo
+- 0 si no existe precio máximo
 
 color:
-- color mencionado
-- cadena vacía si no menciona color
+- color indicado
+- "" si no existe color
 
-Búsqueda del usuario:
-"' . $busqueda . '"
-';
+No inventes información.
+
+Ejemplo:
+
+laptop negra de menos de 600
+
+Debe producir:
+
+{
+  "categoria": "laptop",
+  "precio_maximo": 600,
+  "color": "negro"
+}
+
+Búsqueda:
+
+$busqueda
+PROMPT;
 
 
 // ======================================================
-// DATOS ENVIADOS A GEMINI
+// PETICIÓN
 // ======================================================
 
 $payload = [
 
     "contents" => [
+
         [
             "role" => "user",
+
             "parts" => [
+
                 [
                     "text" => $prompt
                 ]
+
             ]
         ]
+
     ],
 
     "generationConfig" => [
@@ -281,15 +260,19 @@ $payload = [
 ];
 
 
-// Convertir datos a JSON
-$json_payload = json_encode($payload);
+$json = json_encode(
+    $payload,
+    JSON_UNESCAPED_UNICODE
+);
 
-if ($json_payload === false) {
+
+if ($json === false) {
 
     http_response_code(500);
 
     echo json_encode([
-        "error" => "PHP no pudo convertir la petición a JSON."
+        "error" => "No se pudo crear el JSON para Gemini.",
+        "detalle" => json_last_error_msg()
     ]);
 
     exit();
@@ -297,7 +280,7 @@ if ($json_payload === false) {
 
 
 // ======================================================
-// CONEXIÓN CON GEMINI USANDO CURL
+// CURL
 // ======================================================
 
 if (!function_exists("curl_init")) {
@@ -305,7 +288,7 @@ if (!function_exists("curl_init")) {
     http_response_code(500);
 
     echo json_encode([
-        "error" => "Tu instalación de PHP no tiene habilitado cURL."
+        "error" => "cURL no está instalado o habilitado en PHP."
     ]);
 
     exit();
@@ -314,32 +297,40 @@ if (!function_exists("curl_init")) {
 
 $ch = curl_init();
 
+
 curl_setopt_array($ch, [
 
     CURLOPT_URL => $url,
 
-    CURLOPT_RETURNTRANSFER => true,
-
     CURLOPT_POST => true,
 
+    CURLOPT_RETURNTRANSFER => true,
+
     CURLOPT_HTTPHEADER => [
-        "Content-Type: application/json"
+
+        "Content-Type: application/json",
+
+        "x-goog-api-key: " . $gemini_api_key
+
     ],
 
-    CURLOPT_POSTFIELDS => $json_payload,
+    CURLOPT_POSTFIELDS => $json,
 
-    CURLOPT_TIMEOUT => 30,
+    CURLOPT_CONNECTTIMEOUT => 10,
 
-    CURLOPT_CONNECTTIMEOUT => 10
+    CURLOPT_TIMEOUT => 30
 
 ]);
 
 
-$response = curl_exec($ch);
+$respuesta = curl_exec($ch);
 
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$http_code =
+    curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-$curl_error = curl_error($ch);
+$curl_error =
+    curl_error($ch);
+
 
 curl_close($ch);
 
@@ -348,12 +339,12 @@ curl_close($ch);
 // ERROR DE CONEXIÓN
 // ======================================================
 
-if ($response === false) {
+if ($respuesta === false) {
 
     http_response_code(500);
 
     echo json_encode([
-        "error" => "No se pudo conectar con la API de Gemini.",
+        "error" => "No se pudo conectar con Gemini.",
         "detalle" => $curl_error
     ]);
 
@@ -362,90 +353,25 @@ if ($response === false) {
 
 
 // ======================================================
-// CONVERTIR RESPUESTA DE GOOGLE
+// RESPUESTA GEMINI
 // ======================================================
 
-$data = json_decode($response, true);
-
-
-if (json_last_error() !== JSON_ERROR_NONE) {
-
-    http_response_code(500);
-
-    echo json_encode([
-        "error" => "Gemini devolvió una respuesta que no es JSON.",
-        "respuesta" => $response
-    ]);
-
-    exit();
-}
-
-
-// ======================================================
-// ERRORES DEVUELTOS POR GOOGLE
-// ======================================================
-
-if ($http_code < 200 || $http_code >= 300) {
-
-    $mensajeGoogle = "Error desconocido de Gemini.";
-
-    if (isset($data["error"]["message"])) {
-        $mensajeGoogle = $data["error"]["message"];
-    }
-
-    http_response_code($http_code);
-
-    echo json_encode([
-        "error" => "Error de la API de Gemini",
-        "codigo" => $http_code,
-        "detalle" => $mensajeGoogle
-    ]);
-
-    exit();
-}
-
-
-// ======================================================
-// COMPROBAR QUE GEMINI HAYA GENERADO RESPUESTA
-// ======================================================
-
-if (
-    !isset($data["candidates"][0]["content"]["parts"][0]["text"])
-) {
-
-    http_response_code(500);
-
-    echo json_encode([
-        "error" => "Gemini no devolvió una respuesta utilizable.",
-        "respuesta_completa" => $data
-    ]);
-
-    exit();
-}
-
-
-// Obtener JSON generado por Gemini
-$texto_json =
-    $data["candidates"][0]["content"]["parts"][0]["text"];
-
-
-// ======================================================
-// CONVERTIR FILTROS DE GEMINI
-// ======================================================
-
-$filtros_ai = json_decode($texto_json, true);
+$data = json_decode(
+    $respuesta,
+    true
+);
 
 
 if (
     json_last_error() !== JSON_ERROR_NONE ||
-    !is_array($filtros_ai)
+    !is_array($data)
 ) {
 
     http_response_code(500);
 
     echo json_encode([
-        "error" => "Gemini respondió, pero sus filtros no son JSON válido.",
-        "respuestaGemini" => $texto_json
+        "error" => "Gemini no devolvió JSON válido.",
+        "respuesta" => $respuesta
     ]);
 
     exit();
@@ -453,40 +379,147 @@ if (
 
 
 // ======================================================
-// NORMALIZAR LOS FILTROS
+// ERROR API
 // ======================================================
 
-$categoria = isset($filtros_ai["categoria"])
-    ? trim(strtolower($filtros_ai["categoria"]))
+if ($http_code < 200 || $http_code >= 300) {
+
+    $detalle = "Error desconocido.";
+
+    if (
+        isset($data["error"]["message"])
+    ) {
+
+        $detalle =
+            $data["error"]["message"];
+    }
+
+
+    http_response_code($http_code);
+
+    echo json_encode([
+
+        "error" => "Error de la API de Gemini",
+
+        "codigo" => $http_code,
+
+        "detalle" => $detalle
+
+    ]);
+
+    exit();
+}
+
+
+// ======================================================
+// OBTENER TEXTO
+// ======================================================
+
+if (
+    !isset(
+        $data["candidates"][0]["content"]["parts"][0]["text"]
+    )
+) {
+
+    http_response_code(500);
+
+    echo json_encode([
+
+        "error" =>
+            "Gemini no devolvió una respuesta utilizable.",
+
+        "respuesta" => $data
+
+    ]);
+
+    exit();
+}
+
+
+$texto =
+    $data["candidates"][0]["content"]["parts"][0]["text"];
+
+
+// ======================================================
+// DECODIFICAR FILTROS
+// ======================================================
+
+$filtros =
+    json_decode($texto, true);
+
+
+if (
+    json_last_error() !== JSON_ERROR_NONE ||
+    !is_array($filtros)
+) {
+
+    http_response_code(500);
+
+    echo json_encode([
+
+        "error" =>
+            "La respuesta de Gemini no contiene filtros JSON válidos.",
+
+        "respuestaGemini" => $texto
+
+    ]);
+
+    exit();
+}
+
+
+// ======================================================
+// NORMALIZAR
+// ======================================================
+
+$categoria = isset($filtros["categoria"])
+    ? strtolower(trim((string)$filtros["categoria"]))
     : "";
 
 
-$color = isset($filtros_ai["color"])
-    ? trim(strtolower($filtros_ai["color"]))
+$color = isset($filtros["color"])
+    ? strtolower(trim((string)$filtros["color"]))
     : "";
 
 
-$precio_maximo = isset($filtros_ai["precio_maximo"])
-    ? intval($filtros_ai["precio_maximo"])
+$precio = isset($filtros["precio_maximo"])
+    ? intval($filtros["precio_maximo"])
     : 0;
 
 
-// Evitar valores "null"
 if ($categoria === "null") {
     $categoria = "";
 }
+
 
 if ($color === "null") {
     $color = "";
 }
 
 
-// Guardar filtros normalizados
-$filtros_ai = [
+if (
+    $categoria !== "laptop" &&
+    $categoria !== "telefono"
+) {
+
+    $categoria = "";
+}
+
+
+if ($precio < 0) {
+    $precio = 0;
+}
+
+
+// ======================================================
+// FILTROS
+// ======================================================
+
+$filtros_finales = [
 
     "categoria" => $categoria,
 
-    "precio_maximo" => $precio_maximo,
+    "precio_maximo" => $precio,
 
     "color" => $color
 
@@ -494,45 +527,42 @@ $filtros_ai = [
 
 
 // ======================================================
-// FILTRAR LOS PRODUCTOS
+// BUSCAR PRODUCTOS
 // ======================================================
 
-$resultado = array_filter(
+$resultados = array_filter(
 
     $productos,
 
-    function ($producto) use ($filtros_ai) {
+    function ($producto) use ($filtros_finales) {
 
 
-        // FILTRO CATEGORÍA
         if (
-            $filtros_ai["categoria"] !== "" &&
+            $filtros_finales["categoria"] !== "" &&
             strtolower($producto["categoria"])
             !==
-            $filtros_ai["categoria"]
+            $filtros_finales["categoria"]
         ) {
 
             return false;
         }
 
 
-        // FILTRO COLOR
         if (
-            $filtros_ai["color"] !== "" &&
+            $filtros_finales["color"] !== "" &&
             strtolower($producto["color"])
             !==
-            $filtros_ai["color"]
+            $filtros_finales["color"]
         ) {
 
             return false;
         }
 
 
-        // FILTRO PRECIO
         if (
-            $filtros_ai["precio_maximo"] > 0 &&
+            $filtros_finales["precio_maximo"] > 0 &&
             $producto["precio"] >
-            $filtros_ai["precio_maximo"]
+            $filtros_finales["precio_maximo"]
         ) {
 
             return false;
@@ -541,15 +571,12 @@ $resultado = array_filter(
 
         return true;
     }
-
 );
 
 
 // ======================================================
-// RESPUESTA FINAL
+// RESPUESTA
 // ======================================================
-
-http_response_code(200);
 
 echo json_encode(
 
@@ -559,9 +586,11 @@ echo json_encode(
 
         "busqueda" => $busqueda,
 
-        "filtrosAplicados" => $filtros_ai,
+        "filtrosAplicados" =>
+            $filtros_finales,
 
-        "productos" => array_values($resultado)
+        "productos" =>
+            array_values($resultados)
 
     ],
 
