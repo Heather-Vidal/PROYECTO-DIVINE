@@ -1843,13 +1843,11 @@ td{
          ================================================= -->
 
     <a
-        href="javascript:history.back()"
-        class="volver"
-    >
-
-        ← Volver
-
-    </a>
+    href="../admin.php"
+    class="volver"
+>
+    ← Volver al perfil
+</a>
 
 
 </div>

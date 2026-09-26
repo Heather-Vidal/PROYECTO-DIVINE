@@ -1,3 +1,4 @@
+
 <?php
 
 session_start();
@@ -7,10 +8,12 @@ session_start();
 ========================================================= */
 
 if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
-    header("Location: ./SESIONES/loginformcliente.php");
-    exit();
-}
 
+    header("Location: ./SESIONES/loginformcliente.php");
+
+    exit();
+
+}
 
 /* =========================================================
    VALIDAR ROL
@@ -24,16 +27,21 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] != "vendedor") {
           </script>";
 
     exit();
-}
 
+}
 
 /* =========================================================
    DATOS DE SESIÓN
 ========================================================= */
 
-$nombreUsuario = $_SESSION['nombre'];
-$inicial = strtoupper(substr($nombreUsuario, 0, 1));
+$nombreUsuario = trim($_SESSION['nombre'] ?? '');
+$inicial = '';
 
+if ($nombreUsuario !== '') {
+    $inicial = strtoupper(
+        mb_substr($nombreUsuario, 0, 1, 'UTF-8')
+    );
+}
 
 /* =========================================================
    CONEXIÓN A BASE DE DATOS
@@ -52,11 +60,12 @@ $conn = new mysqli(
 );
 
 if ($conn->connect_error) {
+
     die("Error de conexión con la base de datos: " . $conn->connect_error);
+
 }
 
 $conn->set_charset("utf8");
-
 
 /* =========================================================
    VARIABLE SEGURA DEL VENDEDOR
@@ -64,20 +73,24 @@ $conn->set_charset("utf8");
 
 $nombreVendedor = $conn->real_escape_string($_SESSION['nombre']);
 
-
 /* =========================================================
    CONTAR VENTAS DEL VENDEDOR
    SOLO VENTAS COMPLETADAS
 ========================================================= */
 
 $sqlVentas = "
+
     SELECT COUNT(*) AS total_ventas
+
     FROM VENTAS v
+
     INNER JOIN PEDIDOS p
         ON v.PEDIDOS_ID = p.ID
+
     WHERE p.nombrevendedor = '$nombreVendedor'
-       
+
       AND LOWER(TRIM(p.estado)) = 'Aceptado'
+
 ";
 
 $resultadoVentas = $conn->query($sqlVentas);
@@ -89,17 +102,21 @@ if ($resultadoVentas) {
     $filaVentas = $resultadoVentas->fetch_assoc();
 
     $totalVentas = $filaVentas['total_ventas'] ?? 0;
-}
 
+}
 
 /* =========================================================
    CONTAR PEDIDOS DEL VENDEDOR
 ========================================================= */
 
 $sqlPedidos = "
+
     SELECT COUNT(*) AS total_pedidos
+
     FROM PEDIDOS
+
     WHERE nombrevendedor = '$nombreVendedor'
+
 ";
 
 $resultadoPedidos = $conn->query($sqlPedidos);
@@ -111,23 +128,27 @@ if ($resultadoPedidos) {
     $filaPedidos = $resultadoPedidos->fetch_assoc();
 
     $totalPedidos = $filaPedidos['total_pedidos'] ?? 0;
-}
 
+}
 
 /* =========================================================
    RESUMEN DEL DÍA
 ========================================================= */
-
 
 /* ---------------------------------------------------------
    PEDIDOS PENDIENTES
 --------------------------------------------------------- */
 
 $sqlPendientes = "
+
     SELECT COUNT(*) AS cantidad
+
     FROM PEDIDOS
+
     WHERE nombrevendedor = '$nombreVendedor'
+
       AND LOWER(TRIM(estado)) = 'pendiente'
+
 ";
 
 $resultadoPendientes = $conn->query($sqlPendientes);
@@ -139,29 +160,41 @@ if ($resultadoPendientes) {
     $filaPendientes = $resultadoPendientes->fetch_assoc();
 
     $pedidosPendientes = $filaPendientes['cantidad'] ?? 0;
-}
 
+}
 
 /* ---------------------------------------------------------
    VENTAS COMPLETADAS DE HOY
 --------------------------------------------------------- */
 
 $sqlVentasHoy = "
+
     SELECT
+
         COUNT(v.id) AS cantidad,
+
         COALESCE(SUM(v.costototal), 0) AS total
+
     FROM VENTAS v
+
     INNER JOIN PEDIDOS p
+
         ON v.PEDIDOS_ID = p.ID
+
     WHERE p.nombrevendedor = '$nombreVendedor'
+
       AND LOWER(TRIM(v.estado)) = 'completado'
+
       AND LOWER(TRIM(p.estado)) = 'completado'
+
       AND DATE(v.fecha) = CURDATE()
+
 ";
 
 $resultadoVentasHoy = $conn->query($sqlVentasHoy);
 
 $ventasHoy = 0;
+
 $dineroHoy = 0;
 
 if ($resultadoVentasHoy) {
@@ -171,17 +204,21 @@ if ($resultadoVentasHoy) {
     $ventasHoy = $filaVentasHoy['cantidad'] ?? 0;
 
     $dineroHoy = $filaVentasHoy['total'] ?? 0;
-}
 
+}
 
 /* ---------------------------------------------------------
    PRODUCTOS CON STOCK BAJO
 --------------------------------------------------------- */
 
 $sqlStockBajo = "
+
     SELECT COUNT(*) AS cantidad
+
     FROM PRODUCTO
+
     WHERE stock <= 5
+
 ";
 
 $resultadoStockBajo = $conn->query($sqlStockBajo);
@@ -193,28 +230,43 @@ if ($resultadoStockBajo) {
     $filaStockBajo = $resultadoStockBajo->fetch_assoc();
 
     $productosStockBajo = $filaStockBajo['cantidad'] ?? 0;
-}
 
+}
 
 /* =========================================================
    ÚLTIMA VENTA
 ========================================================= */
 
 $sqlUltimaVenta = "
+
     SELECT
+
         v.id,
+
         v.costototal,
+
         v.fecha,
+
         p.nombre,
+
         p.nombrevendedor
+
     FROM VENTAS v
+
     INNER JOIN PEDIDOS p
+
         ON v.PEDIDOS_ID = p.ID
+
     WHERE p.nombrevendedor = '$nombreVendedor'
+
       AND LOWER(TRIM(v.estado)) = 'completado'
+
       AND LOWER(TRIM(p.estado)) = 'completado'
+
     ORDER BY v.id DESC
+
     LIMIT 1
+
 ";
 
 $resultadoUltimaVenta = $conn->query($sqlUltimaVenta);
@@ -224,23 +276,33 @@ $ultimaVenta = null;
 if ($resultadoUltimaVenta) {
 
     $ultimaVenta = $resultadoUltimaVenta->fetch_assoc();
-}
 
+}
 
 /* =========================================================
    ÚLTIMO PEDIDO
 ========================================================= */
 
 $sqlUltimoPedido = "
+
     SELECT
+
         ID,
+
         nombre,
+
         estado,
+
         fecha
+
     FROM PEDIDOS
+
     WHERE nombrevendedor = '$nombreVendedor'
+
     ORDER BY ID DESC
+
     LIMIT 1
+
 ";
 
 $resultadoUltimoPedido = $conn->query($sqlUltimoPedido);
@@ -250,22 +312,31 @@ $ultimoPedido = null;
 if ($resultadoUltimoPedido) {
 
     $ultimoPedido = $resultadoUltimoPedido->fetch_assoc();
-}
 
+}
 
 /* =========================================================
    PRODUCTO CON MENOR STOCK
 ========================================================= */
 
 $sqlUltimoStock = "
+
     SELECT
+
         codigo,
+
         nombre,
+
         stock
+
     FROM PRODUCTO
+
     WHERE stock <= 5
+
     ORDER BY stock ASC
+
     LIMIT 1
+
 ";
 
 $resultadoUltimoStock = $conn->query($sqlUltimoStock);
@@ -275,6 +346,7 @@ $ultimoStock = null;
 if ($resultadoUltimoStock) {
 
     $ultimoStock = $resultadoUltimoStock->fetch_assoc();
+
 }
 
 ?>
@@ -294,7 +366,6 @@ if ($resultadoUltimoStock) {
 
 <title>Beauty Glow Executive Center</title>
 
-
 <link
     href="https://fonts.cdnfonts.com/css/bestigia"
     rel="stylesheet"
@@ -305,7 +376,6 @@ if ($resultadoUltimoStock) {
     rel="stylesheet"
 >
 
-
 <style>
 
 /* =========================================================
@@ -315,25 +385,16 @@ if ($resultadoUltimoStock) {
 :root{
 
 --pink-soft:#fdf0f4;
-
 --pink-light:#fbe3eb;
-
 --pink-medium:#f2a6bf;
-
 --pink-accent:#e06d92;
-
 --pink-dark:#8c3b58;
-
 --rose-gold:#d4989d;
-
 --berry:#5c1d33;
-
 --white:#ffffff;
-
 --shadow:0 12px 30px rgba(180,100,130,0.12);
 
 }
-
 
 /* =========================================================
    GENERAL
@@ -342,26 +403,19 @@ if ($resultadoUltimoStock) {
 *{
 
 margin:0;
-
 padding:0;
-
 box-sizing:border-box;
-
 font-family:'Poppins',sans-serif;
 
 }
 
-
 .fuente{
 
 font-family:'Bestigia',sans-serif;
-
 font-weight:400;
-
 font-style:normal;
 
 }
-
 
 body{
 
@@ -380,22 +434,17 @@ linear-gradient(
 );
 
 min-height:100vh;
-
 color:var(--berry);
 
 }
 
-
 .container{
 
 padding:30px;
-
 max-width:1600px;
-
 margin:auto;
 
 }
-
 
 /* =========================================================
    HERO
@@ -416,7 +465,6 @@ linear-gradient(
 );
 
 border-radius:35px;
-
 padding:35px;
 
 box-shadow:
@@ -424,18 +472,14 @@ box-shadow:
 0 15px 35px rgba(188,75,115,0.25);
 
 margin-bottom:25px;
-
 text-align:center;
-
 color:var(--white);
 
 }
 
-
 .hero h1{
 
 font-size:42px;
-
 color:var(--white);
 
 text-shadow:
@@ -444,17 +488,13 @@ text-shadow:
 
 }
 
-
 .hero p{
 
 color:#fce7ef;
-
 font-weight:500;
-
 margin-top:5px;
 
 }
-
 
 /* =========================================================
    GRID PRINCIPAL
@@ -463,15 +503,11 @@ margin-top:5px;
 .grid-top{
 
 display:grid;
-
 grid-template-columns:420px 1fr;
-
 gap:25px;
-
 margin-bottom:25px;
 
 }
-
 
 /* =========================================================
    TARJETAS
@@ -495,22 +531,22 @@ linear-gradient(
 );
 
 border:
-
 1px solid #f3c2d4;
 
 box-shadow:var(--shadow);
 
 }
 
+/* =========================================================
+   PERFIL
+========================================================= */
 
 .profile-card{
 
 border-radius:30px;
-
 padding:30px;
 
 }
-
 
 .profile-header{
 
@@ -518,16 +554,17 @@ text-align:center;
 
 }
 
+/* =========================================================
+   INICIAL DEL USUARIO
+========================================================= */
 
-.profile-header img{
+.profile-inicial{
 
 width:170px;
-
 height:170px;
-
 border-radius:50%;
 
-object-fit:cover;
+background:#fbe3eb;
 
 border:5px solid #f2a6bf;
 
@@ -535,22 +572,39 @@ box-shadow:
 
 0 8px 20px rgba(224,109,146,0.25);
 
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin:0 auto;
+
+color:var(--pink-dark);
+
+font-size:80px;
+font-weight:700;
+
+text-transform:uppercase;
+
+transition:.3s;
+
 }
 
+.profile-inicial:hover{
+
+transform:scale(1.08);
+
+}
 
 .profile-header h2{
 
 margin-top:15px;
-
 color:var(--berry);
 
 }
 
-
 .badge{
 
 display:inline-block;
-
 margin-top:10px;
 
 padding:8px 18px;
@@ -562,13 +616,11 @@ border:1px solid #f2a6bf;
 border-radius:25px;
 
 font-size:13px;
-
 font-weight:600;
 
 color:var(--pink-dark);
 
 }
-
 
 .quote{
 
@@ -583,22 +635,17 @@ border-left:4px solid var(--pink-accent);
 border-radius:12px;
 
 font-style:italic;
-
 color:var(--pink-dark);
 
 }
 
-
 .profile-card p{
 
 margin-top:15px;
-
 font-weight:500;
-
 color:var(--berry);
 
 }
-
 
 /* =========================================================
    PROGRESO
@@ -610,15 +657,12 @@ margin-top:20px;
 
 }
 
-
 .progress p{
 
 font-size:14px;
-
 margin-bottom:6px;
 
 }
-
 
 .progress-bar{
 
@@ -632,11 +676,9 @@ overflow:hidden;
 
 }
 
-
 .progress-fill{
 
 height:100%;
-
 width:98%;
 
 background:
@@ -653,7 +695,6 @@ linear-gradient(
 
 }
 
-
 /* =========================================================
    ESTADÍSTICAS
 ========================================================= */
@@ -669,7 +710,6 @@ gap:15px;
 margin-top:20px;
 
 }
-
 
 .profile-stats a{
 
@@ -693,7 +733,6 @@ transition:.3s;
 
 }
 
-
 .profile-stats a:hover{
 
 transform:translateY(-6px);
@@ -708,17 +747,13 @@ box-shadow:
 
 }
 
-
 .profile-stats strong{
 
 font-size:30px;
-
 display:block;
-
 margin-bottom:4px;
 
 }
-
 
 /* =========================================================
    RESUMEN DEL DÍA
@@ -727,20 +762,16 @@ margin-bottom:4px;
 .ai-card{
 
 border-radius:30px;
-
 padding:30px;
 
 }
 
-
 .ai-card h2{
 
 margin-bottom:20px;
-
 color:var(--berry);
 
 }
-
 
 .ai-box{
 
@@ -754,7 +785,6 @@ border-radius:20px;
 
 }
 
-
 /* =========================================================
    TARJETAS DEL RESUMEN
 ========================================================= */
@@ -764,13 +794,11 @@ border-radius:20px;
 display:grid;
 
 grid-template-columns:
-
 repeat(4,1fr);
 
 gap:15px;
 
 }
-
 
 .resumen-item{
 
@@ -788,7 +816,6 @@ transition:.3s;
 
 }
 
-
 .resumen-item:hover{
 
 transform:translateY(-5px);
@@ -799,15 +826,12 @@ box-shadow:
 
 }
 
-
 .resumen-icon{
 
 font-size:30px;
-
 margin-bottom:8px;
 
 }
-
 
 .resumen-item strong{
 
@@ -819,24 +843,19 @@ color:var(--pink-dark);
 
 }
 
-
 .resumen-item span{
 
 font-size:13px;
-
 font-weight:600;
-
 color:#9a6074;
 
 }
-
 
 .dinero{
 
 font-size:23px !important;
 
 }
-
 
 /* =========================================================
    CARDS
@@ -845,20 +864,16 @@ font-size:23px !important;
 .card{
 
 border-radius:30px;
-
 padding:25px;
 
 }
 
-
 .card h3{
 
 color:var(--berry);
-
 margin-bottom:12px;
 
 }
-
 
 /* =========================================================
    MOVIMIENTOS
@@ -888,7 +903,6 @@ gap:12px;
 
 }
 
-
 /* =========================================================
    BOTÓN PRODUCTOS CON STOCK BAJO
 ========================================================= */
@@ -896,9 +910,7 @@ gap:12px;
 .stock-bajo-link{
 
 text-decoration:none;
-
 color:inherit;
-
 cursor:pointer;
 
 transition:all .3s ease;
@@ -906,7 +918,6 @@ transition:all .3s ease;
 position:relative;
 
 }
-
 
 .stock-bajo-link:hover{
 
@@ -921,7 +932,6 @@ box-shadow:
 0 10px 25px rgba(224,109,146,0.20);
 
 }
-
 
 .stock-bajo-link::after{
 
@@ -947,7 +957,6 @@ transition:.3s;
 
 }
 
-
 .stock-bajo-link:hover::after{
 
 background:#e06d92;
@@ -956,7 +965,6 @@ transform:translateX(3px);
 
 }
 
-
 /* =========================================================
    CONTENIDO DE MOVIMIENTOS
 ========================================================= */
@@ -964,13 +972,10 @@ transform:translateX(3px);
 .live-icon{
 
 font-size:22px;
-
 min-width:30px;
-
 text-align:center;
 
 }
-
 
 .live-content{
 
@@ -978,13 +983,11 @@ flex:1;
 
 }
 
-
 .live-content strong{
 
 color:var(--berry);
 
 }
-
 
 .live-content small{
 
@@ -995,7 +998,6 @@ margin-top:3px;
 color:#9a6074;
 
 }
-
 
 /* =========================================================
    BOTONES
@@ -1019,13 +1021,11 @@ align-items:start;
 
 }
 
-
 .button-card{
 
 height:190px;
 
 text-decoration:none;
-
 color:inherit;
 
 display:flex;
@@ -1042,7 +1042,6 @@ transition:.3s;
 
 }
 
-
 .button-card:hover{
 
 transform:translateY(-8px);
@@ -1055,15 +1054,12 @@ border-color:var(--pink-accent);
 
 }
 
-
 .metric{
 
 padding:20px;
-
 text-align:center;
 
 }
-
 
 /* =========================================================
    IMÁGENES
@@ -1074,13 +1070,11 @@ text-align:center;
 .actualizar{
 
 width:90px;
-
 height:90px;
 
 display:flex;
 
 justify-content:center;
-
 align-items:center;
 
 margin:auto;
@@ -1095,13 +1089,11 @@ transition:.3s;
 
 }
 
-
 .registro img,
 .historial img,
 .actualizar img{
 
 width:100%;
-
 height:100%;
 
 object-fit:contain;
@@ -1109,7 +1101,6 @@ object-fit:contain;
 transition:.3s;
 
 }
-
 
 .button-card:hover .registro,
 .button-card:hover .historial,
@@ -1119,7 +1110,6 @@ background:var(--pink-accent);
 
 }
 
-
 .button-card:hover img{
 
 transform:scale(1.1);
@@ -1127,7 +1117,6 @@ transform:scale(1.1);
 filter:brightness(0) invert(1);
 
 }
-
 
 .metric p{
 
@@ -1139,7 +1128,6 @@ color:var(--berry);
 
 }
 
-
 /* =========================================================
    CERRAR SESIÓN
 ========================================================= */
@@ -1147,16 +1135,13 @@ color:var(--berry);
 .logout-box{
 
 margin-top:20px;
-
 text-align:center;
 
 }
 
-
 .logout-btn{
 
 display:block;
-
 width:100%;
 
 padding:14px;
@@ -1189,7 +1174,6 @@ box-shadow:
 
 }
 
-
 .logout-btn:hover{
 
 transform:translateY(-3px);
@@ -1208,7 +1192,6 @@ linear-gradient(
 
 }
 
-
 /* =========================================================
    BRILLO
 ========================================================= */
@@ -1216,11 +1199,9 @@ linear-gradient(
 .profile-card{
 
 position:relative;
-
 overflow:hidden;
 
 }
-
 
 .profile-card::before{
 
@@ -1258,7 +1239,6 @@ pointer-events:none;
 
 }
 
-
 @keyframes shineCard{
 
 0%{
@@ -1275,7 +1255,6 @@ left:220%;
 
 }
 
-
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -1289,7 +1268,6 @@ grid-template-columns:1fr 1fr;
 }
 
 }
-
 
 @media(max-width:1024px){
 
@@ -1333,7 +1311,6 @@ height:180px;
 
 }
 
-
 @media(max-width:768px){
 
 .container{
@@ -1360,33 +1337,30 @@ font-size:14px;
 
 }
 
-.profile-header img{
+/* INICIAL EN CELULAR */
+
+.profile-inicial{
 
 width:140px;
-
 height:140px;
+font-size:65px;
 
 }
 
 .profile-card{
 
 width:100%;
-
 padding:30px 20px;
-
 border-radius:20px;
 
 }
 
-
 .profile-stats{
 
 grid-template-columns:1fr 1fr;
-
 gap:10px;
 
 }
-
 
 .profile-stats a{
 
@@ -1394,22 +1368,18 @@ padding:15px 10px;
 
 }
 
-
 .profile-stats strong{
 
 font-size:26px;
 
 }
 
-
 .resumen-grid{
 
 grid-template-columns:1fr 1fr;
-
 gap:10px;
 
 }
-
 
 .resumen-item{
 
@@ -1417,13 +1387,11 @@ padding:15px 10px;
 
 }
 
-
 .resumen-item strong{
 
 font-size:24px;
 
 }
-
 
 .metrics{
 
@@ -1431,26 +1399,21 @@ grid-template-columns:1fr;
 
 }
 
-
 .button-card{
 
 width:100%;
-
 height:170px;
 
 }
-
 
 .registro,
 .historial,
 .actualizar{
 
 width:75px;
-
 height:75px;
 
 }
-
 
 .card,
 .ai-card{
@@ -1458,7 +1421,6 @@ height:75px;
 padding:20px;
 
 }
-
 
 /* BOTÓN STOCK BAJO EN CELULAR */
 
@@ -1468,12 +1430,22 @@ align-items:flex-start;
 
 }
 
-
 .stock-bajo-link::after{
 
 font-size:11px;
-
 padding:6px 9px;
+
+}
+
+}
+
+@media(max-width:480px){
+
+.profile-inicial{
+
+width:120px;
+height:120px;
+font-size:55px;
 
 }
 
@@ -1483,21 +1455,15 @@ padding:6px 9px;
 
 </head>
 
-
 <body>
-
 
 <?php include 'submenu.php'; ?>
 
-
 <div class="container">
-
 
 <main class="bodycito">
 
-
 <section class="bodycito_sec1">
-
 
 <!-- =====================================================
      BIENVENIDA
@@ -1517,7 +1483,6 @@ Bienvenido
 
 </h1>
 
-
 <p>
 
 Perfil personal - DIVINE
@@ -1526,32 +1491,31 @@ Perfil personal - DIVINE
 
 </div>
 
-
 <!-- =====================================================
      PERFIL
 ====================================================== -->
 
 <div class="grid-top">
 
-
 <div class="profile-card">
-
 
 <div class="profile-header">
 
+<!-- =====================================================
+     INICIAL DEL USUARIO
+====================================================== -->
 
-<img
-src="./imagenes/vendee.png"
-alt="Perfil"
->
+<div class="profile-inicial">
 
+<?php echo htmlspecialchars($inicial); ?>
+
+</div>
 
 <h2>
 
 <?php echo htmlspecialchars($_SESSION['nombre']); ?>
 
 </h2>
-
 
 <div class="badge">
 
@@ -1561,9 +1525,7 @@ alt="Perfil"
 
 </div>
 
-
 </div>
-
 
 <div class="quote">
 
@@ -1575,7 +1537,6 @@ alt="Perfil"
 
 </div>
 
-
 <p>
 
 CONTACTO:
@@ -1583,7 +1544,6 @@ CONTACTO:
 <?php echo htmlspecialchars($_SESSION['celular']); ?>
 
 </p>
-
 
 <div class="progress">
 
@@ -1593,7 +1553,6 @@ Desempeño General 97%
 
 </p>
 
-
 <div class="progress-bar">
 
 <div class="progress-fill"></div>
@@ -1602,13 +1561,11 @@ Desempeño General 97%
 
 </div>
 
-
 <!-- =====================================================
      ESTADÍSTICAS
 ====================================================== -->
 
 <div class="profile-stats">
-
 
 <a
 href="./CRUD-ventas/readtodoventa.php"
@@ -1625,7 +1582,6 @@ Ventas
 
 </a>
 
-
 <a
 href="./CRUD-CARRITO-PEDIDO/readtodopedido.php"
 class="stat-card"
@@ -1641,9 +1597,7 @@ Pedidos
 
 </a>
 
-
 </div>
-
 
 <!-- CERRAR SESIÓN -->
 
@@ -1660,16 +1614,13 @@ Cerrar Sesión
 
 </div>
 
-
 </div>
-
 
 <!-- =====================================================
      BOTONES PRINCIPALES
 ====================================================== -->
 
 <div class="metrics">
-
 
 <a
 href="./CRUD-producto/formularioprodu.php"
@@ -1693,7 +1644,6 @@ Registrar producto
 
 </a>
 
-
 <a
 href="./CRUD-CARRITO-PEDIDO/readtodopedido.php"
 class="metric button-card"
@@ -1715,7 +1665,6 @@ Actualizar pedido
 </p>
 
 </a>
-
 
 <a
 href="./CRUD-ventas/readtodoventa.php"
@@ -1739,12 +1688,9 @@ Historial de ventas
 
 </a>
 
-
 </div>
 
-
 </div>
-
 
 <!-- =====================================================
      RESUMEN DEL DÍA
@@ -1758,19 +1704,18 @@ Resumen del Día ✨
 
 </h2>
 
-
 <div class="ai-box">
 
-
 <div class="resumen-grid">
-
 
 <!-- PEDIDOS PENDIENTES -->
 
 <div class="resumen-item">
 
 <div class="resumen-icon">
+
 🛒
+
 </div>
 
 <strong>
@@ -1787,13 +1732,14 @@ Pedidos pendientes
 
 </div>
 
-
 <!-- VENTAS DE HOY -->
 
 <div class="resumen-item">
 
 <div class="resumen-icon">
+
 💰
+
 </div>
 
 <strong>
@@ -1810,13 +1756,14 @@ Ventas completadas hoy
 
 </div>
 
-
 <!-- DINERO DE HOY -->
 
 <div class="resumen-item">
 
 <div class="resumen-icon">
+
 💵
+
 </div>
 
 <strong class="dinero">
@@ -1826,10 +1773,15 @@ Bs.
 <?php
 
 echo number_format(
+
     (float)$dineroHoy,
+
     2,
+
     '.',
+
     ','
+
 );
 
 ?>
@@ -1844,13 +1796,14 @@ Total vendido hoy
 
 </div>
 
-
 <!-- STOCK BAJO -->
 
 <div class="resumen-item">
 
 <div class="resumen-icon">
+
 📦
+
 </div>
 
 <strong>
@@ -1867,13 +1820,11 @@ Productos con stock bajo
 
 </div>
 
-
 </div>
 
 </div>
 
 </div>
-
 
 <!-- =====================================================
      ÚLTIMOS MOVIMIENTOS
@@ -1884,13 +1835,11 @@ class="card"
 style="margin-top:25px; margin-bottom:25px;"
 >
 
-
 <h3>
 
 Últimos Movimientos ✨
 
 </h3>
-
 
 <!-- =====================================================
      ÚLTIMA VENTA
@@ -1901,13 +1850,17 @@ style="margin-top:25px; margin-bottom:25px;"
 <div class="live-item">
 
 <div class="live-icon">
+
 💰
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Última venta completada
+
 </strong>
 
 <small>
@@ -1917,7 +1870,9 @@ Cliente:
 <?php
 
 echo htmlspecialchars(
+
     $ultimaVenta['nombre']
+
 );
 
 ?>
@@ -1929,10 +1884,15 @@ Bs.
 <?php
 
 echo number_format(
+
     (float)$ultimaVenta['costototal'],
+
     2,
+
     '.',
+
     ','
+
 );
 
 ?>
@@ -1942,7 +1902,9 @@ echo number_format(
 <?php
 
 echo htmlspecialchars(
+
     $ultimaVenta['fecha']
+
 );
 
 ?>
@@ -1958,17 +1920,23 @@ echo htmlspecialchars(
 <div class="live-item">
 
 <div class="live-icon">
+
 💰
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Sin ventas completadas
+
 </strong>
 
 <small>
+
 No existen ventas completadas para este vendedor.
+
 </small>
 
 </div>
@@ -1976,7 +1944,6 @@ No existen ventas completadas para este vendedor.
 </div>
 
 <?php endif; ?>
-
 
 <!-- =====================================================
      ÚLTIMO PEDIDO
@@ -1987,13 +1954,17 @@ No existen ventas completadas para este vendedor.
 <div class="live-item">
 
 <div class="live-icon">
+
 🛒
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Último pedido registrado
+
 </strong>
 
 <small>
@@ -2001,7 +1972,9 @@ No existen ventas completadas para este vendedor.
 Pedido #<?php
 
 echo htmlspecialchars(
+
     $ultimoPedido['ID']
+
 );
 
 ?>
@@ -2011,7 +1984,9 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
+
     $ultimoPedido['nombre']
+
 );
 
 ?>
@@ -2021,7 +1996,9 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
+
     $ultimoPedido['estado']
+
 );
 
 ?>
@@ -2037,17 +2014,23 @@ echo htmlspecialchars(
 <div class="live-item">
 
 <div class="live-icon">
+
 🛒
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Sin pedidos registrados
+
 </strong>
 
 <small>
+
 No existen pedidos registrados para este vendedor.
+
 </small>
 
 </div>
@@ -2055,7 +2038,6 @@ No existen pedidos registrados para este vendedor.
 </div>
 
 <?php endif; ?>
-
 
 <!-- =====================================================
      PRODUCTO CON STOCK BAJO
@@ -2067,18 +2049,29 @@ No existen pedidos registrados para este vendedor.
 href="./CRUD-producto/stock_bajo.php"
 class="live-item stock-bajo-link"
 >
-📦 CONSULTA LOS PRODUCTOS CON STOCK BAJO AQUÍ!!!
- 
 
- 
+<div class="live-icon">
 
-<a href="./CRUD-producto/stock_bajo.php">PRODUCTOS CON STOCK BAJO</a>
+📦
+
+</div>
+
+<div class="live-content">
+
+<strong>
+
+CONSULTA LOS PRODUCTOS CON STOCK BAJO AQUÍ!!!
+
+</strong>
+
 <small>
 
 <?php
 
 echo htmlspecialchars(
+
     $ultimoStock['nombre']
+
 );
 
 ?>
@@ -2088,7 +2081,9 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
+
     $ultimoStock['codigo']
+
 );
 
 ?>
@@ -2098,12 +2093,14 @@ echo htmlspecialchars(
 <?php
 
 echo htmlspecialchars(
+
     $ultimoStock['stock']
+
 );
 
 ?>
 
- unidades
+unidades
 
 </small>
 
@@ -2116,17 +2113,23 @@ echo htmlspecialchars(
 <div class="live-item">
 
 <div class="live-icon">
+
 📦
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Stock disponible
+
 </strong>
 
 <small>
+
 Actualmente no existen productos con stock bajo.
+
 </small>
 
 </div>
@@ -2135,7 +2138,6 @@ Actualmente no existen productos con stock bajo.
 
 <?php endif; ?>
 
-
 <!-- =====================================================
      ACTIVIDAD DEL VENDEDOR
 ====================================================== -->
@@ -2143,13 +2145,17 @@ Actualmente no existen productos con stock bajo.
 <div class="live-item">
 
 <div class="live-icon">
+
 📊
+
 </div>
 
 <div class="live-content">
 
 <strong>
+
 Actividad del vendedor
+
 </strong>
 
 <small>
@@ -2170,9 +2176,7 @@ ventas completadas.
 
 </div>
 
-
 </div>
-
 
 </section>
 
@@ -2180,10 +2184,9 @@ ventas completadas.
 
 </div>
 
-
 <?php include 'submenpiepag.php'; ?>
-
 
 </body>
 
 </html>
+

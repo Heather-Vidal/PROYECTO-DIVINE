@@ -1,558 +1,1238 @@
- 
+<?php
+
+$servidor = "localhost";
+$usuario = "root";
+$contrasena = "";
+$bd = "DIVINE";
+
+/* ==========================================
+   CONEXIÓN A LA BASE DE DATOS
+========================================== */
+
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contrasena,
+    $bd
+);
+
+if ($conn->connect_error) {
+
+    die(
+        "Error de conexión: "
+        . $conn->connect_error
+    );
+
+}
+
+session_start();
+
+
+/* ==========================================
+   OBTENER ID DEL PEDIDO
+========================================== */
+
+if (!isset($_GET['idPedido'])) {
+
+    die("No se recibió el ID del pedido.");
+
+}
+
+$id_pedido = $_GET['idPedido'];
+
+
+/* ==========================================
+   CONSULTAR TODOS LOS PRODUCTOS
+========================================== */
+
+$sql = "SELECT * FROM PRODUCTO";
+
+$resultado = $conn->query($sql);
+
+if (!$resultado) {
+
+    die(
+        "Error al consultar los productos: "
+        . $conn->error
+    );
+
+}
+
+
+/* ==========================================
+   CALCULAR TOTAL DEL PEDIDO
+========================================== */
+
+$sqlTotal = "
+    SELECT SUM(costototal) AS total
+    FROM carrito
+    WHERE PEDIDOS_ID = '$id_pedido'
+";
+
+$resultadoTotal = $conn->query($sqlTotal);
+
+if (!$resultadoTotal) {
+
+    die(
+        "Error al calcular el total del pedido: "
+        . $conn->error
+    );
+
+}
+
+$res = $resultadoTotal->fetch_assoc();
+
+$total = $res['total'] ?? 0;
+
+
+/* ==========================================
+   MENSAJE PRODUCTO ELIMINADO
+========================================== */
+
+$productoEliminado = false;
+
+if (
+    isset($_GET['eliminado'])
+    &&
+    $_GET['eliminado'] == '1'
+) {
+
+    $productoEliminado = true;
+
+}
+
+?>
+
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Registro - DIVINE</title>
+<meta charset="UTF-8">
 
-    <!-- JQUERY -->
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <!-- JQUERY VALIDATE -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+<title>
+    DIVINE | Seleccionar productos
+</title>
 
-    <!-- FUENTES -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-    <style>
+<style>
 
-        /* =====================================================
-           CONFIGURACIÓN GENERAL
-        ===================================================== */
+/* ==================================================
+   VARIABLES
+================================================== */
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+:root {
 
-        body {
-            min-height: 100vh;
+    --rosa: #b86f80;
+    --rosa-claro: #d9a6b2;
+    --rosa-palido: #f7e9ec;
+    --crema: #fffaf8;
 
-            font-family: 'Poppins', sans-serif;
+    --texto: #4d4143;
+    --gris: #817679;
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+    --borde: #ead7dc;
 
-            padding: 40px 20px;
+}
 
-            background-color: #e9e5dd;
 
-            background-image: url("../imagenes/fondote.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+/* ==================================================
+   RESET
+================================================== */
 
-            position: relative;
-        }
+* {
 
-        /* Capa suave sobre el fondo */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 
-            background: rgba(255, 255, 255, 0.18);
+}
 
-            z-index: -1;
-        }
 
+html {
 
-        /* =====================================================
-           FORMULARIO PRINCIPAL
-        ===================================================== */
+    margin: 0;
+    padding: 0;
 
-        form {
-            position: relative;
+}
 
-            width: 100%;
-            max-width: 900px;
 
-            min-height: 560px;
+body {
 
-            padding: 42px 48px;
+    margin: 0;
 
-            display: grid;
+    padding-top: 78px !important;
 
-            grid-template-columns: 0.9fr 1.4fr;
+    background: var(--crema);
 
-            grid-template-rows: auto auto 1fr auto;
+    color: var(--texto);
 
-            grid-template-areas:
-                "imagen titulo"
-                "imagen leyenda"
-                "imagen campos"
-                "imagen boton";
+    font-family: 'Segoe UI', sans-serif;
 
-            column-gap: 45px;
-            row-gap: 10px;
+    min-height: 100vh;
 
-            background: rgba(255, 212, 234, 0.94);
+}
 
-            border: 1px solid rgba(255, 255, 255, 0.8);
 
-            border-radius: 28px;
+/* ==================================================
+   MENÚ COMPLETAMENTE FIJO
+================================================== */
 
-            box-shadow:
-                0 25px 60px rgba(90, 45, 68, 0.25),
-                0 5px 15px rgba(0, 0, 0, 0.08);
+/*
+   ESTA CAJA ES LA ÚNICA QUE DEBE QUEDARSE ARRIBA.
+*/
 
-            backdrop-filter: blur(5px);
+#menu-fijo-divine {
 
-            overflow: hidden;
-        }
+    position: fixed !important;
 
+    top: 0 !important;
 
-        /* Decoraciones */
-        form::before {
-            content: "";
+    left: 0 !important;
 
-            position: absolute;
+    right: 0 !important;
 
-            width: 180px;
-            height: 180px;
+    width: 100vw !important;
 
-            border-radius: 50%;
+    height: 78px !important;
 
-            background: rgba(255, 255, 255, 0.20);
+    margin: 0 !important;
 
-            top: -90px;
-            right: -60px;
-        }
+    padding: 0 !important;
 
-        form::after {
-            content: "";
+    z-index: 2147483647 !important;
 
-            position: absolute;
+    background: #fffaf8 !important;
 
-            width: 120px;
-            height: 120px;
+    display: block !important;
 
-            border-radius: 50%;
+    visibility: visible !important;
 
-            background: rgba(255, 255, 255, 0.15);
+    opacity: 1 !important;
 
-            bottom: -65px;
-            left: -45px;
-        }
+    transform: translate3d(0, 0, 0) !important;
 
+    transition: none !important;
 
-        /* =====================================================
-           IMAGEN
-        ===================================================== */
+    animation: none !important;
 
-        .imagen {
-            grid-area: imagen;
+    float: none !important;
 
-            min-height: 430px;
+    overflow: visible !important;
 
-            border-radius: 22px;
+}
 
-            background-image:
-                linear-gradient(
-                    rgba(139, 79, 107, 0.08),
-                    rgba(139, 79, 107, 0.08)
-                ),
-                url("../imagenes/persona.png");
 
-            background-position: center;
-            background-size: contain;
-            background-repeat: no-repeat;
+/*
+   TODO LO QUE ESTÉ DENTRO DEL CONTENEDOR
+   SE QUEDA DENTRO DE LA CAJA.
+*/
 
-            position: relative;
+#menu-fijo-divine > * {
 
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
+    margin-top: 0 !important;
 
-        /* Marco decorativo */
-        .imagen::before {
-            content: "";
+    transform: none !important;
 
-            position: absolute;
+    animation: none !important;
 
-            width: 85%;
-            height: 85%;
+}
 
-            border: 1px solid rgba(139, 79, 107, 0.25);
 
-            border-radius: 25px;
+/*
+   Si submenucarrito.php utiliza alguno
+   de estos elementos, anulamos posiciones
+   que puedan moverlos.
+*/
 
-            pointer-events: none;
-        }
+#menu-fijo-divine header,
+#menu-fijo-divine nav,
+#menu-fijo-divine section {
 
+    margin-top: 0 !important;
 
-        /* =====================================================
-           TÍTULO
-        ===================================================== */
+    transform: none !important;
 
-        h2 {
-            grid-area: titulo;
+    animation: none !important;
 
-            margin: 5px 0 2px;
+}
 
-            font-family: "Playfair Display", serif;
 
-            font-size: 36px;
+/*
+   IMPORTANTE:
+   NO ponemos position:static a TODOS los hijos,
+   porque eso podría destruir el diseño original
+   del submenú.
+*/
 
-            font-weight: 700;
 
-            color: #713b55;
+/* ==================================================
+   HERO
+================================================== */
 
-            letter-spacing: 1.5px;
+.hero {
 
-            line-height: 1.2;
+    min-height: 520px;
 
-            position: relative;
+    background:
 
-            width: fit-content;
+    linear-gradient(
+        to right,
+        rgba(255,250,248,.88),
+        rgba(255,250,248,.35),
+        rgba(255,250,248,.05)
+    ),
 
-            padding-bottom: 10px;
-        }
+    url("../imagenes/fondote.png");
 
-        h2::after {
-            content: "";
+    background-size: cover;
 
-            position: absolute;
+    background-position: center;
 
-            left: 0;
-            bottom: 0;
+    display: flex;
 
-            width: 75px;
-            height: 3px;
+    align-items: center;
 
-            border-radius: 10px;
+    padding: 60px 8%;
 
-            background: #d85b94;
-        }
+    animation: aparecerHero 1s ease;
 
+}
 
-        /* =====================================================
-           LEYENDA
-        ===================================================== */
 
-        legend {
-            grid-area: leyenda;
+.hero-content {
 
-            display: block;
+    max-width: 520px;
 
-            margin-top: 4px;
-            margin-bottom: 10px;
+}
 
-            color: #8b4f6b;
 
-            font-family: "Playfair Display", serif;
+.hero-linea {
 
-            font-size: 18px;
+    width: 60px;
 
-            font-weight: 600;
+    height: 2px;
 
-            letter-spacing: 1px;
-        }
+    background: var(--rosa);
 
+    margin-bottom: 25px;
 
-        /* =====================================================
-           GRUPO DE CAMPOS
-        ===================================================== */
+}
 
-        .grupo-campos {
-            grid-area: campos;
 
-            display: flex;
+.hero h1 {
 
-            flex-direction: column;
+    font-family: Georgia, serif;
 
-            gap: 6px;
+    font-size: clamp(3.5rem, 7vw, 6rem);
 
-            position: relative;
+    font-weight: 400;
 
-            z-index: 2;
-        }
+    letter-spacing: 12px;
 
+    color: var(--rosa);
 
-        /* =====================================================
-           LABELS
-        ===================================================== */
+    line-height: 1;
 
-        label {
-            color: #864763;
+}
 
-            font-size: 14px;
 
-            font-weight: 500;
+.hero p {
 
-            margin-top: 5px;
+    margin-top: 25px;
 
-            letter-spacing: 0.2px;
-        }
+    font-size: 1.05rem;
 
+    letter-spacing: 1px;
 
-        /* =====================================================
-           INPUTS
-        ===================================================== */
+    color: #66595c;
 
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
+    line-height: 1.8;
 
-            width: 100%;
+}
 
-            padding: 13px 15px;
 
-            border: 1px solid #d5a5ba;
+/* ==================================================
+   SECCIÓN
+================================================== */
 
-            border-radius: 11px;
+.section {
 
-            font-family: 'Poppins', sans-serif;
+    max-width: 1450px;
 
-            font-size: 14px;
+    margin: auto;
 
-            color: #5e3045;
+    padding: 90px 50px;
 
-            background: rgba(255, 255, 255, 0.96);
+}
 
-            outline: none;
 
-            transition:
-                border-color 0.3s ease,
-                box-shadow 0.3s ease,
-                transform 0.2s ease;
-        }
+/* ==================================================
+   ENCABEZADO
+================================================== */
 
+.encabezado {
 
-        /* Placeholder */
-        input::placeholder {
-            color: #b89aaa;
-        }
+    text-align: center;
 
+    margin-bottom: 35px;
 
-        /* Focus */
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="date"]:focus,
-        select:focus {
+}
 
-            border-color: #b94f7e;
 
-            box-shadow:
-                0 0 0 3px rgba(216, 91, 148, 0.13);
+.encabezado-pequeno {
 
-            transform: translateY(-1px);
-        }
+    color: var(--rosa);
 
+    font-size: .8rem;
 
-        /* =====================================================
-           OCULTOS
-        ===================================================== */
+    text-transform: uppercase;
 
-        input[type="hidden"] {
-            display: none;
-        }
+    letter-spacing: 4px;
 
+    margin-bottom: 15px;
 
-        /* =====================================================
-           MENSAJES DE VALIDACIÓN
-        ===================================================== */
+}
 
-        label.error {
-            color: #b3295d;
 
-            font-size: 12px;
+.titulo {
 
-            font-weight: 500;
+    font-family: Georgia, serif;
 
-            margin-top: 2px;
-            margin-bottom: 2px;
-        }
+    font-size: 2.5rem;
 
-        input.error,
-        select.error {
+    font-weight: 400;
 
-            border-color: #c94c75;
+    color: #57494c;
 
-            background: #fff8fa;
+}
 
-            box-shadow: 0 0 0 2px rgba(201, 76, 117, 0.08);
-        }
 
+.linea-decorativa {
 
-        /* =====================================================
-           BOTÓN
-        ===================================================== */
+    width: 45px;
 
-        input[type="submit"] {
+    height: 2px;
 
-            grid-area: boton;
+    background: var(--rosa-claro);
 
-            position: relative;
+    margin: 22px auto 0;
 
-            z-index: 3;
+}
 
-            width: 100%;
 
-            margin-top: 12px;
+/* ==================================================
+   TOTAL
+================================================== */
 
-            padding: 14px 20px;
+.total {
 
-            border: none;
+    width: fit-content;
 
-            border-radius: 12px;
+    min-width: 220px;
 
-            background: linear-gradient(
-                135deg,
-                #63364b,
-                #7d415e
-            );
+    margin: 0 auto 55px;
 
-            color: #ffffff;
+    padding: 15px 30px;
 
-            font-family: 'Poppins', sans-serif;
+    background: white;
 
-            font-size: 16px;
+    border: 1px solid var(--borde);
 
-            font-weight: 600;
+    border-radius: 30px;
 
-            letter-spacing: 1px;
+    text-align: center;
 
-            cursor: pointer;
+    color: #57494c;
 
-            box-shadow:
-                0 8px 18px rgba(99, 54, 75, 0.28);
+    font-family: Georgia, serif;
 
-            transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease,
-                background 0.25s ease;
-        }
+    font-size: 1.2rem;
 
-        input[type="submit"]:hover {
+    box-shadow:
+        0 8px 25px rgba(100,70,80,.08);
 
-            background: linear-gradient(
-                135deg,
-                #b85d87,
-                #c96b98
-            );
+}
 
-            transform: translateY(-2px);
 
-            box-shadow:
-                0 10px 22px rgba(99, 54, 75, 0.30);
-        }
+.total strong {
 
-        input[type="submit"]:active {
-            transform: translateY(0);
-        }
+    color: var(--rosa);
 
+    font-size: 1.4rem;
 
-        /* =====================================================
-           RESPONSIVE - TABLET
-        ===================================================== */
+}
 
-        @media (max-width: 800px) {
 
-            body {
-                padding: 25px 15px;
-            }
+/* ==================================================
+   GRID
+================================================== */
 
-            form {
+.grid {
 
-                max-width: 600px;
+    display: grid;
 
-                min-height: auto;
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
 
-                padding: 35px;
+    gap: 35px;
 
-                grid-template-columns: 1fr;
+}
 
-                grid-template-rows: auto;
 
-                grid-template-areas:
-                    "imagen"
-                    "titulo"
-                    "leyenda"
-                    "campos"
-                    "boton";
+/* ==================================================
+   TARJETA
+================================================== */
 
-                gap: 12px;
-            }
+.card {
 
-            .imagen {
+    background: #ffffff;
 
-                min-height: 260px;
+    border-radius: 18px;
 
-                margin-bottom: 8px;
-            }
+    overflow: hidden;
 
-            h2 {
-                font-size: 32px;
-            }
+    border: 1px solid var(--borde);
 
-            legend {
-                margin-bottom: 8px;
-            }
-        }
+    box-shadow:
+        0 8px 30px rgba(100,70,80,.06);
 
+    transition:
+        transform .45s ease,
+        box-shadow .45s ease;
 
-        /* =====================================================
-           RESPONSIVE - CELULAR
-        ===================================================== */
+}
 
-        @media (max-width: 500px) {
 
-            body {
-                padding: 15px 10px;
-            }
+.card:hover {
 
-            form {
+    transform: translateY(-8px);
 
-                padding: 28px 22px;
+    box-shadow:
+        0 20px 45px rgba(100,70,80,.13);
 
-                border-radius: 22px;
-            }
+}
 
-            .imagen {
 
-                min-height: 210px;
-            }
+/* ==================================================
+   IMAGEN
+================================================== */
 
-            h2 {
+.imagen {
 
-                font-size: 27px;
+    height: 300px;
 
-                text-align: center;
+    overflow: hidden;
 
-                width: 100%;
-            }
+    background: var(--rosa-palido);
 
-            h2::after {
+    position: relative;
 
-                left: 50%;
+}
 
-                transform: translateX(-50%);
-            }
 
-            legend {
+.imagen img {
 
-                text-align: center;
+    width: 100%;
 
-                font-size: 16px;
-            }
+    height: 100%;
 
-            input[type="submit"] {
+    object-fit: cover;
 
-                font-size: 15px;
+    display: block;
 
-                padding: 13px;
-            }
-        }
+    transition:
+        transform .7s ease;
 
-    </style>
+}
+
+
+.card:hover .imagen img {
+
+    transform: scale(1.06);
+
+}
+
+
+/* ==================================================
+   PLACEHOLDER
+================================================== */
+
+.placeholder {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: var(--rosa);
+
+    font-family: Georgia, serif;
+
+    font-size: 1rem;
+
+}
+
+
+/* ==================================================
+   INFORMACIÓN
+================================================== */
+
+.info {
+
+    padding: 27px 25px 25px;
+
+    text-align: center;
+
+}
+
+
+.nombre-producto {
+
+    font-family: Georgia, serif;
+
+    font-size: 1.4rem;
+
+    font-weight: 700;
+
+    color: #57494c;
+
+    text-align: center;
+
+    margin-bottom: 14px;
+
+    line-height: 1.3;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+}
+
+
+.descripcion {
+
+    color: var(--gris);
+
+    font-size: .9rem;
+
+    line-height: 1.7;
+
+    min-height: 50px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.precio {
+
+    font-family: Georgia, serif;
+
+    font-size: 1.5rem;
+
+    color: var(--rosa);
+
+    margin-bottom: 20px;
+
+    font-weight: 600;
+
+}
+
+
+/* ==================================================
+   STOCK
+================================================== */
+
+.stock {
+
+    text-align: center;
+
+    margin-bottom: 20px;
+
+    font-size: .82rem;
+
+    color: #9a8b8f;
+
+    letter-spacing: .3px;
+
+}
+
+
+.stock strong {
+
+    color: var(--rosa);
+
+    font-weight: 600;
+
+}
+
+
+.stock.ultimas {
+
+    color: #a57c55;
+
+}
+
+
+.stock.ultimas strong {
+
+    color: #a57c55;
+
+}
+
+
+.stock.agotado {
+
+    color: #999;
+
+}
+
+
+.stock.agotado strong {
+
+    color: #999;
+
+}
+
+
+/* ==================================================
+   CANTIDAD
+================================================== */
+
+.cantidad {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.cantidad button {
+
+    width: 42px;
+
+    height: 42px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--rosa);
+
+    color: white;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+}
+
+
+.cantidad button:hover {
+
+    background: #a65f70;
+
+    transform: scale(1.08);
+
+}
+
+
+.cantidad button:disabled {
+
+    background: #d8cdd0;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+.cantidad input {
+
+    width: 70px;
+
+    height: 42px;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 10px;
+
+    background: var(--rosa-palido);
+
+    text-align: center;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    color: var(--texto);
+
+    outline: none;
+
+}
+
+
+.cantidad input:focus {
+
+    border-color: var(--rosa);
+
+}
+
+
+/* ==================================================
+   BOTÓN
+================================================== */
+
+.btn {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 100%;
+
+    height: 48px;
+
+    border-radius: 8px;
+
+    background: var(--rosa);
+
+    color: white;
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+
+    border: 1px solid var(--rosa);
+
+    cursor: pointer;
+
+    transition:
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease;
+
+}
+
+
+.btn:hover {
+
+    background: transparent;
+
+    color: var(--rosa);
+
+    transform: translateY(-2px);
+
+}
+
+
+.btn-agotado {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    cursor: not-allowed;
+
+}
+
+
+.btn-agotado:hover {
+
+    background: #e2dfe0;
+
+    border-color: #e2dfe0;
+
+    color: #888;
+
+    transform: none;
+
+}
+
+
+/* ==================================================
+   BOTONES FINALES
+================================================== */
+
+.botones {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 18px;
+
+    flex-wrap: wrap;
+
+    margin-top: 65px;
+
+}
+
+
+.final {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 48px;
+
+    padding: 13px 25px;
+
+    background: var(--rosa);
+
+    color: white;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: .9rem;
+
+    font-weight: 600;
+
+    border: 1px solid var(--rosa);
+
+    transition:
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease;
+
+}
+
+
+.final:hover {
+
+    background: transparent;
+
+    color: var(--rosa);
+
+    transform: translateY(-2px);
+
+}
+
+
+/* ==================================================
+   SIN PRODUCTOS
+================================================== */
+
+.sin-productos {
+
+    grid-column: 1 / -1;
+
+    padding: 80px 30px;
+
+    text-align: center;
+
+    background: white;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 18px;
+
+    color: var(--gris);
+
+}
+
+
+/* ==================================================
+   ANIMACIONES
+================================================== */
+
+.animar {
+
+    opacity: 0;
+
+    transform: translateY(25px);
+
+}
+
+
+.animar.activo {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+    transition:
+        opacity .7s ease,
+        transform .7s ease;
+
+}
+
+
+@keyframes aparecerHero {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(1.02);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+/* ==================================================
+   MENSAJE
+================================================== */
+
+.fondo-mensaje {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background: rgba(80, 30, 50, 0.35);
+
+    z-index: 999;
+
+}
+
+
+.mensaje-exito {
+
+    position: fixed;
+
+    top: 50%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 380px;
+
+    max-width: 90%;
+
+    padding: 35px;
+
+    background: #fff8fa;
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.25);
+
+    z-index: 1000;
+
+    border: 2px solid #e7a6b8;
+
+}
+
+
+.icono-exito {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #e8a7b9;
+
+    color: white;
+
+    font-size: 40px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.mensaje-exito h2 {
+
+    margin: 10px 0;
+
+    color: #8d4058;
+
+    font-size: 25px;
+
+}
+
+
+.mensaje-exito p {
+
+    color: #6f555d;
+
+    font-size: 16px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.mensaje-exito button {
+
+    border: none;
+
+    background: #c97991;
+
+    color: white;
+
+    padding: 12px 35px;
+
+    border-radius: 25px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.mensaje-exito button:hover {
+
+    background: #a95670;
+
+    transform: scale(1.05);
+
+}
+
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media(max-width: 768px) {
+
+    .hero {
+
+        min-height: 500px;
+
+        padding: 50px 30px;
+
+        background-position: 65% center;
+
+    }
+
+
+    .hero h1 {
+
+        font-size: 3.5rem;
+
+        letter-spacing: 8px;
+
+    }
+
+
+    .hero p {
+
+        font-size: .95rem;
+
+    }
+
+
+    .section {
+
+        padding: 65px 20px;
+
+    }
+
+
+    .titulo {
+
+        font-size: 2rem;
+
+    }
+
+
+    .grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+    }
+
+
+    .imagen {
+
+        height: 280px;
+
+    }
+
+
+    .botones {
+
+        flex-direction: column;
+
+    }
+
+
+    .final {
+
+        width: 100%;
+
+        max-width: 350px;
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -560,195 +1240,1015 @@
 <body>
 
 
-    <!-- =====================================================
-         FORMULARIO DE REGISTRO
-    ====================================================== -->
+<!-- ==================================================
+     MENÚ
+================================================== -->
 
-    <form action="createcliente.php" method="POST">
+<div
+    id="menu-fijo-original"
+    style="display:none !important;"
+>
 
-        <!-- IMAGEN -->
-        <div class="imagen"></div>
+<?php
 
+include 'submenucarrito.php';
 
-        <!-- TÍTULO -->
-        <h2>CREA TU CUENTA</h2>
+?>
 
-
-        <!-- SUBTÍTULO -->
-        <legend>DATOS PERSONALES</legend>
-
-
-        <!-- CAMPOS -->
-        <div class="grupo-campos">
-
-            <!-- CI -->
-            <label for="CI">CI:</label>
-
-            <input
-                type="number"
-                id="CI"
-                name="CI"
-                placeholder="Ingrese su número de CI"
-            >
+</div>
 
 
-            <!-- NOMBRE -->
-            <label for="nombre">Nombre:</label>
+<!-- ==================================================
+     CREAR EL MENÚ FUERA DEL CONTENIDO
+================================================== -->
 
-            <input
-                type="text"
-                id="nombre"
-                name="nombre"
-                placeholder="Ingrese su nombre completo"
-            >
+<script>
 
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-            <!-- DIRECCIÓN -->
-            <label for="direccion">Dirección:</label>
+        const menuOriginal =
+            document.getElementById(
+                "menu-fijo-original"
+            );
 
-            <input
-                type="text"
-                id="direccion"
-                name="direccion"
-                placeholder="Ingrese su dirección"
-            >
+        if (!menuOriginal) {
+            return;
+        }
 
 
-            <!-- TELÉFONO -->
-            <label for="celular">Teléfono:</label>
+        /*
+         * Creamos un contenedor completamente
+         * independiente del contenido.
+         */
 
-            <input
-                type="number"
-                id="celular"
-                name="celular"
-                placeholder="Ingrese su número de teléfono"
-            >
+        const menuFijo =
+            document.createElement("div");
+
+        menuFijo.id =
+            "menu-fijo-divine";
 
 
-            <!-- DATOS OCULTOS -->
-            <input
-                type="hidden"
-                name="rol"
-                value="vendedor"
-            >
+        /*
+         * Movemos el contenido real del submenu
+         * al nuevo contenedor.
+         */
 
-            <input
-                type="hidden"
-                name="estado"
-                value="ACTIVO"
-            >
+        while (
+            menuOriginal.firstChild
+        ) {
+
+            menuFijo.appendChild(
+                menuOriginal.firstChild
+            );
+
+        }
+
+
+        /*
+         * Lo colocamos directamente en HTML,
+         * fuera del resto del contenido.
+         */
+
+        document.documentElement.appendChild(
+            menuFijo
+        );
+
+
+        /*
+         * Medimos el menú.
+         */
+
+        function actualizarAltura() {
+
+            const altura =
+                menuFijo.offsetHeight;
+
+            document.body.style.paddingTop =
+                altura + "px";
+
+        }
+
+
+        actualizarAltura();
+
+
+        window.addEventListener(
+            "resize",
+            actualizarAltura
+        );
+
+
+        /*
+         * ESTO ES LO IMPORTANTE:
+         * cada vez que haya scroll,
+         * el menú sigue pegado arriba.
+         */
+
+        function mantenerMenuArriba() {
+
+            menuFijo.style.setProperty(
+                "position",
+                "fixed",
+                "important"
+            );
+
+            menuFijo.style.setProperty(
+                "top",
+                "0px",
+                "important"
+            );
+
+            menuFijo.style.setProperty(
+                "left",
+                "0px",
+                "important"
+            );
+
+            menuFijo.style.setProperty(
+                "right",
+                "0px",
+                "important"
+            );
+
+            menuFijo.style.setProperty(
+                "z-index",
+                "2147483647",
+                "important"
+            );
+
+            menuFijo.style.setProperty(
+                "transform",
+                "translate3d(0,0,0)",
+                "important"
+            );
+
+        }
+
+
+        mantenerMenuArriba();
+
+
+        window.addEventListener(
+            "scroll",
+            mantenerMenuArriba,
+            {
+                passive: true
+            }
+        );
+
+    }
+
+);
+
+</script>
+
+
+<script>
+
+const idPedido =
+    <?php echo $id_pedido; ?>;
+
+</script>
+
+
+<script src="../AJAX/scriptventanacarrito.js"></script>
+
+<script src="../AJAX/buscar.js"></script>
+
+
+<div id="productos"></div>
+
+
+<!-- ==================================================
+     HERO
+================================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-linea"></div>
+
+        <h1>
+
+            DIVINE
+
+        </h1>
+
+        <p>
+
+            Selecciona tus productos favoritos
+            y comienza a crear tu pedido.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ==================================================
+     PRODUCTOS
+================================================== -->
+
+<section class="section">
+
+
+    <div class="encabezado">
+
+        <div class="encabezado-pequeno">
+
+            Tu pedido
 
         </div>
 
 
-        <!-- BOTÓN -->
-        <input
-            type="submit"
-            value="Registrar"
+        <h2 class="titulo">
+
+            Comienza a armar tu carrito
+
+        </h2>
+
+
+        <div class="linea-decorativa"></div>
+
+    </div>
+
+
+    <!-- TOTAL -->
+
+    <div class="total">
+
+        Total:
+
+        <strong>
+
+            Bs.
+            <?php echo $total; ?>
+
+        </strong>
+
+    </div>
+
+
+    <!-- PRODUCTOS -->
+
+    <div class="grid">
+
+
+<?php
+
+
+if ($resultado->num_rows > 0) {
+
+
+    while (
+        $fila =
+        $resultado->fetch_assoc()
+    ) {
+
+
+        $stock =
+            (int)$fila["stock"];
+
+
+        $codigo =
+            $fila["codigo"];
+
+
+        /*
+         * BUSCAR IMAGEN
+         */
+
+        $directorio =
+            "../PRODUCTO-img/";
+
+        $nombreArchivo =
+            "p-" . $codigo;
+
+
+        $extensiones = [
+
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+
+        ];
+
+
+        $imagenProducto =
+            null;
+
+
+        foreach (
+            $extensiones
+            as $extension
+        ) {
+
+
+            $ruta =
+                $directorio .
+                $nombreArchivo .
+                "." .
+                $extension;
+
+
+            if (
+                file_exists($ruta)
+            ) {
+
+                $imagenProducto =
+                    $ruta;
+
+                break;
+
+            }
+
+        }
+
+
+?>
+
+
+        <!-- TARJETA -->
+
+        <div class="card animar">
+
+
+            <!-- IMAGEN -->
+
+            <div class="imagen">
+
+
+<?php
+
+if (
+    $imagenProducto !== null
+) {
+
+?>
+
+
+                <img
+
+                    src="<?php
+
+                    echo htmlspecialchars(
+                        $imagenProducto
+                    );
+
+                    ?>"
+
+                    alt="<?php
+
+                    echo htmlspecialchars(
+                        $fila["nombre"]
+                    );
+
+                    ?>"
+
+                >
+
+
+<?php
+
+} else {
+
+?>
+
+
+                <div class="placeholder">
+
+                    Imagen del producto
+
+                </div>
+
+
+<?php
+
+}
+
+?>
+
+
+            </div>
+
+
+            <!-- INFORMACIÓN -->
+
+            <div class="info">
+
+
+                <h3
+                    class="nombre-producto"
+                >
+
+<?php
+
+echo htmlspecialchars(
+
+    strtoupper(
+        $fila["nombre"]
+    )
+
+);
+
+?>
+
+                </h3>
+
+
+                <p
+                    class="descripcion"
+                >
+
+<?php
+
+echo htmlspecialchars(
+    $fila["descripcion"]
+);
+
+?>
+
+                </p>
+
+
+                <div class="precio">
+
+                    Bs.
+
+<?php
+
+echo htmlspecialchars(
+    $fila["precio"]
+);
+
+?>
+
+                </div>
+
+
+<?php
+
+if ($stock <= 0) {
+
+?>
+
+
+                <div
+                    class="stock agotado"
+                >
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+} elseif ($stock <= 5) {
+
+?>
+
+
+                <div
+                    class="stock ultimas"
+                >
+
+                    Últimas unidades:
+
+                    <strong>
+
+<?php
+
+echo $stock;
+
+?>
+
+                    </strong>
+
+                    disponibles
+
+                </div>
+
+
+<?php
+
+} else {
+
+?>
+
+
+                <div class="stock">
+
+                    Stock disponible:
+
+                    <strong>
+
+<?php
+
+echo $stock;
+
+?>
+
+                    </strong>
+
+                    unidades
+
+                </div>
+
+
+<?php
+
+}
+
+
+if ($stock <= 0) {
+
+?>
+
+
+                <div
+                    class="btn btn-agotado"
+                >
+
+                    Producto agotado
+
+                </div>
+
+
+<?php
+
+} else {
+
+?>
+
+
+                <form
+
+                    action="createcarrito.php"
+
+                    method="post"
+
+                >
+
+
+                    <input
+
+                        type="hidden"
+
+                        name="codigo"
+
+                        value="<?php
+
+                        echo htmlspecialchars(
+                            $fila["codigo"]
+                        );
+
+                        ?>"
+
+                    >
+
+
+                    <input
+
+                        type="hidden"
+
+                        name="idpedido"
+
+                        value="<?php
+
+                        echo htmlspecialchars(
+                            $id_pedido
+                        );
+
+                        ?>"
+
+                    >
+
+
+                    <input
+
+                        type="hidden"
+
+                        name="precio"
+
+                        value="<?php
+
+                        echo htmlspecialchars(
+                            $fila["precio"]
+                        );
+
+                        ?>"
+
+                    >
+
+
+                    <div class="cantidad">
+
+
+                        <button
+
+                            type="button"
+
+                            onclick="
+                                cambiarCantidad(
+                                    this,
+                                    -1,
+                                    <?php echo $stock; ?>
+                                )
+                            "
+
+                        >
+
+                            −
+
+                        </button>
+
+
+                        <input
+
+                            type="number"
+
+                            name="cantidad"
+
+                            value="0"
+
+                            min="0"
+
+                            max="<?php
+                                echo $stock;
+                            ?>"
+
+                            required
+
+                        >
+
+
+                        <button
+
+                            type="button"
+
+                            onclick="
+                                cambiarCantidad(
+                                    this,
+                                    1,
+                                    <?php echo $stock; ?>
+                                )
+                            "
+
+                        >
+
+                            +
+
+                        </button>
+
+
+                    </div>
+
+
+                    <button
+
+                        type="submit"
+
+                        class="btn"
+
+                    >
+
+                        Agregar al carrito
+
+                    </button>
+
+
+                </form>
+
+
+<?php
+
+}
+
+?>
+
+
+            </div>
+
+
+        </div>
+
+
+<?php
+
+
+    }
+
+
+} else {
+
+
+?>
+
+
+        <div class="sin-productos">
+
+            No hay productos disponibles
+            en este momento.
+
+        </div>
+
+
+<?php
+
+}
+
+?>
+
+
+    </div>
+
+
+    <!-- BOTÓN FINAL -->
+
+    <div class="botones">
+
+
+        <a
+
+            class="final"
+
+            href="readunopedido.php?idPedido=<?php
+
+            echo $id_pedido;
+
+            ?>"
+
         >
 
-    </form>
+            Finalizar compra
+
+        </a>
 
 
+    </div>
 
-    <!-- =====================================================
-         VALIDACIÓN JQUERY
-    ====================================================== -->
 
-    <script>
+</section>
 
-        $(document).ready(function () {
 
-            $("form").validate({
+<!-- ==================================================
+     ANIMACIÓN PRODUCTOS
+================================================== -->
 
-                rules: {
+<script>
 
-                    CI: {
-                        required: true,
-                        number: true,
-                        minlength: 7
-                    },
+const elementos =
+    document.querySelectorAll(
+        '.animar'
+    );
 
-                    nombre: {
-                        required: true,
-                        minlength: 3
-                    },
 
-                    direccion: {
-                        required: true,
-                        minlength: 5
-                    },
+const observador =
+    new IntersectionObserver(
 
-                    celular: {
-                        required: true,
-                        number: true,
-                        minlength: 7,
-                        maxlength: 8
-                    },
+        (entradas) => {
 
-                    rol: {
-                        required: true
-                    },
+            entradas.forEach(
 
-                    estado: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 44
+                (entrada) => {
+
+                    if (
+                        entrada.isIntersecting
+                    ) {
+
+                        entrada
+                            .target
+                            .classList
+                            .add(
+                                'activo'
+                            );
+
                     }
 
-                },
+                }
+
+            );
+
+        },
+
+        {
+
+            threshold: 0.12
+
+        }
+
+    );
 
 
-                messages: {
+elementos.forEach(
 
-                    CI: {
-                        required: "Ingrese su CI",
-                        number: "Solo se permiten números",
-                        minlength: "El CI debe tener mínimo 7 dígitos"
-                    },
+    (elemento) => {
 
-                    nombre: {
-                        required: "Ingrese su nombre",
-                        minlength: "El nombre debe tener mínimo 3 caracteres"
-                    },
+        observador.observe(
+            elemento
+        );
 
-                    direccion: {
-                        required: "Ingrese su dirección",
-                        minlength: "La dirección debe tener mínimo 5 caracteres"
-                    },
+    }
 
-                    celular: {
-                        required: "Ingrese su teléfono",
-                        number: "Solo se permiten números",
-                        minlength: "El teléfono debe tener mínimo 6 dígitos",
-                        maxlength: "El teléfono debe tener máximo 11 dígitos"
-                    },
+);
 
-                    rol: {
-                        required: "Seleccione un rol"
-                    },
-
-                    estado: {
-                        required: "Ingrese el estado",
-                        minlength: "El estado debe tener mínimo 3 caracteres",
-                        maxlength: "Límite de caracteres excedido"
-                    }
-
-                },
+</script>
 
 
-                errorClass: "error",
+<!-- ==================================================
+     CONTROL DE CANTIDAD
+================================================== -->
 
-                errorElement: "label"
+<script>
 
-            });
+function cambiarCantidad(
+    boton,
+    cambio,
+    stock
+) {
 
-        });
 
-    </script>
+    const contenedor =
+        boton.parentElement;
+
+
+    const input =
+        contenedor.querySelector(
+            'input[name="cantidad"]'
+        );
+
+
+    let cantidad =
+        parseInt(input.value) || 0;
+
+
+    cantidad =
+        cantidad + cambio;
+
+
+    if (cantidad < 0) {
+
+        cantidad = 0;
+
+    }
+
+
+    if (cantidad > stock) {
+
+        cantidad = stock;
+
+    }
+
+
+    input.value =
+        cantidad;
+
+
+    const botones =
+        contenedor.querySelectorAll(
+            'button'
+        );
+
+
+    botones[0].disabled =
+        cantidad <= 0;
+
+
+    botones[1].disabled =
+        cantidad >= stock;
+
+}
+
+</script>
+
+
+<!-- ==================================================
+     MANTENER SCROLL
+================================================== -->
+
+<script>
+
+if (
+    window.location.href.includes(
+        "idPedido"
+    )
+) {
+
+
+    const scroll =
+        sessionStorage.getItem(
+            "scrollY"
+        );
+
+
+    if (scroll) {
+
+        window.scrollTo(
+            0,
+            parseInt(scroll)
+        );
+
+    }
+
+}
+
+
+window.addEventListener(
+
+    "scroll",
+
+    () => {
+
+        sessionStorage.setItem(
+            "scrollY",
+            window.scrollY
+        );
+
+    }
+
+);
+
+</script>
+
+
+<!-- ==================================================
+     MENSAJE ELIMINADO
+================================================== -->
+
+<?php if ($productoEliminado): ?>
+
+
+<div class="mensaje-exito">
+
+    <div class="icono-exito">
+
+        ✓
+
+    </div>
+
+
+    <h2>
+
+        ¡Producto eliminado!
+
+    </h2>
+
+
+    <p>
+
+        El producto fue eliminado exitosamente.
+
+    </p>
+
+
+    <button
+        onclick="cerrarMensaje()"
+    >
+
+        Aceptar
+
+    </button>
+
+</div>
+
+
+<div class="fondo-mensaje"></div>
+
+
+<script>
+
+function cerrarMensaje() {
+
+    document.querySelector(
+        ".mensaje-exito"
+    ).style.display = "none";
+
+
+    document.querySelector(
+        ".fondo-mensaje"
+    ).style.display = "none";
+
+}
+
+</script>
+
+
+<?php endif; ?>
 
 
 </body>
 
 </html>
- 
+
+
+<?php
+
+$conn->close();
+
+?>

@@ -1,13 +1,18 @@
+
 <?php
+
 $archivo = 'mensajes.txt';
+
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Opiniones | DIVINE</title>
@@ -15,10 +20,13 @@ $archivo = 'mensajes.txt';
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
+<link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+>
 
 <style>
 
@@ -30,19 +38,15 @@ $archivo = 'mensajes.txt';
 
     --crema: #fbf6f1;
     --blanco: #fffdfb;
-
     --vino: #50343b;
     --vino-claro: #74545c;
-
     --rosa: #c77d91;
     --rosa-claro: #f2dce2;
-
     --dorado: #b69a6a;
     --dorado-claro: #dfcda7;
-
     --borde: #eadbd7;
-
     --sombra: rgba(77, 49, 57, .13);
+
 }
 
 
@@ -51,9 +55,11 @@ $archivo = 'mensajes.txt';
 ========================================================= */
 
 * {
+
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+
 }
 
 
@@ -74,11 +80,15 @@ body {
     background:
 
         linear-gradient(
+
             rgba(249, 239, 238, .90),
+
             rgba(248, 241, 235, .96)
+
         ),
 
         url("../imagenes/mezcla.jpg")
+
         center / cover fixed no-repeat;
 
 }
@@ -105,6 +115,7 @@ body {
     overflow: hidden;
 
     box-shadow:
+
         0 30px 80px rgba(77,49,57,.18);
 
 }
@@ -135,11 +146,15 @@ body {
     background:
 
         linear-gradient(
+
             rgba(70, 42, 49, .35),
+
             rgba(70, 42, 49, .58)
+
         ),
 
         url("../imagenes/mezcla.jpg")
+
         center / cover no-repeat;
 
 }
@@ -159,8 +174,7 @@ body {
 
     border-radius: 50%;
 
-    background:
-        rgba(255,255,255,.08);
+    background: rgba(255,255,255,.08);
 
     top: -300px;
 
@@ -302,6 +316,25 @@ body {
 }
 
 
+/* CONTENEDOR DE BOTONES */
+
+.botones-cabecera {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
 .seccion-titulo {
 
     font-family: 'Playfair Display', serif;
@@ -325,7 +358,7 @@ body {
 
 
 /* =========================================================
-   BOTÓN COMENTAR
+   BOTONES
 ========================================================= */
 
 .volver {
@@ -335,6 +368,8 @@ body {
     display: inline-flex;
 
     align-items: center;
+
+    justify-content: center;
 
     gap: 8px;
 
@@ -353,6 +388,7 @@ body {
     letter-spacing: .4px;
 
     box-shadow:
+
         0 8px 20px rgba(80,52,59,.18);
 
     transition: .3s ease;
@@ -367,6 +403,7 @@ body {
     transform: translateY(-3px);
 
     box-shadow:
+
         0 12px 25px rgba(199,125,145,.25);
 
 }
@@ -390,6 +427,7 @@ body {
 
 
 .decoracion::before,
+
 .decoracion::after {
 
     content: "";
@@ -420,8 +458,7 @@ body {
 
     display: grid;
 
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 22px;
 
@@ -447,6 +484,7 @@ body {
     border-radius: 20px;
 
     box-shadow:
+
         0 8px 25px var(--sombra);
 
     transition: .35s ease;
@@ -473,10 +511,15 @@ body {
     width: 4px;
 
     background:
+
         linear-gradient(
+
             to bottom,
+
             var(--rosa),
+
             var(--dorado)
+
         );
 
 }
@@ -510,13 +553,122 @@ body {
     border-color: #dcc0c4;
 
     box-shadow:
+
         0 18px 40px rgba(77,49,57,.15);
 
 }
 
 
 /* =========================================================
-   PARTE SUPERIOR DEL POST
+   CÍRCULO DEL ROL
+========================================================= */
+
+.rol-circulo {
+
+    position: absolute;
+
+    top: 16px;
+
+    right: 16px;
+
+    width: 34px;
+
+    height: 34px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--rosa),
+
+            var(--vino)
+
+        );
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    font-family: 'DM Sans', sans-serif;
+
+    box-shadow:
+
+        0 5px 12px rgba(80,52,59,.20);
+
+    z-index: 5;
+
+}
+
+
+/* =========================================================
+   COLORES SEGÚN ROL
+========================================================= */
+
+.rol-administrador {
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #8c3b58,
+
+            #50343b
+
+        );
+
+}
+
+
+.rol-vendedor {
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #c77d91,
+
+            #9b5269
+
+        );
+
+}
+
+
+.rol-cliente {
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #d4989d,
+
+            #b67880
+
+        );
+
+}
+
+
+/* =========================================================
+   PARTE SUPERIOR
 ========================================================= */
 
 .post-top {
@@ -637,10 +789,15 @@ body {
     border-radius: 20px;
 
     background:
+
         linear-gradient(
+
             135deg,
+
             #fffaf9,
+
             #f9eff2
+
         );
 
     color: #987d85;
@@ -747,11 +904,16 @@ body {
     }
 
 
-    .volver {
+    .botones-cabecera {
 
         width: 100%;
 
-        justify-content: center;
+    }
+
+
+    .volver {
+
+        flex: 1;
 
     }
 
@@ -803,6 +965,37 @@ body {
 
     }
 
+
+    .rol-circulo {
+
+        width: 31px;
+
+        height: 31px;
+
+        font-size: 12px;
+
+        top: 12px;
+
+        right: 12px;
+
+    }
+
+
+    .botones-cabecera {
+
+        flex-direction: column;
+
+        width: 100%;
+
+    }
+
+
+    .volver {
+
+        width: 100%;
+
+    }
+
 }
 
 </style>
@@ -825,18 +1018,24 @@ body {
         <div class="portada-contenido">
 
             <div class="mini-titulo">
+
                 DIVINE BEAUTY
+
             </div>
 
             <h1 class="titulo">
+
                 Historias <span>que inspiran</span>
+
             </h1>
 
             <div class="linea"></div>
 
             <p class="subtitulo">
+
                 Descubre las experiencias, comentarios y sugerencias
                 que nuestra comunidad comparte con nosotros.
+
             </p>
 
         </div>
@@ -853,33 +1052,67 @@ body {
 
         <div class="cabecera-publicaciones">
 
+
             <div>
 
                 <h2 class="seccion-titulo">
+
                     Opiniones de nuestra comunidad
+
                 </h2>
 
                 <p class="seccion-descripcion">
+
                     Cada palabra cuenta y nos ayuda a seguir creciendo.
+
                 </p>
 
             </div>
 
 
-            <a
-                class="volver"
-                href="publicar.php"
-            >
-                ♡ &nbsp; Compartir mi opinión
-            </a>
+            <!-- BOTONES -->
+
+            <div class="botones-cabecera">
+
+
+                <!-- BOTÓN INICIO -->
+
+                <a
+                    class="volver"
+                    href="../totu.php"
+                >
+
+                    ⌂ &nbsp; Inicio
+
+                </a>
+
+
+                <!-- BOTÓN COMPARTIR -->
+
+                <a
+                    class="volver"
+                    href="publicar.php"
+                >
+
+                    ♡ &nbsp; Compartir mi opinión
+
+                </a>
+
+
+            </div>
+
 
         </div>
 
 
-        <!-- DECORACIÓN -->
+        <!-- =================================================
+             DECORACIÓN
+        ================================================== -->
 
         <div class="decoracion">
+
             <span>✦</span>
+
         </div>
 
 
@@ -889,82 +1122,225 @@ body {
 
         <div class="publicaciones">
 
+
 <?php
 
 if (file_exists($archivo)) {
 
+
     $lineas = file(
+
         $archivo,
+
         FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+
     );
+
 
     $lineas = array_reverse($lineas);
 
+
     foreach ($lineas as $linea) {
 
+
+        /*
+         * ==================================================
+         * FORMATO NUEVO:
+         *
+         * administrador|Mi comentario
+         * vendedor|Mi comentario
+         * cliente|Mi comentario
+         *
+         * FORMATO ANTIGUO:
+         *
+         * Mi comentario
+         *
+         * Los comentarios antiguos se consideran cliente.
+         * ==================================================
+         */
+
+
+        $rol = 'cliente';
+
+        $comentario = $linea;
+
+
+        if (strpos($linea, '|') !== false) {
+
+
+            $partes = explode('|', $linea, 2);
+
+
+            $rolGuardado = strtolower(trim($partes[0]));
+
+
+            $comentario = $partes[1];
+
+
+            if (
+
+                $rolGuardado === 'administrador' ||
+
+                $rolGuardado === 'vendedor' ||
+
+                $rolGuardado === 'cliente'
+
+            ) {
+
+                $rol = $rolGuardado;
+
+            }
+
+        }
+
+
+        /*
+         * ==================================================
+         * INICIAL SEGÚN EL ROL
+         * ==================================================
+         */
+
+
+        if ($rol === 'administrador') {
+
+            $inicialRol = 'D';
+
+            $claseRol = 'rol-administrador';
+
+        }
+
+        elseif ($rol === 'vendedor') {
+
+            $inicialRol = 'V';
+
+            $claseRol = 'rol-vendedor';
+
+        }
+
+        else {
+
+            $inicialRol = 'C';
+
+            $claseRol = 'rol-cliente';
+
+        }
+
 ?>
+
 
             <article class="post">
 
 
-                <div class="post-top">
+                <!-- CÍRCULO DEL ROL -->
 
-                    <div class="icono">
-                        ♡
-                    </div>
+                <div
+                    class="rol-circulo <?php echo $claseRol; ?>"
+                    title="<?php echo ucfirst($rol); ?>"
+                >
 
-                    <div class="opinion">
-                        Opinión de cliente
-                    </div>
+                    <?php echo $inicialRol; ?>
 
                 </div>
 
 
+                <!-- PARTE SUPERIOR -->
+
+                <div class="post-top">
+
+
+                    <div class="icono">
+
+                        ♡
+
+                    </div>
+
+
+                    <div class="opinion">
+
+                        Opinión de cliente
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- COMENTARIO -->
+
                 <div class="post-texto">
 
                     <?php
+
                     echo nl2br(
+
                         htmlspecialchars(
-                            $linea,
+
+                            $comentario,
+
                             ENT_QUOTES,
+
                             'UTF-8'
+
                         )
+
                     );
+
                     ?>
 
                 </div>
 
 
+                <!-- PIE -->
+
                 <div class="post-pie">
+
                     ✦ Gracias por compartir
+
                 </div>
 
 
             </article>
 
+
 <?php
 
     }
 
-} else {
+
+}
+
+else {
+
 
 ?>
 
+
             <div class="sin-publicaciones">
 
+
                 <div class="sin-icono">
+
                     ♡
+
                 </div>
 
+
                 <h3>
+
                     Aún no hay opiniones
+
                 </h3>
 
+
                 <p>
+
                     Sé la primera persona en compartir una experiencia.
+
                 </p>
 
+
             </div>
+
 
 <?php
 
@@ -972,10 +1348,13 @@ if (file_exists($archivo)) {
 
 ?>
 
+
         </div>
 
 
-        <!-- FOOTER -->
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
 
         <div class="footer">
 
@@ -985,6 +1364,7 @@ if (file_exists($archivo)) {
 
 
     </main>
+
 
 </div>
 
@@ -997,9 +1377,16 @@ if (file_exists($archivo)) {
 
 <?php
 
-if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
+if (
+
+    isset($_GET['guardado']) &&
+
+    $_GET['guardado'] == '1'
+
+) {
 
 ?>
+
 
 Swal.fire({
 
@@ -1021,6 +1408,7 @@ Swal.fire({
 
 });
 
+
 <?php
 
 }
@@ -1033,3 +1421,4 @@ Swal.fire({
 </body>
 
 </html>
+

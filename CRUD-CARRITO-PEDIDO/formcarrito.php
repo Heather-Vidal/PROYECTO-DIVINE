@@ -1126,99 +1126,51 @@ body {
 
 
 /* ==================================================
-   RESPONSIVE
+   MENÚ PRINCIPAL FIJO ARRIBA
 ================================================== */
 
-@media(max-width: 768px) {
+.menu-fijo {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 78px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 999999 !important;
+    background: #fffaf8 !important;
+    overflow: visible !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    float: none !important;
+}
 
-    .hero {
+.menu-fijo * {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    margin-top: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    float: none !important;
+}
 
-        min-height: 500px;
+/* El contenido del submenu permanece dentro de la caja fija. */
+.menu-fijo a,
+.menu-fijo button,
+.menu-fijo ul,
+.menu-fijo ol,
+.menu-fijo li {
+    transform: none !important;
+}
 
-        padding:
-
-            50px 30px;
-
-        background-position:
-
-            65% center;
-
-    }
-
-
-    .hero h1 {
-
-        font-size: 3.5rem;
-
-        letter-spacing: 8px;
-
-    }
-
-
-    .hero p {
-
-        font-size: .95rem;
-
-    }
-
-
-    .section {
-
-        padding:
-
-            65px 20px;
-
-    }
-
-
-    .titulo {
-
-        font-size:
-
-            2rem;
-
-    }
-
-
-    .grid {
-
-        grid-template-columns:
-
-            1fr;
-
-        gap:
-
-            25px;
-
-    }
-
-
-    .imagen {
-
-        height:
-
-            280px;
-
-    }
-
-
-    .botones {
-
-        flex-direction:
-
-            column;
-
-    }
-
-
-    .final {
-
-        width: 100%;
-
-        max-width: 350px;
-
-    }
-
+body {
+    padding-top: 78px !important;
 }
 
 </style>
@@ -1229,16 +1181,74 @@ body {
 <body>
 
 
+<!-- MENÚ FIJO -->
+<div class="menu-fijo">
 <?php
-
 include 'submenucarrito.php';
-
 ?>
+</div>
 
 
 <script>
 
 const idPedido = <?php echo $id_pedido; ?>;
+
+/* ==================================================
+   MENÚ COMPLETAMENTE FIJO
+   Este código evita que el submenu pueda desplazarse
+   aunque otro archivo intente modificar su posición.
+================================================== */
+
+function fijarMenuArriba() {
+
+    const menu = document.querySelector('.menu-fijo');
+
+    if (!menu) return;
+
+    menu.style.setProperty('position', 'fixed', 'important');
+    menu.style.setProperty('top', '0px', 'important');
+    menu.style.setProperty('left', '0px', 'important');
+    menu.style.setProperty('right', '0px', 'important');
+    menu.style.setProperty('bottom', 'auto', 'important');
+    menu.style.setProperty('width', '100vw', 'important');
+    menu.style.setProperty('height', '78px', 'important');
+    menu.style.setProperty('margin', '0', 'important');
+    menu.style.setProperty('padding', '0', 'important');
+    menu.style.setProperty('z-index', '999999', 'important');
+    menu.style.setProperty('transform', 'none', 'important');
+
+    menu.querySelectorAll('*').forEach(function(elemento) {
+        elemento.style.setProperty('position', 'static', 'important');
+        elemento.style.setProperty('top', 'auto', 'important');
+        elemento.style.setProperty('right', 'auto', 'important');
+        elemento.style.setProperty('bottom', 'auto', 'important');
+        elemento.style.setProperty('left', 'auto', 'important');
+        elemento.style.setProperty('transform', 'none', 'important');
+        elemento.style.setProperty('margin-top', '0', 'important');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    fijarMenuArriba();
+
+    const menu = document.querySelector('.menu-fijo');
+
+    if (menu) {
+        const observadorMenu = new MutationObserver(function() {
+            fijarMenuArriba();
+        });
+
+        observadorMenu.observe(menu, {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            attributeFilter: ['style', 'class']
+        });
+    }
+});
+
+window.addEventListener('scroll', fijarMenuArriba, { passive: true });
+window.addEventListener('resize', fijarMenuArriba);
 
 </script>
 
