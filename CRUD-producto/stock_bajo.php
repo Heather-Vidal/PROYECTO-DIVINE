@@ -2049,11 +2049,7 @@ if (count($productos) > 0) {
 
     <br>
 
-    Las imágenes se cargan desde la carpeta
-
-    <strong>PRODUCTO-img</strong>
-
-    utilizando el código de cada producto.
+     
 
 
 

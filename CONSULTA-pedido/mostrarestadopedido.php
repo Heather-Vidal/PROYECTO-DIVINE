@@ -1,3 +1,23 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.25/dist/sweetalert2.all.min.js"></script>
+
+</head>
+
+<body>
+
+
+
 <?php
 
 /* ==================================================
@@ -40,14 +60,46 @@ $sqlPedido = "SELECT *
 $resultadoPedido = $conn->query($sqlPedido);
 
 if (!$resultadoPedido) {
-    die("Error al consultar el pedido");
+
+    echo "<script>
+        Swal.fire({
+            icon: 'error',
+            title: '¡Ups!',
+            text: 'Ocurrió un error al consultar el pedido.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#c96f84',
+            background: '#fff8fa',
+            color: '#713d4d'
+        }).then(() => {
+            window.history.back();
+        });
+    </script>";
+
+    exit;
 }
 
+
 if ($resultadoPedido->num_rows == 0) {
-    die("El pedido no existe");
+
+    echo "<script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Pedido no encontrado 🌸',
+            text: 'El pedido que buscas no existe.',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#c96f84',
+            background: '#fff8fa',
+            color: '#713d4d'
+        }).then(() => {
+            window.history.back();
+        });
+    </script>";
+
+    exit;
 }
 
 $pedido = $resultadoPedido->fetch_assoc();
+
 
 
 /* ==================================================
@@ -2084,3 +2136,11 @@ else {
 $conn->close();
 
 ?>
+
+
+
+
+
+
+</body>
+</html>

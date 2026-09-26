@@ -291,6 +291,7 @@ body {
 
 
 <body>
+<?php include '../boton_flotante.php'; ?>
 
 <div class="contenedor">
 

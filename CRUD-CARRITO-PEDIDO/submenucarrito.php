@@ -1306,7 +1306,7 @@ nav{
 
                         <a href="mascarillas.php">
 
-                            Mascarillas
+                            Skin Hair
 
                         </a>
 
@@ -1333,19 +1333,7 @@ nav{
 
             <li>
 
-                <a href="#ofertas">
-
-                    Ofertas
-
-                </a>
-
-            </li>
-
-
-
-            <li>
-
-                <a href="#contacto">
+                <a href="../contactanos.php">
 
                     Contacto
 
@@ -1357,13 +1345,18 @@ nav{
 
             <li>
 
-                <a href="#consulta">
+                <a  href="../CONSULTA-pedido/formreadpedido.php">
 
-                    Consulta Personal
+                    Consulta
 
                 </a>
 
             </li>
+
+
+
+        
+            
 
 
         </ul>

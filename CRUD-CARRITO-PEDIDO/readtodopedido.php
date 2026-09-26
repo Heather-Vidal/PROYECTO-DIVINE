@@ -1138,18 +1138,32 @@ if($resultado && $resultado->num_rows > 0){
 
 ?>
 
+ 
 
     </div>
+ 
+<?php
+ 
 
-    <div class="volver">
+$rol = $_SESSION['rol'] ?? '';
 
-        <a href="../perfilvendedor.php">
+if ($rol === 'vendedor') {
+    $rutaVolver = '../perfilvendedor.php';
+} elseif ($rol === 'administrador') {
+    $rutaVolver = '../admin.php';
+} else {
+    $rutaVolver = '../SESIONES/loginformcliente.php';
+}
+?>
 
-            Volver al perfil
+<div class="volver">
 
-        </a>
+    <a href="<?php echo $rutaVolver; ?>">
+        Volver al perfil
+    </a>
 
-    </div>
+</div>
+
 
 </div>
 

@@ -2067,12 +2067,10 @@ No existen pedidos registrados para este vendedor.
 href="./CRUD-producto/stock_bajo.php"
 class="live-item stock-bajo-link"
 >
+📦 CONSULTA LOS PRODUCTOS CON STOCK BAJO AQUÍ!!!
+ 
 
-<div class="live-icon">
-📦
-</div>
-
-<div class="live-content">
+ 
 
 <a href="./CRUD-producto/stock_bajo.php">PRODUCTOS CON STOCK BAJO</a>
 <small>

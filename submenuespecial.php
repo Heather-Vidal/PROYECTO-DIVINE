@@ -780,7 +780,7 @@ nav{
                     <li>
 
                         <a href="mascarillas.php">
-                            Mascarillas
+                           Skin Hair
                         </a>
 
                     </li>

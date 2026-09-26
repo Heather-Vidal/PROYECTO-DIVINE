@@ -1121,7 +1121,7 @@ td:first-child{
 
         <?php endif; ?>
 
-        <a href="../REPORTES/reportes.php" class="volver">← Volver a reportes</a>
+        <a href="../admin.php" class="volver">← Volver al perfil</a>
     </div>
 
 </div>

@@ -1008,6 +1008,7 @@ h1{
 
 <body>
 
+<?php include '../boton_flotante.php'; ?>
 
 <!-- ==================================================
      PANEL PRINCIPAL
