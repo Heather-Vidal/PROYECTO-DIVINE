@@ -1,283 +1,273 @@
+
 <?php
+
+// ==========================================
+// CONEXIÓN A LA BASE DE DATOS
+// ==========================================
+
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
 
-// Verificar conexión
+
+// ==========================================
+// VERIFICAR CONEXIÓN
+// ==========================================
+
 if ($conn->connect_error) {
-    die("Error de conexión con la base de datos.");
+    die("Error de conexión con la base de datos: " . $conn->connect_error);
 }
 
-// Configurar UTF-8
+
+// ==========================================
+// CONFIGURAR UTF-8
+// ==========================================
+
 $conn->set_charset("utf8mb4");
 
-// Función para proteger texto al mostrarlo en HTML
-function limpiarHTML($texto) {
+
+// ==========================================
+// FUNCIÓN PARA PROTEGER TEXTO HTML
+// ==========================================
+
+function limpiarHTML($texto)
+{
     return htmlspecialchars($texto, ENT_QUOTES, 'UTF-8');
 }
+
+
+// ==========================================
+// VARIABLES
+// ==========================================
 
 $mensaje = "";
 $tipoMensaje = "";
 
+
+// ==========================================
+// RECIBIR DATOS DEL FORMULARIO
+// ==========================================
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    // ==========================================
-    // 1. RECIBIR Y VALIDAR DATOS
-    // ==========================================
+    // ------------------------------------------
+    // DATOS VISIBLES
+    // ------------------------------------------
 
+    // Acepta CI o ci
+    $CI = trim($_POST['CI'] ?? $_POST['ci'] ?? '');
+
+    // Nombre
     $nombre = trim($_POST['nombre'] ?? '');
-    $descripcion = trim($_POST['descripcion'] ?? '');
-    $categoria = trim($_POST['categoria'] ?? '');
-    $precio = $_POST['precio'] ?? '';
-    $costo = $_POST['costo'] ?? '';
-    $stock = $_POST['stock'] ?? '';
-    $codigo = trim($_POST['codigo'] ?? '');
 
-    // Comprobar campos obligatorios
-    if (
-        $nombre === '' ||
-        $descripcion === '' ||
-        $categoria === '' ||
-        $codigo === ''
-    ) {
-        $mensaje = "Todos los campos obligatorios deben estar llenos.";
+    // Dirección
+    $direccion = trim($_POST['direccion'] ?? '');
+
+    // ------------------------------------------
+    // TELÉFONO
+    // ------------------------------------------
+    // Tu formulario puede estar usando:
+    // name="telefono"
+    // o
+    // name="celular"
+
+    $celular = trim(
+        $_POST['telefono']
+        ?? $_POST['celular']
+        ?? ''
+    );
+
+
+    // ------------------------------------------
+    // DATOS OCULTOS / HIDDEN
+    // ------------------------------------------
+
+    $rol = trim($_POST['rol'] ?? '');
+
+    $estado = trim($_POST['estado'] ?? '');
+
+
+    // ==========================================
+    // VALIDAR DATOS RECIBIDOS
+    // ==========================================
+
+    if ($CI === '') {
+
+        $mensaje = "El CI no fue recibido.";
         $tipoMensaje = "error";
+
     }
 
-    // Comprobar números
-    elseif (
-        !is_numeric($precio) ||
-        !is_numeric($costo) ||
-        !is_numeric($stock)
-    ) {
-        $mensaje = "Precio, costo y stock deben ser valores numéricos.";
+    elseif ($nombre === '') {
+
+        $mensaje = "El nombre no fue recibido.";
         $tipoMensaje = "error";
+
+    }
+
+    elseif ($direccion === '') {
+
+        $mensaje = "La dirección no fue recibida.";
+        $tipoMensaje = "error";
+
+    }
+
+    elseif ($celular === '') {
+
+        $mensaje = "El teléfono no fue recibido. Verifica que el formulario tenga name=\"telefono\" o name=\"celular\".";
+        $tipoMensaje = "error";
+
+    }
+
+    elseif ($rol === '') {
+
+        $mensaje = "El rol no fue recibido. Verifica el campo hidden del formulario.";
+        $tipoMensaje = "error";
+
+    }
+
+    elseif ($estado === '') {
+
+        $mensaje = "El estado no fue recibido. Verifica el campo hidden del formulario.";
+        $tipoMensaje = "error";
+
     }
 
     else {
 
-        // Convertir valores numéricos
-        $precio = (float)$precio;
-        $costo = (float)$costo;
-        $stock = (int)$stock;
 
         // ==========================================
-        // 2. VERIFICAR LA IMAGEN
+        // VERIFICAR SI EL CI YA EXISTE
         // ==========================================
 
-        if (
-            !isset($_FILES["fileToUpload"]) ||
-            $_FILES["fileToUpload"]["error"] !== UPLOAD_ERR_OK
-        ) {
+        $consultaCI = $conn->prepare(
+            "SELECT CI FROM CLIENTE WHERE CI = ?"
+        );
 
-            $mensaje = "Debes seleccionar una imagen válida.";
+
+        if (!$consultaCI) {
+
+            $mensaje = "Error al preparar la consulta del CI: "
+                     . $conn->error;
+
             $tipoMensaje = "error";
 
-        } else {
+        }
 
-            $archivo = $_FILES["fileToUpload"];
+        else {
 
-            // Tamaño máximo: 5 MB
-            $maxSize = 5 * 1024 * 1024;
+            $consultaCI->bind_param(
+                "s",
+                $CI
+            );
 
-            if ($archivo["size"] > $maxSize) {
+            $consultaCI->execute();
 
-                $mensaje = "La imagen no puede superar los 5 MB.";
+            $consultaCI->store_result();
+
+
+            // ==========================================
+            // SI EL CI YA EXISTE
+            // ==========================================
+
+            if ($consultaCI->num_rows > 0) {
+
+                $mensaje = "El CI ingresado ya está registrado.";
                 $tipoMensaje = "error";
 
-            } else {
+            }
 
-                // Comprobar que realmente sea una imagen
-                $informacionImagen = getimagesize($archivo["tmp_name"]);
+            else {
 
-                if ($informacionImagen === false) {
 
-                    $mensaje = "El archivo seleccionado no es una imagen válida.";
+                // ==========================================
+                // INSERTAR CLIENTE
+                // ==========================================
+
+                $sql = "INSERT INTO CLIENTE
+                        (CI, nombre, direccion, celular, rol, estado)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+
+
+                $stmt = $conn->prepare($sql);
+
+
+                // ==========================================
+                // VERIFICAR PREPARACIÓN
+                // ==========================================
+
+                if (!$stmt) {
+
+                    $mensaje = "Error al preparar el registro: "
+                             . $conn->error;
+
                     $tipoMensaje = "error";
 
-                } else {
+                }
+
+                else {
+
 
                     // ==========================================
-                    // 3. VALIDAR TIPO DE IMAGEN
+                    // ENVIAR LOS 6 DATOS
                     // ==========================================
 
-                    $tiposPermitidos = [
-                        "image/jpeg" => "jpg",
-                        "image/png"  => "png",
-                        "image/gif"  => "gif"
-                    ];
+                    $stmt->bind_param(
+                        "ssssss",
+                        $CI,
+                        $nombre,
+                        $direccion,
+                        $celular,
+                        $rol,
+                        $estado
+                    );
 
-                    $tipoMime = $informacionImagen["mime"];
 
-                    if (!isset($tiposPermitidos[$tipoMime])) {
+                    // ==========================================
+                    // EJECUTAR INSERT
+                    // ==========================================
 
-                        $mensaje = "Solo se permiten imágenes JPG, PNG o GIF.";
-                        $tipoMensaje = "error";
+                    if ($stmt->execute()) {
 
-                    } else {
+                        $mensaje =
+                            "✔ USUARIO REGISTRADO CORRECTAMENTE";
 
-                        $extension = $tiposPermitidos[$tipoMime];
+                        $tipoMensaje = "exito";
 
-                        // ==========================================
-                        // 4. CREAR NOMBRE DE ARCHIVO
-                        // ==========================================
-
-                        $target_dir = "../PRODUCTO-img/";
-
-                        // Crear carpeta si no existe
-                        if (!is_dir($target_dir)) {
-                            mkdir($target_dir, 0755, true);
-                        }
-
-                        /*
-                         * No usamos directamente el nombre enviado
-                         * por el usuario.
-                         *
-                         * Utilizamos el código del producto.
-                         */
-                        $codigoArchivo = preg_replace(
-                            "/[^a-zA-Z0-9_-]/",
-                            "",
-                            $codigo
-                        );
-
-                        $newFileName = "P-" . $codigoArchivo . "." . $extension;
-
-                        $target_file = $target_dir . $newFileName;
-
-                        // ==========================================
-                        // 5. COMPROBAR SI YA EXISTE
-                        // ==========================================
-
-                        if (file_exists($target_file)) {
-
-                            $mensaje = "Ya existe una imagen para este producto.";
-                            $tipoMensaje = "error";
-
-                        } else {
-
-                            // ==========================================
-                            // 6. CONSULTA PREPARADA
-                            // ==========================================
-
-                            $stmt = $conn->prepare(
-                                "INSERT INTO PRODUCTO
-                                (nombre, descripcion, categoria, precio, costo, stock, codigo)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)"
-                            );
-
-                            if (!$stmt) {
-
-                                $mensaje = "Error al preparar la consulta.";
-                                $tipoMensaje = "error";
-
-                            } else {
-
-                                /*
-                                 * Tipos de datos:
-                                 *
-                                 * s = string
-                                 * d = decimal/double
-                                 * i = integer
-                                 *
-                                 * nombre       = s
-                                 * descripcion  = s
-                                 * categoria    = s
-                                 * precio       = d
-                                 * costo        = d
-                                 * stock        = i
-                                 * codigo       = s
-                                 */
-
-                                $stmt->bind_param(
-                                    "sssddis",
-                                    $nombre,
-                                    $descripcion,
-                                    $categoria,
-                                    $precio,
-                                    $costo,
-                                    $stock,
-                                    $codigo
-                                );
-
-                                // ==========================================
-                                // 7. EJECUTAR INSERT
-                                // ==========================================
-
-                                if ($stmt->execute()) {
-
-                                    // ==========================================
-                                    // 8. SUBIR IMAGEN
-                                    // ==========================================
-
-                                    if (
-                                        move_uploaded_file(
-                                            $archivo["tmp_name"],
-                                            $target_file
-                                        )
-                                    ) {
-
-                                        $mensaje = "✔ PRODUCTO GUARDADO EXITOSAMENTE";
-                                        $tipoMensaje = "exito";
-
-                                        /*
-                                         * Redirigir después de guardar.
-                                         * El código se ejecuta solamente
-                                         * si todo salió correctamente.
-                                         */
-                                        header("Location: readtodoprodu.php");
-                                        exit;
-
-                                    } else {
-
-                                        /*
-                                         * Si el producto se guardó pero
-                                         * la imagen falló, eliminamos el
-                                         * producto para evitar información
-                                         * incompleta.
-                                         */
-                                        $idProducto = $conn->insert_id;
-
-                                        $deleteStmt = $conn->prepare(
-                                            "DELETE FROM PRODUCTO WHERE id = ?"
-                                        );
-
-                                        if ($deleteStmt) {
-                                            $deleteStmt->bind_param(
-                                                "i",
-                                                $idProducto
-                                            );
-                                            $deleteStmt->execute();
-                                            $deleteStmt->close();
-                                        }
-
-                                        $mensaje = "No se pudo subir la imagen. El producto no fue guardado.";
-                                        $tipoMensaje = "error";
-                                    }
-
-                                } else {
-
-                                    $mensaje = "Error al guardar el producto.";
-                                    $tipoMensaje = "error";
-                                }
-
-                                $stmt->close();
-                            }
-                        }
                     }
+
+                    else {
+
+                        $mensaje =
+                            "Error al registrar el usuario: "
+                            . $stmt->error;
+
+                        $tipoMensaje = "error";
+                    }
+
+
+                    $stmt->close();
                 }
             }
+
+
+            $consultaCI->close();
         }
     }
 }
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -286,21 +276,42 @@ $conn->close();
 
 <meta
     name="viewport"
-    content="width=device-width, initial-scale=1"
+    content="width=device-width, initial-scale=1.0"
 >
 
-<title>Guardar Producto - DIVINE</title>
+<title>Registro - DIVINE</title>
+
 
 <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap"
     rel="stylesheet"
-/>
+>
+
 
 <style>
 
-body {
+/* ==========================================
+   RESETEO
+   ========================================== */
 
-    font-family: 'Poppins', sans-serif;
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: 'Segoe UI', sans-serif;
+
+}
+
+
+/* ==========================================
+   CUERPO
+   ========================================== */
+
+body {
 
     background: #e9e5dd;
 
@@ -312,21 +323,14 @@ body {
 
     min-height: 100vh;
 
-    margin: 0;
+    padding: 40px 20px;
 
-    padding: 40px 0;
-
-    color: #63364b;
-
-    background-image: url('../imagenes/fondote.png');
-
-    background-size: cover;
-
-    background-position: center;
-
-    background-repeat: no-repeat;
 }
 
+
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
 
 .contenedor {
 
@@ -343,24 +347,40 @@ body {
 
     max-width: 700px;
 
-    display: grid;
-
-    grid-template-columns: 1fr;
-
-    grid-template-areas:
-        "encabezado"
-        "contenido"
-        "botones";
-
-    gap: 30px;
-
     text-align: center;
+
+    animation: entrada 0.7s ease;
+
 }
 
 
-.encabezado {
+/* ==========================================
+   ICONO
+   ========================================== */
 
-    grid-area: encabezado;
+.icono {
+
+    width: 140px;
+
+    margin-bottom: 20px;
+
+    transition: 0.4s;
+
+}
+
+
+.icono:hover {
+
+    transform: scale(1.08);
+
+}
+
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado {
 
     font-family: "Playfair Display", serif;
 
@@ -380,13 +400,16 @@ body {
 
     width: fit-content;
 
-    margin: 0 auto;
+    margin: 0 auto 25px auto;
+
 }
 
 
-.contenido {
+/* ==========================================
+   CONTENIDO
+   ========================================== */
 
-    grid-area: contenido;
+.contenido {
 
     background: rgba(255, 255, 255, 0.75);
 
@@ -397,13 +420,16 @@ body {
     box-shadow:
         0 5px 12px rgba(0, 0, 0, 0.15);
 
-    font-family: 'Poppins', sans-serif;
-
     font-size: 16px;
 
     color: #63364b;
+
 }
 
+
+/* ==========================================
+   MENSAJE
+   ========================================== */
 
 .mensaje {
 
@@ -415,41 +441,55 @@ body {
 
     margin-bottom: 15px;
 
-    font-family: 'Poppins', sans-serif;
 }
 
+
+/* ==========================================
+   ÉXITO
+   ========================================== */
 
 .exito {
 
     background-color: #c56d99;
 
-    color: #ffffff;
+    color: white;
 
     box-shadow:
         0 5px 12px rgba(197, 109, 153, 0.45);
+
 }
 
+
+/* ==========================================
+   ERROR
+   ========================================== */
 
 .error {
 
     background-color: #8b4f6b;
 
-    color: #ffffff;
+    color: white;
 
     box-shadow:
         0 5px 12px rgba(139, 79, 107, 0.45);
+
 }
 
 
-.botones {
+/* ==========================================
+   BOTONES
+   ========================================== */
 
-    grid-area: botones;
+.botones {
 
     display: flex;
 
     justify-content: center;
 
     gap: 20px;
+
+    margin-top: 25px;
+
 }
 
 
@@ -459,13 +499,11 @@ body {
 
     background: #63364b;
 
-    color: #ffffff;
+    color: white;
 
     padding: 14px 30px;
 
     border-radius: 10px;
-
-    font-family: 'Poppins', sans-serif;
 
     font-weight: 600;
 
@@ -481,6 +519,7 @@ body {
     align-items: center;
 
     justify-content: center;
+
 }
 
 
@@ -488,87 +527,173 @@ body {
 
     background-color: #c56d99;
 
-    color: #ffffff;
+    color: white;
 
     transform: scale(1.03);
 
     box-shadow:
         0 6px 15px rgba(197, 109, 153, 0.5);
+
 }
 
 
-@media (max-width: 600px) {
+/* ==========================================
+   ANIMACIÓN
+   ========================================== */
+
+@keyframes entrada {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(40px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    body {
+
+        padding: 25px 15px;
+
+    }
+
 
     .contenedor {
 
+        width: 95%;
+
         padding: 25px;
 
-        width: 80%;
     }
+
 
     .encabezado {
 
         font-size: 30px;
+
     }
+
+
+    .icono {
+
+        width: 110px;
+
+    }
+
+
+    .contenido {
+
+        padding: 25px 15px;
+
+    }
+
 
     .botones {
 
         flex-direction: column;
 
         gap: 15px;
+
     }
+
 
     .boton {
 
         width: 100%;
 
-        box-sizing: border-box;
     }
+
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <div class="contenedor">
 
+
+    <!-- =====================================
+         ICONO
+         ===================================== -->
+
+    <img
+        src="../imagenes/persona.png"
+        class="icono"
+        alt="Usuario"
+    >
+
+
+    <!-- =====================================
+         TITULO
+         ===================================== -->
+
     <div class="encabezado">
+
         DIVINE
+
     </div>
+
+
+    <!-- =====================================
+         MENSAJE
+         ===================================== -->
 
     <div class="contenido">
 
         <?php if ($mensaje !== ""): ?>
 
             <div class="mensaje <?= limpiarHTML($tipoMensaje) ?>">
+
                 <?= limpiarHTML($mensaje) ?>
+
             </div>
 
         <?php endif; ?>
 
     </div>
 
+
+    <!-- =====================================
+         BOTONES
+         ===================================== -->
+
     <div class="botones">
 
         <a
-            href="../totu.php"
+            href="../SESIONES/loginformcliente.php"
             class="boton"
         >
-            ⬅ Volver al inicio
+            ⬅ Iniciar Sesión
         </a>
 
-        <a
-            href="readtodoprodu.php"
-            class="boton"
-        >
-            Ver productos ➡
-        </a>
 
+       
     </div>
 
+
 </div>
+
 
 </body>
 

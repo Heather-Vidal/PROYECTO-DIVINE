@@ -1389,12 +1389,7 @@ nav{
                 >
 
 
-                <button
-                    class="boton-buscar"
-                    onclick="buscar()"
-                    type="button"
-                >
-
+              
                     <img
                         src="../imagenes/lupa-removebg-preview.png"
                         alt="Buscar"
