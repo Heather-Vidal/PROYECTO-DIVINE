@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 // Verificar sesión
@@ -26,11 +27,14 @@ if ($conexion->connect_error) {
 // Obtener clientes
 $sql = "SELECT * FROM CLIENTE";
 $resultado = $conexion->query($sql);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -138,6 +142,7 @@ $resultado = $conexion->query($sql);
             );
 
             color: white;
+
             font-family: 'Cormorant Garamond', serif;
             font-size: 27px;
             font-weight: 600;
@@ -172,6 +177,7 @@ $resultado = $conexion->query($sql);
             gap: 10px;
 
             padding: 10px 18px;
+
             border: 1px solid rgba(177, 123, 137, 0.20);
             border-radius: 30px;
 
@@ -204,8 +210,8 @@ $resultado = $conexion->query($sql);
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            gap: 30px;
 
+            gap: 30px;
             margin-bottom: 42px;
         }
 
@@ -219,11 +225,11 @@ $resultado = $conexion->query($sql);
             gap: 12px;
 
             color: #b07787;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             letter-spacing: 4px;
-            text-transform: uppercase;
 
+            text-transform: uppercase;
             margin-bottom: 10px;
         }
 
@@ -251,8 +257,9 @@ $resultado = $conexion->query($sql);
             margin-top: 17px;
             max-width: 570px;
 
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.8;
+
             color: #8a6b72;
             font-weight: 400;
         }
@@ -263,6 +270,7 @@ $resultado = $conexion->query($sql);
 
         .contador {
             min-width: 170px;
+
             padding: 18px 22px;
 
             border-radius: 18px;
@@ -281,16 +289,19 @@ $resultado = $conexion->query($sql);
 
             font-family: 'Cormorant Garamond', serif;
             font-size: 38px;
+
             color: #9d6374;
             line-height: 1;
         }
 
         .contador-texto {
             display: block;
+
             margin-top: 6px;
 
-            font-size: 9px;
+            font-size: 10px;
             letter-spacing: 2px;
+
             text-transform: uppercase;
             color: #a7838c;
         }
@@ -333,6 +344,7 @@ $resultado = $conexion->query($sql);
 
         .cliente::before {
             content: "";
+
             position: absolute;
 
             width: 130px;
@@ -394,11 +406,12 @@ $resultado = $conexion->query($sql);
 
             font-family: 'Cormorant Garamond', serif;
             font-size: 27px;
+
             color: #92596a;
         }
 
         .cliente-numero {
-            font-size: 9px;
+            font-size: 10px;
             letter-spacing: 2px;
             color: #b18c94;
         }
@@ -412,7 +425,7 @@ $resultado = $conexion->query($sql);
             z-index: 2;
 
             font-family: 'Cormorant Garamond', serif;
-            font-size: 29px;
+            font-size: 31px;
             font-weight: 600;
 
             color: #5d3d46;
@@ -423,17 +436,17 @@ $resultado = $conexion->query($sql);
         .dato {
             display: flex;
             align-items: center;
+
             gap: 12px;
+            margin-bottom: 13px;
 
-            margin-bottom: 12px;
-
-            font-size: 11px;
+            font-size: 12.5px;
             color: #80656d;
         }
 
         .dato-icono {
-            width: 31px;
-            height: 31px;
+            width: 33px;
+            height: 33px;
 
             flex-shrink: 0;
 
@@ -446,13 +459,83 @@ $resultado = $conexion->query($sql);
             background: #f8e9ed;
             color: #a66779;
 
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .dato-texto {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* =========================
+           ROL Y ESTADO
+        ========================= */
+
+        .dato-especial {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin-bottom: 13px;
+
+            font-size: 12.5px;
+            color: #80656d;
+        }
+
+        .dato-especial .dato-icono {
+            width: 33px;
+            height: 33px;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #f8e9ed;
+            color: #a66779;
+
+            font-size: 13px;
+        }
+
+        .etiqueta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 6px 11px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: 0.5px;
+
+            text-transform: uppercase;
+        }
+
+        .rol-vendedor {
+            background: #f4e3e8;
+            color: #92596a;
+        }
+
+        .rol-administrador {
+            background: #eadde9;
+            color: #76516f;
+        }
+
+        .estado-activo {
+            background: #e5f1e8;
+            color: #63806b;
+        }
+
+        .estado-bloqueado {
+            background: #f4dfe1;
+            color: #a05c69;
         }
 
         /* =========================
@@ -479,7 +562,9 @@ $resultado = $conexion->query($sql);
 
         .acciones {
             display: grid;
+
             grid-template-columns: 1fr 1fr 1fr;
+
             gap: 8px;
         }
 
@@ -496,7 +581,8 @@ $resultado = $conexion->query($sql);
             border-radius: 11px;
 
             font-family: 'Montserrat', sans-serif;
-            font-size: 9px;
+
+            font-size: 10px;
             font-weight: 600;
 
             letter-spacing: 0.5px;
@@ -557,6 +643,7 @@ $resultado = $conexion->query($sql);
 
             display: flex;
             align-items: center;
+
             gap: 12px;
 
             padding: 14px 28px;
@@ -569,7 +656,8 @@ $resultado = $conexion->query($sql);
             color: #805562;
 
             font-family: 'Montserrat', sans-serif;
-            font-size: 10px;
+
+            font-size: 11px;
             font-weight: 600;
 
             letter-spacing: 1.5px;
@@ -606,6 +694,7 @@ $resultado = $conexion->query($sql);
             border-radius: 30px;
 
             background: rgba(255,255,255,0.70);
+
             border: 1px solid rgba(185, 129, 144, 0.15);
         }
 
@@ -616,14 +705,18 @@ $resultado = $conexion->query($sql);
 
         .sin-clientes h2 {
             font-family: 'Cormorant Garamond', serif;
+
             font-size: 32px;
             font-weight: 500;
+
             color: #704751;
         }
 
         .sin-clientes p {
             margin-top: 8px;
-            font-size: 12px;
+
+            font-size: 13px;
+
             color: #a0848b;
         }
 
@@ -645,7 +738,6 @@ $resultado = $conexion->query($sql);
             .contador {
                 width: 100%;
             }
-
         }
 
         @media (max-width: 600px) {
@@ -666,12 +758,25 @@ $resultado = $conexion->query($sql);
                 font-size: 52px;
             }
 
+            .descripcion {
+                font-size: 13px;
+            }
+
             .clientes {
                 grid-template-columns: 1fr;
             }
 
             .cliente {
                 padding: 23px;
+            }
+
+            .cliente h3 {
+                font-size: 29px;
+            }
+
+            .dato,
+            .dato-especial {
+                font-size: 12px;
             }
 
             .acciones {
@@ -684,6 +789,7 @@ $resultado = $conexion->query($sql);
         }
 
     </style>
+
 </head>
 
 <body>
@@ -703,8 +809,13 @@ $resultado = $conexion->query($sql);
             </div>
 
             <div class="nombre-marca">
+
                 <h2>DIVINE</h2>
-                <span>BEAUTY & CARE</span>
+
+                <span>
+                    BEAUTY & CARE
+                </span>
+
             </div>
 
         </div>
@@ -783,8 +894,13 @@ $resultado = $conexion->query($sql);
                 $direccion = $fila['direccion'];
                 $celular = $fila['celular'];
 
+                // NUEVOS DATOS
+                $rol = $fila['rol'];
+                $estado = $fila['estado'];
+
                 // Primera letra para el avatar
                 $inicial = strtoupper(substr($nombre, 0, 1));
+
         ?>
 
         <div class="cliente">
@@ -794,11 +910,16 @@ $resultado = $conexion->query($sql);
             <div class="cliente-top">
 
                 <div class="avatar">
+
                     <?php echo htmlspecialchars($inicial); ?>
+
                 </div>
 
                 <div class="cliente-numero">
-                    CLIENTE #<?php echo str_pad($numero, 2, '0', STR_PAD_LEFT); ?>
+
+                    CLIENTE #
+                    <?php echo str_pad($numero, 2, '0', STR_PAD_LEFT); ?>
+
                 </div>
 
             </div>
@@ -807,11 +928,13 @@ $resultado = $conexion->query($sql);
             <!-- Nombre -->
 
             <h3>
+
                 <?php echo htmlspecialchars($nombre); ?>
+
             </h3>
 
 
-            <!-- Datos -->
+            <!-- CI -->
 
             <div class="dato">
 
@@ -820,11 +943,16 @@ $resultado = $conexion->query($sql);
                 </div>
 
                 <div class="dato-texto">
-                    CI: <?php echo htmlspecialchars($CI); ?>
+
+                    CI:
+                    <?php echo htmlspecialchars($CI); ?>
+
                 </div>
 
             </div>
 
+
+            <!-- Dirección -->
 
             <div class="dato">
 
@@ -833,11 +961,15 @@ $resultado = $conexion->query($sql);
                 </div>
 
                 <div class="dato-texto">
+
                     <?php echo htmlspecialchars($direccion); ?>
+
                 </div>
 
             </div>
 
+
+            <!-- Celular -->
 
             <div class="dato">
 
@@ -846,7 +978,71 @@ $resultado = $conexion->query($sql);
                 </div>
 
                 <div class="dato-texto">
+
                     <?php echo htmlspecialchars($celular); ?>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROL -->
+
+            <div class="dato-especial">
+
+                <div class="dato-icono">
+                    ♛
+                </div>
+
+                <div class="dato-texto">
+
+                    Rol:
+
+                    <?php
+
+                    $claseRol = strtolower($rol) === 'administrador'
+                        ? 'rol-administrador'
+                        : 'rol-vendedor';
+
+                    ?>
+
+                    <span class="etiqueta <?php echo $claseRol; ?>">
+
+                        <?php echo htmlspecialchars($rol); ?>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="dato-especial">
+
+                <div class="dato-icono">
+                    ●
+                </div>
+
+                <div class="dato-texto">
+
+                    Estado:
+
+                    <?php
+
+                    $claseEstado = strtoupper($estado) === 'ACTIVO'
+                        ? 'estado-activo'
+                        : 'estado-bloqueado';
+
+                    ?>
+
+                    <span class="etiqueta <?php echo $claseEstado; ?>">
+
+                        <?php echo htmlspecialchars($estado); ?>
+
+                    </span>
+
                 </div>
 
             </div>
@@ -862,20 +1058,28 @@ $resultado = $conexion->query($sql);
                 <a
                     href="readunocliente.php?CI=<?php echo urlencode($CI); ?>"
                     class="btn btn-ver">
+
                     VER
+
                 </a>
+
 
                 <a
                     href="updateformcliente.php?CI=<?php echo urlencode($CI); ?>"
                     class="btn btn-editar">
+
                     EDITAR
+
                 </a>
+
 
                 <button
                     type="button"
                     class="btn btn-eliminar"
                     onclick="confirmarEliminacion('<?php echo htmlspecialchars($CI, ENT_QUOTES); ?>')">
+
                     ELIMINAR
+
                 </button>
 
             </div>
@@ -966,9 +1170,7 @@ function confirmarEliminacion(CI) {
         cancelButtonColor: '#d9c3c9',
 
         customClass: {
-
             popup: 'divine-alert'
-
         }
 
     }).then((resultado) => {
@@ -987,8 +1189,11 @@ function confirmarEliminacion(CI) {
 </script>
 
 </body>
+
 </html>
 
 <?php
+
 $conexion->close();
+
 ?>

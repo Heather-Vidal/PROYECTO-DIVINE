@@ -1,4 +1,6 @@
+ 
 <?php
+
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
@@ -15,13 +17,25 @@ if ($conn->connect_error) {
     die("Ocurrió un error de conexión");
 }
 
+$conn->set_charset("utf8mb4");
+
 $CI = $_GET['CI'] ?? '';
 
-$stmt = $conn->prepare("SELECT * FROM CLIENTE WHERE CI = ?");
+
+// ==========================================
+// BUSCAR CLIENTE
+// ==========================================
+
+$stmt = $conn->prepare(
+    "SELECT * FROM CLIENTE WHERE CI = ?"
+);
+
 $stmt->bind_param("s", $CI);
+
 $stmt->execute();
 
 $resultado = $stmt->get_result();
+
 
 if ($resultado->num_rows > 0) {
 
@@ -40,8 +54,11 @@ if ($resultado->num_rows > 0) {
 
 }
 
+
 $stmt->close();
+
 $conn->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -58,14 +75,17 @@ $conn->close();
 
 <title>Editar Cliente | DIVINE</title>
 
+
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 
+
 <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet"
->
+/>
+
 
 <style>
 
@@ -74,10 +94,15 @@ $conn->close();
 ===================================================== */
 
 * {
+
     box-sizing: border-box;
+
     margin: 0;
+
     padding: 0;
+
 }
+
 
 body {
 
@@ -86,6 +111,7 @@ body {
     font-family: "DM Sans", sans-serif;
 
     background:
+
         radial-gradient(
             circle at 10% 10%,
             rgba(226, 175, 192, .30),
@@ -164,6 +190,7 @@ body {
     padding: 45px 30px;
 
     background:
+
         linear-gradient(
             160deg,
             #63384d,
@@ -187,8 +214,6 @@ body {
 
 }
 
-
-/* círculos decorativos */
 
 .lateral::before {
 
@@ -459,6 +484,10 @@ body {
 }
 
 
+/* =====================================================
+   INPUTS
+===================================================== */
+
 .campo input {
 
     width: 100%;
@@ -476,7 +505,9 @@ body {
 
     color: #58434d;
 
-    font-family: "DM Sans", sans-serif;
+    font-family:
+        "DM Sans",
+        sans-serif;
 
     font-size: 13px;
 
@@ -507,13 +538,75 @@ body {
 }
 
 
-/* CI */
+/* =====================================================
+   CI INMODIFICABLE
+===================================================== */
 
 .campo input[name="CI"] {
 
     background: #f7f0f3;
 
     color: #8d7781;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =====================================================
+   SELECT ROL Y ESTADO
+===================================================== */
+
+.campo select {
+
+    width: 100%;
+
+    height: 47px;
+
+    padding: 0 15px;
+
+    border:
+        1px solid #ead5dd;
+
+    border-radius: 13px;
+
+    background: #fffafd;
+
+    color: #58434d;
+
+    font-family:
+        "DM Sans",
+        sans-serif;
+
+    font-size: 13px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: .25s ease;
+
+    appearance: auto;
+
+}
+
+
+.campo select:hover {
+
+    border-color: #d7adbd;
+
+}
+
+
+.campo select:focus {
+
+    border-color: #a96a83;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(169,106,131,.10);
 
 }
 
@@ -562,6 +655,7 @@ label.error {
     border-radius: 15px;
 
     background:
+
         linear-gradient(
             135deg,
             #a86680,
@@ -570,7 +664,9 @@ label.error {
 
     color: white;
 
-    font-family: "DM Sans", sans-serif;
+    font-family:
+        "DM Sans",
+        sans-serif;
 
     font-size: 14px;
 
@@ -599,6 +695,7 @@ label.error {
         rgba(117,65,89,.30);
 
     background:
+
         linear-gradient(
             135deg,
             #b87590,
@@ -617,7 +714,7 @@ label.error {
 
 
 /* =====================================================
-   DECORACIÓN INFERIOR
+   FIRMA
 ===================================================== */
 
 .firma {
@@ -651,6 +748,7 @@ label.error {
 
     }
 
+
     .lateral {
 
         min-height: 250px;
@@ -658,6 +756,7 @@ label.error {
         padding: 35px 25px;
 
     }
+
 
     .logo {
 
@@ -671,17 +770,20 @@ label.error {
 
     }
 
+
     .lateral h1 {
 
         font-size: 30px;
 
     }
 
+
     .decoracion {
 
         margin-top: 15px;
 
     }
+
 
     .mensaje {
 
@@ -700,11 +802,13 @@ label.error {
 
     }
 
+
     .formulario {
 
         padding: 30px 22px;
 
     }
+
 
     .grupo-campos {
 
@@ -712,11 +816,13 @@ label.error {
 
     }
 
+
     .campo.completo {
 
         grid-column: auto;
 
     }
+
 
     .encabezado h2 {
 
@@ -747,17 +853,21 @@ label.error {
             D
         </div>
 
+
         <h1>
             DIVINE
         </h1>
+
 
         <div class="subtitulo">
             Beauty & Elegance
         </div>
 
+
         <div class="decoracion">
             ♡ ✦ ♡
         </div>
+
 
         <p class="mensaje">
 
@@ -783,9 +893,11 @@ label.error {
                 Gestión de clientes
             </div>
 
+
             <h2>
                 Editar cliente
             </h2>
+
 
             <p>
                 Actualiza los datos del cliente seleccionado.
@@ -804,21 +916,32 @@ label.error {
             <div class="grupo-campos">
 
 
+                <!-- =====================================
+                     CI
+                ====================================== -->
+
                 <div class="campo">
 
                     <label for="CI">
                         C.I.
                     </label>
 
+
                     <input
-                        type="number"
+                        type="text"
                         id="CI"
                         name="CI"
-                        value="<?= htmlspecialchars($CI) ?>"
+                        value="<?= htmlspecialchars($CI, ENT_QUOTES, 'UTF-8') ?>"
+                        readonly
+                        title="Este campo es inmodificable."
                     >
 
                 </div>
 
+
+                <!-- =====================================
+                     CELULAR
+                ====================================== -->
 
                 <div class="campo">
 
@@ -826,15 +949,20 @@ label.error {
                         Teléfono
                     </label>
 
+
                     <input
-                        type="number"
+                        type="text"
                         id="celular"
                         name="celular"
-                        value="<?= htmlspecialchars($celular) ?>"
+                        value="<?= htmlspecialchars($celular, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
                 </div>
 
+
+                <!-- =====================================
+                     NOMBRE
+                ====================================== -->
 
                 <div class="campo completo">
 
@@ -842,15 +970,20 @@ label.error {
                         Nombre completo
                     </label>
 
+
                     <input
                         type="text"
                         id="nombre"
                         name="nombre"
-                        value="<?= htmlspecialchars($nombre) ?>"
+                        value="<?= htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
                 </div>
 
+
+                <!-- =====================================
+                     DIRECCIÓN
+                ====================================== -->
 
                 <div class="campo completo">
 
@@ -858,15 +991,20 @@ label.error {
                         Dirección
                     </label>
 
+
                     <input
                         type="text"
                         id="direccion"
                         name="direccion"
-                        value="<?= htmlspecialchars($direccion) ?>"
+                        value="<?= htmlspecialchars($direccion, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
                 </div>
 
+
+                <!-- =====================================
+                     ROL
+                ====================================== -->
 
                 <div class="campo">
 
@@ -874,15 +1012,35 @@ label.error {
                         Rol
                     </label>
 
-                    <input
-                        type="text"
+
+                    <select
                         id="rol"
                         name="rol"
-                        value="<?= htmlspecialchars($rol) ?>"
                     >
+
+                        <option
+                            value="vendedor"
+                            <?= strtolower($rol) === 'vendedor' ? 'selected' : '' ?>
+                        >
+                            vendedor
+                        </option>
+
+
+                        <option
+                            value="administrador"
+                            <?= strtolower($rol) === 'administrador' ? 'selected' : '' ?>
+                        >
+                            administrador
+                        </option>
+
+                    </select>
 
                 </div>
 
+
+                <!-- =====================================
+                     ESTADO
+                ====================================== -->
 
                 <div class="campo">
 
@@ -890,18 +1048,38 @@ label.error {
                         Estado
                     </label>
 
-                    <input
-                        type="text"
+
+                    <select
                         id="estado"
                         name="estado"
-                        value="<?= htmlspecialchars($estado) ?>"
                     >
+
+                        <option
+                            value="ACTIVO"
+                            <?= strtoupper($estado) === 'ACTIVO' ? 'selected' : '' ?>
+                        >
+                            ACTIVO
+                        </option>
+
+
+                        <option
+                            value="BLOQUEADO"
+                            <?= strtoupper($estado) === 'BLOQUEADO' ? 'selected' : '' ?>
+                        >
+                            BLOQUEADO
+                        </option>
+
+                    </select>
 
                 </div>
 
 
             </div>
 
+
+            <!-- =====================================
+                 BOTÓN
+            ====================================== -->
 
             <div class="acciones">
 
@@ -918,7 +1096,9 @@ label.error {
 
 
         <div class="firma">
+
             DIVINE · Elegancia en cada detalle
+
         </div>
 
 
@@ -937,76 +1117,122 @@ $(document).ready(function(){
         rules: {
 
             CI: {
+
                 required: true,
+
                 number: true,
-                minlength: 7
+
+                minlength: 6
+
             },
+
 
             nombre: {
+
                 required: true,
+
                 minlength: 3
+
             },
+
 
             direccion: {
+
                 required: true,
+
                 minlength: 5
+
             },
+
 
             celular: {
+
                 required: true,
+
                 number: true,
-                minlength: 8,
-                maxlength: 8
+
+                minlength: 6,
+
+                maxlength: 11
+
             },
+
 
             rol: {
-                required: true,
-                minlength: 3
+
+                required: true
+
             },
 
+
             estado: {
-                required: true,
-                minlength: 3
+
+                required: true
+
             }
 
         },
+
 
         messages: {
 
             CI: {
-                required: "Ingrese el CI",
-                number: "Solo se permiten números",
-                minlength: "El CI debe tener al menos 7 dígitos"
+
+                required: "El CI es obligatorio",
+
+                number: "El CI debe contener números",
+
+                minlength: "El CI debe tener al menos 6 dígitos"
+
             },
+
 
             nombre: {
+
                 required: "Ingrese el nombre",
+
                 minlength: "Debe tener al menos 3 caracteres"
+
             },
+
 
             direccion: {
+
                 required: "Ingrese la dirección",
+
                 minlength: "La dirección es demasiado corta"
+
             },
+
 
             celular: {
+
                 required: "Ingrese el teléfono",
+
                 number: "Solo se permiten números",
-                minlength: "Debe tener 8 dígitos",
-                maxlength: "Debe tener 8 dígitos"
+
+                minlength: "Debe tener 7 dígitos mínimamente",
+
+                maxlength: "Máximo de dígitos sobrepasado"
+
             },
+
 
             rol: {
-                required: "Ingrese el rol",
-                minlength: "Debe tener al menos 3 caracteres"
+
+                required: "Seleccione un rol"
+
             },
 
+
             estado: {
-                required: "Ingrese el estado",
-                minlength: "Debe tener al menos 3 caracteres"
+
+                required: "Seleccione un estado"
+
             }
 
         },
+
 
         errorClass: "error"
 
@@ -1020,3 +1246,4 @@ $(document).ready(function(){
 </body>
 
 </html>
+ 
