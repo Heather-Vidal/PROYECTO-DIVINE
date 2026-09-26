@@ -1,273 +1,1022 @@
- <?php
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+<?php
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
 
-if($conn->connect_error){
+if ($conn->connect_error) {
     die("Ocurrió un error de conexión");
 }
 
-$CI = $_GET['CI'];
+$CI = $_GET['CI'] ?? '';
 
-$sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";             
-$resultado = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM CLIENTE WHERE CI = ?");
+$stmt->bind_param("s", $CI);
+$stmt->execute();
 
-if($resultado->num_rows > 0){
-    while($fila = $resultado->fetch_assoc()){
+$resultado = $stmt->get_result();
 
-        $CI = $fila['CI'];
-        $nombre = $fila['nombre'];
-        $direccion = $fila['direccion'];
-        $celular = $fila['celular'];
-        $rol = $fila['rol'];
-        $estado = $fila['estado'];
-    }
+if ($resultado->num_rows > 0) {
+
+    $fila = $resultado->fetch_assoc();
+
+    $CI = $fila['CI'];
+    $nombre = $fila['nombre'];
+    $direccion = $fila['direccion'];
+    $celular = $fila['celular'];
+    $rol = $fila['rol'];
+    $estado = $fila['estado'];
+
+} else {
+
+    die("Cliente no encontrado");
+
 }
+
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Editar Cliente - DIVINE</title>
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Editar Cliente | DIVINE</title>
 
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+>
 
 <style>
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f8eff1; /* Fondo rosa empolvado claro */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 0;
+/* =====================================================
+   GENERAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
     margin: 0;
+    padding: 0;
 }
 
-/* FORMULARIO */
-form {
-    background: #ffffff; /* Blanco limpio como las tarjetas de la imagen */
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(166, 91, 113, 0.12);
-    max-width: 600px;
-    width: 85%;
+body {
+
+    min-height: 100vh;
+
+    font-family: "DM Sans", sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(226, 175, 192, .30),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(201, 151, 171, .20),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #fffafa,
+            #f8edf2,
+            #fff7f9
+        );
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 35px 18px;
+
+    color: #58434d;
+
+}
+
+
+/* =====================================================
+   CONTENEDOR
+===================================================== */
+
+.contenedor {
+
+    width: 100%;
+
+    max-width: 900px;
+
+    background:
+        rgba(255,255,255,.88);
+
+    border:
+        1px solid rgba(255,255,255,.95);
+
+    border-radius: 30px;
+
+    box-shadow:
+        0 25px 70px
+        rgba(120,70,92,.15);
+
+    backdrop-filter: blur(15px);
+
+    overflow: hidden;
 
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 25px;
+
+    grid-template-columns: 35% 65%;
+
 }
 
-/* IMAGEN */
-.imagen {
-    background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png") center/contain no-repeat;
-    height: 180px;
-}
 
-/* TITULO */
-h2 {
-    margin: 0;
-    text-align: center;
-    color: #a65b71; /* Tono rosa vino principal de DIVINE */
-    font-size: 32px;
-    font-family: "Playfair Display", serif;
-    letter-spacing: 1px;
-}
+/* =====================================================
+   PANEL IZQUIERDO
+===================================================== */
 
-legend {
-    text-align: center;
-    color: #c87588; /* Rosa medio */
-    font-size: 18px;
-    font-weight: 500;
-}
+.lateral {
 
-/* CAMPOS */
-.grupo-campos {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
+    position: relative;
 
-label {
-    color: #5a4e53; /* Gris neutro cálido para lectura cómoda */
-    font-weight: 500;
-    margin-bottom: -10px;
-    font-size: 14px;
-}
+    min-height: 650px;
 
-input[type="text"],
-input[type="number"],
-input[type="date"] {
-    padding: 14px;
-    border: 1px solid #e2c2c9; /* Borde rosa suave */
-    border-radius: 10px;
-    font-size: 15px;
-    background: #faf6f7;
-    outline: none;
-    transition: all 0.3s ease;
-    color: #4a3f43;
-}
+    padding: 45px 30px;
 
-/* EFECTO FOCUS */
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus {
-    border-color: #a65b71;
-    background: #ffffff;
-    box-shadow: 0 0 10px rgba(166, 91, 113, 0.2);
-    transform: scale(1.01);
-}
+    background:
+        linear-gradient(
+            160deg,
+            #63384d,
+            #87536a 55%,
+            #a86d83
+        );
 
-/* MENSAJES DE ERROR DE VALIDACIÓN */
-label.error {
-    color: #b84156;
-    font-size: 12px;
-    margin-top: 2px;
-    margin-bottom: 0;
-    font-weight: 400;
-}
-
-/* BOTON */
-input[type="submit"] {
-    padding: 14px;
-    background: #c87588; /* Color similar al botón "Descubrir Productos" */
     color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    overflow: hidden;
+
+}
+
+
+/* círculos decorativos */
+
+.lateral::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 260px;
+
+    height: 260px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    border-radius: 50%;
+
+    top: -100px;
+
+    left: -100px;
+
+}
+
+
+.lateral::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+
+    height: 300px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.10);
+
+    border-radius: 50%;
+
+    bottom: -150px;
+
+    right: -140px;
+
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.logo {
+
+    width: 82px;
+
+    height: 82px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        rgba(255,255,255,.13);
+
+    border:
+        1px solid
+        rgba(255,255,255,.35);
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 42px;
+
+    margin-bottom: 25px;
+
+    position: relative;
+
+    z-index: 2;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,.12);
+
+}
+
+
+.lateral h1 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 38px;
+
+    letter-spacing: 3px;
+
+    font-weight: 600;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.lateral .subtitulo {
+
+    margin-top: 8px;
+
+    color: #efd8e1;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.decoracion {
+
+    margin-top: 35px;
+
+    font-size: 25px;
+
+    color: #e9bdcd;
+
+    letter-spacing: 12px;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.mensaje {
+
+    margin-top: 25px;
+
+    max-width: 230px;
+
+    color: #ead9df;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+/* =====================================================
+   FORMULARIO
+===================================================== */
+
+.formulario {
+
+    padding: 45px 45px 40px;
+
+}
+
+
+.encabezado {
+
+    margin-bottom: 28px;
+
+}
+
+
+.etiqueta {
+
+    color: #b27a91;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+}
+
+
+.encabezado h2 {
+
+    margin-top: 6px;
+
+    color: #63384d;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 36px;
+
+    font-weight: 600;
+
+}
+
+
+.encabezado p {
+
+    margin-top: 7px;
+
+    color: #a28f98;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================================
+   CAMPOS
+===================================================== */
+
+.grupo-campos {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+
+}
+
+
+.campo {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+}
+
+
+.campo.completo {
+
+    grid-column: 1 / -1;
+
+}
+
+
+.campo label {
+
+    color: #684c5a;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.campo input {
+
+    width: 100%;
+
+    height: 47px;
+
+    padding: 0 15px;
+
+    border:
+        1px solid #ead5dd;
+
+    border-radius: 13px;
+
+    background: #fffafd;
+
+    color: #58434d;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition: .25s ease;
+
+}
+
+
+.campo input:hover {
+
+    border-color: #d7adbd;
+
+}
+
+
+.campo input:focus {
+
+    border-color: #a96a83;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(169,106,131,.10);
+
+}
+
+
+/* CI */
+
+.campo input[name="CI"] {
+
+    background: #f7f0f3;
+
+    color: #8d7781;
+
+}
+
+
+/* =====================================================
+   ERROR
+===================================================== */
+
+label.error {
+
+    color: #c35e70 !important;
+
+    font-size: 10px !important;
+
+    font-weight: 400 !important;
+
+    margin-top: -2px;
+
+}
+
+
+/* =====================================================
+   BOTÓN
+===================================================== */
+
+.acciones {
+
+    margin-top: 28px;
+
+    padding-top: 22px;
+
+    border-top:
+        1px solid #eee1e6;
+
+}
+
+
+.boton {
+
+    width: 100%;
+
+    height: 50px;
+
     border: none;
-    border-radius: 25px; /* Bordes más redondeados estilo marca cosmética */
-    font-size: 16px;
-    font-weight: 500;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #a86680,
+            #754159
+        );
+
+    color: white;
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(200, 117, 136, 0.3);
+
+    box-shadow:
+        0 10px 25px
+        rgba(117,65,89,.20);
+
+    transition: .3s ease;
+
 }
 
-input[type="submit"]:hover {
-    background: #a65b71; /* Tono más oscuro al pasar el cursor */
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(166, 91, 113, 0.4);
+
+.boton:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 14px 30px
+        rgba(117,65,89,.30);
+
+    background:
+        linear-gradient(
+            135deg,
+            #b87590,
+            #814960
+        );
+
 }
 
-/* RESPONSIVE */
-@media(max-width: 768px) {
-    form {
-        padding: 25px;
+
+.boton:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* =====================================================
+   DECORACIÓN INFERIOR
+===================================================== */
+
+.firma {
+
+    text-align: center;
+
+    margin-top: 18px;
+
+    color: #b49ca7;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width: 800px) {
+
+    .contenedor {
+
+        grid-template-columns: 1fr;
+
+        max-width: 600px;
+
     }
 
-    .imagen {
-        height: 150px;
+    .lateral {
+
+        min-height: 250px;
+
+        padding: 35px 25px;
+
     }
+
+    .logo {
+
+        width: 65px;
+
+        height: 65px;
+
+        font-size: 32px;
+
+        margin-bottom: 15px;
+
+    }
+
+    .lateral h1 {
+
+        font-size: 30px;
+
+    }
+
+    .decoracion {
+
+        margin-top: 15px;
+
+    }
+
+    .mensaje {
+
+        margin-top: 10px;
+
+    }
+
+}
+
+
+@media(max-width: 550px) {
+
+    body {
+
+        padding: 15px;
+
+    }
+
+    .formulario {
+
+        padding: 30px 22px;
+
+    }
+
+    .grupo-campos {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .campo.completo {
+
+        grid-column: auto;
+
+    }
+
+    .encabezado h2 {
+
+        font-size: 30px;
+
+    }
+
 }
 
 </style>
+
 </head>
+
 
 <body>
 
-<form action="updatecliente.php" method="POST" id="formcliente">
 
-    <div class="imagen"></div>
+<div class="contenedor">
 
-    <h2>MODIFICAR CLIENTE</h2>
 
-    <legend>DATOS A EDITAR</legend>
+    <!-- =========================================
+         PANEL DECORATIVO
+    ========================================== -->
 
-    <div class="grupo-campos">
+    <div class="lateral">
 
-        <label>CI:</label>
-        <input type="number" name="CI" value="<?= $CI ?>">
+        <div class="logo">
+            D
+        </div>
 
-        <label>Nombre:</label>
-        <input type="text" name="nombre" value="<?= $nombre ?>">
+        <h1>
+            DIVINE
+        </h1>
 
-        <label>Dirección:</label>
-        <input type="text" name="direccion" value="<?= $direccion ?>">
+        <div class="subtitulo">
+            Beauty & Elegance
+        </div>
 
-        <label>Teléfono:</label>
-        <input type="number" name="celular" value="<?= $celular ?>">
+        <div class="decoracion">
+            ♡ ✦ ♡
+        </div>
 
-        <label>Rol:</label>
-        <input type="text" name="rol" value="<?= $rol ?>">
+        <p class="mensaje">
 
-        <label>Estado:</label>
-        <input type="text" name="estado" value="<?= $estado ?>">
+            Cada detalle cuenta.
+            Mantén la información de tus
+            clientes actualizada y organizada.
+
+        </p>
+
     </div>
 
-    <input type="submit" value="Guardar Cambios">
 
-</form>
+    <!-- =========================================
+         FORMULARIO
+    ========================================== -->
+
+    <div class="formulario">
+
+
+        <div class="encabezado">
+
+            <div class="etiqueta">
+                Gestión de clientes
+            </div>
+
+            <h2>
+                Editar cliente
+            </h2>
+
+            <p>
+                Actualiza los datos del cliente seleccionado.
+            </p>
+
+        </div>
+
+
+        <form
+            action="updatecliente.php"
+            method="POST"
+            id="formcliente"
+        >
+
+
+            <div class="grupo-campos">
+
+
+                <div class="campo">
+
+                    <label for="CI">
+                        C.I.
+                    </label>
+
+                    <input
+                        type="number"
+                        id="CI"
+                        name="CI"
+                        value="<?= htmlspecialchars($CI) ?>"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="celular">
+                        Teléfono
+                    </label>
+
+                    <input
+                        type="number"
+                        id="celular"
+                        name="celular"
+                        value="<?= htmlspecialchars($celular) ?>"
+                    >
+
+                </div>
+
+
+                <div class="campo completo">
+
+                    <label for="nombre">
+                        Nombre completo
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value="<?= htmlspecialchars($nombre) ?>"
+                    >
+
+                </div>
+
+
+                <div class="campo completo">
+
+                    <label for="direccion">
+                        Dirección
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion"
+                        name="direccion"
+                        value="<?= htmlspecialchars($direccion) ?>"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="rol">
+                        Rol
+                    </label>
+
+                    <input
+                        type="text"
+                        id="rol"
+                        name="rol"
+                        value="<?= htmlspecialchars($rol) ?>"
+                    >
+
+                </div>
+
+
+                <div class="campo">
+
+                    <label for="estado">
+                        Estado
+                    </label>
+
+                    <input
+                        type="text"
+                        id="estado"
+                        name="estado"
+                        value="<?= htmlspecialchars($estado) ?>"
+                    >
+
+                </div>
+
+
+            </div>
+
+
+            <div class="acciones">
+
+                <input
+                    type="submit"
+                    value="Guardar cambios"
+                    class="boton"
+                >
+
+            </div>
+
+
+        </form>
+
+
+        <div class="firma">
+            DIVINE · Elegancia en cada detalle
+        </div>
+
+
+    </div>
+
+
+</div>
+
 
 <script>
+
 $(document).ready(function(){
+
     $("#formcliente").validate({
-        rules:{
-            CI:{
-                required:true,
-                number:true,
-                minlength:7
+
+        rules: {
+
+            CI: {
+                required: true,
+                number: true,
+                minlength: 7
             },
-            nombre:{
-                required:true,
-                minlength:3
+
+            nombre: {
+                required: true,
+                minlength: 3
             },
-            direccion:{
-                required:true,
-                minlength:5
+
+            direccion: {
+                required: true,
+                minlength: 5
             },
-            celular:{
-                required:true,
-                number:true,
-                minlength:8,
-                maxlength:8
+
+            celular: {
+                required: true,
+                number: true,
+                minlength: 8,
+                maxlength: 8
             },
-            rol:{
-                required:true,
-                minlength:3
+
+            rol: {
+                required: true,
+                minlength: 3
             },
-            estado:{
-                required:true,
-                minlength:3
+
+            estado: {
+                required: true,
+                minlength: 3
             }
+
         },
-        messages:{
-            CI:{
-                required:"Ingrese el CI",
-                number:"Solo se permiten números",
-                minlength:"El CI debe tener al menos 7 dígitos"
+
+        messages: {
+
+            CI: {
+                required: "Ingrese el CI",
+                number: "Solo se permiten números",
+                minlength: "El CI debe tener al menos 7 dígitos"
             },
-            nombre:{
-                required:"Ingrese el nombre",
-                minlength:"Debe tener al menos 3 caracteres"
+
+            nombre: {
+                required: "Ingrese el nombre",
+                minlength: "Debe tener al menos 3 caracteres"
             },
-            direccion:{
-                required:"Ingrese la dirección",
-                minlength:"La dirección es demasiado corta"
+
+            direccion: {
+                required: "Ingrese la dirección",
+                minlength: "La dirección es demasiado corta"
             },
-            celular:{
-                required:"Ingrese el teléfono",
-                number:"Solo se permiten números",
-                minlength:"Debe tener 8 dígitos",
-                maxlength:"Debe tener 8 dígitos"
+
+            celular: {
+                required: "Ingrese el teléfono",
+                number: "Solo se permiten números",
+                minlength: "Debe tener 8 dígitos",
+                maxlength: "Debe tener 8 dígitos"
             },
-            rol:{
-                required:"Ingrese el rol",
-                minlength:"Debe tener al menos 3 caracteres"
+
+            rol: {
+                required: "Ingrese el rol",
+                minlength: "Debe tener al menos 3 caracteres"
             },
-            estado:{
-                required:"Ingrese el estado",
-                minlength:"Debe tener al menos 3 caracteres"
+
+            estado: {
+                required: "Ingrese el estado",
+                minlength: "Debe tener al menos 3 caracteres"
             }
-        }
+
+        },
+
+        errorClass: "error"
+
     });
+
 });
+
 </script>
 
+
 </body>
+
 </html>

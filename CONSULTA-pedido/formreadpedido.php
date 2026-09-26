@@ -13,7 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
 
 <style>
 
@@ -42,7 +43,6 @@ body{
 
     font-family:'DM Sans', sans-serif;
 
-    /* FONDO CON IMAGEN */
     background:
         linear-gradient(
             rgba(253,244,247,.55),
@@ -266,7 +266,7 @@ h2{
 
 
 /* =========================================================
-   CONTENEDOR DEL FORMULARIO
+   FORMULARIO
 ========================================================= */
 
 .formulario{
@@ -399,7 +399,7 @@ input[type="number"]:focus{
 
 
 /* =========================================================
-   BOTÓN
+   BOTÓN CONSULTAR
 ========================================================= */
 
 input[type="submit"]{
@@ -538,8 +538,265 @@ input.error{
 
 
 /* =========================================================
+   BOTÓN VOLVER DIVINE
+========================================================= */
+
+.divine-back{
+
+    position:fixed;
+
+    left:28px;
+    bottom:28px;
+
+    width:58px;
+    height:58px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            #a96f87,
+            #925f76
+        );
+
+    color:#fff8fa;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:99999;
+
+    box-shadow:
+        0 8px 20px rgba(115,65,84,.22),
+        inset 0 1px 3px rgba(255,255,255,.35);
+
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease,
+        background .35s ease;
+}
+
+
+/* =========================================================
+   CORAZÓN DEL BOTÓN
+========================================================= */
+
+.divine-back-heart{
+
+    width:27px;
+    height:27px;
+
+    fill:none;
+
+    stroke:#fff8fa;
+
+    stroke-width:1.8;
+
+    stroke-linecap:round;
+    stroke-linejoin:round;
+
+    transition:
+        transform .35s ease,
+        fill .35s ease,
+        stroke-width .35s ease;
+}
+
+
+/* =========================================================
+   FLECHA
+========================================================= */
+
+.divine-back-arrow{
+
+    position:absolute;
+
+    top:56px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    color:#925f76;
+
+    font-family:Arial,sans-serif;
+
+    font-size:31px;
+
+    font-weight:700;
+
+    line-height:1;
+
+    text-shadow:
+        0 1px 1px rgba(146,95,118,.15);
+
+    transition:
+        transform .3s ease,
+        color .3s ease;
+}
+
+
+/* =========================================================
+   HOVER DEL BOTÓN
+========================================================= */
+
+.divine-back:hover{
+
+    transform:
+        translateY(-5px)
+        scale(1.07);
+
+    background:
+        linear-gradient(
+            145deg,
+            #b67d93,
+            #9c667e
+        );
+
+    box-shadow:
+        0 13px 28px rgba(115,65,84,.30),
+        inset 0 1px 3px rgba(255,255,255,.45);
+}
+
+
+/* =========================================================
+   HOVER CORAZÓN
+========================================================= */
+
+.divine-back:hover .divine-back-heart{
+
+    transform:scale(1.13);
+
+    fill:rgba(255,245,248,.22);
+
+    stroke-width:2;
+}
+
+
+/* =========================================================
+   HOVER FLECHA
+========================================================= */
+
+.divine-back:hover .divine-back-arrow{
+
+    transform:translateX(-55%);
+
+    color:#925f76;
+}
+
+
+/* =========================================================
+   TEXTO VOLVER
+========================================================= */
+
+.divine-back-text{
+
+    position:absolute;
+
+    top:88px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%)
+        translateY(-5px);
+
+    color:#925f76;
+
+    font-family:"Poppins",Arial,sans-serif;
+
+    font-size:12px;
+
+    font-weight:500;
+
+    letter-spacing:.4px;
+
+    white-space:nowrap;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:
+        opacity .3s ease,
+        transform .3s ease;
+}
+
+
+/* =========================================================
+   MOSTRAR TEXTO
+========================================================= */
+
+.divine-back:hover .divine-back-text{
+
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* =========================================================
+   CLICK
+========================================================= */
+
+.divine-back:active{
+
+    transform:scale(.93);
+}
+
+
+/* =========================================================
    RESPONSIVE
 ========================================================= */
+
+@media(max-width:600px){
+
+    .divine-back{
+
+        width:52px;
+        height:52px;
+
+        left:18px;
+        bottom:18px;
+    }
+
+
+    .divine-back-heart{
+
+        width:24px;
+        height:24px;
+    }
+
+
+    .divine-back-arrow{
+
+        top:51px;
+
+        font-size:27px;
+
+        font-weight:700;
+    }
+
+
+    .divine-back-text{
+
+        top:79px;
+
+        font-size:11px;
+    }
+
+}
+
 
 @media(max-width:520px){
 
@@ -550,6 +807,7 @@ input.error{
         overflow:auto;
     }
 
+
     .contenedor{
 
         width:100%;
@@ -559,10 +817,12 @@ input.error{
         border-radius:25px;
     }
 
+
     h2{
 
         font-size:27px;
     }
+
 
     .formulario{
 
@@ -579,10 +839,12 @@ input.error{
 <body>
 
 
+<!-- =====================================================
+     TARJETA PRINCIPAL
+===================================================== -->
+
 <div class="contenedor">
 
-
-    <!-- DECORACIÓN -->
 
     <div class="detalle-superior">
 
@@ -597,14 +859,10 @@ input.error{
     </div>
 
 
-    <!-- MARCA -->
-
     <div class="marca">
         DIVINE
     </div>
 
-
-    <!-- TÍTULO -->
 
     <h2>
         Ver Estado del Pedido
@@ -616,8 +874,6 @@ input.error{
         ingresando el número correspondiente.
     </p>
 
-
-    <!-- FORMULARIO -->
 
     <div class="formulario">
 
@@ -665,8 +921,6 @@ input.error{
     </div>
 
 
-    <!-- AYUDA -->
-
     <div class="ayuda">
 
         <span>♡</span>
@@ -675,8 +929,51 @@ input.error{
 
     </div>
 
-
 </div>
+
+
+
+<!-- =====================================================
+     BOTÓN VOLVER DIVINE
+===================================================== -->
+
+<button
+    type="button"
+    class="divine-back"
+    onclick="history.back()"
+    aria-label="Volver"
+    title="Volver"
+>
+
+    <svg
+        class="divine-back-heart"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+    >
+
+        <path
+            d="M20.84 8.61
+               C20.84 13.42 12 19 12 19
+               S3.16 13.42 3.16 8.61
+               C3.16 6.12 5.13 4.5 7.35 4.5
+               C9.05 4.5 10.56 5.43 12 7.12
+               C13.44 5.43 14.95 4.5 16.65 4.5
+               C18.87 4.5 20.84 6.12 20.84 8.61Z"
+        />
+
+    </svg>
+
+
+    <span class="divine-back-arrow">
+        ←
+    </span>
+
+
+    <span class="divine-back-text">
+        Volver
+    </span>
+
+</button>
 
 
 
@@ -719,10 +1016,10 @@ $(document).ready(function(){
         },
 
 
-        errorClass: "error",
+        errorClass:"error",
 
 
-        errorPlacement: function(error, element){
+        errorPlacement:function(error,element){
 
             error.insertAfter(
                 element.closest(".input-contenedor")

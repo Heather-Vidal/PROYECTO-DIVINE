@@ -2037,7 +2037,7 @@ if ($puedeVerPedidos) {
 
     <a
 
-        href="readtodopedido.php"
+        href="formreadpedido.php"
 
         class="btn btn-volver"
 

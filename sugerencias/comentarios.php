@@ -1,425 +1,1035 @@
-<?php 
-$archivo = 'mensajes.txt'; 
-?> 
- 
-<!DOCTYPE html> 
-<html lang="es"> 
-<head> 
-  <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Publicaciones</title> 
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style> 
-    * {
-      box-sizing: border-box;
-    }
-
-    body { 
-      font-family: "Georgia", "Times New Roman", serif;
-      margin: 0;
-      padding: 50px 20px;
-      min-height: 100vh;
-
-      background:
-        linear-gradient(
-          rgba(255, 240, 246, 0.88),
-          rgba(242, 232, 245, 0.94)
-        ),
-        url("../imagenes/mezcla.jpg");
-
-      background-repeat: no-repeat;
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-
-      color: #654b59;
-    }
-
-    /* CONTENEDOR PRINCIPAL */
-    .contenedor {
-      width: 100%;
-      max-width: 900px;
-      margin: auto;
-      padding: 45px 50px;
-
-      background: rgba(255, 252, 253, 0.97);
-      border: 1px solid rgba(218, 174, 193, 0.45);
-      border-radius: 30px;
-
-      box-shadow:
-        0 20px 60px rgba(126, 82, 105, 0.18),
-        0 5px 18px rgba(126, 82, 105, 0.08);
-
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* DECORACIÓN */
-    .contenedor::before {
-      content: "♡";
-      position: absolute;
-      top: -35px;
-      right: 20px;
-      font-size: 130px;
-      color: rgba(221, 170, 192, 0.10);
-      font-family: Arial, sans-serif;
-    }
-
-    .contenedor::after {
-      content: "✿";
-      position: absolute;
-      bottom: -35px;
-      left: 20px;
-      font-size: 100px;
-      color: rgba(221, 170, 192, 0.08);
-    }
-
-    /* TÍTULO */
-    h1 { 
-      text-align: center;
-      color: #a8758b;
-      font-size: 40px;
-      font-weight: normal;
-      letter-spacing: 1px;
-      margin: 0 0 8px;
-
-      position: relative;
-      z-index: 2;
-    }
-
-    h1::after {
-      content: "♡  ✦  ♡";
-      display: block;
-      font-family: Arial, sans-serif;
-      font-size: 17px;
-      letter-spacing: 5px;
-      color: #d5a0b5;
-      margin-top: 10px;
-    }
-
-    /* SUBTÍTULO */
-    .subtitulo {
-      text-align: center;
-      color: #a58b98;
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-      letter-spacing: 0.3px;
-      margin: 0 0 28px;
-
-      position: relative;
-      z-index: 2;
-    }
-
-    /* BOTÓN COMENTAR */
-    .volver {
-      display: block;
-      width: fit-content;
-      margin: auto;
-
-      text-decoration: none;
-
-      background: linear-gradient(
-        135deg,
-        #e9c4d3,
-        #d8a5ba
-      );
-
-      color: #684957;
-
-      padding: 13px 30px;
-      border-radius: 30px;
-
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-      font-weight: bold;
-
-      box-shadow:
-        0 6px 18px rgba(174, 119, 142, 0.22);
-
-      transition: all 0.3s ease;
-
-      position: relative;
-      z-index: 2;
-    }
-
-    .volver:hover {
-      background: linear-gradient(
-        135deg,
-        #d9afc1,
-        #c997ad
-      );
-
-      color: white;
-
-      transform: translateY(-4px);
-
-      box-shadow:
-        0 10px 25px rgba(174, 119, 142, 0.30);
-    }
-
-    /* LÍNEA */
-    hr {
-      border: none;
-      height: 1px;
-
-      background: linear-gradient(
-        to right,
-        transparent,
-        #dfb9c9,
-        transparent
-      );
-
-      margin: 38px 0 30px;
-    }
-
-    /* CONTENEDOR DE COMENTARIOS */
-    .publicaciones {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-
-      position: relative;
-      z-index: 2;
-    }
-
-    /* CADA COMENTARIO */
-    .post { 
-      position: relative;
-
-      padding: 24px 28px 24px 58px;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(255, 249, 251, 0.98),
-          rgba(250, 240, 246, 0.98)
-        );
-
-      border: 1px solid #ecd3df;
-      border-radius: 20px;
-
-      color: #6e5260;
-
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-      line-height: 1.7;
-
-      box-shadow:
-        0 7px 20px rgba(126, 82, 105, 0.08);
-
-      transition: all 0.3s ease;
-
-      overflow: hidden;
-    }
-
-    /* Corazón de cada comentario */
-    .post::before {
-      content: "♡";
-
-      position: absolute;
-      left: 20px;
-      top: 22px;
-
-      width: 27px;
-      height: 27px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #f1d5e0;
-      color: #bd829b;
-
-      border-radius: 50%;
-
-      font-size: 17px;
-      font-family: Arial, sans-serif;
-    }
-
-    /* Detalle superior */
-    .post::after {
-      content: "";
-
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      width: 100%;
-      height: 4px;
-
-      background: linear-gradient(
-        to right,
-        #d9a9bc,
-        #efcbd9,
-        #d9a9bc
-      );
-    }
-
-    /* EFECTO AL PASAR EL MOUSE */
-    .post:hover {
-      transform: translateY(-5px);
-
-      background:
-        linear-gradient(
-          135deg,
-          #fffafd,
-          #fdf1f6
-        );
-
-      border-color: #dcb2c4;
-
-      box-shadow:
-        0 12px 28px rgba(126, 82, 105, 0.14);
-    }
-
-    .post:hover::before {
-      background: #dfb4c7;
-      color: white;
-      transform: scale(1.08);
-    }
-
-    /* TEXTO DEL COMENTARIO */
-    .post-texto {
-      position: relative;
-      z-index: 2;
-    }
-
-    /* CUANDO NO HAY PUBLICACIONES */
-    .sin-publicaciones {
-      text-align: center;
-      padding: 40px 25px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #fff7fa,
-          #f8eef5
-        );
-
-      border: 1px dashed #ddb8c8;
-      border-radius: 20px;
-
-      color: #a17c8e;
-
-      font-family: Arial, sans-serif;
-      font-size: 15px;
-
-      position: relative;
-      z-index: 2;
-    }
-
-    .sin-publicaciones::before {
-      content: "♡";
-      display: block;
-
-      font-size: 35px;
-      color: #d5a0b5;
-
-      margin-bottom: 8px;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 600px) {
-
-      body {
-        padding: 25px 12px;
-      }
-
-      .contenedor {
-        padding: 30px 18px;
-        border-radius: 23px;
-      }
-
-      h1 {
-        font-size: 31px;
-      }
-
-      .subtitulo {
-        font-size: 14px;
-        line-height: 1.5;
-        padding: 0 10px;
-      }
-
-      .volver {
-        padding: 11px 24px;
-      }
-
-      .post {
-        padding: 22px 18px 22px 52px;
-        font-size: 14px;
-        line-height: 1.6;
-        border-radius: 17px;
-      }
-
-      .post::before {
-        left: 17px;
-        top: 20px;
-      }
-    }
-  </style> 
-</head> 
- 
-<body> 
- <script>
 <?php
-if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
+$archivo = 'mensajes.txt';
 ?>
-    Swal.fire({
-        icon: 'success',
-        title: '¡Comentario guardado!',
-        text: 'Tu comentario se guardó correctamente.',
-        confirmButtonText: 'Aceptar'
-    });
-<?php
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Opiniones | DIVINE</title>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+
+<style>
+
+/* =========================================================
+   PALETA
+========================================================= */
+
+:root {
+
+    --crema: #fbf6f1;
+    --blanco: #fffdfb;
+
+    --vino: #50343b;
+    --vino-claro: #74545c;
+
+    --rosa: #c77d91;
+    --rosa-claro: #f2dce2;
+
+    --dorado: #b69a6a;
+    --dorado-claro: #dfcda7;
+
+    --borde: #eadbd7;
+
+    --sombra: rgba(77, 49, 57, .13);
 }
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+    min-height: 100vh;
+
+    font-family: 'DM Sans', sans-serif;
+
+    color: var(--vino);
+
+    padding: 45px 20px;
+
+    background:
+
+        linear-gradient(
+            rgba(249, 239, 238, .90),
+            rgba(248, 241, 235, .96)
+        ),
+
+        url("../imagenes/mezcla.jpg")
+        center / cover fixed no-repeat;
+
+}
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.contenedor {
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    background: rgba(255,253,251,.94);
+
+    border: 1px solid rgba(255,255,255,.9);
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 30px 80px rgba(77,49,57,.18);
+
+}
+
+
+/* =========================================================
+   PORTADA
+========================================================= */
+
+.portada {
+
+    min-height: 350px;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 60px 25px;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            rgba(70, 42, 49, .35),
+            rgba(70, 42, 49, .58)
+        ),
+
+        url("../imagenes/mezcla.jpg")
+        center / cover no-repeat;
+
+}
+
+
+/* brillo */
+
+.portada::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+
+    height: 500px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.08);
+
+    top: -300px;
+
+    right: -100px;
+
+}
+
+
+/* círculo inferior */
+
+.portada::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+
+    height: 350px;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    bottom: -250px;
+
+    left: -100px;
+
+}
+
+
+/* =========================================================
+   CONTENIDO PORTADA
+========================================================= */
+
+.portada-contenido {
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.mini-titulo {
+
+    color: #e8cfa0;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 5px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 13px;
+
+}
+
+
+.titulo {
+
+    font-family: 'Playfair Display', serif;
+
+    color: white;
+
+    font-size: clamp(43px, 7vw, 70px);
+
+    font-weight: 600;
+
+    line-height: 1;
+
+}
+
+
+.titulo span {
+
+    color: #efd3dc;
+
+}
+
+
+.linea {
+
+    width: 70px;
+
+    height: 1px;
+
+    background: #e1c58f;
+
+    margin: 22px auto;
+
+}
+
+
+.subtitulo {
+
+    max-width: 540px;
+
+    margin: auto;
+
+    color: rgba(255,255,255,.87);
+
+    font-size: 14px;
+
+    line-height: 1.8;
+
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.contenido {
+
+    padding: 45px 55px 50px;
+
+}
+
+
+/* =========================================================
+   CABECERA DE PUBLICACIONES
+========================================================= */
+
+.cabecera-publicaciones {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.seccion-titulo {
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 29px;
+
+    color: var(--vino);
+
+}
+
+
+.seccion-descripcion {
+
+    margin-top: 5px;
+
+    color: #927b80;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   BOTÓN COMENTAR
+========================================================= */
+
+.volver {
+
+    text-decoration: none;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 13px 22px;
+
+    border-radius: 30px;
+
+    background: var(--vino);
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: .4px;
+
+    box-shadow:
+        0 8px 20px rgba(80,52,59,.18);
+
+    transition: .3s ease;
+
+}
+
+
+.volver:hover {
+
+    background: var(--rosa);
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px rgba(199,125,145,.25);
+
+}
+
+
+/* =========================================================
+   LÍNEA DECORATIVA
+========================================================= */
+
+.decoracion {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.decoracion::before,
+.decoracion::after {
+
+    content: "";
+
+    height: 1px;
+
+    flex: 1;
+
+    background: var(--borde);
+
+}
+
+
+.decoracion span {
+
+    color: var(--dorado);
+
+    font-size: 15px;
+
+}
+
+
+/* =========================================================
+   PUBLICACIONES
+========================================================= */
+
+.publicaciones {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px;
+
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.post {
+
+    position: relative;
+
+    min-height: 190px;
+
+    padding: 30px 28px;
+
+    background: var(--blanco);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px var(--sombra);
+
+    transition: .35s ease;
+
+    overflow: hidden;
+
+}
+
+
+/* línea lateral */
+
+.post::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+    bottom: 0;
+
+    width: 4px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            var(--rosa),
+            var(--dorado)
+        );
+
+}
+
+
+/* comillas decorativas */
+
+.post::after {
+
+    content: "“";
+
+    position: absolute;
+
+    top: -15px;
+
+    right: 18px;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 100px;
+
+    color: rgba(199,125,145,.10);
+
+}
+
+
+.post:hover {
+
+    transform: translateY(-7px);
+
+    border-color: #dcc0c4;
+
+    box-shadow:
+        0 18px 40px rgba(77,49,57,.15);
+
+}
+
+
+/* =========================================================
+   PARTE SUPERIOR DEL POST
+========================================================= */
+
+.post-top {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 22px;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.icono {
+
+    width: 38px;
+
+    height: 38px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: var(--rosa-claro);
+
+    color: var(--rosa);
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 20px;
+
+}
+
+
+.opinion {
+
+    color: #9a7c84;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   TEXTO
+========================================================= */
+
+.post-texto {
+
+    position: relative;
+
+    z-index: 2;
+
+    color: #634b52;
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 18px;
+
+    line-height: 1.65;
+
+}
+
+
+/* =========================================================
+   PIE
+========================================================= */
+
+.post-pie {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    margin-top: 22px;
+
+    color: var(--dorado);
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* =========================================================
+   SIN PUBLICACIONES
+========================================================= */
+
+.sin-publicaciones {
+
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 65px 25px;
+
+    border: 1px dashed #dcbec8;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fffaf9,
+            #f9eff2
+        );
+
+    color: #987d85;
+
+}
+
+
+.sin-icono {
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 55px;
+
+    color: var(--rosa);
+
+    margin-bottom: 10px;
+
+}
+
+
+.sin-publicaciones h3 {
+
+    font-family: 'Playfair Display', serif;
+
+    font-size: 24px;
+
+    color: var(--vino);
+
+    margin-bottom: 5px;
+
+}
+
+
+.sin-publicaciones p {
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+
+    text-align: center;
+
+    margin-top: 45px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid var(--borde);
+
+    color: #a18c91;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.footer span {
+
+    color: var(--rosa);
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    body {
+
+        padding: 20px 12px;
+
+    }
+
+
+    .contenido {
+
+        padding: 35px 25px;
+
+    }
+
+
+    .publicaciones {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .cabecera-publicaciones {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .volver {
+
+        width: 100%;
+
+        justify-content: center;
+
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .contenedor {
+
+        border-radius: 20px;
+
+    }
+
+
+    .portada {
+
+        min-height: 310px;
+
+        padding: 45px 20px;
+
+    }
+
+
+    .contenido {
+
+        padding: 30px 17px;
+
+    }
+
+
+    .titulo {
+
+        font-size: 43px;
+
+    }
+
+
+    .post {
+
+        padding: 25px 21px;
+
+    }
+
+
+    .post-texto {
+
+        font-size: 17px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="contenedor">
+
+
+    <!-- =====================================================
+         PORTADA
+    ====================================================== -->
+
+    <section class="portada">
+
+        <div class="portada-contenido">
+
+            <div class="mini-titulo">
+                DIVINE BEAUTY
+            </div>
+
+            <h1 class="titulo">
+                Historias <span>que inspiran</span>
+            </h1>
+
+            <div class="linea"></div>
+
+            <p class="subtitulo">
+                Descubre las experiencias, comentarios y sugerencias
+                que nuestra comunidad comparte con nosotros.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONTENIDO
+    ====================================================== -->
+
+    <main class="contenido">
+
+
+        <div class="cabecera-publicaciones">
+
+            <div>
+
+                <h2 class="seccion-titulo">
+                    Opiniones de nuestra comunidad
+                </h2>
+
+                <p class="seccion-descripcion">
+                    Cada palabra cuenta y nos ayuda a seguir creciendo.
+                </p>
+
+            </div>
+
+
+            <a
+                class="volver"
+                href="publicar.php"
+            >
+                ♡ &nbsp; Compartir mi opinión
+            </a>
+
+        </div>
+
+
+        <!-- DECORACIÓN -->
+
+        <div class="decoracion">
+            <span>✦</span>
+        </div>
+
+
+        <!-- =================================================
+             PUBLICACIONES
+        ================================================== -->
+
+        <div class="publicaciones">
+
+<?php
+
+if (file_exists($archivo)) {
+
+    $lineas = file(
+        $archivo,
+        FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+    );
+
+    $lineas = array_reverse($lineas);
+
+    foreach ($lineas as $linea) {
+
 ?>
+
+            <article class="post">
+
+
+                <div class="post-top">
+
+                    <div class="icono">
+                        ♡
+                    </div>
+
+                    <div class="opinion">
+                        Opinión de cliente
+                    </div>
+
+                </div>
+
+
+                <div class="post-texto">
+
+                    <?php
+                    echo nl2br(
+                        htmlspecialchars(
+                            $linea,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        )
+                    );
+                    ?>
+
+                </div>
+
+
+                <div class="post-pie">
+                    ✦ Gracias por compartir
+                </div>
+
+
+            </article>
+
+<?php
+
+    }
+
+} else {
+
+?>
+
+            <div class="sin-publicaciones">
+
+                <div class="sin-icono">
+                    ♡
+                </div>
+
+                <h3>
+                    Aún no hay opiniones
+                </h3>
+
+                <p>
+                    Sé la primera persona en compartir una experiencia.
+                </p>
+
+            </div>
+
+<?php
+
+}
+
+?>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="footer">
+
+            Hecho con <span>♥</span> para la comunidad DIVINE
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     SWEETALERT
+========================================================= -->
+
+<script>
+
+<?php
+
+if (isset($_GET['guardado']) && $_GET['guardado'] == '1') {
+
+?>
+
+Swal.fire({
+
+    icon: 'success',
+
+    title: '¡Opinión publicada!',
+
+    text: 'Tu comentario se guardó correctamente.',
+
+    confirmButtonText: 'Continuar',
+
+    confirmButtonColor: '#50343b',
+
+    background: '#fffdfb',
+
+    color: '#50343b',
+
+    iconColor: '#c77d91'
+
+});
+
+<?php
+
+}
+
+?>
+
 </script>
-  <div class="contenedor">
 
-    <h1>Publicaciones</h1>
 
-    <p class="subtitulo">
-      Comentarios y sugerencias de nuestros clientes
-    </p>
+</body>
 
-    <a class="volver" href="publicar.php">
-      ♡ Comentar
-    </a> 
-
-    <hr> 
- 
-    <div class="publicaciones">
-
-      <?php 
-      if (file_exists($archivo)) { 
-
-          $lineas = file(
-              $archivo, 
-              FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
-          ); 
-
-          $lineas = array_reverse($lineas); 
- 
-          foreach ($lineas as $linea) { 
-              echo '<div class="post">';
-              echo '<div class="post-texto">';
-              echo htmlspecialchars($linea);
-              echo '</div>';
-              echo '</div>';
-          } 
-
-      } else { 
-
-          echo '<div class="sin-publicaciones">';
-          echo 'No hay publicaciones aún.';
-          echo '</div>';
-
-      } 
-      ?> 
-
-    </div>
-
-  </div>
- 
-</body> 
 </html>
