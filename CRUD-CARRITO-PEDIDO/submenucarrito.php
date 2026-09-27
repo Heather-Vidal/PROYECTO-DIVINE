@@ -1219,7 +1219,7 @@ nav{
 
     <div class="logo">
 
-        <a href="pagintrof.php">
+        <a href="../pagintrof.php">
 
             <img
                 src="../imagenes/DIVINE-removebg-preview.png"

@@ -5,7 +5,6 @@ $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-
 /* ==================================================
    CONEXIÓN A LA BASE DE DATOS
 ================================================== */
@@ -17,7 +16,6 @@ $conn = new mysqli(
     $nombreBD
 );
 
-
 if ($conn->connect_error) {
 
     die(
@@ -26,6 +24,8 @@ if ($conn->connect_error) {
     );
 
 }
+
+$conn->set_charset("utf8mb4");
 
 
 /* ==================================================
@@ -36,7 +36,6 @@ $sql = "SELECT * FROM PRODUCTO";
 
 $resultado = $conn->query($sql);
 
-
 if (!$resultado) {
 
     die(
@@ -46,8 +45,57 @@ if (!$resultado) {
 
 }
 
-?>
 
+/* ==================================================
+   CREAR LISTA DE IMÁGENES PARA AJAX
+   UTILIZANDO EL MISMO SISTEMA DE ESTE ARCHIVO
+================================================== */
+
+$imagenesAjax = [];
+
+$resultadoImagenes = $conn->query(
+    "SELECT codigo FROM PRODUCTO"
+);
+
+if ($resultadoImagenes) {
+
+    while ($productoImagen = $resultadoImagenes->fetch_assoc()) {
+
+        $codigoImagen = $productoImagen['codigo'];
+
+        $directorioImagen = "./PRODUCTO-img/";
+
+        $nombreArchivoImagen = "p-" . $codigoImagen;
+
+        $extensionesImagen = [
+            "jpg",
+            "jpeg",
+            "png",
+            "gif"
+        ];
+
+        foreach ($extensionesImagen as $extensionImagen) {
+
+            $rutaImagen =
+                $directorioImagen .
+                $nombreArchivoImagen .
+                "." .
+                $extensionImagen;
+
+            if (file_exists($rutaImagen)) {
+
+                $imagenesAjax[$codigoImagen] = $rutaImagen;
+
+                break;
+            }
+
+        }
+
+    }
+
+}
+
+?>
 
 <!DOCTYPE html>
 
@@ -74,18 +122,18 @@ if (!$resultado) {
 :root {
 
     --rosa: #b86f80;
-
+    --rosa-oscuro: #9f596b;
     --rosa-claro: #d9a6b2;
-
     --rosa-palido: #f7e9ec;
 
     --crema: #fffaf8;
 
     --texto: #4d4143;
-
     --gris: #817679;
 
     --borde: #ead7dc;
+
+    --blanco: #ffffff;
 
 }
 
@@ -97,13 +145,16 @@ if (!$resultado) {
 * {
 
     margin: 0;
-
     padding: 0;
 
     box-sizing: border-box;
 
 }
 
+
+/* ==================================================
+   BODY
+================================================== */
 
 body {
 
@@ -126,19 +177,14 @@ body {
 
     background:
 
-    linear-gradient(
+        linear-gradient(
+            to right,
+            rgba(255,250,248,.88),
+            rgba(255,250,248,.35),
+            rgba(255,250,248,.05)
+        ),
 
-        to right,
-
-        rgba(255,250,248,.88),
-
-        rgba(255,250,248,.35),
-
-        rgba(255,250,248,.05)
-
-    ),
-
-    url("https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg");
+        url("https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg");
 
     background-size: cover;
 
@@ -210,6 +256,393 @@ body {
 
 
 /* ==================================================
+   RESULTADOS AJAX
+================================================== */
+
+#productos {
+
+    max-width: 1450px;
+
+    margin: 0 auto;
+
+    padding: 35px 50px 5px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
+
+    gap: 30px;
+
+}
+
+
+/* ==================================================
+   TARJETA AJAX
+================================================== */
+
+#productos .resultado-busqueda {
+
+    position: relative;
+
+    background: #ffffff;
+
+    border: 1px solid var(--borde);
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 30px rgba(100,70,80,.08);
+
+    transition:
+        transform .35s ease,
+        box-shadow .35s ease;
+
+    animation:
+        aparecerResultado .5s ease both;
+
+}
+
+
+#productos .resultado-busqueda:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 20px 45px rgba(100,70,80,.15);
+
+}
+
+
+/* ==================================================
+   IMAGEN AJAX
+================================================== */
+
+#productos .resultado-imagen {
+
+    width: 100%;
+
+    height: 280px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #f9e9ed,
+            #f3d8df
+        );
+
+}
+
+
+#productos .resultado-imagen img {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+        transform .6s ease;
+
+}
+
+
+#productos
+.resultado-busqueda:hover
+.resultado-imagen img {
+
+    transform: scale(1.06);
+
+}
+
+
+/* ==================================================
+   CORAZÓN SOBRE LA IMAGEN
+================================================== */
+
+#productos .resultado-imagen::after {
+
+    content: "♡";
+
+    position: absolute;
+
+    top: 15px;
+
+    right: 15px;
+
+    width: 42px;
+
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.92);
+
+    color: var(--rosa);
+
+    font-size: 22px;
+
+    box-shadow:
+        0 5px 15px rgba(100,70,80,.13);
+
+    z-index: 2;
+
+}
+
+
+/* ==================================================
+   INFORMACIÓN AJAX
+================================================== */
+
+#productos .resultado-info {
+
+    padding: 24px 25px 25px;
+
+}
+
+
+#productos .resultado-etiqueta {
+
+    display: block;
+
+    text-align: center;
+
+    margin-bottom: 8px;
+
+    color: var(--rosa);
+
+    font-size: .68rem;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+}
+
+
+#productos .resultado-info h3 {
+
+    font-family: Georgia, serif;
+
+    color: #57494c;
+
+    font-size: 1.4rem;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    margin-bottom: 12px;
+
+    line-height: 1.3;
+
+}
+
+
+#productos .resultado-descripcion {
+
+    color: var(--gris);
+
+    font-size: .88rem;
+
+    line-height: 1.7;
+
+    min-height: 50px;
+
+    margin-bottom: 18px;
+
+}
+
+
+/* ==================================================
+   PARTE INFERIOR AJAX
+================================================== */
+
+#productos .resultado-abajo {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-top: 5px;
+
+}
+
+
+/* ==================================================
+   PRECIO AJAX
+================================================== */
+
+#productos .resultado-precio {
+
+    font-family: Georgia, serif;
+
+    font-size: 1.4rem;
+
+    font-weight: 600;
+
+    color: var(--rosa);
+
+    white-space: nowrap;
+
+}
+
+
+/* ==================================================
+   BOTÓN AJAX
+================================================== */
+
+#productos .resultado-boton {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+
+    background: var(--rosa);
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: .82rem;
+
+    font-weight: 600;
+
+    letter-spacing: .2px;
+
+    border: 1px solid var(--rosa);
+
+    transition:
+        background .3s ease,
+        color .3s ease,
+        transform .3s ease,
+        box-shadow .3s ease;
+
+}
+
+
+#productos .resultado-boton:hover {
+
+    background: transparent;
+
+    color: var(--rosa);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(184,111,128,.12);
+
+}
+
+
+/* ==================================================
+   MENSAJE SIN RESULTADOS
+================================================== */
+
+#productos .busqueda-vacia {
+
+    grid-column: 1 / -1;
+
+    padding: 55px 30px;
+
+    text-align: center;
+
+    background: rgba(255,255,255,.92);
+
+    border: 1px solid var(--borde);
+
+    border-radius: 22px;
+
+    color: var(--gris);
+
+    box-shadow:
+        0 8px 25px rgba(100,70,80,.06);
+
+}
+
+
+#productos .busqueda-vacia-icono {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--rosa-palido);
+
+    color: var(--rosa);
+
+    font-size: 31px;
+
+}
+
+
+#productos .busqueda-vacia h3 {
+
+    font-family: Georgia, serif;
+
+    color: #57494c;
+
+    font-size: 1.45rem;
+
+    margin-bottom: 8px;
+
+}
+
+
+#productos .busqueda-vacia p {
+
+    font-size: .9rem;
+
+    color: var(--gris);
+
+}
+
+
+/* ==================================================
    SECCIÓN
 ================================================== */
 
@@ -225,7 +658,7 @@ body {
 
 
 /* ==================================================
-   ENCABEZADO SECCIÓN
+   ENCABEZADO
 ================================================== */
 
 .encabezado {
@@ -279,7 +712,7 @@ body {
 
 
 /* ==================================================
-   GRID
+   GRID DE PRODUCTOS
 ================================================== */
 
 .grid {
@@ -298,7 +731,7 @@ body {
 
 
 /* ==================================================
-   TARJETA
+   TARJETA NORMAL
 ================================================== */
 
 .card {
@@ -312,13 +745,10 @@ body {
     border: 1px solid var(--borde);
 
     box-shadow:
-
         0 8px 30px rgba(100,70,80,.06);
 
     transition:
-
         transform .45s ease,
-
         box-shadow .45s ease;
 
 }
@@ -326,19 +756,16 @@ body {
 
 .card:hover {
 
-    transform:
-
-        translateY(-8px);
+    transform: translateY(-8px);
 
     box-shadow:
-
         0 20px 45px rgba(100,70,80,.13);
 
 }
 
 
 /* ==================================================
-   IMAGEN
+   IMAGEN NORMAL
 ================================================== */
 
 .imagen-producto {
@@ -365,7 +792,6 @@ body {
     display: block;
 
     transition:
-
         transform .7s ease;
 
 }
@@ -374,15 +800,13 @@ body {
 .card:hover
 .imagen-producto img {
 
-    transform:
-
-        scale(1.06);
+    transform: scale(1.06);
 
 }
 
 
 /* ==================================================
-   PLACEHOLDER SI NO EXISTE IMAGEN
+   PLACEHOLDER
 ================================================== */
 
 .placeholder {
@@ -407,7 +831,7 @@ body {
 
 
 /* ==================================================
-   INFORMACIÓN
+   INFORMACIÓN NORMAL
 ================================================== */
 
 .info {
@@ -416,10 +840,6 @@ body {
 
 }
 
-
-/* ==================================================
-   NOMBRE
-================================================== */
 
 .info h3 {
 
@@ -440,10 +860,6 @@ body {
 }
 
 
-/* ==================================================
-   DESCRIPCIÓN
-================================================== */
-
 .descripcion {
 
     color: var(--gris);
@@ -459,10 +875,6 @@ body {
 }
 
 
-/* ==================================================
-   PRECIO
-================================================== */
-
 .precio {
 
     font-family: Georgia, serif;
@@ -477,7 +889,7 @@ body {
 
 
 /* ==================================================
-   BOTÓN CARRITO
+   BOTÓN CARRITO NORMAL
 ================================================== */
 
 .btn-carrito {
@@ -509,11 +921,8 @@ body {
     border: 1px solid var(--rosa);
 
     transition:
-
         background .3s ease,
-
         color .3s ease,
-
         transform .3s ease;
 
 }
@@ -525,9 +934,7 @@ body {
 
     color: var(--rosa);
 
-    transform:
-
-        translateY(-2px);
+    transform: translateY(-2px);
 
 }
 
@@ -560,10 +967,6 @@ body {
 }
 
 
-/* ==================================================
-   STOCK BAJO
-================================================== */
-
 .stock.ultimas {
 
     color: #a57c55;
@@ -577,10 +980,6 @@ body {
 
 }
 
-
-/* ==================================================
-   AGOTADO
-================================================== */
 
 .stock.agotado {
 
@@ -643,7 +1042,34 @@ body {
 
 
 /* ==================================================
-   ANIMACIONES
+   ANIMACIÓN RESULTADOS
+================================================== */
+
+@keyframes aparecerResultado {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* ==================================================
+   ANIMACIONES PRODUCTOS
 ================================================== */
 
 .animar {
@@ -651,7 +1077,6 @@ body {
     opacity: 0;
 
     transform:
-
         translateY(25px);
 
 }
@@ -662,20 +1087,17 @@ body {
     opacity: 1;
 
     transform:
-
         translateY(0);
 
     transition:
-
         opacity .7s ease,
-
         transform .7s ease;
 
 }
 
 
 /* ==================================================
-   HERO ANIMACIÓN
+   ANIMACIÓN HERO
 ================================================== */
 
 @keyframes aparecerHero {
@@ -685,7 +1107,6 @@ body {
         opacity: 0;
 
         transform:
-
             scale(1.02);
 
     }
@@ -695,7 +1116,6 @@ body {
         opacity: 1;
 
         transform:
-
             scale(1);
 
     }
@@ -709,17 +1129,14 @@ body {
 
 @media(max-width: 768px) {
 
-
     .hero {
 
         min-height: 500px;
 
         padding:
-
             50px 30px;
 
         background-position:
-
             65% center;
 
     }
@@ -744,7 +1161,6 @@ body {
     .section {
 
         padding:
-
             65px 20px;
 
     }
@@ -753,7 +1169,6 @@ body {
     .titulo {
 
         font-size:
-
             2rem;
 
     }
@@ -762,11 +1177,9 @@ body {
     .grid {
 
         grid-template-columns:
-
             1fr;
 
         gap:
-
             25px;
 
     }
@@ -775,8 +1188,56 @@ body {
     .imagen-producto {
 
         height:
-
             280px;
+
+    }
+
+
+    #productos {
+
+        padding:
+            25px 20px 10px;
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            25px;
+
+    }
+
+
+    #productos .resultado-imagen {
+
+        height:
+            280px;
+
+    }
+
+
+    #productos .resultado-abajo {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+
+    #productos .resultado-precio {
+
+        text-align:
+            center;
+
+    }
+
+
+    #productos .resultado-boton {
+
+        width:
+            100%;
 
     }
 
@@ -797,8 +1258,37 @@ include 'submenuespecial.php';
 ?>
 
 
+<!-- ==================================================
+     IMÁGENES DISPONIBLES PARA EL BUSCADOR
+     SE GENERAN DESDE EL MISMO PHP
+================================================== -->
+
+<script>
+
+const imagenesProductos =
+<?php
+
+echo json_encode(
+    $imagenesAjax,
+    JSON_UNESCAPED_UNICODE |
+    JSON_UNESCAPED_SLASHES
+);
+
+?>;
+
+</script>
+
+
+<!-- ==================================================
+     JAVASCRIPT DEL BUSCADOR
+================================================== -->
+
 <script src="./AJAX/buscar.js"></script>
 
+
+<!-- ==================================================
+     RESULTADOS DEL BUSCADOR AJAX
+================================================== -->
 
 <div id="productos"></div>
 
@@ -809,36 +1299,25 @@ include 'submenuespecial.php';
 
 <section class="hero">
 
-
     <div class="hero-content">
-
 
         <div class="hero-linea"></div>
 
-
         <h1>
-
             DIVINE
-
         </h1>
-
 
         <p>
 
             Una selección especial de productos
-
             para el cuidado, hidratación y
-
             bienestar de tu piel.
 
         </p>
 
-
     </div>
 
-
 </section>
-
 
 
 <!-- ==================================================
@@ -849,7 +1328,6 @@ include 'submenuespecial.php';
 
 
     <div class="encabezado">
-
 
         <div class="encabezado-pequeno">
 
@@ -867,9 +1345,7 @@ include 'submenuespecial.php';
 
         <div class="linea-decorativa"></div>
 
-
     </div>
-
 
 
     <div class="grid">
@@ -877,9 +1353,7 @@ include 'submenuespecial.php';
 
 <?php
 
-
 if ($resultado->num_rows > 0) {
-
 
     while ($fila = $resultado->fetch_assoc()) {
 
@@ -899,13 +1373,7 @@ if ($resultado->num_rows > 0) {
 
 
         /* ==================================================
-           BUSCAR IMAGEN DEL PRODUCTO
-           
-           FORMATO:
-           p-CODIGO.jpg
-           p-CODIGO.jpeg
-           p-CODIGO.png
-           p-CODIGO.gif
+           BUSCAR IMAGEN
         ================================================== */
 
         $directorio = "./PRODUCTO-img/";
@@ -926,9 +1394,7 @@ if ($resultado->num_rows > 0) {
 
         foreach ($extensiones as $extension) {
 
-
             $ruta =
-
                 $directorio .
                 $nombreArchivo .
                 "." .
@@ -945,7 +1411,6 @@ if ($resultado->num_rows > 0) {
 
         }
 
-
 ?>
 
 
@@ -956,9 +1421,7 @@ if ($resultado->num_rows > 0) {
         <div class="card animar">
 
 
-            <!-- ==================================================
-                 IMAGEN DEL PRODUCTO
-            ================================================== -->
+            <!-- IMAGEN -->
 
             <div class="imagen-producto">
 
@@ -968,7 +1431,6 @@ if ($resultado->num_rows > 0) {
 if ($imagenProducto !== null) {
 
 ?>
-
 
                 <img
 
@@ -990,13 +1452,11 @@ if ($imagenProducto !== null) {
 
                 >
 
-
 <?php
 
 } else {
 
 ?>
-
 
                 <div class="placeholder">
 
@@ -1004,26 +1464,19 @@ if ($imagenProducto !== null) {
 
                 </div>
 
-
 <?php
 
 }
 
 ?>
 
-
             </div>
 
 
-
-            <!-- ==================================================
-                 INFORMACIÓN
-            ================================================== -->
+            <!-- INFORMACIÓN -->
 
             <div class="info">
 
-
-                <!-- NOMBRE -->
 
                 <h3>
 
@@ -1038,9 +1491,6 @@ if ($imagenProducto !== null) {
                 </h3>
 
 
-
-                <!-- DESCRIPCIÓN -->
-
                 <p class="descripcion">
 
                     <?php
@@ -1053,9 +1503,6 @@ if ($imagenProducto !== null) {
 
                 </p>
 
-
-
-                <!-- PRECIO -->
 
                 <div class="precio">
 
@@ -1072,19 +1519,11 @@ if ($imagenProducto !== null) {
                 </div>
 
 
-
-                <!-- ==================================================
-                     BOTÓN
-                ================================================== -->
-
 <?php
-
 
 if ($stock <= 0) {
 
-
 ?>
-
 
                 <div class="btn-carrito btn-agotado">
 
@@ -1092,21 +1531,19 @@ if ($stock <= 0) {
 
                 </div>
 
-
 <?php
-
 
 } else {
 
-
 ?>
-
 
                 <a
 
                     href="./CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php
 
-                    echo htmlspecialchars($codigo);
+                    echo htmlspecialchars(
+                        $codigo
+                    );
 
                     ?>"
 
@@ -1118,29 +1555,14 @@ if ($stock <= 0) {
 
                 </a>
 
-
 <?php
-
 
 }
 
 
-?>
-
-
-
-                <!-- ==================================================
-                     STOCK
-                ================================================== -->
-
-<?php
-
-
 if ($stock <= 0) {
 
-
 ?>
-
 
                 <div class="stock agotado">
 
@@ -1148,15 +1570,11 @@ if ($stock <= 0) {
 
                 </div>
 
-
 <?php
-
 
 } elseif ($stock <= 5) {
 
-
 ?>
-
 
                 <div class="stock ultimas">
 
@@ -1176,15 +1594,11 @@ if ($stock <= 0) {
 
                 </div>
 
-
 <?php
-
 
 } else {
 
-
 ?>
-
 
                 <div class="stock">
 
@@ -1204,30 +1618,23 @@ if ($stock <= 0) {
 
                 </div>
 
-
 <?php
 
-
 }
-
 
 ?>
 
 
             </div>
 
-
         </div>
 
 
 <?php
 
-
     }
 
-
 } else {
-
 
 ?>
 
@@ -1235,7 +1642,6 @@ if ($stock <= 0) {
         <div class="sin-productos">
 
             No hay productos disponibles
-
             en este momento.
 
         </div>
@@ -1243,18 +1649,14 @@ if ($stock <= 0) {
 
 <?php
 
-
 }
-
 
 ?>
 
 
     </div>
 
-
 </section>
-
 
 
 <?php
@@ -1264,39 +1666,30 @@ include 'submenpiepag.php';
 ?>
 
 
-
 <!-- ==================================================
      ANIMACIÓN DE PRODUCTOS
 ================================================== -->
 
 <script>
 
-
 const elementos =
-
     document.querySelectorAll(
         '.animar'
     );
 
 
 const observador =
-
     new IntersectionObserver(
 
         (entradas) => {
-
 
             entradas.forEach(
 
                 (entrada) => {
 
-
                     if (
-
                         entrada.isIntersecting
-
                     ) {
-
 
                         entrada
                             .target
@@ -1307,19 +1700,14 @@ const observador =
 
                     }
 
-
                 }
 
             );
 
-
         },
 
-
         {
-
             threshold: 0.12
-
         }
 
     );
@@ -1329,11 +1717,9 @@ elementos.forEach(
 
     (elemento) => {
 
-
         observador.observe(
             elemento
         );
-
 
     }
 
