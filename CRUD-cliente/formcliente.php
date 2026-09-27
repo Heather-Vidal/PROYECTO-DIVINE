@@ -903,7 +903,7 @@
             <button
                 type="button"
                 class="btn-inicio"
-                onclick="window.location.href='../SESIONES/loginformcliente.php';"
+                onclick="window.location.href='index.php';"
             >
                 INICIO
             </button>
