@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
    NO coloques la API Key que publicaste anteriormente.
 */
 
-$gemini_api_key = "AQ.Ab8RN6KZ0sTdcmaq-G5rny9g_mBjgm7wbu8nM44oIi11gS8e7g";
+$gemini_api_key = "      ";
 
 /* ======================================================
    VALIDAR API KEY
