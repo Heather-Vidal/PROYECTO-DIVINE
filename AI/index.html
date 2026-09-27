@@ -1,4 +1,6 @@
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -10,7 +12,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Buscador Inteligente PHP + Gemini</title>
+    <title>Buscador Inteligente DIVINE</title>
 
 
     <style>
@@ -38,11 +40,14 @@
             color: #333;
 
             background: #fafafa;
+
         }
 
 
         h1 {
+
             margin-bottom: 5px;
+
         }
 
 
@@ -51,6 +56,7 @@
             color: #666;
 
             margin-bottom: 25px;
+
         }
 
 
@@ -61,6 +67,7 @@
             gap: 10px;
 
             margin-bottom: 20px;
+
         }
 
 
@@ -77,12 +84,14 @@
             font-size: 16px;
 
             outline: none;
+
         }
 
 
         input:focus {
 
             border-color: #2a75d3;
+
         }
 
 
@@ -103,12 +112,14 @@
             font-weight: bold;
 
             font-size: 15px;
+
         }
 
 
         button:hover {
 
             background: #1c5fa3;
+
         }
 
 
@@ -117,6 +128,7 @@
             opacity: 0.6;
 
             cursor: not-allowed;
+
         }
 
 
@@ -139,6 +151,7 @@
             white-space: pre-wrap;
 
             overflow-wrap: anywhere;
+
         }
 
 
@@ -149,6 +162,7 @@
             border-left-color: #d32f2f;
 
             color: #a00000;
+
         }
 
 
@@ -159,6 +173,7 @@
             border-left-color: #1b8a3c;
 
             color: #145d2b;
+
         }
 
 
@@ -176,6 +191,7 @@
 
             box-shadow:
                 0 2px 7px rgba(0, 0, 0, 0.05);
+
         }
 
 
@@ -184,6 +200,7 @@
             margin-top: 0;
 
             margin-bottom: 8px;
+
         }
 
 
@@ -192,6 +209,7 @@
             margin: 4px 0;
 
             color: #555;
+
         }
 
 
@@ -204,6 +222,7 @@
             border-radius: 8px;
 
             border: 1px solid #ddd;
+
         }
 
 
@@ -212,13 +231,16 @@
             .buscador-contenedor {
 
                 flex-direction: column;
+
             }
 
 
             button {
 
                 width: 100%;
+
             }
+
         }
 
     </style>
@@ -229,24 +251,28 @@
 <body>
 
 
-    <h1>Buscador Inteligente</h1>
+    <h1>Buscador Inteligente DIVINE</h1>
 
 
     <p class="descripcion">
 
-        Prueba escribiendo:
+        Busca productos de DIVINE escribiendo lo que necesitas.
 
         <br><br>
 
-        <b>laptop negra de menos de 600</b>
+        <b>productos para hidratar la piel</b>
 
         <br>
 
-        <b>telefono blanco</b>
+        <b>productos para el cabello</b>
 
         <br>
 
-        <b>telefono de menos de 900</b>
+        <b>aceites de menos de 70</b>
+
+        <br>
+
+        <b>productos para la piel de menos de 80</b>
 
     </p>
 
@@ -256,16 +282,15 @@
         <input
             type="text"
             id="busquedaInput"
-            placeholder="¿Qué estás buscando?"
+            placeholder="¿Qué producto estás buscando?"
+            autocomplete="off"
         >
 
         <button
             id="botonBuscar"
             onclick="buscarConIA()"
         >
-
             Buscar
-
         </button>
 
     </div>
@@ -277,35 +302,43 @@
     <div id="resultados"></div>
 
 
-
 <script>
 
 
+// ======================================================
+// ELEMENTOS
+// ======================================================
+
 const inputBusqueda =
-    document.getElementById("busquedaInput");
+    document.getElementById(
+        "busquedaInput"
+    );
 
 
 const resultadosDiv =
-    document.getElementById("resultados");
+    document.getElementById(
+        "resultados"
+    );
 
 
 const statusDiv =
-    document.getElementById("status");
+    document.getElementById(
+        "status"
+    );
 
 
 const botonBuscar =
-    document.getElementById("botonBuscar");
-
+    document.getElementById(
+        "botonBuscar"
+    );
 
 
 // ======================================================
-// BUSCAR AL PRESIONAR ENTER
+// ENTER PARA BUSCAR
 // ======================================================
 
 inputBusqueda.addEventListener(
-
     "keydown",
-
     function(event) {
 
         if (event.key === "Enter") {
@@ -315,25 +348,28 @@ inputBusqueda.addEventListener(
         }
 
     }
-
 );
-
 
 
 // ======================================================
 // MOSTRAR ESTADO
 // ======================================================
 
-function mostrarEstado(mensaje, tipo = "") {
+function mostrarEstado(
+    mensaje,
+    tipo = ""
+) {
 
-    statusDiv.style.display = "block";
+    statusDiv.style.display =
+        "block";
 
-    statusDiv.className = tipo;
+    statusDiv.className =
+        tipo;
 
-    statusDiv.innerText = mensaje;
+    statusDiv.innerText =
+        mensaje;
 
 }
-
 
 
 // ======================================================
@@ -347,27 +383,37 @@ async function buscarConIA() {
         inputBusqueda.value.trim();
 
 
-    resultadosDiv.innerHTML = "";
+    resultadosDiv.innerHTML =
+        "";
 
 
-    // ---------------------------------------------
-    // VALIDAR CAMPO
-    // ---------------------------------------------
+    // ==================================================
+    // VALIDAR
+    // ==================================================
 
     if (!busqueda) {
 
         mostrarEstado(
+
             "Escribe primero lo que deseas buscar.",
+
             "error"
+
         );
 
         return;
     }
 
 
-    botonBuscar.disabled = true;
+    // ==================================================
+    // ESTADO DE BÚSQUEDA
+    // ==================================================
 
-    botonBuscar.innerText = "Buscando...";
+    botonBuscar.disabled =
+        true;
+
+    botonBuscar.innerText =
+        "Buscando...";
 
 
     mostrarEstado(
@@ -378,56 +424,57 @@ async function buscarConIA() {
     try {
 
 
-        // ---------------------------------------------
-        // PETICIÓN AL PHP
-        // ---------------------------------------------
+        // ==================================================
+        // ENVIAR A FILTRAR.PHP
+        // ==================================================
 
-        const response = await fetch(
+        const response =
+            await fetch(
+                "./filtrar.php",
+                {
 
-            "./filtrar.php",
+                    method: "POST",
 
-            {
+                    headers: {
 
-                method: "POST",
+                        "Content-Type":
+                            "application/json"
 
-                headers: {
+                    },
 
-                    "Content-Type":
-                        "application/json"
+                    body:
+                        JSON.stringify({
 
-                },
+                            busqueda:
+                                busqueda
 
-                body: JSON.stringify({
+                        })
 
-                    busqueda: busqueda
-
-                })
-
-            }
-
-        );
+                }
+            );
 
 
-
-        // ---------------------------------------------
-        // RECIBIR RESPUESTA COMO TEXTO PRIMERO
-        // ---------------------------------------------
+        // ==================================================
+        // RECIBIR RESPUESTA
+        // ==================================================
 
         const textoRespuesta =
             await response.text();
 
 
-
-        // ---------------------------------------------
-        // INTENTAR CONVERTIR A JSON
-        // ---------------------------------------------
+        // ==================================================
+        // CONVERTIR A JSON
+        // ==================================================
 
         let data;
 
 
         try {
 
-            data = JSON.parse(textoRespuesta);
+            data =
+                JSON.parse(
+                    textoRespuesta
+                );
 
         }
 
@@ -451,33 +498,28 @@ async function buscarConIA() {
 
             );
 
-
             return;
-
         }
 
 
-
-        // ---------------------------------------------
+        // ==================================================
         // ERROR HTTP
-        // ---------------------------------------------
+        // ==================================================
 
         if (!response.ok) {
 
 
             let mensaje =
-
                 "Error del servidor PHP (" +
-
                 response.status +
-
                 ")";
 
 
             if (data.error) {
 
                 mensaje +=
-                    "\n\n" + data.error;
+                    "\n\n" +
+                    data.error;
 
             }
 
@@ -492,8 +534,11 @@ async function buscarConIA() {
 
 
             mostrarEstado(
+
                 mensaje,
+
                 "error"
+
             );
 
 
@@ -507,10 +552,9 @@ async function buscarConIA() {
         }
 
 
-
-        // ---------------------------------------------
-        // ERROR PERSONALIZADO DEL PHP
-        // ---------------------------------------------
+        // ==================================================
+        // ERROR PERSONALIZADO
+        // ==================================================
 
         if (data.error) {
 
@@ -524,49 +568,78 @@ async function buscarConIA() {
             );
 
             return;
-
         }
 
 
-
-        // ---------------------------------------------
-        // MOSTRAR FILTROS DE GEMINI
-        // ---------------------------------------------
+        // ==================================================
+        // FILTROS
+        // ==================================================
 
         const filtros =
-            data.filtrosAplicados || {};
+            data.filtrosAplicados ||
+            {};
+
+
+        let mensajeFiltros =
+            "✅ Gemini entendió la búsqueda correctamente.\n\n";
+
+
+        mensajeFiltros +=
+            "Categoría: " +
+            (
+                filtros.categoria ||
+                "No especificada"
+            );
+
+
+        mensajeFiltros +=
+            "\nTérmino: " +
+            (
+                filtros.termino ||
+                "No especificado"
+            );
+
+
+        mensajeFiltros +=
+            "\nPrecio máximo: " +
+            (
+
+                filtros.precio_maximo > 0
+
+                    ? "$" +
+                      filtros.precio_maximo
+
+                    : "No especificado"
+
+            );
+
+
+        mensajeFiltros +=
+            "\nProductos encontrados: " +
+            (
+                data.cantidad ?? 0
+            );
 
 
         mostrarEstado(
 
-            "✅ Gemini entendió la búsqueda correctamente.\n\n" +
-
-            "Categoría: " +
-            (filtros.categoria || "No especificada") +
-
-            "\nColor: " +
-            (filtros.color || "No especificado") +
-
-            "\nPrecio máximo: " +
-            (
-                filtros.precio_maximo > 0
-                ? "$" + filtros.precio_maximo
-                : "No especificado"
-            ),
+            mensajeFiltros,
 
             "exito"
 
         );
 
 
-
-        // ---------------------------------------------
+        // ==================================================
         // SIN RESULTADOS
-        // ---------------------------------------------
+        // ==================================================
 
         if (
+
             !data.productos ||
+
             data.productos.length === 0
+
         ) {
 
 
@@ -578,9 +651,11 @@ async function buscarConIA() {
 
                     <p>
 
-                        Gemini entendió los filtros,
-                        pero ningún producto del inventario
-                        coincide con ellos.
+                        Gemini entendió tu búsqueda,
+
+                        pero ningún producto de DIVINE
+
+                        coincide con esos criterios.
 
                     </p>
 
@@ -590,14 +665,12 @@ async function buscarConIA() {
 
 
             return;
-
         }
 
 
-
-        // ---------------------------------------------
+        // ==================================================
         // MOSTRAR PRODUCTOS
-        // ---------------------------------------------
+        // ==================================================
 
         data.productos.forEach(
 
@@ -605,7 +678,9 @@ async function buscarConIA() {
 
 
                 const div =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
 
                 div.className =
@@ -615,35 +690,81 @@ async function buscarConIA() {
                 div.innerHTML = `
 
                     <h3>
-                        ${escapeHTML(prod.nombre)}
+
+                        ${escapeHTML(
+                            prod.nombre
+                        )}
+
                     </h3>
 
+
                     <p>
+
+                        <b>Código:</b>
+
+                        ${escapeHTML(
+                            prod.codigo
+                        )}
+
+                    </p>
+
+
+                    <p>
+
+                        <b>Descripción:</b>
+
+                        ${escapeHTML(
+                            prod.descripcion
+                        )}
+
+                    </p>
+
+
+                    <p>
+
                         <b>Categoría:</b>
-                        ${escapeHTML(prod.categoria)}
+
+                        ${escapeHTML(
+                            prod.categoria
+                        )}
+
                     </p>
 
+
                     <p>
+
                         <b>Precio:</b>
-                        $${Number(prod.precio)}
+
+                        $${Number(
+                            prod.precio
+                        )}
+
                     </p>
 
+
                     <p>
-                        <b>Color:</b>
-                        ${escapeHTML(prod.color)}
+
+                        <b>Stock:</b>
+
+                        ${Number(
+                            prod.stock
+                        )}
+
                     </p>
 
                 `;
 
 
-                resultadosDiv.appendChild(div);
+                resultadosDiv.appendChild(
+                    div
+                );
 
             }
 
         );
 
-
     }
+
 
     catch (error) {
 
@@ -662,11 +783,13 @@ async function buscarConIA() {
 
             "• Apache no está iniciado.\n" +
 
-            "• Abriste index.html directamente con file://.\n" +
+            "• Estás abriendo index.html directamente con file://.\n" +
 
             "• filtrar.php no está en la misma carpeta.\n" +
 
-            "• PHP no está funcionando.\n\n" +
+            "• PHP no está funcionando.\n" +
+
+            "• La conexión con el servidor falló.\n\n" +
 
             "Error técnico:\n" +
 
@@ -678,38 +801,43 @@ async function buscarConIA() {
 
     }
 
+
     finally {
 
 
-        botonBuscar.disabled = false;
+        botonBuscar.disabled =
+            false;
 
-        botonBuscar.innerText = "Buscar";
+        botonBuscar.innerText =
+            "Buscar";
 
     }
 
 }
 
 
-
 // ======================================================
-// SEGURIDAD AL MOSTRAR TEXTO
+// SEGURIDAD
 // ======================================================
 
 function escapeHTML(texto) {
 
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     div.textContent =
-        String(texto ?? "");
+        String(
+            texto ?? ""
+        );
 
 
     return div.innerHTML;
 
 }
-
 
 </script>
 
@@ -717,3 +845,4 @@ function escapeHTML(texto) {
 </body>
 
 </html>
+

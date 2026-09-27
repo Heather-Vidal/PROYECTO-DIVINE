@@ -1,3 +1,4 @@
+
 <?php
 
 ini_set('display_errors', 0);
@@ -9,38 +10,36 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Content-Type: application/json; charset=UTF-8");
 
+/* ======================================================
+   PETICIONES OPTIONS
+====================================================== */
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
     exit();
 }
 
+/* ======================================================
+   API KEY DE GEMINI
+====================================================== */
 
-// ======================================================
-// API KEY
-// ======================================================
+/*
+   COLOCA AQUÍ TU NUEVA API KEY DE GEMINI.
 
-// PON AQUÍ TU NUEVA API KEY.
-// NO USES LA API KEY QUE PUBLICASTE ANTES.
+   NO coloques la API Key que publicaste anteriormente.
+*/
 
-$gemini_api_key = "TU_NUEVA_CLAVE_AQUI";
+$gemini_api_key = "AQ.Ab8RN6KZ0sTdcmaq-G5rny9g_mBjgm7wbu8nM44oIi11gS8e7g";
 
-if (
-    empty($gemini_api_key) ||
-    $gemini_api_key === "TU_NUEVA_CLAVE_AQUI"
-) {
-    http_response_code(500);
-
-    echo json_encode([
-        "error" => "Debes colocar tu nueva API Key de Gemini en filtrar.php."
-    ]);
-
-    exit();
-}
+/* ======================================================
+   VALIDAR API KEY
+====================================================== */
 
 
-// ======================================================
-// SOLO POST
-// ======================================================
+
+/* ======================================================
+   SOLO POST
+====================================================== */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
@@ -48,56 +47,52 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
     echo json_encode([
         "error" => "Método no permitido. Usa POST."
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
 
     exit();
 }
 
+/* ======================================================
+   CONEXIÓN A LA BASE DE DATOS DIVINE
+====================================================== */
 
-// ======================================================
-// PRODUCTOS
-// ======================================================
+$servidor = "localhost";
+$usuario = "root";
+$contrasena = "";
+$nombreBD = "divine";
 
-$productos = [
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contrasena,
+    $nombreBD
+);
 
-    [
-        "id" => 1,
-        "nombre" => "MacBook Air",
-        "categoria" => "laptop",
-        "precio" => 999,
-        "color" => "gris"
-    ],
+/* ======================================================
+   COMPROBAR CONEXIÓN
+====================================================== */
 
-    [
-        "id" => 2,
-        "nombre" => "Lenovo IdeaPad",
-        "categoria" => "laptop",
-        "precio" => 450,
-        "color" => "negro"
-    ],
+if ($conn->connect_error) {
 
-    [
-        "id" => 3,
-        "nombre" => "iPhone 15",
-        "categoria" => "telefono",
-        "precio" => 799,
-        "color" => "negro"
-    ],
+    http_response_code(500);
 
-    [
-        "id" => 4,
-        "nombre" => "Samsung Galaxy S24",
-        "categoria" => "telefono",
-        "precio" => 850,
-        "color" => "blanco"
-    ]
+    echo json_encode([
+        "error" => "No se pudo conectar con la base de datos DIVINE.",
+        "detalle" => $conn->connect_error
+    ], JSON_UNESCAPED_UNICODE);
 
-];
+    exit();
+}
 
+/* ======================================================
+   UTF-8
+====================================================== */
 
-// ======================================================
-// RECIBIR DATOS
-// ======================================================
+$conn->set_charset("utf8mb4");
+
+/* ======================================================
+   RECIBIR DATOS
+====================================================== */
 
 $input = file_get_contents("php://input");
 
@@ -107,11 +102,16 @@ if ($input === false || trim($input) === "") {
 
     echo json_encode([
         "error" => "No se recibieron datos."
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
+/* ======================================================
+   DECODIFICAR JSON
+====================================================== */
 
 $datos = json_decode($input, true);
 
@@ -125,16 +125,20 @@ if (
     echo json_encode([
         "error" => "El JSON recibido no es válido.",
         "detalle" => json_last_error_msg()
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
+/* ======================================================
+   OBTENER BÚSQUEDA
+====================================================== */
 
 $busqueda = isset($datos["busqueda"])
     ? trim((string)$datos["busqueda"])
     : "";
-
 
 if ($busqueda === "") {
 
@@ -142,75 +146,132 @@ if ($busqueda === "") {
 
     echo json_encode([
         "error" => "Debes escribir algo para buscar."
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
+/* ======================================================
+   CONFIGURACIÓN DE GEMINI
+====================================================== */
 
-// ======================================================
-// GEMINI
-// ======================================================
-
-$modelo = "gemini-2.5-flash";
+$modelo = "gemini-3.8-flash";
 
 $url =
     "https://generativelanguage.googleapis.com/v1beta/models/"
     . $modelo
     . ":generateContent";
 
-
-// ======================================================
-// PROMPT
-// ======================================================
+/* ======================================================
+   PROMPT PARA GEMINI
+====================================================== */
 
 $prompt = <<<PROMPT
-Analiza esta búsqueda de productos.
 
-Extrae solamente:
+Eres un asistente de búsqueda para la tienda DIVINE.
 
-categoria:
-- "laptop"
-- "telefono"
-- ""
+DIVINE vende productos de cuidado facial, piel y cabello.
 
-precio_maximo:
-- número entero
-- 0 si no existe precio máximo
+La base de datos tiene estas categorías:
 
-color:
-- color indicado
-- "" si no existe color
+- SkinCare
+- SkinHair
 
-No inventes información.
+Analiza la búsqueda del usuario y devuelve únicamente un JSON válido.
 
-Ejemplo:
+Debes extraer:
 
-laptop negra de menos de 600
+1. categoria:
+   - "SkinCare" si busca productos para la piel.
+   - "SkinHair" si busca productos para el cabello.
+   - "" si no se puede determinar.
 
-Debe producir:
+2. precio_maximo:
+   - Si el usuario indica un precio máximo, devuelve ese número.
+   - Si no indica precio máximo, devuelve 0.
 
+3. termino:
+   - Palabras importantes relacionadas con el producto.
+   - Estas palabras se utilizarán para buscar dentro de nombre y descripcion.
+   - No incluyas palabras generales como:
+     "producto", "productos", "quiero", "necesito",
+     "para", "una", "uno", "de", "del", "la",
+     "el", "los", "las", "con", "que",
+     "menos", "más", "mayor", "menor".
+   - Si no existe un término útil, devuelve "".
+
+Ejemplos:
+
+Búsqueda:
+"productos para hidratar la piel"
+
+Respuesta:
 {
-  "categoria": "laptop",
-  "precio_maximo": 600,
-  "color": "negro"
+    "categoria": "SkinCare",
+    "precio_maximo": 0,
+    "termino": "hidratar piel"
 }
 
 Búsqueda:
+"productos para el cabello"
+
+Respuesta:
+{
+    "categoria": "SkinHair",
+    "precio_maximo": 0,
+    "termino": ""
+}
+
+Búsqueda:
+"aceites de menos de 70"
+
+Respuesta:
+{
+    "categoria": "",
+    "precio_maximo": 70,
+    "termino": "aceite"
+}
+
+Búsqueda:
+"productos para la piel de menos de 80"
+
+Respuesta:
+{
+    "categoria": "SkinCare",
+    "precio_maximo": 80,
+    "termino": ""
+}
+
+Búsqueda:
+"aceite de argán"
+
+Respuesta:
+{
+    "categoria": "SkinHair",
+    "precio_maximo": 0,
+    "termino": "aceite argán"
+}
+
+No inventes productos, categorías ni precios.
+
+Búsqueda del usuario:
 
 $busqueda
+
 PROMPT;
 
-
-// ======================================================
-// PETICIÓN
-// ======================================================
+/* ======================================================
+   PREPARAR PETICIÓN PARA GEMINI
+====================================================== */
 
 $payload = [
 
     "contents" => [
 
         [
+
             "role" => "user",
 
             "parts" => [
@@ -220,6 +281,7 @@ $payload = [
                 ]
 
             ]
+
         ]
 
     ],
@@ -244,27 +306,34 @@ $payload = [
                     "type" => "INTEGER"
                 ],
 
-                "color" => [
+                "termino" => [
                     "type" => "STRING"
                 ]
 
             ],
 
             "required" => [
+
                 "categoria",
                 "precio_maximo",
-                "color"
+                "termino"
+
             ]
+
         ]
+
     ]
+
 ];
 
+/* ======================================================
+   CONVERTIR PAYLOAD A JSON
+====================================================== */
 
 $json = json_encode(
     $payload,
     JSON_UNESCAPED_UNICODE
 );
-
 
 if ($json === false) {
 
@@ -273,15 +342,16 @@ if ($json === false) {
     echo json_encode([
         "error" => "No se pudo crear el JSON para Gemini.",
         "detalle" => json_last_error_msg()
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
-// ======================================================
-// CURL
-// ======================================================
+/* ======================================================
+   COMPROBAR CURL
+====================================================== */
 
 if (!function_exists("curl_init")) {
 
@@ -289,14 +359,18 @@ if (!function_exists("curl_init")) {
 
     echo json_encode([
         "error" => "cURL no está instalado o habilitado en PHP."
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
+/* ======================================================
+   CONECTAR CON GEMINI
+====================================================== */
 
 $ch = curl_init();
-
 
 curl_setopt_array($ch, [
 
@@ -322,45 +396,46 @@ curl_setopt_array($ch, [
 
 ]);
 
-
 $respuesta = curl_exec($ch);
 
-$http_code =
-    curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$http_code = curl_getinfo(
+    $ch,
+    CURLINFO_HTTP_CODE
+);
 
-$curl_error =
-    curl_error($ch);
-
+$curl_error = curl_error($ch);
 
 curl_close($ch);
 
-
-// ======================================================
-// ERROR DE CONEXIÓN
-// ======================================================
+/* ======================================================
+   ERROR DE CONEXIÓN
+====================================================== */
 
 if ($respuesta === false) {
 
     http_response_code(500);
 
     echo json_encode([
+
         "error" => "No se pudo conectar con Gemini.",
+
         "detalle" => $curl_error
-    ]);
+
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
-// ======================================================
-// RESPUESTA GEMINI
-// ======================================================
+/* ======================================================
+   DECODIFICAR RESPUESTA DE GEMINI
+====================================================== */
 
 $data = json_decode(
     $respuesta,
     true
 );
-
 
 if (
     json_last_error() !== JSON_ERROR_NONE ||
@@ -370,17 +445,21 @@ if (
     http_response_code(500);
 
     echo json_encode([
+
         "error" => "Gemini no devolvió JSON válido.",
+
         "respuesta" => $respuesta
-    ]);
+
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
-// ======================================================
-// ERROR API
-// ======================================================
+/* ======================================================
+   ERROR DE LA API
+====================================================== */
 
 if ($http_code < 200 || $http_code >= 300) {
 
@@ -392,8 +471,8 @@ if ($http_code < 200 || $http_code >= 300) {
 
         $detalle =
             $data["error"]["message"];
-    }
 
+    }
 
     http_response_code($http_code);
 
@@ -405,15 +484,16 @@ if ($http_code < 200 || $http_code >= 300) {
 
         "detalle" => $detalle
 
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
-// ======================================================
-// OBTENER TEXTO
-// ======================================================
+/* ======================================================
+   OBTENER TEXTO DE GEMINI
+====================================================== */
 
 if (
     !isset(
@@ -430,23 +510,24 @@ if (
 
         "respuesta" => $data
 
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
 $texto =
     $data["candidates"][0]["content"]["parts"][0]["text"];
 
+/* ======================================================
+   DECODIFICAR FILTROS
+====================================================== */
 
-// ======================================================
-// DECODIFICAR FILTROS
-// ======================================================
-
-$filtros =
-    json_decode($texto, true);
-
+$filtros = json_decode(
+    $texto,
+    true
+);
 
 if (
     json_last_error() !== JSON_ERROR_NONE ||
@@ -462,121 +543,365 @@ if (
 
         "respuestaGemini" => $texto
 
-    ]);
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
 
     exit();
 }
 
-
-// ======================================================
-// NORMALIZAR
-// ======================================================
+/* ======================================================
+   OBTENER FILTROS
+====================================================== */
 
 $categoria = isset($filtros["categoria"])
-    ? strtolower(trim((string)$filtros["categoria"]))
+    ? trim((string)$filtros["categoria"])
     : "";
-
-
-$color = isset($filtros["color"])
-    ? strtolower(trim((string)$filtros["color"]))
-    : "";
-
 
 $precio = isset($filtros["precio_maximo"])
     ? intval($filtros["precio_maximo"])
     : 0;
 
+$termino = isset($filtros["termino"])
+    ? trim((string)$filtros["termino"])
+    : "";
 
-if ($categoria === "null") {
-    $categoria = "";
-}
-
-
-if ($color === "null") {
-    $color = "";
-}
-
+/* ======================================================
+   NORMALIZAR CATEGORÍA
+====================================================== */
 
 if (
-    $categoria !== "laptop" &&
-    $categoria !== "telefono"
+    strcasecmp($categoria, "skincare") === 0
 ) {
 
+    $categoria = "SkinCare";
+
+} elseif (
+    strcasecmp($categoria, "skinhair") === 0
+) {
+
+    $categoria = "SkinHair";
+
+} else {
+
     $categoria = "";
+
 }
 
+/* ======================================================
+   VALIDAR PRECIO
+====================================================== */
 
 if ($precio < 0) {
+
     $precio = 0;
+
 }
 
+/* ======================================================
+   CONSULTA A LA BASE DE DATOS
+====================================================== */
 
-// ======================================================
-// FILTROS
-// ======================================================
+$sql = "
 
-$filtros_finales = [
+    SELECT
+        codigo,
+        nombre,
+        descripcion,
+        precio,
+        stock,
+        categoria
 
-    "categoria" => $categoria,
+    FROM producto
 
-    "precio_maximo" => $precio,
+    WHERE 1 = 1
 
-    "color" => $color
+";
 
-];
+$tipos = "";
 
+$parametros = [];
 
-// ======================================================
-// BUSCAR PRODUCTOS
-// ======================================================
+/* ======================================================
+   FILTRO POR CATEGORÍA
+====================================================== */
 
-$resultados = array_filter(
+if ($categoria !== "") {
 
-    $productos,
+    $sql .= "
+        AND categoria = ?
+    ";
 
-    function ($producto) use ($filtros_finales) {
+    $tipos .= "s";
 
+    $parametros[] = $categoria;
 
-        if (
-            $filtros_finales["categoria"] !== "" &&
-            strtolower($producto["categoria"])
-            !==
-            $filtros_finales["categoria"]
-        ) {
+}
 
-            return false;
+/* ======================================================
+   FILTRO POR PRECIO
+====================================================== */
+
+if ($precio > 0) {
+
+    $sql .= "
+        AND precio <= ?
+    ";
+
+    $tipos .= "i";
+
+    $parametros[] = $precio;
+
+}
+
+/* ======================================================
+   FILTRO POR TÉRMINOS
+====================================================== */
+
+if ($termino !== "") {
+
+    $terminos = preg_split(
+
+        '/\s+/u',
+
+        mb_strtolower(
+            $termino,
+            "UTF-8"
+        ),
+
+        -1,
+
+        PREG_SPLIT_NO_EMPTY
+
+    );
+
+    $palabrasIgnoradas = [
+
+        "producto",
+        "productos",
+        "quiero",
+        "necesito",
+        "para",
+        "una",
+        "uno",
+        "unos",
+        "unas",
+        "de",
+        "del",
+        "la",
+        "el",
+        "los",
+        "las",
+        "con",
+        "que",
+        "menos",
+        "más",
+        "mayor",
+        "menor"
+
+    ];
+
+    foreach ($terminos as $palabra) {
+
+        $palabra = trim($palabra);
+
+        if ($palabra === "") {
+            continue;
         }
 
-
         if (
-            $filtros_finales["color"] !== "" &&
-            strtolower($producto["color"])
-            !==
-            $filtros_finales["color"]
+            mb_strlen(
+                $palabra,
+                "UTF-8"
+            ) < 3
         ) {
-
-            return false;
+            continue;
         }
 
-
         if (
-            $filtros_finales["precio_maximo"] > 0 &&
-            $producto["precio"] >
-            $filtros_finales["precio_maximo"]
+            in_array(
+                $palabra,
+                $palabrasIgnoradas,
+                true
+            )
         ) {
-
-            return false;
+            continue;
         }
 
+        $sql .= "
 
-        return true;
+            AND (
+
+                LOWER(nombre) LIKE ?
+
+                OR
+
+                LOWER(descripcion) LIKE ?
+
+            )
+
+        ";
+
+        $tipos .= "ss";
+
+        $valorBusqueda =
+            "%" .
+            $palabra .
+            "%";
+
+        $parametros[] =
+            $valorBusqueda;
+
+        $parametros[] =
+            $valorBusqueda;
+
     }
-);
 
+}
 
-// ======================================================
-// RESPUESTA
-// ======================================================
+/* ======================================================
+   ORDENAR RESULTADOS
+====================================================== */
+
+$sql .= "
+
+    ORDER BY nombre ASC
+
+";
+
+/* ======================================================
+   PREPARAR CONSULTA
+====================================================== */
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
+
+    http_response_code(500);
+
+    echo json_encode([
+
+        "error" =>
+            "No se pudo preparar la consulta a la base de datos.",
+
+        "detalle" =>
+            $conn->error
+
+    ], JSON_UNESCAPED_UNICODE);
+
+    $conn->close();
+
+    exit();
+}
+
+/* ======================================================
+   ASIGNAR PARÁMETROS
+====================================================== */
+
+if ($tipos !== "") {
+
+    $bind = [];
+
+    $bind[] = $tipos;
+
+    foreach (
+        $parametros as $indice => $valor
+    ) {
+
+        $bind[] =
+            &$parametros[$indice];
+
+    }
+
+    call_user_func_array(
+
+        [$stmt, "bind_param"],
+
+        $bind
+
+    );
+
+}
+
+/* ======================================================
+   EJECUTAR CONSULTA
+====================================================== */
+
+if (!$stmt->execute()) {
+
+    http_response_code(500);
+
+    echo json_encode([
+
+        "error" =>
+            "No se pudo ejecutar la búsqueda.",
+
+        "detalle" =>
+            $stmt->error
+
+    ], JSON_UNESCAPED_UNICODE);
+
+    $stmt->close();
+
+    $conn->close();
+
+    exit();
+}
+
+/* ======================================================
+   OBTENER RESULTADOS
+====================================================== */
+
+$resultado = $stmt->get_result();
+
+$productos = [];
+
+/* ======================================================
+   RECORRER PRODUCTOS
+====================================================== */
+
+while (
+    $fila = $resultado->fetch_assoc()
+) {
+
+    $productos[] = [
+
+        "id" =>
+            (int)$fila["codigo"],
+
+        "codigo" =>
+            (int)$fila["codigo"],
+
+        "nombre" =>
+            $fila["nombre"],
+
+        "descripcion" =>
+            $fila["descripcion"],
+
+        "precio" =>
+            (int)$fila["precio"],
+
+        "stock" =>
+            (int)$fila["stock"],
+
+        "categoria" =>
+            $fila["categoria"]
+
+    ];
+
+}
+
+/* ======================================================
+   CERRAR
+====================================================== */
+
+$stmt->close();
+
+$conn->close();
+
+/* ======================================================
+   RESPUESTA FINAL
+====================================================== */
 
 echo json_encode(
 
@@ -584,13 +909,27 @@ echo json_encode(
 
         "ok" => true,
 
-        "busqueda" => $busqueda,
+        "busqueda" =>
+            $busqueda,
 
-        "filtrosAplicados" =>
-            $filtros_finales,
+        "filtrosAplicados" => [
+
+            "categoria" =>
+                $categoria,
+
+            "precio_maximo" =>
+                $precio,
+
+            "termino" =>
+                $termino
+
+        ],
+
+        "cantidad" =>
+            count($productos),
 
         "productos" =>
-            array_values($resultados)
+            $productos
 
     ],
 
@@ -602,3 +941,4 @@ echo json_encode(
 exit();
 
 ?>
+
