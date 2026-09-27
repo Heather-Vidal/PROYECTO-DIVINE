@@ -5,6 +5,7 @@ session_start();
 if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
 
     header("Location: loginformcliente.php");
+
     exit();
 
 }
@@ -19,8 +20,11 @@ if (
 ) {
 
     echo "<script>
+
         alert('ACCESO DENEGADO: Solo los administradores pueden entrar a esta página.');
+
         window.location.href = 'SESIONES/loginformcliente.php';
+
     </script>";
 
     exit();
@@ -30,14 +34,18 @@ if (
 ?>
 
 <?php
+
 /* =========================================================
    DATOS PARA INFORMES DEL ADMINISTRADOR
    Las ventas se cuentan cuando el PEDIDO está Aceptado.
 ========================================================= */
 
 $servidor = "localhost";
+
 $usuario = "root";
+
 $contraseña = "";
+
 $nombreBD = "DIVINE";
 
 $conn = new mysqli(
@@ -48,7 +56,9 @@ $conn = new mysqli(
 );
 
 if ($conn->connect_error) {
+
     die("Error de conexión con la base de datos: " . $conn->connect_error);
+
 }
 
 $conn->set_charset("utf8");
@@ -90,76 +100,92 @@ if ($nombreUsuario !== '') {
 $sql = "SELECT COUNT(*) AS total FROM CLIENTE";
 
 if ($r = $conn->query($sql)) {
+
     $totalClientes = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT COUNT(*) AS total 
-        FROM CLIENTE 
+$sql = "SELECT COUNT(*) AS total
+        FROM CLIENTE
         WHERE LOWER(TRIM(estado))='activo'";
 
 if ($r = $conn->query($sql)) {
+
     $clientesActivos = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
 $sql = "SELECT COUNT(*) AS total FROM PRODUCTO";
 
 if ($r = $conn->query($sql)) {
+
     $totalProductos = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT COUNT(*) AS total 
-        FROM PRODUCTO 
+$sql = "SELECT COUNT(*) AS total
+        FROM PRODUCTO
         WHERE stock<=5";
 
 if ($r = $conn->query($sql)) {
+
     $stockBajo = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT codigo,nombre,stock 
-        FROM PRODUCTO 
-        WHERE stock<=5 
-        ORDER BY stock ASC,nombre ASC 
+$sql = "SELECT codigo,nombre,stock
+        FROM PRODUCTO
+        WHERE stock<=5
+        ORDER BY stock ASC,nombre ASC
         LIMIT 1";
 
 if ($r = $conn->query($sql)) {
+
     $productoStock = $r->fetch_assoc();
+
 }
 
 
 $sql = "SELECT COUNT(*) AS total FROM PEDIDOS";
 
 if ($r = $conn->query($sql)) {
+
     $totalPedidos = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT COUNT(*) AS total 
-        FROM PEDIDOS 
+$sql = "SELECT COUNT(*) AS total
+        FROM PEDIDOS
         WHERE LOWER(TRIM(estado))='pendiente'";
 
 if ($r = $conn->query($sql)) {
+
     $pedidosPendientes = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT COUNT(*) AS total 
-        FROM PEDIDOS 
+$sql = "SELECT COUNT(*) AS total
+        FROM PEDIDOS
         WHERE LOWER(TRIM(estado))='aceptado'";
 
 if ($r = $conn->query($sql)) {
+
     $pedidosAceptados = (int)($r->fetch_assoc()['total'] ?? 0);
+
 }
 
 
-$sql = "SELECT 
+$sql = "SELECT
             COUNT(v.id) AS cantidad,
             COALESCE(SUM(v.costototal),0) AS total
         FROM VENTAS v
-        INNER JOIN PEDIDOS p 
+        INNER JOIN PEDIDOS p
             ON v.PEDIDOS_ID=p.ID
         WHERE LOWER(TRIM(p.estado))='aceptado'";
 
@@ -174,7 +200,7 @@ if ($r = $conn->query($sql)) {
 }
 
 
-$sql = "SELECT 
+$sql = "SELECT
             p.nombre,
             COUNT(*) AS cantidad
         FROM PEDIDOS p
@@ -184,7 +210,9 @@ $sql = "SELECT
         LIMIT 1";
 
 if ($r = $conn->query($sql)) {
+
     $clienteFrecuente = $r->fetch_assoc();
+
 }
 
 ?>
@@ -206,7 +234,6 @@ href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&
 rel="stylesheet"
 >
 
-
 <style>
 
 /* =========================
@@ -216,20 +243,27 @@ rel="stylesheet"
 *{
 
     margin:0;
+
     padding:0;
+
     box-sizing:border-box;
+
     font-family:'Poppins',sans-serif;
 
 }
 
-
 :root{
 
     --rosa:#d96c8d;
+
     --rosa-oscuro:#b84f72;
+
     --rosa-claro:#fde7ef;
+
     --blanco:#ffffff;
+
     --crema:#fff8fa;
+
     --texto:#5b4b52;
 
 }
@@ -246,8 +280,11 @@ body{
     linear-gradient(
 
         135deg,
+
         #fff7fa,
+
         #fdeef3,
+
         #fffafc
 
     );
@@ -270,6 +307,7 @@ body::before{
     position:fixed;
 
     width:500px;
+
     height:500px;
 
     border-radius:50%;
@@ -281,6 +319,7 @@ body::before{
     opacity:.4;
 
     top:-150px;
+
     right:-100px;
 
     animation:float 10s infinite ease-in-out;
@@ -297,6 +336,7 @@ body::after{
     position:fixed;
 
     width:400px;
+
     height:400px;
 
     border-radius:50%;
@@ -308,6 +348,7 @@ body::after{
     opacity:.25;
 
     bottom:-100px;
+
     left:-100px;
 
     animation:float 12s infinite ease-in-out;
@@ -358,6 +399,7 @@ body::after{
         180deg,
 
         var(--rosa),
+
         var(--rosa-oscuro)
 
     );
@@ -576,14 +618,7 @@ body::after{
 
     display:grid;
 
-    /*
-       6 columnas permiten hacer:
-       3 tarjetas arriba
-       2 tarjetas centradas abajo
-    */
-
-    grid-template-columns:
-    repeat(6, 1fr);
+    grid-template-columns:repeat(6,1fr);
 
     gap:30px;
 
@@ -611,6 +646,7 @@ body::after{
     transition:
 
     transform .4s ease,
+
     box-shadow .4s ease;
 
     overflow:hidden;
@@ -618,46 +654,53 @@ body::after{
 }
 
 
-/* PRIMERA FILA */
+/* =========================
+   DISTRIBUCIÓN DE LAS 6 CAJAS
+========================= */
 
 .modulo:nth-child(1){
 
-    grid-column:
-    span 2;
+    grid-column:span 2;
 
 }
 
 
 .modulo:nth-child(2){
 
-    grid-column:
-    span 2;
+    grid-column:span 2;
 
 }
 
 
 .modulo:nth-child(3){
 
-    grid-column:
-    span 2;
+    grid-column:span 2;
 
 }
 
 
-/* SEGUNDA FILA CENTRADA */
-
 .modulo:nth-child(4){
 
-    grid-column:
-    2 / span 2;
+    grid-column:span 2;
 
 }
 
 
 .modulo:nth-child(5){
 
-    grid-column:
-    4 / span 2;
+    grid-column:span 2;
+
+}
+
+
+/* =================================================
+   6. COMENTARIOS DE CLIENTES
+   CONECTADO CON comentar.php
+================================================= */
+
+.modulo:nth-child(6){
+
+    grid-column:span 2;
 
 }
 
@@ -738,11 +781,13 @@ body::after{
 .modulo:hover{
 
     transform:
+
     translateY(-10px);
 
     box-shadow:
 
     0 20px 40px
+
     rgba(217,108,141,.25);
 
 }
@@ -751,6 +796,7 @@ body::after{
 .modulo:hover img{
 
     transform:
+
     scale(1.1);
 
 }
@@ -771,6 +817,7 @@ body::after{
         135deg,
 
         var(--rosa),
+
         #f48fb1
 
     );
@@ -784,6 +831,7 @@ body::after{
     box-shadow:
 
     0 15px 40px
+
     rgba(217,108,141,.3);
 
     animation:fadeUp 1s ease;
@@ -816,7 +864,9 @@ body::after{
 
     border-radius:32px;
 
-    box-shadow:0 18px 45px rgba(143,83,98,.08);
+    box-shadow:
+
+    0 18px 45px rgba(143,83,98,.08);
 
     backdrop-filter:blur(8px);
 
@@ -878,7 +928,7 @@ body::after{
 
     border:1px solid #ead7dc;
 
-    color:var(--vino);
+    color:#704052;
 
     font-size:.78rem;
 
@@ -907,9 +957,13 @@ body::after{
     background:
 
     linear-gradient(
+
         145deg,
+
         #ffffff 0%,
+
         #fffafb 100%
+
     );
 
     border:1px solid #ead7dc;
@@ -921,12 +975,15 @@ body::after{
     box-shadow:
 
     0 10px 25px
+
     rgba(143,83,98,.07);
 
     transition:
 
     transform .3s ease,
+
     box-shadow .3s ease,
+
     border-color .3s ease;
 
     position:relative;
@@ -943,6 +1000,7 @@ body::after{
     position:absolute;
 
     left:0;
+
     top:0;
 
     width:100%;
@@ -952,10 +1010,15 @@ body::after{
     background:
 
     linear-gradient(
+
         90deg,
+
         var(--rosa),
+
         var(--rosa-claro),
+
         #f3a8bc
+
     );
 
 }
@@ -968,6 +1031,7 @@ body::after{
     position:absolute;
 
     width:95px;
+
     height:95px;
 
     border-radius:50%;
@@ -975,6 +1039,7 @@ body::after{
     background:rgba(217,166,178,.13);
 
     right:-38px;
+
     bottom:-42px;
 
 }
@@ -987,6 +1052,7 @@ body::after{
     box-shadow:
 
     0 18px 34px
+
     rgba(143,83,98,.14);
 
     border-color:#d9a6b2;
@@ -1022,7 +1088,7 @@ body::after{
 
     border-radius:17px;
 
-    background:var(--rosa-palido);
+    background:var(--rosa-claro);
 
     border:1px solid #f0d4dc;
 
@@ -1039,6 +1105,7 @@ body::after{
     box-shadow:
 
     0 7px 16px
+
     rgba(184,111,128,.08);
 
 }
@@ -1046,7 +1113,7 @@ body::after{
 
 .informe-card h3{
 
-    color:var(--vino-oscuro);
+    color:#4e2c3a;
 
     font-size:.98rem;
 
@@ -1089,7 +1156,7 @@ body::after{
 
 .informe-detalle strong{
 
-    color:var(--vino);
+    color:#704052;
 
 }
 
@@ -1099,9 +1166,13 @@ body::after{
     background:
 
     linear-gradient(
+
         145deg,
+
         #fff8fa,
+
         #fff1f5
+
     );
 
     border-color:#efc6d2;
@@ -1154,9 +1225,9 @@ body::after{
 
     border-radius:14px;
 
-    background:var(--rosa-palido);
+    background:var(--rosa-claro);
 
-    color:var(--vino-oscuro);
+    color:#4e2c3a;
 
     font-size:.78rem;
 
@@ -1165,6 +1236,7 @@ body::after{
     transition:
 
     transform .25s ease,
+
     background .25s ease;
 
 }
@@ -1195,6 +1267,7 @@ body::after{
         opacity:0;
 
         transform:
+
         translateY(30px);
 
     }
@@ -1204,6 +1277,7 @@ body::after{
         opacity:1;
 
         transform:
+
         translateY(0);
 
     }
@@ -1218,6 +1292,7 @@ body::after{
         opacity:0;
 
         transform:
+
         translateX(-50px);
 
     }
@@ -1227,6 +1302,7 @@ body::after{
         opacity:1;
 
         transform:
+
         translateX(0);
 
     }
@@ -1237,9 +1313,11 @@ body::after{
 @keyframes float{
 
     0%,
+
     100%{
 
         transform:
+
         translateY(0);
 
     }
@@ -1247,6 +1325,7 @@ body::after{
     50%{
 
         transform:
+
         translateY(-20px);
 
     }
@@ -1279,15 +1358,19 @@ body::after{
         90deg,
 
         transparent,
+
         rgba(255,255,255,.35),
+
         transparent
 
     );
 
     transform:
+
     skewX(-25deg);
 
     animation:
+
     brillo 5s infinite;
 
 }
@@ -1317,7 +1400,9 @@ body::after{
 @media screen and (max-width:1100px){
 
     .informes-admin{
+
         grid-template-columns:repeat(2,1fr);
+
     }
 
 }
@@ -1350,8 +1435,6 @@ body::after{
     }
 
 
-    /* CAMBIO: antes era .perfil img */
-
     .inicial-usuario{
 
         width:120px;
@@ -1370,15 +1453,9 @@ body::after{
     }
 
 
-    /*
-       En tablet mantenemos
-       3 arriba y 2 abajo
-    */
-
     .modulos{
 
-        grid-template-columns:
-        repeat(6,1fr);
+        grid-template-columns:repeat(6,1fr);
 
     }
 
@@ -1399,18 +1476,14 @@ body::after{
 }
 
 
-@media screen and (max-width:767px){
-
-    .informes-admin-section{
-
-        padding:
-        /* =========================
+/* =========================
    CELULARES
 ========================= */
 
 @media screen and (max-width:767px){
 
     body::before,
+
     body::after{
 
         display:none;
@@ -1442,8 +1515,6 @@ body::after{
 
     }
 
-
-    /* INICIAL DEL USUARIO EN CELULAR */
 
     .inicial-usuario{
 
@@ -1504,11 +1575,6 @@ body::after{
     }
 
 
-    /*
-       En celular se colocan
-       una debajo de otra
-    */
-
     .modulos{
 
         grid-template-columns:1fr;
@@ -1519,10 +1585,16 @@ body::after{
 
 
     .modulo:nth-child(1),
+
     .modulo:nth-child(2),
+
     .modulo:nth-child(3),
+
     .modulo:nth-child(4),
-    .modulo:nth-child(5){
+
+    .modulo:nth-child(5),
+
+    .modulo:nth-child(6){
 
         grid-column:auto;
 
@@ -1607,6 +1679,29 @@ body::after{
 
     }
 
+
+    .informe-cabecera{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+
+    .informes-admin{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .informe-destacado{
+
+        grid-column:auto;
+
+    }
+
 }
 
 
@@ -1663,7 +1758,6 @@ body::after{
 
 <body>
 
-
 <?php include 'submenu.php'; ?>
 
 
@@ -1684,7 +1778,9 @@ body::after{
             <div class="inicial-usuario">
 
                 <?php
+
                 echo htmlspecialchars($inicialUsuario);
+
                 ?>
 
             </div>
@@ -1693,7 +1789,9 @@ body::after{
             <h2>
 
                 <?php
+
                 echo htmlspecialchars($_SESSION['nombre']);
+
                 ?>
 
             </h2>
@@ -1702,7 +1800,9 @@ body::after{
             <div class="cargo">
 
                 <?php
+
                 echo htmlspecialchars($_SESSION['rol']);
+
                 ?>
 
                 GENERAL
@@ -1718,9 +1818,11 @@ body::after{
                     CONTACTO:
 
                     <?php
+
                     echo htmlspecialchars(
                         $_SESSION['celular'] ?? ''
                     );
+
                     ?>
 
                 </p>
@@ -1731,9 +1833,11 @@ body::after{
                     DIRECCIÓN:
 
                     <?php
+
                     echo htmlspecialchars(
                         $_SESSION['direccion'] ?? ''
                     );
+
                     ?>
 
                 </p>
@@ -1746,9 +1850,11 @@ body::after{
                         "
 
                         <?php
+
                         echo htmlspecialchars(
                             $_SESSION['estado'] ?? ''
                         );
+
                         ?>
 
                         "
@@ -1798,9 +1904,11 @@ body::after{
                     Hola!!,
 
                     <?php
+
                     echo htmlspecialchars(
                         $_SESSION['nombre']
                     );
+
                     ?>
 
                 </h1>
@@ -1838,7 +1946,9 @@ body::after{
                     >
 
                     <h3>
+
                         Gestionar Usuarios
+
                     </h3>
 
                 </a>
@@ -1859,7 +1969,9 @@ body::after{
                     >
 
                     <h3>
+
                         Gestionar Productos
+
                     </h3>
 
                 </a>
@@ -1880,7 +1992,9 @@ body::after{
                     >
 
                     <h3>
+
                         Asignar Roles
+
                     </h3>
 
                 </a>
@@ -1901,7 +2015,9 @@ body::after{
                     >
 
                     <h3>
+
                         Visualizar Reportes
+
                     </h3>
 
                 </a>
@@ -1922,12 +2038,41 @@ body::after{
                     >
 
                     <h3>
+
                         Supervisar Ventas y Pedidos
+
                     </h3>
 
                 </a>
 
             </div>
+
+
+
+            <!-- =================================================
+                 6. COMENTARIOS DE CLIENTES
+                 ESTE BOTÓN ABRE comentar.php
+            ================================================== -->
+
+            <div class="modulo">
+
+                <a href="comentar.php">
+
+                    <img
+                        src="./imagenes/mmm.jpg"
+                        alt="Comentarios de Clientes"
+                    >
+
+                    <h3>
+
+                        Comentarios de Clientes
+
+                    </h3>
+
+                </a>
+
+            </div>
+
 
 
         </section>
@@ -1941,7 +2086,9 @@ body::after{
         <section class="mensaje">
 
             <h2>
+
                 Panel Administrativo Empresarial
+
             </h2>
 
 
@@ -1974,18 +2121,24 @@ body::after{
                 <div>
 
                     <h2 class="informe-titulo">
+
                         Informes importantes del negocio ✨
+
                     </h2>
 
                     <p class="informe-subtitulo">
+
                         Resumen general para supervisar DIVINE de un vistazo.
+
                     </p>
 
                 </div>
 
 
                 <div class="informe-badge">
+
                     📊 Panel de control
+
                 </div>
 
             </div>
@@ -2000,17 +2153,23 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
+
                         👥
+
                     </div>
 
                     <h3>
+
                         Clientes registrados
+
                     </h3>
 
                     <span class="informe-numero">
 
                         <?php
+
                         echo $totalClientes;
+
                         ?>
 
                     </span>
@@ -2020,7 +2179,9 @@ body::after{
                         <strong>
 
                             <?php
+
                             echo $clientesActivos;
+
                             ?>
 
                         </strong>
@@ -2038,17 +2199,23 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
+
                         📦
+
                     </div>
 
                     <h3>
+
                         Productos registrados
+
                     </h3>
 
                     <span class="informe-numero">
 
                         <?php
+
                         echo $totalProductos;
+
                         ?>
 
                     </span>
@@ -2073,17 +2240,23 @@ body::after{
                     <div>
 
                         <div class="informe-icon">
+
                             ⚠️
+
                         </div>
 
                         <h3>
+
                             Stock bajo
+
                         </h3>
 
                         <span class="informe-numero">
 
                             <?php
+
                             echo $stockBajo;
+
                             ?>
 
                         </span>
@@ -2091,9 +2264,13 @@ body::after{
                         <p class="informe-detalle">
 
                             Productos con
+
                             <strong>
+
                                 5 unidades o menos
+
                             </strong>
+
                             que requieren revisión.
 
                         </p>
@@ -2104,11 +2281,15 @@ body::after{
                     <div class="informe-ir">
 
                         <span>
+
                             Revisar productos con stock bajo
+
                         </span>
 
                         <span>
+
                             →
+
                         </span>
 
                     </div>
@@ -2122,17 +2303,23 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
+
                         🛍️
+
                     </div>
 
                     <h3>
+
                         Pedidos aceptados
+
                     </h3>
 
                     <span class="informe-numero">
 
                         <?php
+
                         echo $pedidosAceptados;
+
                         ?>
 
                     </span>
@@ -2142,7 +2329,9 @@ body::after{
                         <strong>
 
                             <?php
+
                             echo $pedidosPendientes;
+
                             ?>
 
                         </strong>
@@ -2160,17 +2349,23 @@ body::after{
                 <div class="informe-card informe-destacado">
 
                     <div class="informe-icon">
+
                         💰
+
                     </div>
 
                     <h3>
+
                         Ventas registradas
+
                     </h3>
 
                     <span class="informe-numero">
 
                         <?php
+
                         echo $totalVentas;
+
                         ?>
 
                     </span>
@@ -2178,8 +2373,11 @@ body::after{
                     <p class="informe-detalle">
 
                         Ventas relacionadas con pedidos
+
                         <strong>
+
                             Aceptados
+
                         </strong>.
 
                         Recaudación total:
@@ -2187,13 +2385,16 @@ body::after{
                         <strong>
 
                             Bs.
+
                             <?php
+
                             echo number_format(
                                 $dineroVentas,
                                 2,
                                 '.',
                                 ','
                             );
+
                             ?>
 
                         </strong>.
@@ -2209,11 +2410,15 @@ body::after{
                 <div class="informe-card informe-destacado">
 
                     <div class="informe-icon">
+
                         🏆
+
                     </div>
 
                     <h3>
+
                         Cliente con más pedidos aceptados
+
                     </h3>
 
 
@@ -2222,9 +2427,11 @@ body::after{
                         <span class="informe-numero">
 
                             <?php
+
                             echo htmlspecialchars(
                                 $clienteFrecuente['nombre']
                             );
+
                             ?>
 
                         </span>
@@ -2235,7 +2442,9 @@ body::after{
                             <strong>
 
                                 <?php
+
                                 echo (int)$clienteFrecuente['cantidad'];
+
                                 ?>
 
                             </strong>
@@ -2250,11 +2459,15 @@ body::after{
                     <?php else: ?>
 
                         <span class="informe-numero">
+
                             Sin datos
+
                         </span>
 
                         <p class="informe-detalle">
+
                             Todavía no existen pedidos aceptados.
+
                         </p>
 
                     <?php endif; ?>
@@ -2275,11 +2488,15 @@ body::after{
                 >
 
                     <div class="informe-icon">
+
                         📊
+
                     </div>
 
                     <h3>
+
                         Producto que requiere atención
+
                     </h3>
 
 
@@ -2288,9 +2505,11 @@ body::after{
                         <span class="informe-numero">
 
                             <?php
+
                             echo htmlspecialchars(
                                 $productoStock['nombre']
                             );
+
                             ?>
 
                         </span>
@@ -2303,9 +2522,11 @@ body::after{
                             <strong>
 
                                 <?php
+
                                 echo htmlspecialchars(
                                     $productoStock['codigo']
                                 );
+
                                 ?>
 
                             </strong>
@@ -2315,7 +2536,9 @@ body::after{
                             <strong>
 
                                 <?php
+
                                 echo (int)$productoStock['stock'];
+
                                 ?>
 
                                 unidades
@@ -2328,7 +2551,9 @@ body::after{
                     <?php else: ?>
 
                         <span class="informe-numero">
+
                             Stock estable
+
                         </span>
 
 
@@ -2349,17 +2574,23 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
+
                         📋
+
                     </div>
 
                     <h3>
+
                         Total de pedidos
+
                     </h3>
 
                     <span class="informe-numero">
 
                         <?php
+
                         echo $totalPedidos;
+
                         ?>
 
                     </span>
@@ -2367,6 +2598,7 @@ body::after{
                     <p class="informe-detalle">
 
                         Todos los pedidos registrados,
+
                         sin importar su estado.
 
                     </p>
@@ -2379,10 +2611,10 @@ body::after{
         </section>
 
 
+
     </main>
 
 </div>
-
 
 
 <?php include 'submenpiepag.php'; ?>
