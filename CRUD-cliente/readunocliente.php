@@ -828,13 +828,7 @@ body {
             </a>
 
 
-            <button
-                class="boton2"
-                type="button"
-                onclick="history.back()"
-            >
-                VOLVER ATRÁS →
-            </button>
+           
 
         </div>
 

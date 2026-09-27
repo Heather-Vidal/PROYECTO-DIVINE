@@ -1059,7 +1059,7 @@ $resultado = $conexion->query($sql);
                     href="readunocliente.php?CI=<?php echo urlencode($CI); ?>"
                     class="btn btn-ver">
 
-                    VER
+                    DETALLES
 
                 </a>
 
