@@ -1,40 +1,176 @@
 <?php
+
+session_start();
+
 $archivo = 'mensajes.txt';
+
+/* =====================================================
+   RECUPERAR DATOS DE LA SESIÓN
+===================================================== */
+
+$sesionActiva = isset($_SESSION['nombre']) && !empty(trim($_SESSION['nombre']));
+
+$nombreSesion = $sesionActiva
+    ? trim($_SESSION['nombre'])
+    : '';
+
+$rolSesion = isset($_SESSION['rol'])
+    ? strtolower(trim($_SESSION['rol']))
+    : '';
+
+/* =====================================================
+   VALIDAR ROL
+===================================================== */
+
+$rolesPermitidos = [
+    'administrador',
+    'vendedor',
+    'cliente'
+];
+
+/*
+   Si existe sesión y el rol es válido,
+   se utiliza ese rol.
+
+   Si no existe sesión o el rol no es válido,
+   se asigna cliente.
+*/
+if ($sesionActiva && in_array($rolSesion, $rolesPermitidos, true)) {
+    $rolUsuario = $rolSesion;
+} else {
+    $rolUsuario = 'cliente';
+}
+
+/* =====================================================
+   PROCESAR FORMULARIO
+===================================================== */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $autor = trim($_POST['autor']);
-    $contenido = trim($_POST['contenido']);
+    /* ---------------------------------------------
+       NOMBRE
+    --------------------------------------------- */
+
+    if ($sesionActiva) {
+
+        /*
+           Si hay sesión, NO confiamos en el nombre
+           enviado desde el formulario.
+           Utilizamos directamente el nombre de sesión.
+        */
+        $autor = $nombreSesion;
+
+    } else {
+
+        /*
+           Si no hay sesión, se utiliza el nombre
+           escrito manualmente.
+        */
+        $autor = isset($_POST['autor'])
+            ? trim($_POST['autor'])
+            : '';
+
+        /*
+           Si no escribió nombre, se coloca Cliente.
+        */
+        if ($autor === '') {
+            $autor = 'Cliente';
+        }
+    }
+
+    /* ---------------------------------------------
+       CONTENIDO
+    --------------------------------------------- */
+
+    $contenido = isset($_POST['contenido'])
+        ? trim($_POST['contenido'])
+        : '';
+
+    /* ---------------------------------------------
+       VALIDAR CONTENIDO
+    --------------------------------------------- */
+
+    if ($contenido === '') {
+
+        header("Location: publicarcomentario.php?error=3");
+        exit;
+    }
+
+    /* ---------------------------------------------
+       FECHA
+    --------------------------------------------- */
 
     $fecha = date("Y-m-d H:i:s");
-    $entrada = "$fecha | $autor: $contenido" . PHP_EOL;
+
+    /* =================================================
+       NUEVO FORMATO GUARDADO
+
+       FECHA | ROL | AUTOR: COMENTARIO
+
+       Ejemplo:
+
+       2026-09-26 22:30:15 | administrador | María: Excelente página
+
+       2026-09-26 22:35:10 | vendedor | Carlos: Me gustó mucho
+
+       2026-09-26 22:40:22 | cliente | Ana: Muy bonito
+    ================================================= */
+
+    $entrada = "$fecha | $rolUsuario | $autor: $contenido" . PHP_EOL;
+
+    /* =================================================
+       ABRIR ARCHIVO
+    ================================================= */
 
     $f = fopen($archivo, 'a');
 
     if ($f === false) {
+
         header("Location: publicarcomentario.php?error=1");
         exit;
     }
 
+    /* =================================================
+       GUARDAR COMENTARIO
+    ================================================= */
+
     if (fwrite($f, $entrada) === false) {
+
         fclose($f);
-        header("Location: comentarios.php?error=2");
+
+        header("Location: publicarcomentario.php?error=2");
         exit;
     }
 
     fclose($f);
 
-    header("Location: comentarios.php?guardado=1");
+    /* =================================================
+       REDIRECCIÓN
+
+       También enviamos autor y rol al siguiente archivo
+       para que puedan utilizarse si es necesario.
+    ================================================= */
+
+    $autorURL = urlencode($autor);
+    $rolURL = urlencode($rolUsuario);
+
+    header(
+        "Location: comentarios.php?guardado=1&autor=$autorURL&rol=$rolURL"
+    );
+
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -66,10 +202,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 url("../imagenes/rositafon.jpg");
 
             background-size: cover;
+
             background-position: center;
 
             display: flex;
+
             justify-content: center;
+
             align-items: center;
 
             padding: 30px;
@@ -78,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             position: relative;
         }
-
 
         /* =========================
            LUCES DE FONDO
@@ -98,9 +236,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .luz-1 {
 
             width: 320px;
+
             height: 320px;
 
             top: -120px;
+
             left: -80px;
 
             background: rgba(255, 148, 190, .18);
@@ -112,9 +252,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .luz-2 {
 
             width: 280px;
+
             height: 280px;
 
             right: -100px;
+
             bottom: -80px;
 
             background: rgba(235, 180, 120, .15);
@@ -122,7 +264,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow:
                 0 0 100px rgba(235, 180, 120, .25);
         }
-
 
         /* =========================
            DESTELLOS
@@ -140,43 +281,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .e1 {
+
             top: 14%;
+
             left: 13%;
         }
 
         .e2 {
+
             top: 20%;
+
             right: 17%;
+
             animation-delay: 1s;
         }
 
         .e3 {
+
             bottom: 17%;
+
             left: 18%;
+
             animation-delay: 1.8s;
         }
 
         .e4 {
+
             bottom: 25%;
+
             right: 13%;
+
             animation-delay: .6s;
         }
-
 
         @keyframes brillo {
 
             0%, 100% {
+
                 opacity: .2;
+
                 transform: scale(.7);
             }
 
             50% {
+
                 opacity: 1;
+
                 transform: scale(1.3);
             }
-
         }
-
 
         /* =========================
            CONTENEDOR PRINCIPAL
@@ -208,21 +361,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             animation: entrada .9s ease;
         }
 
-
         @keyframes entrada {
 
             from {
+
                 opacity: 0;
+
                 transform: scale(.96) translateY(25px);
             }
 
             to {
+
                 opacity: 1;
+
                 transform: scale(1) translateY(0);
             }
-
         }
-
 
         /* =========================
            PANEL IZQUIERDO
@@ -257,6 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: absolute;
 
             width: 230px;
+
             height: 230px;
 
             border: 1px solid rgba(255,190,210,.15);
@@ -264,9 +419,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 50%;
 
             right: -100px;
+
             bottom: -80px;
         }
-
 
         .mini-logo {
 
@@ -278,7 +433,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             text-transform: uppercase;
         }
-
 
         .presentacion h2 {
 
@@ -293,14 +447,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin: 45px 0 25px;
         }
 
-
         .presentacion h2 span {
 
             color: #e5a9bd;
 
             font-style: italic;
         }
-
 
         .presentacion p {
 
@@ -312,7 +464,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             max-width: 310px;
         }
-
 
         .frase {
 
@@ -327,7 +478,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             line-height: 1.5;
         }
 
-
         .firma {
 
             color: #a88b97;
@@ -341,9 +491,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 10px;
         }
 
-
         /* =========================
-           PANEL DEL FORMULARIO
+           PANEL FORMULARIO
         ========================= */
 
         .form-panel {
@@ -361,7 +510,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: relative;
         }
 
-
         .form-panel::before {
 
             content: "♡";
@@ -369,6 +517,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: absolute;
 
             right: 35px;
+
             top: 28px;
 
             font-size: 55px;
@@ -379,7 +528,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             transform: rotate(15deg);
         }
-
 
         .etiqueta {
 
@@ -396,7 +544,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 10px;
         }
 
-
         .form-panel h1 {
 
             font-family: 'DM Serif Display', serif;
@@ -409,7 +556,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             margin-bottom: 10px;
         }
-
 
         .descripcion {
 
@@ -424,7 +570,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-width: 420px;
         }
 
-
         /* =========================
            CAMPOS
         ========================= */
@@ -433,7 +578,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             margin-bottom: 20px;
         }
-
 
         .campo label {
 
@@ -449,7 +593,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             margin-bottom: 8px;
         }
-
 
         .campo input,
         .campo textarea {
@@ -475,12 +618,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: .3s ease;
         }
 
-
         .campo input {
 
             height: 50px;
         }
-
 
         .campo textarea {
 
@@ -491,13 +632,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             line-height: 1.6;
         }
 
-
         .campo input::placeholder,
         .campo textarea::placeholder {
 
             color: #c8aeb8;
         }
-
 
         .campo input:focus,
         .campo textarea:focus {
@@ -510,6 +649,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: #fff;
         }
 
+        /* =========================
+           NOMBRE BLOQUEADO
+        ========================= */
+
+        .campo input.nombre-sesion {
+
+            background: #f8edf1;
+
+            color: #694153;
+
+            font-weight: 700;
+
+            cursor: not-allowed;
+        }
+
+        .campo input.nombre-sesion:focus {
+
+            border-color: #ead6dc;
+
+            box-shadow: none;
+
+            background: #f8edf1;
+        }
+
+        .sesion-info {
+
+            margin-top: -10px;
+
+            margin-bottom: 20px;
+
+            font-size: 10px;
+
+            color: #a47d8d;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+        }
+
+        .sesion-punto {
+
+            width: 7px;
+
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #9b4567;
+
+            box-shadow: 0 0 0 4px rgba(155,69,103,.10);
+        }
 
         /* =========================
            BOTÓN PUBLICAR
@@ -556,7 +748,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: .3s ease;
         }
 
-
         form button::after {
 
             content: "";
@@ -564,6 +755,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: absolute;
 
             width: 100px;
+
             height: 100px;
 
             background: rgba(255,255,255,.15);
@@ -571,11 +763,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 50%;
 
             top: -45px;
+
             left: -100px;
 
             transition: .5s;
         }
-
 
         form button:hover {
 
@@ -585,12 +777,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 0 15px 30px rgba(145,61,94,.32);
         }
 
-
         form button:hover::after {
 
             left: 110%;
         }
-
 
         /* =========================
            DETALLE FINAL
@@ -609,7 +799,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-top: 22px;
         }
 
-
         /* =====================================================
            BOTÓN VOLVER DIVINE
         ===================================================== */
@@ -619,9 +808,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             position: fixed;
 
             left: 28px;
+
             bottom: 28px;
 
             width: 58px;
+
             height: 58px;
 
             border: none;
@@ -656,7 +847,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 background 0.35s ease;
         }
 
-
         /* =========================
            CORAZÓN
         ========================= */
@@ -664,6 +854,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .divine-back-heart {
 
             width: 27px;
+
             height: 27px;
 
             fill: none;
@@ -681,7 +872,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 fill 0.35s ease,
                 stroke-width 0.35s ease;
         }
-
 
         /* =========================
            FLECHA
@@ -715,7 +905,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 color 0.3s ease;
         }
 
-
         /* =========================
            HOVER CÍRCULO
         ========================= */
@@ -735,7 +924,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 inset 0 1px 3px rgba(255,255,255,0.45);
         }
 
-
         /* =========================
            HOVER CORAZÓN
         ========================= */
@@ -749,7 +937,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             stroke-width: 2;
         }
 
-
         /* =========================
            HOVER FLECHA
         ========================= */
@@ -760,7 +947,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             color: #925f76;
         }
-
 
         /* =========================
            TEXTO VOLVER
@@ -799,7 +985,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 transform 0.3s ease;
         }
 
-
         /* =========================
            MOSTRAR VOLVER
         ========================= */
@@ -815,7 +1000,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 translateY(0);
         }
 
-
         /* =========================
            CLICK
         ========================= */
@@ -824,7 +1008,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             transform: scale(0.93);
         }
-
 
         /* =========================
            RESPONSIVE
@@ -839,14 +1022,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 overflow-y: auto;
             }
 
-
             .contenedor {
 
                 grid-template-columns: 1fr;
 
                 max-width: 550px;
             }
-
 
             .presentacion {
 
@@ -855,7 +1036,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 padding: 40px 30px;
             }
 
-
             .presentacion h2 {
 
                 margin: 30px 0 20px;
@@ -863,14 +1043,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 48px;
             }
 
-
             .form-panel {
 
                 padding: 45px 30px;
             }
-
         }
-
 
         @media (max-width: 600px) {
 
@@ -885,14 +1062,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 bottom: 18px;
             }
 
-
             .divine-back-heart {
 
                 width: 24px;
 
                 height: 24px;
             }
-
 
             .divine-back-arrow {
 
@@ -903,16 +1078,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-weight: 700;
             }
 
-
             .divine-back-text {
 
                 top: 79px;
 
                 font-size: 11px;
             }
-
         }
-
 
         @media (max-width: 450px) {
 
@@ -921,27 +1093,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 42px;
             }
 
-
             .form-panel h1 {
 
                 font-size: 36px;
             }
-
         }
 
     </style>
 
 </head>
 
-
 <body>
-
 
     <!-- =========================
          LUCES
     ========================= -->
 
     <div class="luz luz-1"></div>
+
     <div class="luz luz-2"></div>
 
 
@@ -950,8 +1119,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ========================= -->
 
     <span class="estrella e1">✦</span>
+
     <span class="estrella e2">✧</span>
+
     <span class="estrella e3">✦</span>
+
     <span class="estrella e4">✧</span>
 
 
@@ -971,35 +1143,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div>
 
                 <div class="mini-logo">
+
                     ♡ Un pequeño detalle
+
                 </div>
 
 
                 <h2>
+
                     Tus palabras<br>
+
                     <span>importan.</span>
+
                 </h2>
 
 
                 <p>
+
                     Queremos conocer lo que piensas,
                     lo que sientes y esos pequeños
                     mensajes que hacen especial este lugar.
+
+
                 </p>
 
+            
+
+                   <p>
+
+                    Comunicate con el admin en vivo y en directo!!.
+
+
+                </p>
             </div>
 
 
             <div>
 
                 <div class="frase">
+
                     “Las palabras bonitas
                     siempre encuentran
                     un lugar donde quedarse.”
+
                 </div>
 
                 <div class="firma">
+
                     Gracias por compartir ♡
+
                 </div>
 
             </div>
@@ -1015,18 +1207,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             <div class="etiqueta">
+
                 Comparte con nosotros
+
             </div>
 
 
             <h1>
+
                 Deja tu mensaje
+
             </h1>
 
 
             <p class="descripcion">
+
                 Escribe tu nombre y déjanos unas palabras.
                 Tu mensaje será guardado con mucho cariño.
+
             </p>
 
 
@@ -1036,7 +1234,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="campo">
 
                     <label for="autor">
+
                         Nombre
+
                     </label>
 
                     <input
@@ -1045,16 +1245,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         name="autor"
                         placeholder="¿Cómo te llamas?"
                         autocomplete="name"
+                        value="<?php echo htmlspecialchars($nombreSesion, ENT_QUOTES, 'UTF-8'); ?>"
+                        <?php echo $sesionActiva ? 'readonly class="nombre-sesion"' : ''; ?>
                         required
                     >
 
                 </div>
 
 
+                <?php if ($sesionActiva): ?>
+
+                    <div class="sesion-info">
+
+                        <span class="sesion-punto"></span>
+
+                        Sesión activa · Rol:
+                        <?php echo htmlspecialchars(ucfirst($rolUsuario), ENT_QUOTES, 'UTF-8'); ?>
+
+                    </div>
+
+                <?php endif; ?>
+
+
+                <!--
+                    El rol se manda también mediante POST.
+                    No se utiliza para decidir el rol cuando
+                    existe sesión; PHP vuelve a comprobarlo
+                    desde $_SESSION.
+                -->
+
+                <input
+                    type="hidden"
+                    name="rol"
+                    value="<?php echo htmlspecialchars($rolUsuario, ENT_QUOTES, 'UTF-8'); ?>"
+                >
+
+
                 <div class="campo">
 
                     <label for="contenido">
+
                         Mensaje
+
                     </label>
 
                     <textarea
@@ -1068,7 +1300,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                 <button type="submit">
+
                     Publicar mi mensaje &nbsp; ♡
+
                 </button>
 
 
@@ -1076,7 +1310,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             <div class="final">
+
                 Hecho con cariño · ✦ · Para recordar
+
             </div>
 
 
@@ -1088,7 +1324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- =====================================================
          BOTÓN FLOTANTE VOLVER DIVINE
-         ===================================================== -->
+    ===================================================== -->
 
     <button
         type="button"
@@ -1118,24 +1354,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         <span class="divine-back-arrow">
+
             ←
+
         </span>
 
 
         <span class="divine-back-text">
+
             Volver
+
         </span>
 
     </button>
 
 
     <!-- =========================
-         ALERTA DE ERROR
+         ALERTAS
     ========================= -->
 
     <script>
 
-        <?php if (isset($_GET['error'])) { ?>
+        <?php if (isset($_GET['error'])): ?>
+
+        <?php if ($_GET['error'] == '1'): ?>
+
+        Swal.fire({
+
+            icon: 'error',
+
+            title: 'No se pudo abrir el archivo ♡',
+
+            text: 'Ocurrió un problema al guardar tu comentario. Inténtalo nuevamente.',
+
+            confirmButtonText: 'Aceptar',
+
+            confirmButtonColor: '#9b4567',
+
+            background: '#fff8fa',
+
+            color: '#432536',
+
+            buttonsStyling: true
+
+        });
+
+        <?php elseif ($_GET['error'] == '2'): ?>
 
         Swal.fire({
 
@@ -1157,7 +1421,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         });
 
-        <?php } ?>
+        <?php elseif ($_GET['error'] == '3'): ?>
+
+        Swal.fire({
+
+            icon: 'warning',
+
+            title: 'Mensaje vacío ♡',
+
+            text: 'Escribe algo antes de publicar tu comentario.',
+
+            confirmButtonText: 'Aceptar',
+
+            confirmButtonColor: '#9b4567',
+
+            background: '#fff8fa',
+
+            color: '#432536',
+
+            buttonsStyling: true
+
+        });
+
+        <?php endif; ?>
+
+        <?php endif; ?>
 
     </script>
 
