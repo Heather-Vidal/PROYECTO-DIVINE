@@ -1,4 +1,4 @@
-
+```php
 <?php
 
 /*
@@ -2384,34 +2384,22 @@ include 'submenuespecial.php';
 
                 <!-- ==================================================
                      VER COMENTARIOS
-                     SOLO EL ADMINISTRADOR PUEDE ACCEDER
+                     SOLO APARECE SI LA SESIÓN ES ADMINISTRADOR
                 =================================================== -->
 
-                <?php if (
+                <?php
 
+                if (
                     isset($_SESSION['rol']) &&
-
                     $_SESSION['rol'] === 'administrador'
+                ):
 
-                ): ?>
+                ?>
 
                     <a
                         href="comentar.php"
                         class="btn btn-light"
                         style="display:inline-block; margin-top:12px;"
-                    >
-
-                        Ver comentarios
-
-                    </a>
-
-                <?php else: ?>
-
-                    <a
-                        href="#"
-                        class="btn btn-light"
-                        style="display:inline-block; margin-top:12px;"
-                        onclick="mostrarAccesoComentarios(event);"
                     >
 
                         Ver comentarios
@@ -2508,32 +2496,6 @@ function divineAlert(icono, titulo, mensaje) {
         focusConfirm: false
 
     });
-
-}
-
-</script>
-
-
-<!-- =========================================================
-     SWEETALERT:
-     USUARIO NORMAL INTENTA VER COMENTARIOS
-========================================================= -->
-
-<script>
-
-function mostrarAccesoComentarios(event) {
-
-    event.preventDefault();
-
-    divineAlert(
-
-        'warning',
-
-        'Acceso restringido',
-
-        'Solo el administrador puede ver los comentarios.'
-
-    );
 
 }
 
@@ -2645,4 +2607,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
-
+ 
