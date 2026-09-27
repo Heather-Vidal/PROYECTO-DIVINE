@@ -1,4 +1,4 @@
-
+```php
 <?php
 
 /*
@@ -1630,9 +1630,10 @@ include 'submenuespecial.php';
 
                 <p>
 
-                    El sistema busca reemplazar el manejo de registros físicos
-                    de productos, pedidos, ventas e inventario por una gestión
-                    organizada mediante una base de datos y módulos web.
+               El sistema busca mejorar la administración de productos, usuarios y ventas, reemplazando el manejo
+                de registros físicos de productos, pedidos e inventario por una gestión organizada mediante una base de 
+                datos y módulos web, facilitando el proceso de compra de los clientes y optimizando la gestión del 
+                emprendimiento DIVINE.
 
                 </p>
 
@@ -1753,13 +1754,13 @@ include 'submenuespecial.php';
                 </div>
 
                 <h3>
-                    Roles de usuario
+      Pedidos virtuales
+
                 </h3>
 
                 <p>
-
-                    Diferenciación de permisos entre administrador y vendedor
-                    según las funciones que corresponde realizar.
+El cliente puede seleccionar productos, 
+agregarlos al carrito y realizar pedidos de manera virtual, agilizando el proceso de compra.
 
                 </p>
 
@@ -1946,6 +1947,29 @@ include 'submenuespecial.php';
             </div>
 
         </div>
+<br>
+         <div class="module">
+
+                <span class="module-number">
+                    07
+                </span>
+
+                <h3>
+                  Pedidos virtuales
+                </h3>
+
+                <p>
+
+                   El cliente puede seleccionar los productos de su preferencia, agregarlos al carrito y realizar
+                    pedidos de manera virtual, sin necesidad de asistir personalmente a una tienda física. Esta funcionalidad 
+                    facilita el proceso de compra,
+                    permite gestionar las solicitudes de forma más organizada y brinda mayor comodidad al cliente.
+                </p>
+
+            </div>
+            
+
+        </div>
 
     </div>
 
@@ -1967,7 +1991,7 @@ include 'submenuespecial.php';
             </small>
 
             <h2>
-                Construcción del proyecto
+                Construcción de DIVINE
             </h2>
 
             <p>
@@ -2293,11 +2317,11 @@ include 'submenuespecial.php';
                     <div>
 
                         <strong>
-                            Proyecto académico
+                            Sistema DIVINE
                         </strong>
 
                         <span>
-                            Sistema web para gestión de emprendimiento
+                            Sistema web para gestión del emprendimiento.
                         </span>
 
                     </div>
@@ -2384,34 +2408,22 @@ include 'submenuespecial.php';
 
                 <!-- ==================================================
                      VER COMENTARIOS
-                     SOLO EL ADMINISTRADOR PUEDE ACCEDER
+                     SOLO APARECE SI LA SESIÓN ES ADMINISTRADOR
                 =================================================== -->
 
-                <?php if (
+                <?php
 
+                if (
                     isset($_SESSION['rol']) &&
-
                     $_SESSION['rol'] === 'administrador'
+                ):
 
-                ): ?>
+                ?>
 
                     <a
                         href="comentar.php"
                         class="btn btn-light"
                         style="display:inline-block; margin-top:12px;"
-                    >
-
-                        Ver comentarios
-
-                    </a>
-
-                <?php else: ?>
-
-                    <a
-                        href="#"
-                        class="btn btn-light"
-                        style="display:inline-block; margin-top:12px;"
-                        onclick="mostrarAccesoComentarios(event);"
                     >
 
                         Ver comentarios
@@ -2508,32 +2520,6 @@ function divineAlert(icono, titulo, mensaje) {
         focusConfirm: false
 
     });
-
-}
-
-</script>
-
-
-<!-- =========================================================
-     SWEETALERT:
-     USUARIO NORMAL INTENTA VER COMENTARIOS
-========================================================= -->
-
-<script>
-
-function mostrarAccesoComentarios(event) {
-
-    event.preventDefault();
-
-    divineAlert(
-
-        'warning',
-
-        'Acceso restringido',
-
-        'Solo el administrador puede ver los comentarios.'
-
-    );
 
 }
 
@@ -2645,4 +2631,4 @@ document.addEventListener('DOMContentLoaded', function() {
 </body>
 
 </html>
-
+ 
