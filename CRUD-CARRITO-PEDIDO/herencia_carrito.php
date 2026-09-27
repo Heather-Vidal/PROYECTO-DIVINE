@@ -1,9 +1,6 @@
 
 <style>
-
-/* ==================================================
-   CONTENEDOR DEL CARRITO
-================================================== */
+ 
 
 .carrito-divine{
 
@@ -20,16 +17,13 @@
     justify-content:center;
 }
 
-
-/* ==================================================
-   BOTÓN DEL CARRITO
-================================================== */
+ 
 
 .boton-carrito-divine{
 
     position:relative;
 
-    width: 40px;
+    width: 20px;
     height: 200px;
     display:flex;
 
@@ -55,10 +49,7 @@
         scale(1.08);
 }
 
-
-/* ==================================================
-   IMAGEN DEL CARRITO
-================================================== */
+ 
 
 .boton-carrito-divine img{
 
@@ -337,24 +328,14 @@ del archivo independiente.
     display:flex;
 }
 
-
-/*
-También permite que tu código anterior
-use:
-
-style.display = "block";
-*/
+ 
 
 .modal-carrito[style*="display: block"]{
 
     display:flex !important;
 }
 
-
-/* ==================================================
-   MODAL COMPATIBLE DIVINE
-================================================== */
-
+ 
 .modal-carrito-divine{
 
     position:fixed;
@@ -390,11 +371,7 @@ style.display = "block";
     display:flex !important;
 }
 
-
-/* ==================================================
-   VENTANA GRANDE
-================================================== */
-
+ 
 .carrito-ventana{
 
     width:95%;
@@ -450,10 +427,7 @@ style.display = "block";
         aparecerCarrito .3s ease;
 }
 
-
-/* ==================================================
-   ANIMACIÓN
-================================================== */
+ 
 
 @keyframes aparecerCarrito{
 
@@ -475,12 +449,7 @@ style.display = "block";
             scale(1);
     }
 }
-
-
-/* ==================================================
-   CABECERA
-================================================== */
-
+ 
 .carrito-cabecera{
 
     display:flex;
@@ -513,7 +482,7 @@ style.display = "block";
 }
 
 
-/* Compatibilidad */
+ 
 
 .carrito-cabecera-divine{
 
@@ -546,11 +515,7 @@ style.display = "block";
     margin:0;
 }
 
-
-/* ==================================================
-   BOTÓN CERRAR
-================================================== */
-
+ 
 .cerrar-carrito{
 
     border:none;
@@ -587,8 +552,7 @@ style.display = "block";
         rotate(90deg);
 }
 
-
-/* Compatibilidad */
+ 
 
 .cerrar-carrito-divine{
 
@@ -626,11 +590,7 @@ style.display = "block";
         rotate(90deg);
 }
 
-
-/* ==================================================
-   CONTENIDO
-================================================== */
-
+ 
 #contenidoCarrito{
 
     min-height:150px;
@@ -639,7 +599,7 @@ style.display = "block";
 }
 
 
-/* Compatibilidad */
+ 
 
 #contenidoCarritoDivine{
 
@@ -648,11 +608,7 @@ style.display = "block";
     width:100%;
 }
 
-
-/* ==================================================
-   PRODUCTO
-================================================== */
-
+ 
 .producto-carrito{
 
     display:flex;
@@ -710,8 +666,7 @@ style.display = "block";
     font-size:17px;
 }
 
-
-/* Compatibilidad Divine */
+ 
 
 .producto-carrito-divine{
 
@@ -766,11 +721,7 @@ style.display = "block";
     font-weight:bold;
 }
 
-
-/* ==================================================
-   CARRITO VACÍO
-================================================== */
-
+ 
 .carrito-vacio{
 
     text-align:center;
@@ -790,11 +741,7 @@ style.display = "block";
     color:#777;
 }
 
-
-/* ==================================================
-   BOTÓN ACTUALIZAR
-================================================== */
-
+ 
 .boton-actualizar-carrito{
 
     width:100%;
@@ -1147,15 +1094,7 @@ function abrirCarrito(event){
         "flex";
 
 
-    /*
-    IMPORTANTE:
-
-    Si tu proyecto ya tiene una función
-    cargarCarrito(), NO la reemplazamos.
-
-    La llamamos para que siga cargando
-    exactamente tus productos.
-    */
+    
 
     if(
         typeof cargarCarrito ===
@@ -1508,4 +1447,3 @@ document.addEventListener(
 );
 
 </script>
-```
