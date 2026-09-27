@@ -290,5 +290,5 @@ $(function(){
 </script>
 
 </body>
-
+<?php include '../boton_flotante.php'; ?>
 </html>
