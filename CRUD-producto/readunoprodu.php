@@ -1,9 +1,97 @@
 <?php
 
+// =====================================================
+// CONTROL DE SESIÓN Y ACCESO
+// =====================================================
+// En DIVINE:
+// - SIN sesión = cliente
+// - administrador = puede administrar productos
+// - vendedor = no puede acceder a esta página
+//
+// Además:
+// - administrador = puede ver COSTO y CÓDIGO
+// - cliente sin sesión = NO puede ver COSTO ni CÓDIGO
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+
+// =====================================================
+// VERIFICAR ROL
+// =====================================================
+
+if (isset($_SESSION['rol'])) {
+
+    if ($_SESSION['rol'] !== 'administrador') {
+
+        ?>
+        <!DOCTYPE html>
+
+        <html lang="es">
+
+        <head>
+
+            <meta charset="UTF-8">
+
+            <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0"
+            >
+
+            <title>Acceso denegado | DIVINE</title>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        </head>
+
+        <body>
+
+            <script>
+
+                Swal.fire({
+
+                    icon: 'error',
+
+                    title: 'Acceso denegado',
+
+                    text: 'No tienes acceso a esta página.',
+
+                    confirmButtonText: 'Volver',
+
+                    confirmButtonColor: '#744653'
+
+                }).then(() => {
+
+                    window.location.href = '../totu.php';
+
+                });
+
+            </script>
+
+        </body>
+
+        </html>
+
+        <?php
+
+        exit;
+    }
+}
+
+
+// =====================================================
+// CONEXIÓN A LA BASE DE DATOS
+// =====================================================
+
 $servidor = "localhost";
+
 $usuario = "root";
+
 $contraseña = "";
+
 $nombreBD = "DIVINE";
+
 
 $conn = new mysqli(
     $servidor,
@@ -12,8 +100,11 @@ $conn = new mysqli(
     $nombreBD
 );
 
+
 if ($conn->connect_error) {
+
     die("Ocurrió un error al conectar con la base de datos.");
+
 }
 
 
@@ -21,7 +112,9 @@ if ($conn->connect_error) {
 // RECIBIR CÓDIGO
 // =====================================================
 
-$codigo = isset($_GET['codigo']) ? intval($_GET['codigo']) : 0;
+$codigo = isset($_GET['codigo'])
+    ? intval($_GET['codigo'])
+    : 0;
 
 
 // =====================================================
@@ -33,6 +126,7 @@ $stmt = $conn->prepare(
 );
 
 $stmt->bind_param("i", $codigo);
+
 $stmt->execute();
 
 $resultado = $stmt->get_result();
@@ -41,50 +135,63 @@ $resultado = $stmt->get_result();
 if ($resultado->num_rows > 0) {
 
 
-// =====================================================
-// BUSCAR IMAGEN DEL PRODUCTO
-// =====================================================
+    // =====================================================
+    // BUSCAR IMAGEN DEL PRODUCTO
+    // =====================================================
 
-$nombreArchivo = "p-" . $codigo;
+    $nombreArchivo = "p-" . $codigo;
 
-$directorio = "../PRODUCTO-img/";
+    $directorio = "../PRODUCTO-img/";
 
-$extensiones = [
-    "jpg",
-    "jpeg",
-    "png",
-    "gif"
-];
+    $extensiones = [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif"
+    ];
 
-$imagenProducto = null;
+    $imagenProducto = null;
 
 
-foreach ($extensiones as $extension) {
+    foreach ($extensiones as $extension) {
 
-    $ruta =
-        $directorio .
-        $nombreArchivo .
-        "." .
-        $extension;
+        $ruta =
+            $directorio .
+            $nombreArchivo .
+            "." .
+            $extension;
 
-    if (file_exists($ruta)) {
 
-        $imagenProducto = $ruta;
+        if (file_exists($ruta)) {
 
-        break;
+            $imagenProducto = $ruta;
+
+            break;
+
+        }
+
     }
-}
 
 
-// =====================================================
-// IMAGEN DE RESPALDO
-// =====================================================
+    // =====================================================
+    // IMAGEN DE RESPALDO
+    // =====================================================
 
-if ($imagenProducto === null) {
+    if ($imagenProducto === null) {
 
-    $imagenProducto =
-        "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
-}
+        $imagenProducto =
+            "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
+
+    }
+
+
+    // =====================================================
+    // DETERMINAR SI ES ADMINISTRADOR
+    // =====================================================
+
+    $esAdministrador =
+        isset($_SESSION['rol']) &&
+        $_SESSION['rol'] === 'administrador';
 
 ?>
 
@@ -106,13 +213,19 @@ if ($imagenProducto === null) {
 </title>
 
 
-<!-- FUENTES -->
+<!-- =====================================================
+     FUENTES
+     ===================================================== -->
 
 <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet"
 >
 
+
+<!-- =====================================================
+     ESTILOS
+     ===================================================== -->
 
 <style>
 
@@ -123,12 +236,15 @@ if ($imagenProducto === null) {
 :root {
 
     --rosa: #d99aaa;
+
     --rosa-claro: #f6dfe4;
+
     --rosa-muy-claro: #fff7f8;
 
     --crema: #fffaf5;
 
     --dorado: #c8a56a;
+
     --dorado-claro: #e8d1a4;
 
     --vino: #744653;
@@ -139,6 +255,7 @@ if ($imagenProducto === null) {
 
     --sombra:
         0 20px 50px rgba(116, 70, 83, 0.15);
+
 }
 
 
@@ -147,7 +264,9 @@ if ($imagenProducto === null) {
    ===================================================== */
 
 * {
+
     box-sizing: border-box;
+
 }
 
 
@@ -240,7 +359,9 @@ body {
 }
 
 
-/* decoración */
+/* =====================================================
+   DECORACIÓN
+   ===================================================== */
 
 .contenedor::before {
 
@@ -312,7 +433,9 @@ body {
 }
 
 
-/* capa sobre la imagen */
+/* =====================================================
+   CAPA SOBRE LA IMAGEN
+   ===================================================== */
 
 .imagen::after {
 
@@ -356,7 +479,9 @@ body {
 }
 
 
-/* pequeño encabezado */
+/* =====================================================
+   SUBTÍTULO
+   ===================================================== */
 
 .subtitulo {
 
@@ -527,7 +652,7 @@ body {
    PRECIO
    ===================================================== */
 
-.item p:nth-of-type(4) {
+.item p.precio {
 
     background:
         linear-gradient(
@@ -545,24 +670,19 @@ body {
     border-radius:
         12px;
 
-}
-
-
-.item p:nth-of-type(4) span {
-
-    color:
-        var(--rosa);
-
-}
-
-
-.item p:nth-of-type(4) {
-
     font-size:
         18px;
 
     font-weight:
         600;
+
+}
+
+
+.item p.precio span {
+
+    color:
+        var(--rosa);
 
 }
 
@@ -614,7 +734,9 @@ body {
 }
 
 
-/* editar */
+/* =====================================================
+   EDITAR
+   ===================================================== */
 
 .boton:first-child {
 
@@ -648,7 +770,9 @@ body {
 }
 
 
-/* eliminar */
+/* =====================================================
+   ELIMINAR
+   ===================================================== */
 
 .boton:last-child {
 
@@ -671,6 +795,44 @@ body {
 
     transform:
         translateY(-3px);
+
+}
+
+
+/* =====================================================
+   BOTÓN CARRITO
+   ===================================================== */
+
+.boton-carrito {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--rosa),
+            var(--dorado)
+        );
+
+    color:
+        white;
+
+    border:
+        1px solid var(--rosa);
+
+    box-shadow:
+        0 8px 20px
+        rgba(217,154,170,0.25);
+
+}
+
+
+.boton-carrito:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 10px 25px
+        rgba(217,154,170,0.35);
 
 }
 
@@ -959,7 +1121,15 @@ body {
 
 <?php
 
+// =====================================================
+// MOSTRAR INFORMACIÓN DEL PRODUCTO
+// =====================================================
+
 while ($fila = $resultado->fetch_assoc()) {
+
+    // -------------------------------------------------
+    // DATOS VISIBLES PARA TODOS
+    // -------------------------------------------------
 
     echo "
 
@@ -1002,27 +1172,14 @@ while ($fila = $resultado->fetch_assoc()) {
         </p>
 
 
-        <p>
+        <p class='precio'>
 
             <span>
                 Precio
             </span>
 
-            $"
+            Bs. "
             . htmlspecialchars($fila['precio'])
-            . "
-
-        </p>
-
-
-        <p>
-
-            <span>
-                Costo
-            </span>
-
-            $"
-            . htmlspecialchars($fila['costo'])
             . "
 
         </p>
@@ -1034,28 +1191,58 @@ while ($fila = $resultado->fetch_assoc()) {
                 Stock
             </span>
 
-            "
+           Unidades "
             . htmlspecialchars($fila['stock'])
-            . "
-
-        </p>
-
-
-        <p>
-
-            <span>
-                Código
-            </span>
-
-            #"
-            . htmlspecialchars($fila['codigo'])
             . "
 
         </p>
 
     ";
 
+
+    // =================================================
+    // COSTO Y CÓDIGO
+    // SOLO PARA ADMINISTRADOR
+    // =================================================
+
+    if ($esAdministrador) {
+
+        echo "
+
+            <p>
+
+                <span>
+                    Costo
+                </span>
+
+                Bs. "
+                . htmlspecialchars($fila['costo'])
+                . "
+
+            </p>
+
+
+            <p>
+
+                <span>
+                    Código
+                </span>
+
+                #"
+                . htmlspecialchars($fila['codigo'])
+                . "
+
+            </p>
+
+        ";
+
+    }
+
+
+    // Guardar código para los botones
+
     $codigo = $fila['codigo'];
+
 }
 
 ?>
@@ -1076,21 +1263,98 @@ while ($fila = $resultado->fetch_assoc()) {
         <div class="botones">
 
 
-            <a
-                href="updateformprodu.php?codigo=<?php echo $codigo; ?>"
-                class="boton"
-            >
-                ✦ Editar producto
-            </a>
+            <?php if ($esAdministrador): ?>
 
 
-            <a
-                href="deleteprodu.php?codigo=<?php echo $codigo; ?>"
-                class="boton"
-                onclick="return confirm('¿Estás segura de que deseas eliminar este producto?');"
-            >
-                ♡ Eliminar
-            </a>
+                <!-- =========================================
+                     BOTONES DEL ADMINISTRADOR
+                     ========================================= -->
+
+                <a
+                    href="updateformprodu.php?codigo=<?php echo urlencode($codigo); ?>"
+                    class="boton"
+                >
+                    ✦ Editar producto
+                </a>
+
+
+                <a
+                    href="deleteprodu.php?codigo=<?php echo urlencode($codigo); ?>"
+                    class="boton"
+                    onclick="return confirmarEliminacion(event);"
+                >
+                    ♡ Eliminar
+                </a>
+
+
+            <?php else: ?>
+
+
+                <!-- =========================================
+                     CLIENTE SIN SESIÓN
+                     ========================================= -->
+
+                <a
+                    href="../CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php echo urlencode($codigo); ?>"
+                    class="boton boton-carrito"
+                >
+                     Agregar al carrito
+                </a>
+
+
+            <?php endif; ?>
+
+
+        </div>
+
+
+        <!-- =================================================
+             SWEET ALERT
+             ================================================= -->
+
+        <script>
+
+            function confirmarEliminacion(event) {
+
+                event.preventDefault();
+
+                const url = event.currentTarget.href;
+
+
+                Swal.fire({
+
+                    icon: 'warning',
+
+                    title: '¿Eliminar producto?',
+
+                    text: '¿Estás segura de que deseas eliminar este producto?',
+
+                    showCancelButton: true,
+
+                    confirmButtonText: 'Sí, eliminar',
+
+                    cancelButtonText: 'Cancelar',
+
+                    confirmButtonColor: '#a45b69',
+
+                    cancelButtonColor: '#744653'
+
+                }).then((resultado) => {
+
+                    if (resultado.isConfirmed) {
+
+                        window.location.href = url;
+
+                    }
+
+                });
+
+
+                return false;
+
+            }
+
+        </script>
 
 
         </div>
@@ -1100,29 +1364,59 @@ while ($fila = $resultado->fetch_assoc()) {
              NAVEGACIÓN
              ================================================= -->
 
-        <div class="navegacion">
+        <?php if ($esAdministrador): ?>
 
 
-            <a
-                href="readtodoprodu.php"
-                class="boton2"
+            <div class="navegacion">
+
+                <a
+                    href="readtodoprodu.php"
+                    class="boton2"
+                >
+                    ← Ver productos
+                </a>
+
+
+                <a
+                    href="../totu.php"
+                    class="boton2"
+                >
+                    Volver al inicio
+                </a>
+
+            </div>
+
+
+        <?php else: ?>
+
+
+            <!-- =============================================
+                 CLIENTE SIN SESIÓN
+                 ============================================= -->
+
+            <div
+                class="navegacion"
+                style="justify-content: center;"
             >
-                ← Ver productos
-            </a>
+
+                <a
+                    href="../produccomp.php"
+                    class="boton2"
+                >
+                    volver a productos
+                </a>
+
+            </div>
 
 
-            <a
-                href="../totu.php"
-                class="boton2"
-            >
-                Volver al inicio
-            </a>
+        <?php endif; ?>
 
 
         </div>
 
 
     </div>
+
 
 </div>
 
@@ -1135,6 +1429,11 @@ while ($fila = $resultado->fetch_assoc()) {
 <?php
 
 } else {
+
+
+    // =====================================================
+    // PRODUCTO NO ENCONTRADO
+    // =====================================================
 
     echo "
 
@@ -1155,8 +1454,13 @@ while ($fila = $resultado->fetch_assoc()) {
         </div>
 
     ";
+
 }
 
+
+// =====================================================
+// CERRAR CONEXIÓN
+// =====================================================
 
 $stmt->close();
 

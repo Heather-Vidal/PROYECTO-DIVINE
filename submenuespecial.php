@@ -1537,13 +1537,12 @@ if ($busquedaRealizada) {
                             </div>
 
 
-                            <a
-                                class="resultado-boton"
-                                href="produccomp.php"
-                            >
-                                Ver productos
-                            </a>
-
+<a
+    class="resultado-boton"
+    href="./CRUD-producto/readunoprodu.php?codigo=<?php echo urlencode($producto['codigo']); ?>"
+>
+    Detalles del producto
+</a>
                         </div>
 
                     </div>
