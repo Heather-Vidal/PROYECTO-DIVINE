@@ -157,7 +157,7 @@ if ($busqueda === "") {
    CONFIGURACIÓN DE GEMINI
 ====================================================== */
 
-$modelo = "gemini-3.8-flash";
+
 
 $url =
     "https://generativelanguage.googleapis.com/v1beta/models/"
