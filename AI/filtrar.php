@@ -1,3044 +1,744 @@
- <?php
-
+<?php
 
 /* ======================================================
-   CONFIGURACIÓN GENERAL
-====================================================== */
+   DIVINE - ASISTENTE IA + PRODUCTOS REALES
+   VERSION: PREGUNTAS ABIERTAS SIN BD
 
+   REGLA PRINCIPAL:
+   - Pregunta abierta/general -> SOLO IA.
+   - Solicitud explícita de productos -> BD.
+   - Pregunta general + solicitud explícita de productos -> IA + BD.
+
+   La IA NO decide si debe consultar la BD.
+   PHP determina primero la intención mediante reglas.
+====================================================== */
 
 ini_set("display_errors", 0);
-
 ini_set("log_errors", 1);
-
 error_reporting(E_ALL);
 
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Content-Type: application/json; charset=UTF-8");
 
-header(
-    "Access-Control-Allow-Origin: *"
-);
-
-
-header(
-    "Access-Control-Allow-Headers: Content-Type, Authorization"
-);
-
-
-header(
-    "Access-Control-Allow-Methods: POST, OPTIONS"
-);
-
-
-header(
-    "Content-Type: application/json; charset=UTF-8"
-);
-
-
-/* ======================================================
-   OPTIONS
-====================================================== */
-
-
-if (
-    $_SERVER["REQUEST_METHOD"] === "OPTIONS"
-) {
-
+if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
     http_response_code(204);
-
     exit();
-
 }
 
-
 /* ======================================================
-   CONFIGURACIÓN DE NVIDIA
+   CONFIGURACIÓN NVIDIA
 ====================================================== */
 
+$api_url = "https://integrate.api.nvidia.com/v1/chat/completions";
+$api_key = " "; // <-- COLOCA AQUÍ TU API KEY REAL
+$modelo = "openai/gpt-oss-20b";
 
-/*
-   PON AQUÍ TU API KEY.
-
-   NO COLOQUES LA API KEY REAL EN EL FRONTEND.
-*/
-
-
-$api_url =
-    "https://integrate.api.nvidia.com/v1/chat/completions";
-
-$api_key =
-    "";
-
-$modelo =
-    "openai/gpt-oss-20b";
-
-
-/* ======================================================
-   VALIDAR API KEY
-====================================================== */
-
-
-if (
-    trim($api_key) === "" ||
-    $api_key != ""
-) {
-
+if (trim($api_key) === "") {
     http_response_code(500);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "La API Key de NVIDIA no está configurada."
-
-        ],
-
-        JSON_UNESCAPED_UNICODE
-
-    );
-
-
+    echo json_encode([
+        "ok" => false,
+        "error" => "La API Key de NVIDIA está vacía."
+    ], JSON_UNESCAPED_UNICODE);
     exit();
-
 }
 
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    http_response_code(405);
+    echo json_encode([
+        "ok" => false,
+        "error" => "Método no permitido. Usa POST."
+    ], JSON_UNESCAPED_UNICODE);
+    exit();
+}
 
 /* ======================================================
-   SOLO POST
+   FUNCIONES
 ====================================================== */
 
-
-if (
-    $_SERVER["REQUEST_METHOD"] !== "POST"
-) {
-
-    http_response_code(405);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "Método no permitido. Usa POST."
-
-        ],
-
-        JSON_UNESCAPED_UNICODE
-
-    );
-
-
+function responderJSON($datos, $codigo = 200)
+{
+    http_response_code($codigo);
+    echo json_encode($datos, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
-
 }
 
+function normalizarTexto($texto)
+{
+    $texto = mb_strtolower(trim($texto), "UTF-8");
+
+    $buscar = [
+        "á", "é", "í", "ó", "ú", "ü", "ñ"
+    ];
+
+    $reemplazar = [
+        "a", "e", "i", "o", "u", "u", "n"
+    ];
+
+    return str_replace($buscar, $reemplazar, $texto);
+}
+
+function llamarNvidia($api_url, $api_key, $modelo, $messages, $temperature = 0.7)
+{
+    $payload = [
+        "model" => $modelo,
+        "messages" => $messages,
+        "temperature" => $temperature,
+        "max_tokens" => 1000
+    ];
+
+    $ch = curl_init($api_url);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json",
+            "Authorization: Bearer " . $api_key
+        ],
+        CURLOPT_TIMEOUT => 60,
+        CURLOPT_CONNECTTIMEOUT => 15
+    ]);
+
+    $respuesta = curl_exec($ch);
+    $curl_error = curl_error($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($respuesta === false || $curl_error !== "") {
+        return [
+            "ok" => false,
+            "error" => "No se pudo conectar con NVIDIA.",
+            "detalle" => $curl_error
+        ];
+    }
+
+    $data = json_decode($respuesta, true);
+
+    if (!is_array($data)) {
+        return [
+            "ok" => false,
+            "error" => "NVIDIA no devolvió una respuesta JSON válida.",
+            "codigo" => $http_code,
+            "respuesta" => $respuesta
+        ];
+    }
+
+    if ($http_code < 200 || $http_code >= 300) {
+        $detalle = "Error desconocido de NVIDIA.";
+
+        if (isset($data["error"]["message"])) {
+            $detalle = $data["error"]["message"];
+        } elseif (isset($data["error"]) && is_string($data["error"])) {
+            $detalle = $data["error"];
+        }
+
+        return [
+            "ok" => false,
+            "error" => "NVIDIA devolvió un error.",
+            "codigo" => $http_code,
+            "detalle" => $detalle
+        ];
+    }
+
+    $texto = $data["choices"][0]["message"]["content"] ?? "";
+
+    if (trim($texto) === "") {
+        return [
+            "ok" => false,
+            "error" => "NVIDIA no devolvió contenido."
+        ];
+    }
+
+    return [
+        "ok" => true,
+        "texto" => trim($texto),
+        "data" => $data
+    ];
+}
+
+/* ======================================================
+   RECIBIR MENSAJE
+====================================================== */
+
+$input = file_get_contents("php://input");
+$datos = json_decode($input, true);
+
+if (!is_array($datos)) {
+    $datos = $_POST;
+}
+
+$mensaje = "";
+
+foreach (["busqueda", "mensaje", "pregunta", "consulta"] as $campo) {
+    if (isset($datos[$campo]) && trim((string)$datos[$campo]) !== "") {
+        $mensaje = trim((string)$datos[$campo]);
+        break;
+    }
+}
+
+if ($mensaje === "") {
+    responderJSON([
+        "ok" => false,
+        "error" => "No se recibió ninguna pregunta."
+    ], 400);
+}
+
+/* ======================================================
+   DETECCIÓN DE INTENCIÓN
+
+   IMPORTANTE:
+   AQUÍ NO SE USA IA PARA DECIDIR SI CONSULTAR LA BD.
+
+   Solo se consulta la BD cuando el usuario utiliza una
+   expresión que realmente pide productos, disponibilidad,
+   precios, compra o artículos de DIVINE.
+====================================================== */
+
+$q = normalizarTexto($mensaje);
+
+/* ------------------------------------------------------
+   PALABRAS / FRASES QUE SÍ SIGNIFICAN "QUIERO PRODUCTOS"
+------------------------------------------------------ */
+
+$solicitaProductos = [
+    "producto",
+    "productos",
+    "crema",
+    "cremas",
+    "serum",
+    "serums",
+    "suero",
+    "sueros",
+    "shampoo",
+    "champu",
+    "acondicionador",
+    "mascarilla",
+    "aceite",
+    "aceites",
+    "gel",
+    "tonico",
+    "tonicos",
+    "limpiador",
+    "limpiadores",
+    "protector solar",
+    "bloqueador",
+    "disponible",
+    "disponibles",
+    "disponibilidad",
+    "stock",
+    "precio",
+    "precios",
+    "cuanto cuesta",
+    "cuanto cuestan",
+    "cuanto vale",
+    "cuanto valen",
+    "que tienen",
+    "que venden",
+    "que ofrece divine",
+    "que productos tienen",
+    "productos tienen",
+    "quiero comprar",
+    "quiero una crema",
+    "quiero un shampoo",
+    "quiero un serum",
+    "busco un producto",
+    "busco una crema",
+    "busco un shampoo",
+    "busco un serum",
+    "muestrame productos",
+    "mostrame productos",
+    "ensename productos",
+    "tienen algo para",
+    "tienen productos para",
+    "venden productos para",
+    "producto de divine",
+    "productos de divine",
+    "de divine"
+];
+
+$haySolicitudProducto = false;
+
+foreach ($solicitaProductos as $frase) {
+    if (mb_strpos($q, $frase, 0, "UTF-8") !== false) {
+        $haySolicitudProducto = true;
+        break;
+    }
+}
+
+/* ------------------------------------------------------
+   PALABRAS QUE INDICAN QUE ADEMÁS QUIERE EXPLICACIÓN,
+   RUTINA O CONSEJO.
+------------------------------------------------------ */
+
+$solicitaConsejo = [
+    "que hago",
+    "como hago",
+    "como cuidar",
+    "como puedo cuidar",
+    "que rutina",
+    "rutina",
+    "consejo",
+    "consejos",
+    "explicame",
+    "explicacion",
+    "por que",
+    "porque",
+    "como puedo",
+    "que deberia hacer",
+    "que puedo hacer",
+    "que me recomiendas",
+    "como debo",
+    "que deberia usar",
+    "que puedo usar",
+    "que podria usar",
+    "que seria bueno"
+];
+
+$haySolicitudConsejo = false;
+
+foreach ($solicitaConsejo as $frase) {
+    if (mb_strpos($q, $frase, 0, "UTF-8") !== false) {
+        $haySolicitudConsejo = true;
+        break;
+    }
+}
+
+/* ======================================================
+   DECISIÓN FINAL
+
+   PREGUNTA:
+   No hay solicitud explícita de productos.
+
+   PRODUCTO:
+   Sí solicita productos.
+
+   MIXTA:
+   Solicita productos + también quiere explicación/consejo.
+====================================================== */
+
+if (!$haySolicitudProducto) {
+    $tipo = "pregunta";
+} elseif ($haySolicitudConsejo) {
+    $tipo = "mixta";
+} else {
+    $tipo = "producto";
+}
+
+/* ======================================================
+   CASO PREGUNTA ABIERTA
+
+   ESTE BLOQUE NO CONECTA A MYSQL.
+   ESTE BLOQUE NO CONSULTA PRODUCTOS.
+   ESTE BLOQUE USA SOLAMENTE LA IA.
+====================================================== */
+
+if ($tipo === "pregunta") {
+
+    $systemPrompt = <<<SYSTEM
+Eres el asistente virtual de DIVINE, una tienda especializada en cuidado de la piel y del cabello.
+
+Tu función principal es responder preguntas abiertas y generales de forma útil, natural y conversacional.
+
+MUY IMPORTANTE:
+Esta conversación NO necesita consultar la base de datos cuando el usuario no está pidiendo productos de DIVINE.
+
+Puedes responder directamente utilizando tus conocimientos generales sobre:
+- cuidado facial
+- cuidado de la piel
+- tipos de piel
+- rutinas de skincare
+- hidratación
+- limpieza facial
+- protección solar
+- cabello
+- cuero cabelludo
+- tipos de cabello
+- rutinas capilares
+- hábitos de cuidado
+- ingredientes cosméticos y su función general
+
+Si el usuario pregunta algo como:
+"Tengo piel grasa, ¿qué hago?"
+"¿Cómo cuido mi piel?"
+"¿Qué rutina puedo hacer?"
+"¿Por qué tengo la piel seca?"
+"¿Cómo puedo cuidar mi cabello?"
+"¿Qué hago para el frizz?"
+"¿Para qué sirve el ácido hialurónico?"
+
+DEBES RESPONDER LA PREGUNTA DIRECTAMENTE.
+
+NO digas que no tienes información en la base de datos.
+NO digas que necesitas buscar productos.
+NO pidas al usuario que formule la pregunta como búsqueda de productos.
+NO inventes productos de DIVINE.
+
+Si el usuario pregunta por síntomas o problemas de salud, proporciona orientación general y evita presentar un diagnóstico médico como una certeza. Si hay síntomas graves, persistentes o una reacción importante, recomienda consultar con un profesional de salud.
+
+Si el usuario solamente quiere consejo, responde con consejo. No conviertas automáticamente la conversación en una recomendación de productos.
+
+Responde siempre en español.
+Sé clara, amable, natural y útil.
+SYSTEM;
+
+    $resultadoIA = llamarNvidia(
+        $api_url,
+        $api_key,
+        $modelo,
+        [
+            [
+                "role" => "system",
+                "content" => $systemPrompt
+            ],
+            [
+                "role" => "user",
+                "content" => $mensaje
+            ]
+        ],
+        0.7
+    );
+
+    if (!$resultadoIA["ok"]) {
+        responderJSON([
+            "ok" => false,
+            "tipo" => "pregunta",
+            "busqueda" => $mensaje,
+            "error" => $resultadoIA["error"],
+            "detalle" => $resultadoIA["detalle"] ?? null
+        ], 500);
+    }
+
+    responderJSON([
+        "ok" => true,
+        "tipo" => "pregunta",
+        "busqueda" => $mensaje,
+        "respuesta" => $resultadoIA["texto"],
+        "productos" => [],
+        "cantidad" => 0,
+        "fuente" => "ia"
+    ]);
+}
+
+/* ======================================================
+   DESDE AQUÍ SOLAMENTE SE PERMITE CONSULTAR MYSQL
+   SI EL USUARIO PIDIÓ PRODUCTOS.
+====================================================== */
 
 /* ======================================================
    BASE DE DATOS DIVINE
 ====================================================== */
 
-
-$servidor =
-    "localhost";
-
-
-$usuario =
-    "root";
-
-
-$contrasena =
-    "";
-
-
-$nombreBD =
-    "divine";
-
-
-/* ======================================================
-   CONEXIÓN MYSQL
-====================================================== */
-
+$servidor = "localhost";
+$usuario = "root";
+$contrasena = "";
+$nombreBD = "DIVINE";
 
 $conn = new mysqli(
-
     $servidor,
-
     $usuario,
-
     $contrasena,
-
     $nombreBD
-
 );
 
-
-/* ======================================================
-   COMPROBAR CONEXIÓN
-====================================================== */
-
-
-if (
-    $conn->connect_error
-) {
-
-    http_response_code(500);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "No se pudo conectar con la base de datos DIVINE.",
-
-            "detalle" =>
-                $conn->connect_error
-
-        ],
-
-        JSON_UNESCAPED_UNICODE
-
-    );
-
-
-    exit();
-
+if ($conn->connect_error) {
+    responderJSON([
+        "ok" => false,
+        "error" => "No se pudo conectar con la base de datos DIVINE.",
+        "detalle" => $conn->connect_error
+    ], 500);
 }
 
+$conn->set_charset("utf8mb4");
 
 /* ======================================================
-   UTF8
+   EXTRAER FILTROS SENCILLOS
 ====================================================== */
 
+$categoria = "";
 
-$conn->set_charset(
-    "utf8mb4"
-);
-
-
-/* ======================================================
-   RECIBIR JSON
-====================================================== */
-
-
-$input =
-    file_get_contents(
-        "php://input"
-    );
-
-
-/* ======================================================
-   VALIDAR INPUT
-====================================================== */
-
-
-if (trim($api_key) === "") {
-
-    http_response_code(500);
-
-    echo json_encode(
-        [
-            "ok" => false,
-            "error" => "La API Key de NVIDIA está vacía."
-        ],
-        JSON_UNESCAPED_UNICODE
-    );
-
-    exit();
+if (preg_match('/\b(skincare|skin care|facial|piel|rostro|cara)\b/iu', $mensaje)) {
+    $categoria = "SkinCare";
 }
 
+if (preg_match('/\b(skinhair|skin hair|cabello|pelo|capilar|cuero cabelludo|shampoo|champu|acondicionador)\b/iu', $mensaje)) {
+    $categoria = "SkinHair";
+}
+
+$precioMaximo = 0;
+
+if (preg_match('/(?:menos de|menor de|hasta|maximo|maxima|por menos de|menos de bs\.?|hasta bs\.?)\s*([0-9]+(?:[.,][0-9]+)?)/iu', $mensaje, $matchPrecio)) {
+    $precioMaximo = (float)str_replace(",", ".", $matchPrecio[1]);
+}
 
 /* ======================================================
-   DECODIFICAR JSON
+   CONSTRUIR TÉRMINOS DE BÚSQUEDA
 ====================================================== */
 
+$termino = "";
 
-$datos =
-    json_decode(
+$palabrasProblema = [
+    "piel grasa",
+    "piel seca",
+    "piel sensible",
+    "piel mixta",
+    "acne",
+    "manchas",
+    "poros",
+    "arrugas",
+    "hidratacion",
+    "deshidratada",
+    "cabello seco",
+    "cabello graso",
+    "cabello danado",
+    "cabello dañado",
+    "frizz",
+    "caspa",
+    "caida del cabello",
+    "caida cabello",
+    "puntas secas",
+    "puntas abiertas"
+];
 
-        $input,
-
-        true
-
-    );
-
-
-/* ======================================================
-   VALIDAR JSON
-====================================================== */
-
-
-if (
-
-    json_last_error() !== JSON_ERROR_NONE ||
-
-    !is_array($datos)
-
-) {
-
-    http_response_code(400);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "El JSON recibido no es válido.",
-
-            "detalle" =>
-                json_last_error_msg()
-
-        ],
-
-        JSON_UNESCAPED_UNICODE
-
-    );
-
-
-    $conn->close();
-
-
-    exit();
-
+foreach ($palabrasProblema as $problema) {
+    if (mb_strpos($q, normalizarTexto($problema), 0, "UTF-8") !== false) {
+        $termino = $problema;
+        break;
+    }
 }
 
-
-/* ======================================================
-   OBTENER MENSAJE DEL USUARIO
-====================================================== */
-
-
-$busqueda = "";
-
-
-if (
-    isset($datos["busqueda"])
-) {
-
-    $busqueda =
-        trim(
-            (string)$datos["busqueda"]
-        );
-
-}
-
-
-/*
-   También permite:
-
-   mensaje
-
-   pregunta
-
-   consulta
-*/
-
-
-if (
-    $busqueda === "" &&
-    isset($datos["mensaje"])
-) {
-
-    $busqueda =
-        trim(
-            (string)$datos["mensaje"]
-        );
-
-}
-
-
-if (
-    $busqueda === "" &&
-    isset($datos["pregunta"])
-) {
-
-    $busqueda =
-        trim(
-            (string)$datos["pregunta"]
-        );
-
-}
-
-
-if (
-    $busqueda === "" &&
-    isset($datos["consulta"])
-) {
-
-    $busqueda =
-        trim(
-            (string)$datos["consulta"]
-        );
-
-}
-
-
-/* ======================================================
-   VALIDAR MENSAJE
-====================================================== */
-
-
-if (
-    $busqueda === ""
-) {
-
-    http_response_code(400);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "Debes escribir una pregunta o búsqueda."
-
-        ],
-
-        JSON_UNESCAPED_UNICODE
-
-    );
-
-
-    $conn->close();
-
-
-    exit();
-
-}
-
-
-/* ======================================================
-   FUNCIÓN PARA LLAMAR A NVIDIA
-====================================================== */
-
-
-function llamarNvidia(
-
-    $api_url,
-
-    $api_key,
-
-    $modelo,
-
-    $messages,
-
-    $temperature = 0.2,
-
-    $max_tokens = 1000
-
-) {
-
-
-    $payload = [
-
-        "model" =>
-            $modelo,
-
-        "messages" =>
-            $messages,
-
-        "temperature" =>
-            $temperature,
-
-        "top_p" =>
-            0.8,
-
-        "max_tokens" =>
-            $max_tokens,
-
-        "stream" =>
-            false
-
+/* Si no encontramos un problema, buscamos categorías/tipos de producto. */
+if ($termino === "") {
+    $terminosProducto = [
+        "serum",
+        "crema",
+        "shampoo",
+        "champu",
+        "acondicionador",
+        "mascarilla",
+        "aceite",
+        "tonico",
+        "limpiador",
+        "bloqueador",
+        "protector solar",
+        "gel"
     ];
 
-
-    $json =
-        json_encode(
-
-            $payload,
-
-            JSON_UNESCAPED_UNICODE
-
-        );
-
-
-    if (
-        $json === false
-    ) {
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "No se pudo crear la petición para NVIDIA.",
-
-            "detalle" =>
-                json_last_error_msg()
-
-        ];
-
-    }
-
-
-    if (
-        !function_exists("curl_init")
-    ) {
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "cURL no está instalado o habilitado en PHP."
-
-        ];
-
-    }
-
-
-    $ch =
-        curl_init();
-
-
-    curl_setopt_array(
-
-        $ch,
-
-        [
-
-            CURLOPT_URL =>
-                $api_url,
-
-            CURLOPT_POST =>
-                true,
-
-            CURLOPT_RETURNTRANSFER =>
-                true,
-
-            CURLOPT_FOLLOWLOCATION =>
-                true,
-
-            CURLOPT_HTTPHEADER =>
-                [
-
-                    "Authorization: Bearer " .
-                    trim($api_key),
-
-                    "Content-Type: application/json",
-
-                    "Accept: application/json"
-
-                ],
-
-            CURLOPT_POSTFIELDS =>
-                $json,
-
-            CURLOPT_CONNECTTIMEOUT =>
-                20,
-
-            CURLOPT_TIMEOUT =>
-                120
-
-        ]
-
-    );
-
-
-    $respuesta =
-        curl_exec($ch);
-
-
-    $curl_error =
-        curl_error($ch);
-
-
-    $http_code =
-        curl_getinfo(
-
-            $ch,
-
-            CURLINFO_HTTP_CODE
-
-        );
-
-
-    curl_close($ch);
-
-
-    if (
-        $respuesta === false
-    ) {
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "No se pudo conectar con NVIDIA.",
-
-            "detalle" =>
-                $curl_error
-
-        ];
-
-    }
-
-
-    $data =
-        json_decode(
-
-            $respuesta,
-
-            true
-
-        );
-
-
-    if (
-        !is_array($data)
-    ) {
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "NVIDIA no devolvió JSON válido.",
-
-            "codigo" =>
-                $http_code,
-
-            "respuesta" =>
-                $respuesta
-
-        ];
-
-    }
-
-
-    if (
-
-        $http_code < 200 ||
-
-        $http_code >= 300
-
-    ) {
-
-
-        $detalle =
-            "Error desconocido.";
-
-
-        if (
-
-            isset(
-                $data["error"]
-            )
-
-        ) {
-
-
-            if (
-
-                is_array(
-                    $data["error"]
-                )
-
-            ) {
-
-
-                if (
-
-                    isset(
-                        $data["error"]["message"]
-                    )
-
-                ) {
-
-                    $detalle =
-                        $data["error"]["message"];
-
-                }
-
-            }
-
-
-            elseif (
-
-                is_string(
-                    $data["error"]
-                )
-
-            ) {
-
-                $detalle =
-                    $data["error"];
-
-            }
-
+    foreach ($terminosProducto as $tp) {
+        if (mb_strpos($q, normalizarTexto($tp), 0, "UTF-8") !== false) {
+            $termino = $tp;
+            break;
         }
-
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "NVIDIA devolvió un error.",
-
-            "codigo" =>
-                $http_code,
-
-            "detalle" =>
-                $detalle,
-
-            "respuesta" =>
-                $data
-
-        ];
-
     }
-
-
-    $texto =
-        "";
-
-
-    if (
-
-        isset(
-            $data["choices"][0]["message"]["content"]
-        )
-
-    ) {
-
-        $texto =
-
-            $data["choices"][0]["message"]["content"];
-
-    }
-
-
-    if (
-        trim($texto) === ""
-    ) {
-
-        return [
-
-            "ok" => false,
-
-            "error" =>
-                "NVIDIA no devolvió contenido.",
-
-            "respuesta" =>
-                $data
-
-        ];
-
-    }
-
-
-    return [
-
-        "ok" =>
-            true,
-
-        "texto" =>
-            trim($texto),
-
-        "data" =>
-            $data
-
-    ];
-
 }
 
-
 /* ======================================================
-   PRIMERA IA
-   DETERMINAR TIPO DE PETICIÓN
+   CONSULTA DE PRODUCTOS
 ====================================================== */
 
+$productos = [];
 
-$promptClasificacion = <<<PROMPT
+$sql = "SELECT codigo, nombre, descripcion, precio, stock, categoria FROM PRODUCTO WHERE 1=1";
+$parametros = [];
+$tipos = "";
 
-Eres el asistente inteligente de la tienda DIVINE.
-
-DIVINE vende productos reales relacionados con:
-
-cuidado de la piel
-
-cuidado facial
-
-cuidado del cabello
-
-Tu tarea es ANALIZAR el mensaje del usuario y determinar qué necesita.
-
-NO debes responder al usuario.
-NO debes explicar tu decisión.
-NO debes agregar texto fuera del JSON.
-
-Debes devolver ÚNICAMENTE un objeto JSON válido.
-
-FORMATO EXACTO:
-
-{
-"tipo": "producto",
-"categoria": "",
-"precio_maximo": 0,
-"termino": "",
-"necesita_respuesta": true
+if ($categoria !== "") {
+    $sql .= " AND LOWER(categoria) = LOWER(?)";
+    $tipos .= "s";
+    $parametros[] = $categoria;
 }
 
-TIPOS POSIBLES
-
-Debes utilizar únicamente uno de estos valores:
-
-"producto"
-
-"pregunta"
-
-"mixta"
-
-1. PRODUCTO
-
-Usa "producto" cuando el usuario está buscando directamente productos de DIVINE.
-
-Esto incluye:
-
-productos concretos
-
-productos de una categoría
-
-productos para un problema específico
-
-productos disponibles
-
-productos con un precio determinado
-
-productos que puedan ayudar con una necesidad
-
-Ejemplos:
-
-"quiero una crema para piel seca"
-
-"qué shampoo tienen"
-
-"busco aceite de argán"
-
-"qué productos tienen para cabello"
-
-"qué crema tienen por menos de 50"
-
-"quiero productos para piel grasa"
-
-"tienen algo para las manchas"
-
-"qué serum tienen"
-
-"muéstrame productos para cabello seco"
-
-En estos casos se debe realizar una búsqueda de productos.
-
-2. PREGUNTA
-
-Usa "pregunta" cuando el usuario quiere únicamente:
-
-una explicación
-
-información general
-
-un consejo
-
-una orientación
-
-una rutina
-
-saber cómo hacer algo
-
-Y NO está solicitando productos de DIVINE.
-
-Ejemplos:
-
-"qué puedo hacer si tengo piel grasa"
-
-"qué rutina puedo hacer"
-
-"cómo cuidar mi cabello"
-
-"qué hago si mi piel se descama"
-
-"cómo debo lavarme la cara"
-
-"para qué sirve el ácido hialurónico"
-
-"por qué se me cae el cabello"
-
-"cómo hidratar la piel"
-
-En estos casos NO se debe realizar una búsqueda de productos.
-
-3. MIXTA
-
-Usa "mixta" cuando el usuario:
-
-describe un problema, necesidad, condición u objetivo relacionado con piel o cabello
-
-y solicita una recomendación, productos o qué debería utilizar
-
-También usa "mixta" cuando solicita una explicación o consejo Y además solicita productos de DIVINE.
-
-IMPORTANTE:
-
-Las siguientes expresiones indican que el usuario quiere una recomendación:
-
-"qué me recomiendas"
-
-"qué productos me recomiendas"
-
-"qué puedo usar"
-
-"qué debería usar"
-
-"qué podría usar"
-
-"qué sería bueno para"
-
-"qué productos serían buenos"
-
-"qué me puede ayudar"
-
-"qué puedo ponerme"
-
-"qué debería comprar"
-
-Si estas expresiones aparecen junto con un problema, necesidad o condición de piel o cabello, utiliza "mixta".
-
-Ejemplos:
-
-"tengo piel grasa, qué productos me recomiendas"
-
-"tengo la piel seca, qué me recomiendas"
-
-"tengo manchas, qué productos puedo usar"
-
-"mi cabello está muy seco, qué me recomiendas"
-
-"se me cae mucho el cabello, qué productos puedo usar"
-
-"tengo acné, qué productos me recomiendas"
-
-"qué puedo usar para mi piel sensible"
-
-"qué sería bueno para mi cabello dañado"
-
-"tengo caspa, qué productos me recomiendas"
-
-"qué hago para el cabello seco y qué productos tienen"
-
-"cómo puedo cuidar mi piel y qué productos me recomiendas"
-
-En estos casos:
-
-se debe realizar una búsqueda de productos
-
-se debe generar posteriormente una respuesta explicativa y contextualizada
-
-los productos encontrados deben formar parte de la recomendación
-
-REGLA PARA DIFERENCIAR PRODUCTO Y MIXTA
-
-Si el usuario simplemente pide productos:
-
-"quiero una crema para piel seca"
-
-→ "producto"
-
-Si el usuario describe un problema y pregunta qué puede usar o qué le recomiendas:
-
-"tengo la piel seca, qué me recomiendas"
-
-→ "mixta"
-
-Si el usuario pide solamente información:
-
-"cómo cuidar la piel seca"
-
-→ "pregunta"
-
-Si pide información Y productos:
-
-"cómo cuidar la piel seca y qué productos me recomiendas"
-
-→ "mixta"
-
-CATEGORÍAS
-
-La categoría indica qué tipo de productos se deben buscar.
-
-Solo puedes utilizar:
-
-"SkinCare"
-
-"SkinHair"
-
-""
-
-SKINCARE
-
-Usa "SkinCare" cuando el usuario se refiere a:
-
-piel
-
-rostro
-
-cara
-
-cuidado facial
-
-piel seca
-
-piel grasa
-
-piel mixta
-
-piel sensible
-
-acné
-
-manchas
-
-arrugas
-
-hidratación facial
-
-limpieza facial
-
-serum facial
-
-crema facial
-
-protector solar
-
-poros
-
-irritación facial
-
-etc.
-
-Ejemplos:
-
-"crema para piel seca"
-
-→ "SkinCare"
-
-"algo para las manchas de la cara"
-
-→ "SkinCare"
-
-"qué me recomiendas para piel grasa"
-
-→ "SkinCare"
-
-SKINHAIR
-
-Usa "SkinHair" cuando el usuario se refiere a:
-
-cabello
-
-pelo
-
-cuero cabelludo
-
-cabello seco
-
-cabello graso
-
-cabello dañado
-
-cabello maltratado
-
-caída del cabello
-
-caspa
-
-shampoo
-
-champú
-
-acondicionador
-
-mascarilla capilar
-
-aceite capilar
-
-tratamiento capilar
-
-etc.
-
-Ejemplos:
-
-"shampoo para cabello seco"
-
-→ "SkinHair"
-
-"qué puedo usar para el cabello dañado"
-
-→ "SkinHair"
-
-"tengo caspa, qué productos me recomiendas"
-
-→ "SkinHair"
-
-CUANDO NO SE PUEDE DETERMINAR
-
-Si no se puede determinar si corresponde a piel o cabello:
-
-""
-
-No inventes una categoría.
-
-CUANDO APARECEN PIEL Y CABELLO
-
-Si el usuario solicita productos para piel Y cabello al mismo tiempo, utiliza:
-
-""
-
-No inventes una categoría.
-
-Ejemplo:
-
-"quiero productos para mi piel y mi cabello"
-
-→ categoria: ""
-
-PRECIO_MAXIMO
-
-Extrae el precio máximo indicado explícitamente por el usuario.
-
-El resultado debe ser siempre un número.
-
-Ejemplos:
-
-"menos de 50"
-
-→ 50
-
-"hasta 100"
-
-→ 100
-
-"máximo 70"
-
-→ 70
-
-"por debajo de 80"
-
-→ 80
-
-"no más de 60"
-
-→ 60
-
-"quiero algo de máximo $40"
-
-→ 40
-
-Si el usuario no indica ningún límite de precio:
-
-→ 0
-
-Ignora la moneda.
-
-No escribas símbolos de moneda.
-
-No escribas texto.
-
-Ejemplo correcto:
-
-"precio_maximo": 50
-
-Ejemplo incorrecto:
-
-"precio_maximo": "$50"
-
-TERMINO
-
-Extrae únicamente las palabras importantes que puedan utilizarse para buscar productos en el nombre o descripción de la base de datos.
-
-El término debe ser corto.
-
-Conserva las palabras que describen:
-
-tipo de producto
-
-problema
-
-necesidad
-
-zona
-
-tipo de piel
-
-tipo de cabello
-
-ingrediente
-
-característica
-
-objetivo
-
-Elimina palabras de relleno y palabras relacionadas con la intención de compra.
-
-NO incluyas:
-
-producto
-productos
-quiero
-necesito
-busco
-buscar
-dame
-muéstrame
-mostrar
-tienen
-tiene
-hay
-para
-una
-uno
-unos
-unas
-un
-de
-del
-la
-el
-los
-las
-con
-que
-qué
-menos
-más
-mas
-mayor
-menor
-hasta
-máximo
-maximo
-precio
-por
-favor
-pueden
-puede
-podrían
-podria
-puedo
-me
-mi
-mis
-recomiendas
-recomendar
-recomiéndame
-recomiendame
-usar
-uso
-comprar
-compras
-quiero
-necesito
-
-EJEMPLOS
-
-"quiero una crema para piel seca"
-
-→ "crema piel seca"
-
-"busco aceite de argán para cabello"
-
-→ "aceite argán cabello"
-
-"qué productos tienen para cabello graso"
-
-→ "cabello graso"
-
-"quiero una crema facial para manchas"
-
-→ "crema facial manchas"
-
-"qué shampoo tienen para cabello seco"
-
-→ "shampoo cabello seco"
-
-"tengo piel grasa, qué productos me recomiendas"
-
-→ "piel grasa"
-
-"tengo manchas en la cara, qué puedo usar"
-
-→ "manchas cara"
-
-"mi cabello está seco y dañado, qué me recomiendas"
-
-→ "cabello seco dañado"
-
-"qué serum tienen para hidratar la piel"
-
-→ "serum hidratar piel"
-
-SI EL USUARIO SOLO PIDE UNA RECOMENDACIÓN
-
-Si el usuario dice:
-
-"qué me recomiendas para piel seca"
-
-El término debe contener la necesidad principal:
-
-→ "piel seca"
-
-No agregues palabras que no estén relacionadas con la necesidad.
-
-SI EL USUARIO MENCIONA UN PROBLEMA
-
-Conserva el problema como parte del término.
-
-Ejemplos:
-
-"tengo acné, qué productos me recomiendas"
-
-→ "acné"
-
-"tengo piel grasa y manchas, qué me recomiendas"
-
-→ "piel grasa manchas"
-
-"se me cae mucho el cabello, qué puedo usar"
-
-→ "caída cabello"
-
-"tengo cabello seco y con frizz"
-
-→ "cabello seco frizz"
-
-NO INVENTAR INFORMACIÓN
-
-Nunca agregues información que el usuario no haya proporcionado.
-
-No inventes:
-
-ingredientes
-
-marcas
-
-productos
-
-problemas
-
-características
-
-tipos de piel
-
-tipos de cabello
-
-precios
-
-categorías
-
-Ejemplo:
-
-Usuario:
-
-"quiero algo para mi piel"
-
-Correcto:
-
-{
-"tipo": "producto",
-"categoria": "SkinCare",
-"precio_maximo": 0,
-"termino": "piel",
-"necesita_respuesta": true
+if ($precioMaximo > 0) {
+    $sql .= " AND precio <= ?";
+    $tipos .= "d";
+    $parametros[] = $precioMaximo;
 }
 
-No conviertas "piel" automáticamente en:
-
-"piel seca"
-
-"piel grasa"
-
-"piel sensible"
-
-SI NO EXISTE UN TÉRMINO ÚTIL
-
-Si el usuario pide productos pero no proporciona ninguna característica útil:
-
-"qué productos tienen?"
-
-El término debe ser:
-
-""
-
-No inventes términos.
-
-NECESITA_RESPUESTA
-
-Usa:
-
-true
-
-cuando el mensaje contiene una solicitud, pregunta, necesidad o petición que requiere respuesta.
-
-Ejemplos:
-
-"quiero una crema"
-
-→ true
-
-"qué productos tienen"
-
-→ true
-
-"tengo piel grasa, qué me recomiendas"
-
-→ true
-
-"cómo cuidar mi cabello"
-
-→ true
-
-Usa:
-
-false
-
-únicamente cuando el mensaje no contiene una solicitud, pregunta o necesidad interpretable.
-
-Ejemplos:
-
-"hola"
-
-→ false
-
-"ok"
-
-→ false
-
-"gracias"
-
-→ false
-
-"perfecto"
-
-→ false
-
-"👍"
-
-→ false
-
-REGLAS DE PRIORIDAD
-
-Cuando existan varias condiciones en el mismo mensaje, aplica estas reglas en orden:
-
-Si solicita productos Y una recomendación, explicación o consejo relacionado con un problema → "mixta".
-
-Si solicita productos pero no solicita explicación o consejo → "producto".
-
-Si solicita únicamente información, explicación, consejo o rutina → "pregunta".
-
-Si no existe una solicitud interpretable → "necesita_respuesta": false.
-
-REGLA FINAL
-
-Antes de devolver el JSON verifica:
-
-"tipo" es exactamente "producto", "pregunta" o "mixta".
-
-"categoria" es exactamente "SkinCare", "SkinHair" o "".
-
-"precio_maximo" es un número.
-
-"termino" contiene únicamente palabras útiles para buscar productos.
-
-"necesita_respuesta" es true o false.
-
-No inventaste información.
-
-No agregaste explicaciones.
-
-La respuesta contiene ÚNICAMENTE JSON válido.
-
-Devuelve únicamente el objeto JSON.
-
-$busqueda
-
-PROMPT;
-
-
-/* ======================================================
-   LLAMAR A NVIDIA PARA CLASIFICAR
-====================================================== */
-
-
-$clasificacion =
-    llamarNvidia(
-
-        $api_url,
-
-        $api_key,
-
-        $modelo,
-
-        [
-
-            [
-
-                "role" =>
-                    "system",
-
-                "content" =>
-                    "Clasifica las solicitudes del usuario de DIVINE."
-
-            ],
-
-            [
-
-                "role" =>
-                    "user",
-
-                "content" =>
-                    $promptClasificacion
-
-            ]
-
-        ],
-
-        0.0,
-
-        500
-
-    );
-
-
-/* ======================================================
-   ERROR CLASIFICACIÓN
-====================================================== */
-
-
-if (
-    !$clasificacion["ok"]
-) {
-
-    http_response_code(
-        isset($clasificacion["codigo"])
-            ? $clasificacion["codigo"]
-            : 500
-    );
-
-
-    echo json_encode(
-
-        $clasificacion,
-
-        JSON_UNESCAPED_UNICODE |
-
-        JSON_PRETTY_PRINT
-
-    );
-
-
+if ($termino !== "") {
+    $sql .= " AND (LOWER(nombre) LIKE LOWER(?) OR LOWER(descripcion) LIKE LOWER(?))";
+    $tipos .= "ss";
+    $buscar = "%" . $termino . "%";
+    $parametros[] = $buscar;
+    $parametros[] = $buscar;
+}
+
+$sql .= " ORDER BY nombre ASC LIMIT 20";
+
+$stmt = $conn->prepare($sql);
+
+if (!$stmt) {
     $conn->close();
-
-
-    exit();
-
+    responderJSON([
+        "ok" => false,
+        "error" => "No se pudo preparar la búsqueda de productos.",
+        "detalle" => $conn->error
+    ], 500);
 }
 
+if ($tipos !== "") {
+    $bind = [$tipos];
 
-/* ======================================================
-   LIMPIAR JSON DE CLASIFICACIÓN
-====================================================== */
-
-
-$textoClasificacion =
-    trim(
-        $clasificacion["texto"]
-    );
-
-
-$textoClasificacion =
-    preg_replace(
-
-        '/```json\s*/i',
-
-        "",
-
-        $textoClasificacion
-
-    );
-
-
-$textoClasificacion =
-    preg_replace(
-
-        '/```\s*/',
-
-        "",
-
-        $textoClasificacion
-
-    );
-
-
-$textoClasificacion =
-    trim(
-        $textoClasificacion
-    );
-
-
-/* ======================================================
-   DECODIFICAR CLASIFICACIÓN
-====================================================== */
-
-
-$clasificacionData =
-    json_decode(
-
-        $textoClasificacion,
-
-        true
-
-    );
-
-
-/* ======================================================
-   INTENTAR EXTRAER JSON
-====================================================== */
-
-
-if (
-    !is_array($clasificacionData)
-) {
-
-
-    $inicio =
-        strpos(
-            $textoClasificacion,
-            "{"
-        );
-
-
-    $final =
-        strrpos(
-            $textoClasificacion,
-            "}"
-        );
-
-
-    if (
-
-        $inicio !== false &&
-
-        $final !== false
-
-    ) {
-
-
-        $jsonLimpio =
-            substr(
-
-                $textoClasificacion,
-
-                $inicio,
-
-                $final - $inicio + 1
-
-            );
-
-
-        $clasificacionData =
-            json_decode(
-
-                $jsonLimpio,
-
-                true
-
-            );
-
+    foreach ($parametros as $indice => $valor) {
+        $bind[] = &$parametros[$indice];
     }
 
+    call_user_func_array([$stmt, "bind_param"], $bind);
 }
 
-
-/* ======================================================
-   VALIDAR CLASIFICACIÓN
-====================================================== */
-
-
-if (
-    !is_array($clasificacionData)
-) {
-
-    http_response_code(500);
-
-
-    echo json_encode(
-
-        [
-
-            "ok" => false,
-
-            "error" =>
-                "No se pudo interpretar la clasificación de NVIDIA.",
-
-            "respuestaIA" =>
-                $textoClasificacion
-
-        ],
-
-        JSON_UNESCAPED_UNICODE |
-
-        JSON_PRETTY_PRINT
-
-    );
-
-
-    $conn->close();
-
-
-    exit();
-
-}
-
-
-/* ======================================================
-   OBTENER TIPO
-====================================================== */
-
-
-$tipo =
-
-    isset(
-        $clasificacionData["tipo"]
-    )
-
-    ? strtolower(
-        trim(
-            (string)
-            $clasificacionData["tipo"]
-        )
-    )
-
-    : "pregunta";
-
-
-/* ======================================================
-   OBTENER CATEGORÍA
-====================================================== */
-
-
-$categoria =
-
-    isset(
-        $clasificacionData["categoria"]
-    )
-
-    ? trim(
-        (string)
-        $clasificacionData["categoria"]
-    )
-
-    : "";
-
-
-/* ======================================================
-   OBTENER PRECIO
-====================================================== */
-
-
-$precio =
-
-    isset(
-        $clasificacionData["precio_maximo"]
-    )
-
-    ? intval(
-        $clasificacionData["precio_maximo"]
-    )
-
-    : 0;
-
-
-/* ======================================================
-   OBTENER TÉRMINO
-====================================================== */
-
-
-$termino =
-
-    isset(
-        $clasificacionData["termino"]
-    )
-
-    ? trim(
-        (string)
-        $clasificacionData["termino"]
-    )
-
-    : "";
-
-
-/* ======================================================
-   NORMALIZAR TIPO
-====================================================== */
-
-
-if (
-
-    $tipo !== "producto" &&
-
-    $tipo !== "pregunta" &&
-
-    $tipo !== "mixta"
-
-) {
-
-    $tipo =
-        "pregunta";
-
-}
-
-
-/* ======================================================
-   NORMALIZAR CATEGORÍA
-====================================================== */
-
-
-if (
-
-    strcasecmp(
-        $categoria,
-        "skincare"
-    ) === 0
-
-) {
-
-    $categoria =
-        "SkinCare";
-
-}
-
-
-elseif (
-
-    strcasecmp(
-        $categoria,
-        "skinhair"
-    ) === 0
-
-) {
-
-    $categoria =
-        "SkinHair";
-
-}
-
-
-else {
-
-    $categoria =
-        "";
-
-}
-
-
-/* ======================================================
-   VALIDAR PRECIO
-====================================================== */
-
-
-if (
-    $precio < 0
-) {
-
-    $precio =
-        0;
-
-}
-
-
-/* ======================================================
-   PRODUCTOS
-====================================================== */
-
-
-$productos =
-    [];
-
-
-/* ======================================================
-   SI NECESITA PRODUCTOS
-====================================================== */
-
-
-if (
-
-    $tipo === "producto" ||
-
-    $tipo === "mixta"
-
-) {
-
-
-    /* ==================================================
-       CONSULTA SQL
-    ================================================== */
-
-
-    $sql = "
-
-        SELECT
-
-            codigo,
-
-            nombre,
-
-            descripcion,
-
-            precio,
-
-            stock,
-
-            categoria
-
-        FROM producto
-
-        WHERE 1 = 1
-
-    ";
-
-
-    $tipos =
-        "";
-
-
-    $parametros =
-        [];
-
-
-    /* ==================================================
-       FILTRO CATEGORÍA
-    ================================================== */
-
-
-    if (
-        $categoria !== ""
-    ) {
-
-
-        $sql .= "
-
-            AND categoria = ?
-
-        ";
-
-
-        $tipos .=
-            "s";
-
-
-        $parametros[] =
-            $categoria;
-
-    }
-
-
-    /* ==================================================
-       FILTRO PRECIO
-    ================================================== */
-
-
-    if (
-        $precio > 0
-    ) {
-
-
-        $sql .= "
-
-            AND precio <= ?
-
-        ";
-
-
-        $tipos .=
-            "d";
-
-
-        $parametros[] =
-            $precio;
-
-    }
-
-
-    /* ==================================================
-       FILTRO TÉRMINOS
-    ================================================== */
-
-
-    if (
-        $termino !== ""
-    ) {
-
-
-        $terminos =
-            preg_split(
-
-                '/\s+/u',
-
-                mb_strtolower(
-
-                    $termino,
-
-                    "UTF-8"
-
-                ),
-
-                -1,
-
-                PREG_SPLIT_NO_EMPTY
-
-            );
-
-
-        $palabrasIgnoradas = [
-
-            "producto",
-
-            "productos",
-
-            "quiero",
-
-            "necesito",
-
-            "busco",
-
-            "buscar",
-
-            "dame",
-
-            "para",
-
-            "una",
-
-            "uno",
-
-            "unos",
-
-            "unas",
-
-            "de",
-
-            "del",
-
-            "la",
-
-            "el",
-
-            "los",
-
-            "las",
-
-            "con",
-
-            "que",
-
-            "qué",
-
-            "menos",
-
-            "más",
-
-            "mas",
-
-            "mayor",
-
-            "menor",
-
-            "hasta",
-
-            "máximo",
-
-            "maximo",
-
-            "precio"
-
-        ];
-
-
-        foreach (
-
-            $terminos as $palabra
-
-        ) {
-
-
-            $palabra =
-                trim($palabra);
-
-
-            if (
-                $palabra === ""
-            ) {
-
-                continue;
-
-            }
-
-
-            if (
-
-                mb_strlen(
-
-                    $palabra,
-
-                    "UTF-8"
-
-                ) < 3
-
-            ) {
-
-                continue;
-
-            }
-
-
-            if (
-
-                in_array(
-
-                    $palabra,
-
-                    $palabrasIgnoradas,
-
-                    true
-
-                )
-
-            ) {
-
-                continue;
-
-            }
-
-
-            /*
-               Buscar la palabra en nombre
-               o descripción.
-            */
-
-
-            $sql .= "
-
-                AND (
-
-                    LOWER(nombre) LIKE ?
-
-                    OR
-
-                    LOWER(descripcion) LIKE ?
-
-                )
-
-            ";
-
-
-            $tipos .=
-                "ss";
-
-
-            $valorBusqueda =
-
-                "%" .
-
-                $palabra .
-
-                "%";
-
-
-            $parametros[] =
-                $valorBusqueda;
-
-
-            $parametros[] =
-                $valorBusqueda;
-
-        }
-
-    }
-
-
-    /* ==================================================
-       ORDENAR
-    ================================================== */
-
-
-    $sql .= "
-
-        ORDER BY nombre ASC
-
-    ";
-
-
-    /* ==================================================
-       PREPARAR
-    ================================================== */
-
-
-    $stmt =
-        $conn->prepare($sql);
-
-
-    if (
-        !$stmt
-    ) {
-
-        http_response_code(500);
-
-
-        echo json_encode(
-
-            [
-
-                "ok" => false,
-
-                "error" =>
-                    "No se pudo preparar la consulta.",
-
-                "detalle" =>
-                    $conn->error
-
-            ],
-
-            JSON_UNESCAPED_UNICODE
-
-        );
-
-
-        $conn->close();
-
-
-        exit();
-
-    }
-
-
-    /* ==================================================
-       BIND PARAMS
-    ================================================== */
-
-
-    if (
-        $tipos !== ""
-    ) {
-
-
-        $bind =
-            [];
-
-
-        $bind[] =
-            $tipos;
-
-
-        foreach (
-
-            $parametros as $indice => $valor
-
-        ) {
-
-
-            $bind[] =
-                &$parametros[$indice];
-
-        }
-
-
-        call_user_func_array(
-
-            [
-
-                $stmt,
-
-                "bind_param"
-
-            ],
-
-            $bind
-
-        );
-
-    }
-
-
-    /* ==================================================
-       EJECUTAR
-    ================================================== */
-
-
-    if (
-        !$stmt->execute()
-    ) {
-
-        http_response_code(500);
-
-
-        echo json_encode(
-
-            [
-
-                "ok" => false,
-
-                "error" =>
-                    "No se pudo ejecutar la búsqueda.",
-
-                "detalle" =>
-                    $stmt->error
-
-            ],
-
-            JSON_UNESCAPED_UNICODE
-
-        );
-
-
-        $stmt->close();
-
-
-        $conn->close();
-
-
-        exit();
-
-    }
-
-
-    /* ==================================================
-       RESULTADOS
-    ================================================== */
-
-
-    $resultado =
-        $stmt->get_result();
-
-
-    while (
-
-        $fila =
-            $resultado->fetch_assoc()
-
-    ) {
-
-
-        $productos[] = [
-
-            "id" =>
-                (int)
-                $fila["codigo"],
-
-            "codigo" =>
-                (int)
-                $fila["codigo"],
-
-            "nombre" =>
-                $fila["nombre"],
-
-            "descripcion" =>
-                $fila["descripcion"],
-
-            "precio" =>
-                (float)
-                $fila["precio"],
-
-            "stock" =>
-                (int)
-                $fila["stock"],
-
-            "categoria" =>
-                $fila["categoria"]
-
-        ];
-
-    }
-
-
+if (!$stmt->execute()) {
+    $detalle = $stmt->error;
     $stmt->close();
-
-}
-
-
-/* ======================================================
-   GENERAR RESPUESTA
-====================================================== */
-
-
-/*
-   CASO 1:
-   PREGUNTA GENERAL
-
-
-   NVIDIA responde directamente.
-
-
-   CASO 2:
-   PRODUCTO
-
-
-   NVIDIA explica los productos encontrados.
-
-
-   CASO 3:
-   MIXTA
-
-
-   NVIDIA responde la pregunta y utiliza
-   los productos encontrados.
-*/
-
-
-if (
-    $tipo === "pregunta"
-) {
-
-
-    $systemPrompt = <<<SYSTEM
-
-Eres el asistente general de DIVINE.
-
-DIVINE es una tienda especializada en
-cuidado de la piel y cabello.
-
-Puedes responder preguntas generales sobre:
-
-- cuidado de la piel
-- cuidado facial
-- cuidado del cabello
-- rutinas básicas
-- hábitos de cuidado
-- tipos de piel
-- tipos de cabello
-- recomendaciones generales
-
-Responde siempre en español.
-
-Sé claro, natural y útil.
-
-No inventes productos de DIVINE.
-
-No afirmes que un producto está disponible
-si no se ha consultado la base de datos.
-
-Cuando la pregunta sea sobre una condición
-de piel o cabello, proporciona orientación general
-y no presentes un diagnóstico médico como certeza.
-
-Si aparecen señales importantes como dolor intenso,
-heridas, infección, sangrado, inflamación severa,
-reacción alérgica o síntomas persistentes,
-recomienda consultar con un profesional de salud.
-
-No necesitas mencionar estas reglas en cada respuesta.
-
-SYSTEM;
-
-
-    $respuestaIA =
-        llamarNvidia(
-
-            $api_url,
-
-            $api_key,
-
-            $modelo,
-
-            [
-
-                [
-
-                    "role" =>
-                        "system",
-
-                    "content" =>
-                        $systemPrompt
-
-                ],
-
-                [
-
-                    "role" =>
-                        "user",
-
-                    "content" =>
-                        $busqueda
-
-                ]
-
-            ],
-
-            0.4,
-
-            1200
-
-        );
-
-
-    if (
-        !$respuestaIA["ok"]
-    ) {
-
-        http_response_code(
-
-            isset(
-                $respuestaIA["codigo"]
-            )
-
-            ? $respuestaIA["codigo"]
-
-            : 500
-
-        );
-
-
-        echo json_encode(
-
-            $respuestaIA,
-
-            JSON_UNESCAPED_UNICODE |
-
-            JSON_PRETTY_PRINT
-
-        );
-
-
-        $conn->close();
-
-
-        exit();
-
-    }
-
-
-    echo json_encode(
-
-        [
-
-            "ok" =>
-                true,
-
-            "tipo" =>
-                "pregunta",
-
-            "busqueda" =>
-                $busqueda,
-
-            "respuesta" =>
-                $respuestaIA["texto"],
-
-            "productos" =>
-                [],
-
-            "cantidad" =>
-                0
-
-        ],
-
-        JSON_UNESCAPED_UNICODE |
-
-        JSON_PRETTY_PRINT
-
-    );
-
-
     $conn->close();
 
-
-    exit();
-
+    responderJSON([
+        "ok" => false,
+        "error" => "No se pudo ejecutar la búsqueda de productos.",
+        "detalle" => $detalle
+    ], 500);
 }
 
+$resultado = $stmt->get_result();
+
+while ($fila = $resultado->fetch_assoc()) {
+    $productos[] = [
+        "id" => (int)$fila["codigo"],
+        "codigo" => (int)$fila["codigo"],
+        "nombre" => $fila["nombre"],
+        "descripcion" => $fila["descripcion"],
+        "precio" => (float)$fila["precio"],
+        "stock" => (int)$fila["stock"],
+        "categoria" => $fila["categoria"]
+    ];
+}
+
+$stmt->close();
+$conn->close();
 
 /* ======================================================
-   PRODUCTOS ENCONTRADOS
+   PREPARAR CONTEXTO PARA LA IA
 ====================================================== */
 
+$contextoProductos = "";
 
-$productosTexto =
-    "";
-
-
-if (
-    count($productos) > 0
-) {
-
-
-    foreach (
-
-        $productos as $producto
-
-    ) {
-
-
-        $productosTexto .=
-
-            "\n\n" .
-
-            "ID: " .
-            $producto["id"] .
-
-            "\nNombre: " .
-            $producto["nombre"] .
-
-            "\nDescripción: " .
-            $producto["descripcion"] .
-
-            "\nPrecio: " .
-            $producto["precio"] .
-
-            "\nStock: " .
-            $producto["stock"] .
-
-            "\nCategoría: " .
-            $producto["categoria"];
-
+if (count($productos) === 0) {
+    $contextoProductos = "No se encontraron productos de DIVINE que coincidan con la búsqueda.";
+} else {
+    foreach ($productos as $producto) {
+        $contextoProductos .= "\n";
+        $contextoProductos .= "Nombre: " . $producto["nombre"] . "\n";
+        $contextoProductos .= "Descripción: " . $producto["descripcion"] . "\n";
+        $contextoProductos .= "Precio: Bs. " . number_format($producto["precio"], 2, ".", "") . "\n";
+        $contextoProductos .= "Stock: " . $producto["stock"] . "\n";
+        $contextoProductos .= "Categoría: " . $producto["categoria"] . "\n";
     }
-
 }
-
-
-else {
-
-    $productosTexto =
-        "No se encontraron productos.";
-
-}
-
 
 /* ======================================================
-   RESPUESTA PARA PRODUCTOS
+   RESPUESTA PRODUCTO / MIXTA
 ====================================================== */
 
-
-if (
-    $tipo === "producto"
-) {
-
+if ($tipo === "producto") {
 
     $systemPrompt = <<<SYSTEM
+Eres el asistente de productos de DIVINE.
 
-Eres el asistente de la tienda DIVINE.
+DIVINE es una tienda de productos para cuidado de la piel y el cabello.
 
-DIVINE vende productos para cuidado de piel
-y cabello.
+El usuario está solicitando productos, disponibilidad, precios o artículos de DIVINE.
 
-El usuario realizó una búsqueda de productos.
+Los únicos productos reales que puedes mencionar son los que aparecen en el contexto de productos proporcionado por el sistema.
 
-Los productos que aparecen en el contexto
-son los únicos productos que puedes afirmar
-que existen o están disponibles.
+NO inventes:
+- productos
+- nombres
+- precios
+- stock
+- ingredientes
+- marcas
+- beneficios específicos
+- características que no aparecen en los datos
 
-NO inventes productos.
+Si no se encontraron productos, dilo claramente y no inventes alternativas de DIVINE.
 
-NO inventes precios.
+Puedes explicar brevemente por qué los productos encontrados pueden relacionarse con la búsqueda, pero no conviertas una descripción general en una afirmación médica.
 
-NO inventes stock.
-
-NO inventes características que no aparezcan
-en los datos proporcionados.
-
-Responde en español.
-
-Explica brevemente por qué los productos
-pueden estar relacionados con la búsqueda.
-
-Si no hay productos encontrados,
-indica claramente que no se encontraron
-productos que coincidan con la búsqueda.
-
-Productos encontrados:
-
-$productosTexto
-
+Responde en español y de forma natural.
 SYSTEM;
 
+    $userPrompt = "MENSAJE DEL USUARIO:\n" . $mensaje . "\n\nPRODUCTOS REALES EN DIVINE:\n" . $contextoProductos;
 
-    $respuestaIA =
-        llamarNvidia(
-
-            $api_url,
-
-            $api_key,
-
-            $modelo,
-
-            [
-
-                [
-
-                    "role" =>
-                        "system",
-
-                    "content" =>
-                        $systemPrompt
-
-                ],
-
-                [
-
-                    "role" =>
-                        "user",
-
-                    "content" =>
-                        $busqueda
-
-                ]
-
-            ],
-
-            0.3,
-
-            1200
-
-        );
-
-
-    if (
-        !$respuestaIA["ok"]
-    ) {
-
-        http_response_code(
-
-            isset(
-                $respuestaIA["codigo"]
-            )
-
-            ? $respuestaIA["codigo"]
-
-            : 500
-
-        );
-
-
-        echo json_encode(
-
-            $respuestaIA,
-
-            JSON_UNESCAPED_UNICODE |
-
-            JSON_PRETTY_PRINT
-
-        );
-
-
-        $conn->close();
-
-
-        exit();
-
-    }
-
-
-    echo json_encode(
-
-        [
-
-            "ok" =>
-                true,
-
-            "tipo" =>
-                "producto",
-
-            "busqueda" =>
-                $busqueda,
-
-            "filtrosAplicados" => [
-
-                "categoria" =>
-                    $categoria,
-
-                "precio_maximo" =>
-                    $precio,
-
-                "termino" =>
-                    $termino
-
-            ],
-
-            "respuesta" =>
-                $respuestaIA["texto"],
-
-            "cantidad" =>
-                count($productos),
-
-            "productos" =>
-                $productos
-
-        ],
-
-        JSON_UNESCAPED_UNICODE |
-
-        JSON_PRETTY_PRINT
-
-    );
-
-
-    $conn->close();
-
-
-    exit();
-
-}
-
-
-/* ======================================================
-   RESPUESTA MIXTA
-====================================================== */
-
-
-if (
-    $tipo === "mixta"
-) {
-
+} else {
 
     $systemPrompt = <<<SYSTEM
+Eres el asistente virtual de DIVINE.
 
-Eres el asistente inteligente de DIVINE.
+El usuario hizo una consulta MIXTA: quiere orientación general sobre cuidado de piel o cabello y también quiere conocer productos de DIVINE.
 
-DIVINE es una tienda de productos para
-cuidado de la piel y cabello.
+Debes hacer DOS cosas:
 
-El usuario realizó una pregunta que combina
-una consulta general con una posible búsqueda
-de productos.
+1. Responder primero la parte general usando tus conocimientos sobre cuidado de piel o cabello.
+2. Después mencionar los productos reales de DIVINE que aparecen en el contexto proporcionado.
 
-Debes responder primero la parte general
-de la pregunta de forma clara y útil.
+Si NO hay productos encontrados:
+- NO inventes productos.
+- NO detengas la respuesta.
+- Responde igualmente la parte general.
+- Indica de manera natural que actualmente no se encontraron productos específicos de DIVINE que coincidan con la búsqueda.
 
-Después, si existen productos encontrados,
-puedes mencionar los productos disponibles
-en DIVINE.
+Los productos, precios, stock y nombres deben salir exclusivamente del contexto de productos.
 
-IMPORTANTE:
-
-Los productos proporcionados en el contexto
-son los únicos productos reales de DIVINE.
-
-NO inventes productos.
-
-NO inventes precios.
-
-NO inventes stock.
-
-NO inventes características que no estén
-en la información proporcionada.
-
-Puedes dar consejos generales sobre cuidado
-de piel y cabello.
+NO inventes ingredientes, marcas, precios, stock ni beneficios específicos.
 
 No presentes diagnósticos médicos como certezas.
 
-Si aparecen síntomas intensos, persistentes,
-dolor, heridas, infección, sangrado,
-inflamación severa o una posible reacción
-alérgica, recomienda consultar con un profesional
-de salud.
-
-Responde siempre en español.
-
-PRODUCTOS DISPONIBLES:
-
-$productosTexto
-
+Responde en español, con un tono amable, natural y útil.
 SYSTEM;
 
-
-    $respuestaIA =
-        llamarNvidia(
-
-            $api_url,
-
-            $api_key,
-
-            $modelo,
-
-            [
-
-                [
-
-                    "role" =>
-                        "system",
-
-                    "content" =>
-                        $systemPrompt
-
-                ],
-
-                [
-
-                    "role" =>
-                        "user",
-
-                    "content" =>
-                        $busqueda
-
-                ]
-
-            ],
-
-            0.4,
-
-            1500
-
-        );
-
-
-    if (
-        !$respuestaIA["ok"]
-    ) {
-
-        http_response_code(
-
-            isset(
-                $respuestaIA["codigo"]
-            )
-
-            ? $respuestaIA["codigo"]
-
-            : 500
-
-        );
-
-
-        echo json_encode(
-
-            $respuestaIA,
-
-            JSON_UNESCAPED_UNICODE |
-
-            JSON_PRETTY_PRINT
-
-        );
-
-
-        $conn->close();
-
-
-        exit();
-
-    }
-
-
-    echo json_encode(
-
-        [
-
-            "ok" =>
-                true,
-
-            "tipo" =>
-                "mixta",
-
-            "busqueda" =>
-                $busqueda,
-
-            "filtrosAplicados" => [
-
-                "categoria" =>
-                    $categoria,
-
-                "precio_maximo" =>
-                    $precio,
-
-                "termino" =>
-                    $termino
-
-            ],
-
-            "respuesta" =>
-                $respuestaIA["texto"],
-
-            "cantidad" =>
-                count($productos),
-
-            "productos" =>
-                $productos
-
-        ],
-
-        JSON_UNESCAPED_UNICODE |
-
-        JSON_PRETTY_PRINT
-
-    );
-
-
-    $conn->close();
-
-
-    exit();
-
+    $userPrompt = "MENSAJE DEL USUARIO:\n" . $mensaje . "\n\nPRODUCTOS REALES EN DIVINE:\n" . $contextoProductos;
 }
 
-
-/* ======================================================
-   RESPUESTA DE SEGURIDAD
-====================================================== */
-
-
-echo json_encode(
-
+$resultadoIA = llamarNvidia(
+    $api_url,
+    $api_key,
+    $modelo,
     [
-
-        "ok" =>
-            true,
-
-        "tipo" =>
-            $tipo,
-
-        "busqueda" =>
-            $busqueda,
-
-        "respuesta" =>
-            "No pude determinar el tipo de consulta.",
-
-        "productos" =>
-            $productos,
-
-        "cantidad" =>
-            count($productos)
-
+        [
+            "role" => "system",
+            "content" => $systemPrompt
+        ],
+        [
+            "role" => "user",
+            "content" => $userPrompt
+        ]
     ],
-
-    JSON_UNESCAPED_UNICODE |
-
-    JSON_PRETTY_PRINT
-
+    0.6
 );
 
+if (!$resultadoIA["ok"]) {
+    responderJSON([
+        "ok" => false,
+        "tipo" => $tipo,
+        "busqueda" => $mensaje,
+        "error" => $resultadoIA["error"],
+        "detalle" => $resultadoIA["detalle"] ?? null
+    ], 500);
+}
 
-$conn->close();
-
-
-exit();
+responderJSON([
+    "ok" => true,
+    "tipo" => $tipo,
+    "busqueda" => $mensaje,
+    "filtrosAplicados" => [
+        "categoria" => $categoria,
+        "precio_maximo" => $precioMaximo,
+        "termino" => $termino
+    ],
+    "respuesta" => $resultadoIA["texto"],
+    "productos" => $productos,
+    "cantidad" => count($productos),
+    "fuente" => $tipo === "mixta" ? "ia+base_datos" : "base_datos"
+]);
 
 ?>
