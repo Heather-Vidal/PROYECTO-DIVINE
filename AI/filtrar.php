@@ -78,7 +78,7 @@ $modelo =
 
 if (
     trim($api_key) === "" ||
-    $api_key === "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"
+    $api_key != "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"
 ) {
 
     http_response_code(500);
@@ -777,39 +777,57 @@ $promptClasificacion = <<<PROMPT
 
 Eres el asistente inteligente de la tienda DIVINE.
 
-DIVINE vende productos relacionados con:
+DIVINE vende productos reales de:
 
-- cuidado de la piel
-- cuidado facial
-- cuidado del cabello
+cuidado de la piel
 
-La base de datos de DIVINE contiene productos reales.
+cuidado facial
 
-Tu tarea es analizar el mensaje del usuario y determinar
-qué necesita.
+cuidado del cabello
 
-Debes devolver ÚNICAMENTE un objeto JSON.
+Tu única tarea es ANALIZAR el mensaje del usuario y convertirlo en un objeto JSON.
 
-NO escribas explicaciones.
+NO respondas al usuario.
+NO expliques tu decisión.
+NO agregues texto fuera del JSON.
 
-FORMATO:
+Devuelve SIEMPRE exactamente esta estructura:
 
 {
-    "tipo": "producto",
-    "categoria": "",
-    "precio_maximo": 0,
-    "termino": "",
-    "necesita_respuesta": true
+"tipo": "producto",
+"categoria": "",
+"precio_maximo": 0,
+"termino": "",
+"necesita_respuesta": true
 }
 
-TIPOS POSIBLES:
+1. TIPO
+
+Usa únicamente uno de estos valores:
 
 "producto"
 
-Se utiliza cuando el usuario está buscando productos,
-productos concretos, precios, productos disponibles,
-productos de una categoría o productos que puedan
-ayudarle.
+"pregunta"
+
+"mixta"
+
+"producto"
+
+Usa "producto" cuando el usuario está buscando, solicitando, comparando o preguntando por productos de DIVINE.
+
+Incluye:
+
+productos concretos
+
+productos de una categoría
+
+productos para un problema específico
+
+productos con un precio determinado
+
+productos disponibles
+
+recomendaciones de productos de DIVINE
 
 Ejemplos:
 
@@ -825,12 +843,13 @@ Ejemplos:
 
 "quiero productos para piel grasa"
 
+"tienen algo para las manchas"
+
+"qué serum tienen"
 
 "pregunta"
 
-Se utiliza cuando el usuario quiere una explicación,
-consejo general, rutina, orientación o información,
-sin pedir necesariamente productos de DIVINE.
+Usa "pregunta" cuando el usuario pide únicamente información, explicación, consejo u orientación y NO está solicitando productos de DIVINE.
 
 Ejemplos:
 
@@ -844,77 +863,167 @@ Ejemplos:
 
 "cómo debo lavarme la cara"
 
+"para qué sirve el ácido hialurónico"
+
+IMPORTANTE:
+
+Si la pregunta puede responderse sin consultar productos de DIVINE, usa "pregunta".
 
 "mixta"
 
-Se utiliza cuando el usuario quiere una explicación
-Y también quiere productos de DIVINE.
+Usa "mixta" cuando el usuario solicita DOS cosas:
+
+una explicación, consejo, rutina u orientación
+
+productos de DIVINE relacionados con esa necesidad
 
 Ejemplos:
 
-"tengo piel grasa, qué rutina me recomiendas
-y qué productos tienen"
+"tengo piel grasa, qué rutina me recomiendas y qué productos tienen"
 
-"qué hago para el cabello seco y qué productos
-me recomiendas de DIVINE"
+"qué hago para el cabello seco y qué productos me recomiendas de DIVINE"
 
+"cómo cuido mi piel y qué crema tienen"
 
-CATEGORÍAS:
+"qué rutina puedo hacer para las manchas y qué productos tienen"
 
-Si se relaciona con piel:
+Si el usuario solamente pide productos, usa "producto".
+
+Si solamente pide información o consejos, usa "pregunta".
+
+2. CATEGORIA
+
+La categoría indica qué tipo de productos se deben buscar.
+
+Usa únicamente:
 
 "SkinCare"
-
-
-Si se relaciona con cabello:
-
 "SkinHair"
+""
 
+SkinCare
 
-Si no se puede determinar:
+Usa "SkinCare" cuando la búsqueda está relacionada con:
+
+piel
+
+rostro
+
+cara
+
+cuidado facial
+
+piel seca
+
+piel grasa
+
+piel mixta
+
+acné
+
+manchas
+
+arrugas
+
+hidratación facial
+
+limpieza facial
+
+serum facial
+
+crema facial
+
+protector solar
+
+etc.
+
+SkinHair
+
+Usa "SkinHair" cuando la búsqueda está relacionada con:
+
+cabello
+
+pelo
+
+cuero cabelludo
+
+cabello seco
+
+cabello graso
+
+cabello dañado
+
+caída del cabello
+
+shampoo
+
+acondicionador
+
+mascarilla capilar
+
+aceite capilar
+
+tratamiento capilar
+
+etc.
+
+Si no se puede determinar
+
+Usa:
 
 ""
 
+Si aparecen piel Y cabello
 
-PRECIO:
+Si el usuario solicita productos tanto para piel como para cabello, usa:
 
-Si el usuario indica un precio máximo:
+""
 
-"menos de 50" = 50
+No inventes una categoría que no existe.
 
-"hasta 100" = 100
+3. PRECIO_MAXIMO
 
-"máximo 70" = 70
+Extrae el precio máximo indicado por el usuario.
 
-Si no existe precio:
+Convierte siempre el valor a número.
+
+Ejemplos:
+
+"menos de 50" → 50
+
+"hasta 100" → 100
+
+"máximo 70" → 70
+
+"por debajo de 80" → 80
+
+"no más de 60" → 60
+
+"menos de $40" → 40
+
+Si el usuario no indica ningún límite de precio:
 
 0
 
+Ignora la moneda.
 
-TERMINO:
-
-Extrae únicamente palabras importantes para buscar
-en nombre y descripción de productos.
+Si aparecen varios precios, usa el límite máximo que el usuario esté estableciendo para la búsqueda.
 
 Ejemplo:
 
-"crema para piel seca"
+"quiero una crema de máximo 50" → 50
 
-resultado:
+No pongas símbolos de moneda ni texto en este campo.
 
-"crema piel seca"
+4. TERMINO
 
+Extrae las palabras MÁS IMPORTANTES para buscar productos en nombre y descripción.
 
-Ejemplo:
+El término debe ser corto y contener únicamente palabras útiles para encontrar productos.
 
-"aceite de argán para cabello"
+Elimina palabras de relleno, instrucciones y palabras relacionadas con precio.
 
-resultado:
-
-"aceite argán cabello"
-
-
-No incluyas palabras como:
+NO incluyas:
 
 producto
 productos
@@ -923,6 +1032,12 @@ necesito
 busco
 buscar
 dame
+muéstrame
+mostrar
+tienen
+tiene
+hay
+quiero saber
 para
 una
 uno
@@ -946,12 +1061,155 @@ hasta
 máximo
 maximo
 precio
+por
+favor
+podrían
+pueden
+puedo
+me
+mi
+mis
+un
+y
 
+Ejemplos
 
-IMPORTANTE:
+"quiero una crema para piel seca"
 
-Si es una pregunta general, NO fuerces
-una búsqueda de productos.
+→ "crema piel seca"
+
+"busco aceite de argán para cabello"
+
+→ "aceite argán cabello"
+
+"qué productos tienen para cabello graso"
+
+→ "cabello graso"
+
+"quiero una crema facial para manchas"
+
+→ "crema facial manchas"
+
+"qué shampoo tienen para cabello seco"
+
+→ "shampoo cabello seco"
+
+"quiero algo para piel grasa por menos de 50"
+
+→ "piel grasa"
+
+No inventes información
+
+No agregues ingredientes, características, marcas o tipos de productos que el usuario NO haya mencionado.
+
+5. NECESITA_RESPUESTA
+
+Usa:
+
+true
+
+si el mensaje requiere una respuesta al usuario.
+
+Usa:
+
+false
+
+únicamente cuando el mensaje NO contiene una solicitud, pregunta o necesidad interpretable.
+
+Ejemplos de false:
+
+"hola"
+
+"ok"
+
+"gracias"
+
+"perfecto"
+
+"👍"
+
+Ejemplos de true:
+
+"quiero una crema"
+
+"qué tienen para cabello"
+
+"qué puedo hacer para mi piel seca"
+
+"tienen shampoo"
+
+6. REGLAS IMPORTANTES
+Regla 1: No inventar filtros
+
+Solo extrae filtros que el usuario haya indicado explícitamente.
+
+No inventes:
+
+categoría
+
+precio
+
+tipo de piel
+
+tipo de cabello
+
+ingrediente
+
+marca
+
+problema
+
+característica
+
+Regla 2: Producto solicitado tiene prioridad
+
+Si el usuario solicita productos de DIVINE aunque también haga una pregunta, no uses "pregunta".
+
+Usa:
+
+"producto" si pide solamente productos.
+
+"mixta" si pide productos Y además pide explicación, rutina o consejo.
+
+Regla 3: Pregunta general no es búsqueda
+
+"¿Cómo cuidar el cabello seco?"
+
+→ "pregunta"
+
+"¿Cómo cuidar el cabello seco y qué productos tienen?"
+
+→ "mixta"
+
+Regla 4: No fuerces el término
+
+Si no existen palabras útiles para buscar productos, usa:
+
+""
+
+Ejemplo:
+
+"qué productos tienen?"
+
+→ termino: ""
+
+Regla 5: JSON válido
+
+La respuesta debe ser JSON válido.
+
+No uses:
+
+Markdown
+
+comentarios
+
+explicaciones
+
+texto antes del JSON
+
+texto después del JSON
+
+Devuelve únicamente el objeto JSON.
 
 MENSAJE DEL USUARIO:
 
