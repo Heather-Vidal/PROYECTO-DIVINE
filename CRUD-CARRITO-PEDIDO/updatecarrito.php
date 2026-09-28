@@ -1,11 +1,12 @@
+
 <?php
 
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+$servidor = "localhost";
+$usuario = "root";
+$contraseña = "";
+$nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
+$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
 
 ?>
 
@@ -45,6 +46,7 @@ body {
 }
 
 /* TITULO */
+
 .encabezado {
   font-size: 36px;
   font-weight: 700;
@@ -56,6 +58,7 @@ body {
 }
 
 /* CONTENIDO */
+
 .contenido {
   background: #fff5f8;
   border-radius: 20px;
@@ -65,6 +68,7 @@ body {
 }
 
 /* MENSAJES */
+
 .mensaje {
   border-radius: 12px;
   padding: 18px;
@@ -85,6 +89,7 @@ body {
 }
 
 /* BOTONES */
+
 .botones {
   display: flex;
   justify-content: center;
@@ -128,32 +133,163 @@ body {
 
 <?php
 
+/* =========================================================
+   VERIFICAR CONEXIÓN
+========================================================= */
+
 if ($conn->connect_error) {
-    echo '<div class="mensaje error">❌ ERROR DE CONEXIÓN CON BD</div>';
+
+    echo '<div class="mensaje error">
+            ❌ ERROR DE CONEXIÓN CON BD
+          </div>';
+
     exit;
 }
 
-/* DATOS DEL FORM */
-$idPedido = $_POST['idPedido'];
-$codigo = $_POST['codigo'];
-$cantidad = $_POST['cantidad'];
 
-/* UPDATE */
-$sql = "UPDATE CARRITO 
-        SET cantidad='$cantidad',
-            costototal = (costototal / cantidad) * '$cantidad'
-        WHERE PEDIDOS_ID='$idPedido'
-        AND PRODUCTO_codigo='$codigo'";
+/* =========================================================
+   RECIBIR DATOS DEL FORMULARIO
+========================================================= */
 
-if ($conn->query($sql) === TRUE) {
+$idPedido = $_POST['idPedido'] ?? null;
+$codigo = $_POST['codigo'] ?? null;
+$cantidad = $_POST['cantidad'] ?? null;
 
-    echo '<div class="mensaje exito">✔ CARRITO ACTUALIZADO EXITOSAMENTE</div>';
+
+/* =========================================================
+   VALIDAR DATOS
+========================================================= */
+
+if (
+    empty($idPedido) ||
+    empty($codigo) ||
+    !isset($cantidad) ||
+    !is_numeric($cantidad) ||
+    $cantidad <= 0
+) {
+
+    echo '<div class="mensaje error">
+            ⚠ DATOS DE ACTUALIZACIÓN NO VÁLIDOS
+          </div>';
+
+    exit;
+}
+
+
+/* =========================================================
+   CONVERTIR CANTIDAD A ENTERO
+========================================================= */
+
+$cantidad = (int)$cantidad;
+
+
+/* =========================================================
+   BUSCAR EL PRECIO DEL PRODUCTO
+   SOLO DEL PRODUCTO QUE SE ESTÁ MODIFICANDO
+========================================================= */
+
+$sqlPrecio = "SELECT precio
+              FROM PRODUCTO
+              WHERE codigo = ?";
+
+$stmtPrecio = $conn->prepare($sqlPrecio);
+
+$stmtPrecio->bind_param("s", $codigo);
+
+$stmtPrecio->execute();
+
+$resultadoPrecio = $stmtPrecio->get_result();
+
+
+/* =========================================================
+   VERIFICAR QUE EL PRODUCTO EXISTA
+========================================================= */
+
+if ($resultadoPrecio->num_rows == 0) {
+
+    echo '<div class="mensaje error">
+            ⚠ EL PRODUCTO NO EXISTE
+          </div>';
+
+    $stmtPrecio->close();
+    $conn->close();
+
+    exit;
+}
+
+
+/* =========================================================
+   OBTENER PRECIO UNITARIO
+========================================================= */
+
+$producto = $resultadoPrecio->fetch_assoc();
+
+$precioUnitario = (float)$producto['precio'];
+
+$stmtPrecio->close();
+
+
+/* =========================================================
+   CALCULAR NUEVO COSTO TOTAL
+   PRECIO UNITARIO × NUEVA CANTIDAD
+========================================================= */
+
+$costototal = $precioUnitario * $cantidad;
+
+
+/* =========================================================
+   ACTUALIZAR SOLO ESE PRODUCTO DE ESE PEDIDO
+========================================================= */
+
+$sqlUpdate = "UPDATE CARRITO
+              SET cantidad = ?,
+                  costototal = ?
+              WHERE PEDIDOS_ID = ?
+              AND PRODUCTO_codigo = ?";
+
+$stmtUpdate = $conn->prepare($sqlUpdate);
+
+$stmtUpdate->bind_param(
+    "idis",
+    $cantidad,
+    $costototal,
+    $idPedido,
+    $codigo
+);
+
+
+/* =========================================================
+   EJECUTAR ACTUALIZACIÓN
+========================================================= */
+
+if ($stmtUpdate->execute()) {
+
+    if ($stmtUpdate->affected_rows > 0) {
+
+        echo '<div class="mensaje exito">
+                ✔ CARRITO ACTUALIZADO EXITOSAMENTE
+              </div>';
+
+    } else {
+
+        echo '<div class="mensaje error">
+                ⚠ NO SE ENCONTRÓ EL PRODUCTO EN ESTE PEDIDO
+              </div>';
+    }
 
 } else {
 
-    echo '<div class="mensaje error">⚠ ERROR AL ACTUALIZAR EL CARRITO</div>';
+    echo '<div class="mensaje error">
+            ⚠ ERROR AL ACTUALIZAR EL CARRITO
+          </div>';
 }
 
+
+/* =========================================================
+   CERRAR
+========================================================= */
+
+$stmtUpdate->close();
 $conn->close();
 
 ?>
@@ -162,9 +298,9 @@ $conn->close();
 
 <div class="botones">
 
- 
-
-<a href="formcarrito.php?idPedido=<?php echo $idPedido ?>" class="boton">Seguir comprando ➡</a>
+<a href="formcarrito.php?idPedido=<?php echo htmlspecialchars($idPedido); ?>" class="boton">
+    Seguir comprando ➡
+</a>
 
 </div>
 
@@ -172,3 +308,4 @@ $conn->close();
 
 </body>
 </html>
+

@@ -137,7 +137,7 @@ if (
 <title>
     DIVINE | Seleccionar productos
 </title>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
 
@@ -203,7 +203,7 @@ body {
         rgba(255,250,248,.05)
     ),
 
-    url("../imagenes/fondote.png");
+    url("../imagenes/catalogo.jpg");
 
     background-size: cover;
 
@@ -1220,7 +1220,32 @@ body {
     }
 
 }
+/* ==================================================
+   SWEETALERT DIVINE
+================================================== */
 
+.divine-alert {
+    border-radius: 25px !important;
+    border: 1px solid #ead7dc !important;
+    box-shadow: 0 20px 60px rgba(100, 70, 80, .18) !important;
+    padding: 35px !important;
+}
+
+.divine-alert-title {
+    font-family: Georgia, serif !important;
+    color: #57494c !important;
+    font-weight: 400 !important;
+    font-size: 28px !important;
+}
+
+.divine-alert-button {
+    border-radius: 25px !important;
+    padding: 12px 30px !important;
+    font-family: 'Segoe UI', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: .3px !important;
+    box-shadow: 0 5px 15px rgba(184, 111, 128, .25) !important;
+}
 </style>
 
 </head>
@@ -1234,8 +1259,13 @@ body {
 include 'submenucarrito.php';
 
 ?>
+<?php
 
+include 'herencia_carrito.php';
 
+?>
+
+ 
 <script>
 
 const idPedido = <?php echo $id_pedido; ?>;
@@ -1275,7 +1305,11 @@ const idPedido = <?php echo $id_pedido; ?>;
 
             Selecciona tus productos favoritos
             y comienza a crear tu pedido.
-
+            <br>
+  <strong>
+           
+        
+        <em>¡Revisa tu carrito en la esquina superior derecha!.</em></strong>
         </p>
 
 
@@ -1840,31 +1874,102 @@ if ($stock <= 0) {
     </div>
 
 
-    <!-- ==================================================
-         BOTONES FINALES
-    ================================================== -->
+ 
 
-    <div class="botones">
+<div class="botones">
 
+    <?php if ($total <= 0): ?>
+
+        <button
+            type="button"
+            class="final"
+            onclick="carritoVacio()"
+        >
+            Finalizar compra
+        </button>
+
+    <?php else: ?>
 
         <a
-
             class="final"
-
             href="readunopedido.php?idPedido=<?php
-
-            echo $id_pedido;
-
+            echo urlencode($id_pedido);
             ?>"
-
         >
-
             Finalizar compra
-
         </a>
 
+    <?php endif; ?>
 
-    </div>
+</div>
+
+
+<script>
+
+function carritoVacio() {
+
+    Swal.fire({
+
+        icon: 'warning',
+
+        title: '¡Tu carrito está vacío!',
+
+        html: `
+            <p style="
+                color: #6f555d;
+                font-size: 16px;
+                line-height: 1.6;
+                margin: 5px 0 0;
+            ">
+                Antes de finalizar tu compra debes
+                <strong style="color:#b86f80;">
+                    agregar al menos un producto
+                </strong>
+                a tu carrito.
+            </p>
+        `,
+
+        confirmButtonText: 'Agregar productos',
+
+        confirmButtonColor: '#b86f80',
+
+        background: '#fffaf8',
+
+        color: '#57494c',
+
+        iconColor: '#c97991',
+
+        customClass: {
+
+            popup: 'divine-alert',
+
+            title: 'divine-alert-title',
+
+            confirmButton: 'divine-alert-button'
+
+        },
+
+        buttonsStyling: true,
+
+        showClass: {
+            popup: `
+                animate__animated
+                animate__fadeInDown
+            `
+        },
+
+        hideClass: {
+            popup: `
+                animate__animated
+                animate__fadeOutUp
+            `
+        }
+
+    });
+
+}
+
+</script>
 
 
 </section>

@@ -1,340 +1,421 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html> <html lang="es"> <head>
+<meta charset="UTF-8">
 
-<head>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta charset="UTF-8">
+<title>Asistente DIVINE</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<style>
 
-    <title>Buscador Inteligente PHP + Gemini</title>
+    * {
+        box-sizing: border-box;
+    }
 
+    body {
 
-    <style>
+        font-family:
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
 
-        * {
-            box-sizing: border-box;
-        }
+        max-width: 800px;
 
+        margin: 40px auto;
 
-        body {
+        padding: 0 20px;
 
-            font-family:
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
+        color: #333;
 
-            max-width: 750px;
+        background: #fafafa;
 
-            margin: 40px auto;
+    }
 
-            padding: 0 20px;
+    h1 {
 
-            color: #333;
+        margin-bottom: 5px;
 
-            background: #fafafa;
-        }
+    }
 
+    .descripcion {
 
-        h1 {
-            margin-bottom: 5px;
-        }
+        color: #666;
 
+        margin-bottom: 25px;
 
-        .descripcion {
+        line-height: 1.6;
 
-            color: #666;
+    }
 
-            margin-bottom: 25px;
-        }
+    .buscador-contenedor {
 
+        display: flex;
+
+        gap: 10px;
+
+        margin-bottom: 20px;
+
+    }
+
+    input {
+
+        flex: 1;
+
+        padding: 14px;
+
+        border: 1px solid #ccc;
+
+        border-radius: 8px;
+
+        font-size: 16px;
+
+        outline: none;
+
+    }
+
+    input:focus {
+
+        border-color: #2a75d3;
+
+    }
+
+    button {
+
+        padding: 14px 25px;
+
+        background: #2a75d3;
+
+        color: white;
+
+        border: none;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        font-size: 15px;
+
+    }
+
+    button:hover {
+
+        background: #1c5fa3;
+
+    }
+
+    button:disabled {
+
+        opacity: 0.6;
+
+        cursor: not-allowed;
+
+    }
+
+    #status {
+
+        display: none;
+
+        margin-bottom: 20px;
+
+        padding: 15px;
+
+        background: #f4f4f9;
+
+        border-left: 4px solid #2a75d3;
+
+        border-radius: 6px;
+
+        font-size: 14px;
+
+        white-space: pre-wrap;
+
+        overflow-wrap: anywhere;
+
+    }
+
+    #status.error {
+
+        background: #fff0f0;
+
+        border-left-color: #d32f2f;
+
+        color: #a00000;
+
+    }
+
+    #status.exito {
+
+        background: #effff3;
+
+        border-left-color: #1b8a3c;
+
+        color: #145d2b;
+
+    }
+
+    .respuesta-ia {
+
+        padding: 20px;
+
+        margin-bottom: 20px;
+
+        border: 1px solid #ddd;
+
+        border-radius: 10px;
+
+        background: white;
+
+        box-shadow:
+            0 2px 7px rgba(0, 0, 0, 0.05);
+
+        line-height: 1.7;
+
+    }
+
+    .producto {
+
+        padding: 18px;
+
+        margin-bottom: 12px;
+
+        border: 1px solid #e3e3e3;
+
+        border-radius: 10px;
+
+        background: white;
+
+        box-shadow:
+            0 2px 7px rgba(0, 0, 0, 0.05);
+
+    }
+
+    .producto h3 {
+
+        margin-top: 0;
+
+        margin-bottom: 8px;
+
+    }
+
+    .producto p {
+
+        margin: 6px 0;
+
+        color: #555;
+
+    }
+
+    .sin-resultados {
+
+        padding: 20px;
+
+        background: white;
+
+        border-radius: 8px;
+
+        border: 1px solid #ddd;
+
+    }
+
+    .ejemplos {
+
+        margin-top: 20px;
+
+        padding: 15px;
+
+        background: #f4f4f9;
+
+        border-radius: 8px;
+
+    }
+
+    .ejemplos p {
+
+        margin: 7px 0;
+
+    }
+
+    @media (max-width: 600px) {
 
         .buscador-contenedor {
 
-            display: flex;
+            flex-direction: column;
 
-            gap: 10px;
-
-            margin-bottom: 20px;
         }
-
-
-        input {
-
-            flex: 1;
-
-            padding: 14px;
-
-            border: 1px solid #ccc;
-
-            border-radius: 8px;
-
-            font-size: 16px;
-
-            outline: none;
-        }
-
-
-        input:focus {
-
-            border-color: #2a75d3;
-        }
-
 
         button {
 
-            padding: 14px 25px;
-
-            background: #2a75d3;
-
-            color: white;
-
-            border: none;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
-            font-weight: bold;
-
-            font-size: 15px;
-        }
-
-
-        button:hover {
-
-            background: #1c5fa3;
-        }
-
-
-        button:disabled {
-
-            opacity: 0.6;
-
-            cursor: not-allowed;
-        }
-
-
-        #status {
-
-            display: none;
-
-            margin-bottom: 20px;
-
-            padding: 15px;
-
-            background: #f4f4f9;
-
-            border-left: 4px solid #2a75d3;
-
-            border-radius: 6px;
-
-            font-size: 14px;
-
-            white-space: pre-wrap;
-
-            overflow-wrap: anywhere;
-        }
-
-
-        #status.error {
-
-            background: #fff0f0;
-
-            border-left-color: #d32f2f;
-
-            color: #a00000;
-        }
-
-
-        #status.exito {
-
-            background: #effff3;
-
-            border-left-color: #1b8a3c;
-
-            color: #145d2b;
-        }
-
-
-        .producto {
-
-            padding: 18px;
-
-            margin-bottom: 12px;
-
-            border: 1px solid #e3e3e3;
-
-            border-radius: 10px;
-
-            background: white;
-
-            box-shadow:
-                0 2px 7px rgba(0, 0, 0, 0.05);
-        }
-
-
-        .producto h3 {
-
-            margin-top: 0;
-
-            margin-bottom: 8px;
-        }
-
-
-        .producto p {
-
-            margin: 4px 0;
-
-            color: #555;
-        }
-
-
-        .sin-resultados {
-
-            padding: 20px;
-
-            background: white;
-
-            border-radius: 8px;
-
-            border: 1px solid #ddd;
-        }
-
-
-        @media (max-width: 600px) {
-
-            .buscador-contenedor {
-
-                flex-direction: column;
-            }
-
-
-            button {
-
-                width: 100%;
-            }
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-    <h1>Buscador Inteligente</h1>
-
-
-    <p class="descripcion">
-
-        Prueba escribiendo:
-
-        <br><br>
-
-        <b>laptop negra de menos de 600</b>
-
-        <br>
-
-        <b>telefono blanco</b>
-
-        <br>
-
-        <b>telefono de menos de 900</b>
-
-    </p>
-
-
-    <div class="buscador-contenedor">
-
-        <input
-            type="text"
-            id="busquedaInput"
-            placeholder="¿Qué estás buscando?"
-        >
-
-        <button
-            id="botonBuscar"
-            onclick="buscarConIA()"
-        >
-
-            Buscar
-
-        </button>
-
-    </div>
-
-
-    <div id="status"></div>
-
-
-    <div id="resultados"></div>
-
-
-
-<script>
-
-
-const inputBusqueda =
-    document.getElementById("busquedaInput");
-
-
-const resultadosDiv =
-    document.getElementById("resultados");
-
-
-const statusDiv =
-    document.getElementById("status");
-
-
-const botonBuscar =
-    document.getElementById("botonBuscar");
-
-
-
-// ======================================================
-// BUSCAR AL PRESIONAR ENTER
-// ======================================================
-
-inputBusqueda.addEventListener(
-
-    "keydown",
-
-    function(event) {
-
-        if (event.key === "Enter") {
-
-            buscarConIA();
+            width: 100%;
 
         }
 
     }
 
+</style>
+
+</head> <body>
+<h1>Asistente DIVINE</h1>
+
+<p class="descripcion">
+
+    Puedes buscar productos de DIVINE o hacer preguntas generales
+    sobre cuidado de la piel y cabello.
+
+</p>
+
+<div class="buscador-contenedor">
+
+    <input
+        type="text"
+        id="busquedaInput"
+        placeholder="Escribe tu pregunta o búsqueda..."
+        autocomplete="off"
+    >
+
+    <button
+        id="botonBuscar"
+        type="button"
+    >
+        Buscar
+    </button>
+
+</div>
+
+<div class="ejemplos">
+
+    <strong>Ejemplos:</strong>
+
+    <p>
+        productos para hidratar la piel
+    </p>
+
+    <p>
+        aceite de argán de menos de 70
+    </p>
+
+    <p>
+        ¿Qué puedo hacer si tengo piel grasa?
+    </p>
+
+    <p>
+        ¿Qué rutina me recomiendas para mi piel?
+    </p>
+
+    <p>
+        ¿Qué hago si mi piel se descama?
+    </p>
+
+</div>
+
+<div id="status"></div>
+
+<div id="respuestaIA"></div>
+
+<div id="resultados"></div>
+
+<script>
+// ======================================================
+// ELEMENTOS
+// ======================================================
+
+const inputBusqueda =
+document.getElementById(
+"busquedaInput"
 );
 
+const resultadosDiv =
+document.getElementById(
+"resultados"
+);
 
+const respuestaIADiv =
+document.getElementById(
+"respuestaIA"
+);
+
+const statusDiv =
+document.getElementById(
+"status"
+);
+
+const botonBuscar =
+document.getElementById(
+"botonBuscar"
+);
+
+// ======================================================
+// ENTER
+// ======================================================
+
+inputBusqueda.addEventListener(
+
+"keydown",
+
+function(event) {
+
+    if (event.key === "Enter") {
+
+        event.preventDefault();
+
+        buscarConIA();
+
+    }
+
+}
+
+);
+
+// ======================================================
+// CLICK
+// ======================================================
+
+botonBuscar.addEventListener(
+
+"click",
+
+buscarConIA
+
+);
 
 // ======================================================
 // MOSTRAR ESTADO
 // ======================================================
 
-function mostrarEstado(mensaje, tipo = "") {
+function mostrarEstado(
+mensaje,
+tipo = ""
+) {
 
-    statusDiv.style.display = "block";
+statusDiv.style.display =
+    "block";
 
-    statusDiv.className = tipo;
+statusDiv.className =
+    tipo;
 
-    statusDiv.innerText = mensaje;
+statusDiv.innerText =
+    mensaje;
 
 }
 
+// ======================================================
+// OCULTAR ESTADO
+// ======================================================
 
+function ocultarEstado() {
+
+statusDiv.style.display =
+    "none";
+
+statusDiv.innerText =
+    "";
+
+}
 
 // ======================================================
 // FUNCIÓN PRINCIPAL
@@ -342,378 +423,567 @@ function mostrarEstado(mensaje, tipo = "") {
 
 async function buscarConIA() {
 
+const busqueda =
+    inputBusqueda.value.trim();
 
-    const busqueda =
-        inputBusqueda.value.trim();
+resultadosDiv.innerHTML =
+    "";
 
+respuestaIADiv.innerHTML =
+    "";
 
-    resultadosDiv.innerHTML = "";
+// ==================================================
+// VALIDAR
+// ==================================================
 
-
-    // ---------------------------------------------
-    // VALIDAR CAMPO
-    // ---------------------------------------------
-
-    if (!busqueda) {
-
-        mostrarEstado(
-            "Escribe primero lo que deseas buscar.",
-            "error"
-        );
-
-        return;
-    }
-
-
-    botonBuscar.disabled = true;
-
-    botonBuscar.innerText = "Buscando...";
-
+if (!busqueda) {
 
     mostrarEstado(
-        "Consultando a Gemini..."
+
+        "Escribe primero una pregunta o búsqueda.",
+
+        "error"
+
     );
 
+    inputBusqueda.focus();
 
-    try {
+    return;
 
+}
 
-        // ---------------------------------------------
-        // PETICIÓN AL PHP
-        // ---------------------------------------------
+// ==================================================
+// ESTADO
+// ==================================================
 
-        const response = await fetch(
+botonBuscar.disabled =
+    true;
+
+botonBuscar.innerText =
+    "Pensando...";
+
+mostrarEstado(
+
+    "Consultando al asistente...",
+
+    ""
+
+);
+
+try {
+
+    // ==================================================
+    // LLAMAR A PHP
+    // ==================================================
+
+    const response =
+        await fetch(
 
             "./filtrar.php",
 
             {
 
-                method: "POST",
+                method:
+                    "POST",
 
-                headers: {
+                headers:
+                    {
 
-                    "Content-Type":
-                        "application/json"
+                        "Content-Type":
+                            "application/json"
 
-                },
+                    },
 
-                body: JSON.stringify({
+                body:
+                    JSON.stringify(
 
-                    busqueda: busqueda
+                        {
 
-                })
+                            busqueda:
+                                busqueda
+
+                        }
+
+                    )
 
             }
 
         );
 
+    // ==================================================
+    // LEER RESPUESTA
+    // ==================================================
 
+    const textoRespuesta =
+        await response.text();
 
-        // ---------------------------------------------
-        // RECIBIR RESPUESTA COMO TEXTO PRIMERO
-        // ---------------------------------------------
+    console.log(
+        "Respuesta PHP:",
+        textoRespuesta
+    );
 
-        const textoRespuesta =
-            await response.text();
+    // ==================================================
+    // CONVERTIR A JSON
+    // ==================================================
 
+    let data;
 
+    try {
 
-        // ---------------------------------------------
-        // INTENTAR CONVERTIR A JSON
-        // ---------------------------------------------
-
-        let data;
-
-
-        try {
-
-            data = JSON.parse(textoRespuesta);
-
-        }
-
-        catch (error) {
-
-            console.error(
-                "Respuesta PHP:",
+        data =
+            JSON.parse(
                 textoRespuesta
             );
-
-
-            mostrarEstado(
-
-                "PHP respondió algo que no es JSON.\n\n" +
-
-                "Respuesta del servidor:\n" +
-
-                textoRespuesta,
-
-                "error"
-
-            );
-
-
-            return;
-
-        }
-
-
-
-        // ---------------------------------------------
-        // ERROR HTTP
-        // ---------------------------------------------
-
-        if (!response.ok) {
-
-
-            let mensaje =
-
-                "Error del servidor PHP (" +
-
-                response.status +
-
-                ")";
-
-
-            if (data.error) {
-
-                mensaje +=
-                    "\n\n" + data.error;
-
-            }
-
-
-            if (data.detalle) {
-
-                mensaje +=
-                    "\n\nDetalle:\n" +
-                    data.detalle;
-
-            }
-
-
-            mostrarEstado(
-                mensaje,
-                "error"
-            );
-
-
-            console.error(
-                "Error servidor:",
-                data
-            );
-
-
-            return;
-        }
-
-
-
-        // ---------------------------------------------
-        // ERROR PERSONALIZADO DEL PHP
-        // ---------------------------------------------
-
-        if (data.error) {
-
-            mostrarEstado(
-
-                "Error:\n" +
-                data.error,
-
-                "error"
-
-            );
-
-            return;
-
-        }
-
-
-
-        // ---------------------------------------------
-        // MOSTRAR FILTROS DE GEMINI
-        // ---------------------------------------------
-
-        const filtros =
-            data.filtrosAplicados || {};
-
-
-        mostrarEstado(
-
-            "✅ Gemini entendió la búsqueda correctamente.\n\n" +
-
-            "Categoría: " +
-            (filtros.categoria || "No especificada") +
-
-            "\nColor: " +
-            (filtros.color || "No especificado") +
-
-            "\nPrecio máximo: " +
-            (
-                filtros.precio_maximo > 0
-                ? "$" + filtros.precio_maximo
-                : "No especificado"
-            ),
-
-            "exito"
-
-        );
-
-
-
-        // ---------------------------------------------
-        // SIN RESULTADOS
-        // ---------------------------------------------
-
-        if (
-            !data.productos ||
-            data.productos.length === 0
-        ) {
-
-
-            resultadosDiv.innerHTML = `
-
-                <div class="sin-resultados">
-
-                    <b>No se encontraron productos.</b>
-
-                    <p>
-
-                        Gemini entendió los filtros,
-                        pero ningún producto del inventario
-                        coincide con ellos.
-
-                    </p>
-
-                </div>
-
-            `;
-
-
-            return;
-
-        }
-
-
-
-        // ---------------------------------------------
-        // MOSTRAR PRODUCTOS
-        // ---------------------------------------------
-
-        data.productos.forEach(
-
-            function(prod) {
-
-
-                const div =
-                    document.createElement("div");
-
-
-                div.className =
-                    "producto";
-
-
-                div.innerHTML = `
-
-                    <h3>
-                        ${escapeHTML(prod.nombre)}
-                    </h3>
-
-                    <p>
-                        <b>Categoría:</b>
-                        ${escapeHTML(prod.categoria)}
-                    </p>
-
-                    <p>
-                        <b>Precio:</b>
-                        $${Number(prod.precio)}
-                    </p>
-
-                    <p>
-                        <b>Color:</b>
-                        ${escapeHTML(prod.color)}
-                    </p>
-
-                `;
-
-
-                resultadosDiv.appendChild(div);
-
-            }
-
-        );
-
 
     }
 
     catch (error) {
 
-
         console.error(
-            "Error de conexión:",
-            error
+            "PHP respondió:",
+            textoRespuesta
         );
-
 
         mostrarEstado(
 
-            "No se pudo conectar con filtrar.php.\n\n" +
+            "El servidor PHP no devolvió JSON válido.\n\n" +
 
-            "Posibles causas:\n" +
+            "Respuesta recibida:\n\n" +
 
-            "• Apache no está iniciado.\n" +
-
-            "• Abriste index.html directamente con file://.\n" +
-
-            "• filtrar.php no está en la misma carpeta.\n" +
-
-            "• PHP no está funcionando.\n\n" +
-
-            "Error técnico:\n" +
-
-            error.message,
+            textoRespuesta,
 
             "error"
 
         );
 
+        return;
+
     }
 
-    finally {
+    // ==================================================
+    // ERROR HTTP
+    // ==================================================
 
+    if (!response.ok) {
 
-        botonBuscar.disabled = false;
+        let mensaje =
 
-        botonBuscar.innerText = "Buscar";
+            "Error del servidor PHP (" +
+
+            response.status +
+
+            ")" ;
+
+        if (data.error) {
+
+            mensaje +=
+
+                "\n\n" +
+
+                data.error;
+
+        }
+
+        if (data.detalle) {
+
+            mensaje +=
+
+                "\n\nDetalle:\n" +
+
+                data.detalle;
+
+        }
+
+        mostrarEstado(
+
+            mensaje,
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+    // ==================================================
+    // ERROR DEVUELTO POR PHP
+    // ==================================================
+
+    if (data.error) {
+
+        mostrarEstado(
+
+            data.error,
+
+            "error"
+
+        );
+
+        return;
+
+    }
+
+    // ==================================================
+    // RESPUESTA GENERAL DE IA
+    // ==================================================
+
+    if (
+
+        data.respuestaIA &&
+
+        typeof data.respuestaIA === "string"
+
+    ) {
+
+        respuestaIADiv.innerHTML =
+
+            `
+
+            <div class="respuesta-ia">
+
+                <strong>Asistente DIVINE</strong>
+
+                <br><br>
+
+                ${formatearRespuesta(
+                    data.respuestaIA
+                )}
+
+            </div>
+
+            `;
+
+    }
+
+    // ==================================================
+    // PRODUCTOS
+    // ==================================================
+
+    const productos =
+
+        Array.isArray(
+            data.productos
+        )
+
+            ? data.productos
+
+            : [];
+
+    // ==================================================
+    // MOSTRAR PRODUCTOS
+    // ==================================================
+
+    if (productos.length > 0) {
+
+        const filtros =
+
+            data.filtrosAplicados ||
+
+            {};
+
+        let mensaje =
+
+            "Productos encontrados: " +
+
+            productos.length;
+
+        if (
+            filtros.categoria
+        ) {
+
+            mensaje +=
+
+                "\nCategoría: " +
+
+                filtros.categoria;
+
+        }
+
+        if (
+            Number(
+                filtros.precio_maximo
+            ) > 0
+        ) {
+
+            mensaje +=
+
+                "\nPrecio máximo: $" +
+
+                filtros.precio_maximo;
+
+        }
+
+        mostrarEstado(
+
+            mensaje,
+
+            "exito"
+
+        );
+
+        productos.forEach(
+
+            function(prod) {
+
+                const div =
+
+                    document.createElement(
+                        "div"
+                    );
+
+                div.className =
+                    "producto";
+
+                div.innerHTML = `
+
+                    <h3>
+
+                        ${escapeHTML(
+                            prod.nombre
+                        )}
+
+                    </h3>
+
+                    <p>
+
+                        <b>Código:</b>
+
+                        ${escapeHTML(
+                            prod.codigo
+                        )}
+
+                    </p>
+
+                    <p>
+
+                        <b>Descripción:</b>
+
+                        ${escapeHTML(
+                            prod.descripcion
+                        )}
+
+                    </p>
+
+                    <p>
+
+                        <b>Categoría:</b>
+
+                        ${escapeHTML(
+                            prod.categoria
+                        )}
+
+                    </p>
+
+                    <p>
+
+                        <b>Precio:</b>
+
+                        $${formatearNumero(
+                            prod.precio
+                        )}
+
+                    </p>
+
+                    <p>
+
+                        <b>Stock:</b>
+
+                        ${formatearNumero(
+                            prod.stock
+                        )}
+
+                    </p>
+
+                `;
+
+                resultadosDiv.appendChild(
+                    div
+                );
+
+            }
+
+        );
+
+    }
+
+    else {
+
+        // ==================================================
+        // SI HAY RESPUESTA IA
+        // ==================================================
+
+        if (
+            data.respuestaIA
+        ) {
+
+            mostrarEstado(
+
+                "Respuesta generada correctamente.",
+
+                "exito"
+
+            );
+
+        }
+
+        else {
+
+            mostrarEstado(
+
+                "No se encontraron productos.",
+
+                ""
+
+            );
+
+            resultadosDiv.innerHTML =
+
+                `
+
+                <div class="sin-resultados">
+
+                    <b>
+                        No se encontraron productos.
+                    </b>
+
+                    <p>
+
+                        Intenta realizar otra búsqueda.
+
+                    </p>
+
+                </div>
+
+                `;
+
+        }
 
     }
 
 }
 
+catch (error) {
 
+    console.error(
+        "Error:",
+        error
+    );
 
-// ======================================================
-// SEGURIDAD AL MOSTRAR TEXTO
-// ======================================================
+    mostrarEstado(
 
-function escapeHTML(texto) {
+        "No se pudo conectar con filtrar.php.\n\n" +
 
+        "Comprueba que:\n" +
 
-    const div =
-        document.createElement("div");
+        "• Apache esté iniciado.\n" +
 
+        "• PHP esté funcionando.\n" +
 
-    div.textContent =
-        String(texto ?? "");
+        "• index.html esté dentro de htdocs.\n" +
 
+        "• filtrar.php esté en la misma carpeta.\n\n" +
 
-    return div.innerHTML;
+        "Error técnico:\n" +
+
+        error.message,
+
+        "error"
+
+    );
 
 }
 
+finally {
 
-</script>
+    botonBuscar.disabled =
+        false;
 
+    botonBuscar.innerText =
+        "Buscar";
 
-</body>
+}
 
-</html>
+}
+
+// ======================================================
+// FORMATEAR RESPUESTA IA
+// ======================================================
+
+function formatearRespuesta(
+texto
+) {
+
+let resultado =
+    escapeHTML(texto);
+
+resultado =
+    resultado.replace(
+
+        /\*\*(.*?)\*\*/g,
+
+        "<strong>$1</strong>"
+
+    );
+
+resultado =
+    resultado.replace(
+
+        /\n/g,
+
+        "<br>"
+
+    );
+
+return resultado;
+
+}
+
+// ======================================================
+// FORMATEAR NÚMEROS
+// ======================================================
+
+function formatearNumero(
+numero
+) {
+
+const valor =
+    Number(numero);
+
+if (
+    Number.isNaN(valor)
+) {
+
+    return "0";
+
+}
+
+return valor.toLocaleString(
+    "es-ES"
+);
+
+}
+
+// ======================================================
+// SEGURIDAD HTML
+// ======================================================
+
+function escapeHTML(
+texto
+) {
+
+const div =
+    document.createElement(
+        "div"
+    );
+
+div.textContent =
+    String(
+        texto ?? ""
+    );
+
+return div.innerHTML;
+
+}
+
+</script> </body> </html>

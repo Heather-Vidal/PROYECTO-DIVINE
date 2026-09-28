@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -102,7 +103,7 @@ nav{
 
 
 /* ==================================================
-   SUBMENÚ
+   SUBMENÚ PC
 ================================================== */
 
 .submenu{
@@ -138,6 +139,24 @@ nav{
 
 
 /* ==================================================
+   PRODUCTOS + FLECHA
+================================================== */
+
+.productos-contenedor{
+    display:flex;
+    align-items:center;
+}
+
+.productos-contenedor > a{
+    flex:1;
+}
+
+.boton-submenu{
+    display:none;
+}
+
+
+/* ==================================================
    ICONOS
 ================================================== */
 
@@ -151,6 +170,12 @@ nav{
     width:25px;
     height:25px;
     object-fit:contain;
+
+    transition:transform .3s ease;
+}
+
+.iconos-derecha a:hover img{
+    transform:scale(1.1);
 }
 
 
@@ -291,31 +316,100 @@ nav{
 
 
     /* ==================================================
-       SUBMENÚ EN TABLET/CELULAR
+       PRODUCTOS
+    ================================================== */
+
+    .productos-contenedor{
+        width:100%;
+
+        display:flex;
+        align-items:center;
+    }
+
+    .productos-contenedor > a{
+        width:auto;
+        flex:1;
+    }
+
+
+    /* ==================================================
+       BOTÓN SUBMENÚ
+    ================================================== */
+
+    .boton-submenu{
+        display:flex;
+
+        justify-content:center;
+        align-items:center;
+
+        width:55px;
+        height:55px;
+
+        border:none;
+
+        background:transparent;
+
+        font-size:22px;
+
+        cursor:pointer;
+
+        transition:.3s;
+    }
+
+    .boton-submenu.activo{
+        transform:rotate(180deg);
+    }
+
+
+    /* ==================================================
+       SUBMENÚ CELULAR
     ================================================== */
 
     .submenu{
+        display:none;
+
+        position:absolute;
+
+        top:0;
+        left:100%;
+
+        width:210px;
+        min-width:210px;
+
+        margin:0;
+
+        padding:5px 0;
+
+        background:white;
+
+        border-radius:0 12px 12px 0;
+
+        box-shadow:
+            5px 5px 20px rgba(0,0,0,.15);
+
+        z-index:10002;
+    }
+
+    .menu li.submenu-abierto > .submenu{
         display:block;
+    }
 
-        position:static;
-
-        width:calc(100% - 30px);
-
-        min-width:0;
-
-        margin-left:15px;
-        margin-right:15px;
-
-        box-shadow:none;
-
-        background:#f7f7f7;
-
-        border-radius:10px;
+    .submenu li{
+        width:100%;
     }
 
     .submenu li a{
-        font-size:15px;
-        padding:12px 18px;
+        width:100%;
+
+        font-size:16px;
+
+        padding:15px 18px;
+    }
+
+    .submenu li a:hover{
+        background:#f5f5f5;
+
+        transform:none;
     }
 
 
@@ -444,22 +538,35 @@ nav{
     ================================================== */
 
     .submenu{
-        display:block;
+        width:190px;
 
-        width:calc(100% - 25px);
+        min-width:190px;
 
-        margin-left:12px;
-        margin-right:12px;
+        left:100%;
 
-        background:#f2f2f2;
+        margin:0;
 
-        border-radius:8px;
+        background:white;
+
+        border-radius:0 10px 10px 0;
     }
 
     .submenu li a{
         font-size:14px;
 
-        padding:12px 15px;
+        padding:13px 15px;
+    }
+
+
+    /* ==================================================
+       BOTÓN SUBMENÚ
+    ================================================== */
+
+    .boton-submenu{
+        width:50px;
+        height:50px;
+
+        font-size:20px;
     }
 
 
@@ -569,12 +676,30 @@ nav{
 
             <!-- PRODUCTOS -->
 
-            <li>
+            <li id="productosMenu">
 
-                <a href="produccomp.php">
-                    Productos
-                </a>
 
+                <div class="productos-contenedor">
+
+
+                    <a href="produccomp.php">
+                        Productos
+                    </a>
+
+
+                    <button
+                        class="boton-submenu"
+                        onclick="toggleSubmenu(event)"
+                        type="button"
+                    >
+                        ›
+                    </button>
+
+
+                </div>
+
+
+                <!-- SUBMENÚ -->
 
                 <ul class="submenu">
 
@@ -599,6 +724,7 @@ nav{
 
                 </ul>
 
+
             </li>
 
 
@@ -613,19 +739,39 @@ nav{
             </li>
 
 
-             <li>
+            <!-- CONTACTO -->
+
+            <li>
 
                 <a href="contactanos.php">
-
                     Contacto
                 </a>
 
             </li>
 
 
+            <!-- SUGERENCIAS -->
 
-                <a href="sugerencias.php">
-                    Sugerencias
+          
+
+
+            <!-- CONSULTA -->
+
+            <li>
+
+                <a href="CONSULTA-pedido/formreadpedido.php">
+                    Consulta
+                </a>
+
+            </li>
+
+
+            <!-- GESTIÓN AMBIENTAL -->
+
+            <li>
+
+                <a href="formulario.pdf">
+                    Gestión Ambiental
                 </a>
 
             </li>
@@ -687,24 +833,68 @@ nav{
 
 <script>
 
+
 /* ==================================================
    ABRIR / CERRAR MENÚ
 ================================================== */
 
 function toggleMenu(){
 
-    document
-        .getElementById("menuLateral")
-        .classList
-        .toggle("active");
+    const menu =
+        document.getElementById("menuLateral");
+
+    const overlay =
+        document.getElementById("overlay");
+
+    const hamburger =
+        document.querySelector(".hamburger");
 
 
-    document
-        .getElementById("overlay")
-        .classList
-        .toggle("active");
+    menu.classList.toggle("active");
+
+    overlay.classList.toggle("active");
+
+
+    /* Cambiar ☰ por ✕ */
+
+    if(menu.classList.contains("active")){
+
+        hamburger.innerHTML = "✕";
+
+    }else{
+
+        hamburger.innerHTML = "☰";
+
+    }
 
 }
+
+
+/* ==================================================
+   ABRIR / CERRAR SUBMENÚ
+================================================== */
+
+function toggleSubmenu(event){
+
+    event.preventDefault();
+
+    event.stopPropagation();
+
+
+    const productos =
+        document.getElementById("productosMenu");
+
+
+    const boton =
+        productos.querySelector(".boton-submenu");
+
+
+    productos.classList.toggle("submenu-abierto");
+
+    boton.classList.toggle("activo");
+
+}
+
 
 </script>
 

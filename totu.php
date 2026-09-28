@@ -1,16 +1,26 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Divine Beauty</title>
 
 <style>
 
-
+/* =========================================================
+   FUENTES
+========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@300;400;500;600&display=swap');
+
+
+/* =========================================================
+   GENERAL
+========================================================= */
 
 *{
     margin: 0;
@@ -30,6 +40,9 @@ body{
 }
 
 
+/* =========================================================
+   PANTALLA NEGRA
+========================================================= */
 
 .pantalla-negra{
     position: fixed;
@@ -54,24 +67,32 @@ body{
 }
 
 @keyframes salirIntro{
+
     from{
         transform: translateY(0);
     }
+
     to{
         transform: translateY(-100%);
     }
+
 }
 
 
+/* =========================================================
+   HEADER
+========================================================= */
 
 header{
     width: 92%;
     height: 82px;
+
     position: absolute;
     top: 25px;
     left: 4%;
-    z-index: 100;
-    
+
+    z-index: 1000;
+
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -88,7 +109,9 @@ header{
 }
 
 
-
+/* =========================================================
+   LOGO
+========================================================= */
 
 .logo{
     display: flex;
@@ -104,6 +127,10 @@ header{
     transform: rotate(-3deg) scale(1.05);
 }
 
+
+/* =========================================================
+   MENÚ DESKTOP
+========================================================= */
 
 nav{
     display: flex;
@@ -123,8 +150,10 @@ nav{
 .menu li a{
     text-decoration: none;
     color: #392b2e;
+
     font-size: 12px;
     font-weight: 500;
+
     text-transform: uppercase;
     letter-spacing: 1px;
 
@@ -139,18 +168,25 @@ nav{
 }
 
 
+/* =========================================================
+   SUBMENÚ DESKTOP
+========================================================= */
+
 .submenu{
     display: none;
+
     position: absolute;
     top: 45px;
     left: 0;
 
     width: 190px;
+
     padding: 10px;
 
     list-style: none;
 
     background: #fffaf7;
+
     border-radius: 15px;
 
     box-shadow: 0 20px 40px rgba(50,30,30,.15);
@@ -160,6 +196,7 @@ nav{
     text-transform: none;
     letter-spacing: 0;
     font-size: 13px;
+
     border-radius: 8px;
 }
 
@@ -172,10 +209,14 @@ nav{
 }
 
 
+/* =========================================================
+   ICONOS DERECHA
+========================================================= */
 
 .iconos-derecha{
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 10px;
 }
 
@@ -204,7 +245,81 @@ nav{
 }
 
 
+/* =========================================================
+   BOTÓN HAMBURGUESA
+========================================================= */
 
+.boton-hamburguesa{
+    display: none;
+
+    width: 46px;
+    height: 46px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #38272a;
+
+    cursor: pointer;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+    gap: 5px;
+
+    box-shadow: 0 8px 20px rgba(50,30,30,.18);
+
+    transition: .3s;
+
+    position: relative;
+    z-index: 1100;
+}
+
+.boton-hamburguesa:hover{
+    background: #9b5c67;
+    transform: scale(1.05);
+}
+
+.boton-hamburguesa span{
+    width: 19px;
+    height: 2px;
+
+    background: #fffaf7;
+
+    border-radius: 10px;
+
+    transition: .3s;
+}
+
+
+/* ANIMACIÓN DE HAMBURGUESA A X */
+
+.boton-hamburguesa.activo span:nth-child(1){
+    transform: translateY(7px) rotate(45deg);
+}
+
+.boton-hamburguesa.activo span:nth-child(2){
+    opacity: 0;
+}
+
+.boton-hamburguesa.activo span:nth-child(3){
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* =========================================================
+   MENÚ MÓVIL
+========================================================= */
+
+.menu-movil{
+    display: none;
+}
+
+
+/* =========================================================
+   SECCIÓN PRINCIPAL
+========================================================= */
 
 body > section:not(.pantalla-negra):not(.derecha){
     min-height: 100vh;
@@ -213,7 +328,10 @@ body > section:not(.pantalla-negra):not(.derecha){
     flex-direction: column;
     justify-content: center;
 
-    padding: 150px 7% 70px;
+    /*
+       SUBIMOS UN POQUITO EL CONTENIDO
+    */
+    padding: 125px 7% 70px;
 
     background:
         radial-gradient(
@@ -228,12 +346,14 @@ body > section:not(.pantalla-negra):not(.derecha){
 }
 
 
-
+/* =========================================================
+   NÚMERO
+========================================================= */
 
 body > section:not(.pantalla-negra):not(.derecha)::after{
     content: "01";
-    position: absolute;
 
+    position: absolute;
     left: 7%;
     bottom: 35px;
 
@@ -244,15 +364,18 @@ body > section:not(.pantalla-negra):not(.derecha)::after{
 }
 
 
-
+/* =========================================================
+   TÍTULO
+========================================================= */
 
 h1{
     max-width: 720px;
 
     font-family: 'DM Serif Display', serif;
-    font-size: clamp(55px, 7vw, 100px);
-    font-weight: 400;
 
+    font-size: clamp(55px, 7vw, 100px);
+
+    font-weight: 400;
     line-height: .92;
 
     letter-spacing: -4px;
@@ -262,17 +385,22 @@ h1{
 
 .color{
     color: #a35d68;
+
     font-style: italic;
+
     font-family: 'DM Serif Display', serif;
 }
 
 
+/* =========================================================
+   TEXTO
+========================================================= */
 
 .sub{
     max-width: 430px;
 
-    margin-top: 35px;
-    margin-bottom: 35px;
+    margin-top: 28px;
+    margin-bottom: 28px;
 
     font-size: 14px;
     line-height: 1.9;
@@ -281,23 +409,36 @@ h1{
 }
 
 
+/* =========================================================
+   CAJA ESENCIAS
+========================================================= */
+
 .box{
     align-items: center;
+
     width: 430px;
     height: 220px;
+
     position: relative;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
+
     padding: 20px;
+
     background: #dac0b9;
+
     border-radius: 15px;
+
     box-shadow: 15px 20px 0 #eee1db;
 }
 
 .box h2{
     font-family: 'DM Serif Display', serif;
+
     font-size: 25px;
+
     font-weight: 400;
 
     color: #38272a;
@@ -312,6 +453,8 @@ h1{
     line-height: 1.5;
 
     color: #624d50;
+
+    text-align: center;
 }
 
 .box a{
@@ -326,6 +469,7 @@ h1{
 
     font-size: 11px;
     letter-spacing: 1px;
+
     text-transform: uppercase;
 
     border-radius: 30px;
@@ -350,6 +494,10 @@ h1{
 }
 
 
+/* =========================================================
+   IMAGEN DERECHA
+========================================================= */
+
 .derecha{
     min-height: 100vh;
 
@@ -363,6 +511,7 @@ h1{
     padding: 135px 4% 50px 20px;
 
     display: flex;
+
     justify-content: center;
     align-items: center;
 }
@@ -386,6 +535,11 @@ h1{
     transform: translateY(-10px);
 }
 
+
+/* =========================================================
+   PRINCIPAL
+========================================================= */
+
 main.principal{
     padding: 130px 7%;
 
@@ -393,8 +547,6 @@ main.principal{
 
     position: relative;
 }
-
-
 
 main.principal::before{
     content: "DIVINE COLLECTION";
@@ -404,6 +556,7 @@ main.principal::before{
     text-align: center;
 
     font-size: 11px;
+
     letter-spacing: 5px;
 
     color: #a56b72;
@@ -412,7 +565,9 @@ main.principal::before{
 }
 
 
-
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
 
 .caracteristicas{
     width: 100%;
@@ -472,6 +627,10 @@ main.principal::before{
 }
 
 
+/* =========================================================
+   TARJETAS
+========================================================= */
+
 .tarjetas{
     width: 90%;
 
@@ -526,25 +685,252 @@ main.principal::before{
 }
 
 
+/* =========================================================
+   FOOTER
+========================================================= */
+
 footer{
     background: #302124;
     color: #f5e8e2;
 }
 
 
+/* =========================================================
+   TABLET
+========================================================= */
 
 @media(max-width:1100px){
 
     header{
+        height: 75px;
+
         grid-template-columns: 1fr auto;
+
+        padding: 0 20px;
     }
 
     nav{
         display: none;
     }
 
+    .logo{
+        justify-content: flex-start;
+    }
+
+
+    /*
+
+       AHORA LOS ICONOS SÍ SE MUESTRAN
+       JUNTO A LA HAMBURGUESA
+
+    */
+
+    .iconos-derecha{
+        display: flex;
+
+        position: absolute;
+
+        right: 78px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        gap: 7px;
+    }
+
+    .iconos-derecha a{
+        width: 35px;
+        height: 35px;
+    }
+
+    .iconos-derecha img{
+        width: 17px;
+    }
+
+
+    .boton-hamburguesa{
+        display: flex;
+    }
+
+
+    /* MENÚ MÓVIL */
+
+    .menu-movil{
+        display: none;
+
+        position: absolute;
+
+        top: 88px;
+        left: 0;
+
+        width: 100%;
+
+        padding: 15px;
+
+        background: rgba(255,250,247,.98);
+
+        backdrop-filter: blur(20px);
+
+        border-radius: 25px;
+
+        box-shadow: 0 20px 45px rgba(50,30,30,.16);
+
+        border: 1px solid rgba(105,70,70,.10);
+
+        z-index: 1000;
+    }
+
+    .menu-movil.abierto{
+        display: block;
+
+        animation: aparecerMenu .3s ease;
+    }
+
+    @keyframes aparecerMenu{
+
+        from{
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    .menu-movil ul{
+        list-style: none;
+    }
+
+    .menu-movil li{
+        position: relative;
+    }
+
+
+    .menu-movil > ul > li > a{
+
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        padding: 14px 15px;
+
+        color: #392b2e;
+
+        text-decoration: none;
+
+        font-size: 12px;
+
+        text-transform: uppercase;
+
+        letter-spacing: 1px;
+
+        border-radius: 12px;
+
+        transition: .3s;
+    }
+
+    .menu-movil > ul > li > a:hover{
+        background: #f1ded9;
+        color: #9a5c67;
+    }
+
+
+    /* FLECHA PRODUCTOS */
+
+    .productos-movil > a::after{
+
+        content: "⌄";
+
+        font-size: 17px;
+
+        transition: .3s;
+    }
+
+    .productos-movil.abierto > a::after{
+        transform: rotate(180deg);
+    }
+
+
+    /* SUBMENÚ MÓVIL */
+
+    .submenu-movil{
+
+        display: none;
+
+        margin: 0 8px 8px;
+
+        padding: 5px;
+
+        background: #f7ebe7;
+
+        border-radius: 15px;
+    }
+
+    .productos-movil.abierto .submenu-movil{
+
+        display: block;
+
+        animation: aparecerSub .25s ease;
+    }
+
+    @keyframes aparecerSub{
+
+        from{
+            opacity: 0;
+            transform: translateY(-5px);
+        }
+
+        to{
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    .submenu-movil a{
+
+        display: block;
+
+        padding: 11px 15px;
+
+        color: #624d50;
+
+        text-decoration: none;
+
+        font-size: 12px;
+
+        border-radius: 10px;
+
+        transition: .3s;
+    }
+
+    .submenu-movil a:hover{
+
+        background: #ead4ce;
+
+        color: #9b5c67;
+    }
+
+
+    /* ICONOS DENTRO DEL MENÚ */
+
+    .menu-iconos-movil{
+
+        display: none;
+
+    }
+
+
     body > section:not(.pantalla-negra):not(.derecha){
+
         padding-left: 5%;
+        padding-top: 110px;
     }
 
     h1{
@@ -563,6 +949,7 @@ footer{
     .caja-caracteristica:nth-child(2),
     .caja-caracteristica:nth-child(3),
     .caja-caracteristica:nth-child(4){
+
         margin-top: 0;
     }
 
@@ -573,10 +960,14 @@ footer{
 }
 
 
+/* =========================================================
+   CELULAR
+========================================================= */
 
 @media(max-width:750px){
 
     header{
+
         position: relative;
 
         top: auto;
@@ -586,49 +977,110 @@ footer{
 
         margin: 15px auto;
 
-        height: auto;
+        height: 68px;
 
-        padding: 15px;
+        padding: 8px 10px 8px 18px;
 
         grid-template-columns: 1fr auto;
+
+        border-radius: 35px;
     }
 
+
+    .logo img{
+        width: 110px;
+    }
+
+
+    /*
+       ICONOS A LA DERECHA
+       HAMBURGUESA AL FINAL
+    */
+
     .iconos-derecha{
+
+        position: absolute;
+
+        right: 65px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        display: flex;
+
         gap: 5px;
     }
 
     .iconos-derecha a{
+
         width: 34px;
         height: 34px;
+
+        background: #eee3de;
     }
 
+    .iconos-derecha img{
+        width: 16px;
+    }
+
+
+    .boton-hamburguesa{
+
+        width: 42px;
+        height: 42px;
+
+        margin-left: auto;
+    }
+
+
+    .menu-movil{
+
+        top: 78px;
+
+        width: 100%;
+    }
+
+
+    /* CONTENIDO UN POQUITO MÁS ARRIBA */
+
     body > section:not(.pantalla-negra):not(.derecha){
+
         min-height: auto;
 
-        padding: 100px 25px 70px;
+        padding: 70px 25px 70px;
 
         align-items: center;
 
         text-align: center;
     }
 
+
     h1{
+
         font-size: 52px;
+
         letter-spacing: -2px;
     }
+
 
     .sub{
         max-width: 500px;
     }
 
+
     .box{
+
         width: 100%;
+
         max-width: 430px;
 
         text-align: left;
     }
 
+
     .derecha{
+
         position: relative;
 
         width: 100%;
@@ -638,26 +1090,37 @@ footer{
         padding: 30px 25px 80px;
     }
 
+
     .derecha img{
+
         height: 550px;
 
         border-radius: 180px 180px 20px 20px;
     }
 
+
     main.principal{
+
         padding: 90px 20px;
     }
 
+
     .caracteristicas{
+
         grid-template-columns: 1fr 1fr;
     }
 
+
     .caja-caracteristica{
+
         height: 350px;
+
         border-radius: 60px 60px 12px 12px;
     }
 
+
     .tarjetas{
+
         width: 100%;
 
         grid-template-columns: 1fr;
@@ -665,38 +1128,76 @@ footer{
         margin-top: 90px;
     }
 
+
     .tarjeta,
     .tarjeta:nth-child(2){
+
         height: 400px;
 
         transform: none;
     }
 
+
     .tarjeta:hover,
     .tarjeta:nth-child(2):hover{
+
         transform: translateY(-10px);
     }
 
 }
 
 
+/* =========================================================
+   CELULARES PEQUEÑOS
+========================================================= */
 
 @media(max-width:360px){
 
     .pantalla-negra h1{
+
         font-size: 45px;
+
         letter-spacing: 8px;
     }
 
+
     .logo img{
-        width: 105px;
+        width: 100px;
     }
+
+
+    .iconos-derecha{
+        right: 60px;
+        gap: 3px;
+    }
+
+
+    .iconos-derecha a{
+
+        width: 31px;
+        height: 31px;
+    }
+
+
+    .iconos-derecha img{
+        width: 15px;
+    }
+
+
+    .boton-hamburguesa{
+
+        width: 39px;
+        height: 39px;
+    }
+
 
     h1{
         font-size: 43px;
     }
 
+
     .box{
+
         min-height: 190px;
 
         padding-left: 125px;
@@ -704,17 +1205,21 @@ footer{
         border-radius: 0 50px 0 50px;
     }
 
+
     .box img{
         width: 105px;
     }
+
 
     .derecha img{
         height: 420px;
     }
 
+
     .caracteristicas{
         grid-template-columns: 1fr;
     }
+
 
     .caja-caracteristica{
         height: 400px;
@@ -722,20 +1227,42 @@ footer{
 
 }
 
+
+/* =========================================================
+   BLOQUEO CUANDO MENÚ ABIERTO
+========================================================= */
+
+body.menu-abierto{
+    overflow: hidden;
+}
+
 </style>
+
 </head>
 
 
 <body>
 
 
+<!-- =====================================================
+     PANTALLA DE INTRODUCCIÓN
+===================================================== -->
+
 <section class="pantalla-negra" id="pantallaNegra">
+
     <h1>DIVINE</h1>
+
 </section>
 
 
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header>
+
+
+    <!-- LOGO -->
 
     <div class="logo">
 
@@ -752,13 +1279,23 @@ footer{
     </div>
 
 
+    <!-- =================================================
+         MENÚ NORMAL
+    ================================================== -->
+
     <nav>
 
         <ul class="menu">
 
+
             <li>
-                <a href="totu.php">Inicio</a>
+
+                <a href="totu.php">
+                    Inicio
+                </a>
+
             </li>
+
 
             <li>
 
@@ -769,91 +1306,233 @@ footer{
                 <ul class="submenu">
 
                     <li>
+
                         <a href="skincare.php">
                             Skin Care
                         </a>
+
                     </li>
 
                     <li>
+
                         <a href="mascarillas.php">
-                            Mascarillas
+                            Skin Hair
                         </a>
+
                     </li>
 
                 </ul>
 
             </li>
 
+
             <li>
+
                 <a href="mision-vision.php">
                     Historia
                 </a>
+
             </li>
 
-           
 
-         
             <li>
+
                 <a href="contactanos.php">
                     Contacto
                 </a>
+
             </li>
 
-            
-             <li>
+
+            <li>
+
                 <a href="./sugerencias/comentarios.php">
                     Sugerencias
                 </a>
+
             </li>
 
-              <li>
+
+            <li>
 
                 <a href="formulario.pdf">
-                   Gestión Ambiental
+                    Gestión Ambiental
                 </a>
 
             </li>
+
+
         </ul>
 
     </nav>
 
 
+    <!-- =================================================
+         CARRITO + PERFIL
+         AHORA SE MUESTRAN TAMBIÉN EN CELULAR
+    ================================================== -->
+
     <div class="iconos-derecha">
- 
+
+
         <a href="./CRUD-CARRITO-PEDIDO/formpedido.php">
 
             <img
                 src="./imagenes/carrito.png"
                 alt="Carrito"
-                width="25"
             >
 
         </a>
+
 
         <a href="./SESIONES/loginformcliente.php">
 
             <img
                 src="./imagenes/persona.png"
                 alt="Perfil"
-                width="25"
             >
 
         </a>
+
+
+    </div>
+
+
+    <!-- =================================================
+         HAMBURGUESA
+    ================================================== -->
+
+    <button
+        class="boton-hamburguesa"
+        id="botonHamburguesa"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+    >
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+    </button>
+
+
+    <!-- =================================================
+         MENÚ MÓVIL
+    ================================================== -->
+
+    <div class="menu-movil" id="menuMovil">
+
+
+        <ul>
+
+
+            <li>
+
+                <a href="totu.php">
+                    Inicio
+                </a>
+
+            </li>
+
+
+            <li
+                class="productos-movil"
+                id="productosMovil"
+            >
+
+                <a
+                    href="javascript:void(0);"
+                    id="botonProductos"
+                >
+                    Productos
+                </a>
+
+
+                <ul class="submenu-movil">
+
+
+                    <li>
+
+                        <a href="skincare.php">
+                            ✦ Skin Care
+                        </a>
+
+                    </li>
+
+
+                    <li>
+
+                        <a href="mascarillas.php">
+                            ✦ Skin Hair
+                        </a>
+
+                    </li>
+
+
+                </ul>
+
+            </li>
+
+
+            <li>
+
+                <a href="mision-vision.php">
+                    Historia
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a href="contactanos.php">
+                    Contacto
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a href="./sugerencias/comentarios.php">
+                    Sugerencias
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a href="formulario.pdf">
+                    Gestión Ambiental
+                </a>
+
+            </li>
+
+
+        </ul>
+
 
     </div>
 
 </header>
 
 
+<!-- =====================================================
+     SECCIÓN PRINCIPAL
+===================================================== -->
 
 <section>
+
 
     <h1>
 
         Glow Starts
+
         <br>
 
         With
+
         <span class="color">
             Natural Beauty
         </span>
@@ -871,55 +1550,60 @@ footer{
 
     <section class="box">
 
+
         <h2>
             ESENCIAS
         </h2>
 
 
-        <center>
-
-            <p>
-                Producto a base de esencias naturales.
-            </p>
-
-        </center>
+        <p>
+            Producto a base de esencias naturales.
+        </p>
 
 
         <img
             src="./imagenes/crema.png"
-            alt="cremca"
+            alt="crema"
             width="80px"
         >
 
 
         <a href="produccomp.php">
-
-       ¡CONSULTA TU PEDIDO AQUÍ!
-
+            ¡CONSULTA TU PEDIDO AQUÍ!
         </a>
 
+
     </section>
+
 
 </section>
 
 
-
+<!-- =====================================================
+     IMAGEN DERECHA
+===================================================== -->
 
 <section class="derecha">
+
 
     <img
         src="./imagenes/rosafc.jpg"
         alt="Beauty Products"
     >
 
+
 </section>
 
 
+<!-- =====================================================
+     CONTENIDO
+===================================================== -->
 
 <main class="principal">
 
 
     <section class="caracteristicas">
+
 
         <div class="caja-caracteristica">
 
@@ -960,6 +1644,7 @@ footer{
 
         </div>
 
+
     </section>
 
 
@@ -998,12 +1683,20 @@ footer{
 
     </section>
 
+
 </main>
 
 
-
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
 
 <script>
+
+
+/* =====================================================
+   INTRO
+===================================================== */
 
 window.onload = function(){
 
@@ -1017,6 +1710,156 @@ window.onload = function(){
 
 };
 
+
+/* =====================================================
+   ELEMENTOS DEL MENÚ
+===================================================== */
+
+const botonHamburguesa =
+    document.getElementById("botonHamburguesa");
+
+const menuMovil =
+    document.getElementById("menuMovil");
+
+const productosMovil =
+    document.getElementById("productosMovil");
+
+const botonProductos =
+    document.getElementById("botonProductos");
+
+
+/* =====================================================
+   ABRIR / CERRAR HAMBURGUESA
+===================================================== */
+
+botonHamburguesa.addEventListener(
+    "click",
+    function(){
+
+        const abierto =
+            menuMovil.classList.toggle("abierto");
+
+
+        botonHamburguesa.classList.toggle(
+            "activo",
+            abierto
+        );
+
+
+        botonHamburguesa.setAttribute(
+            "aria-expanded",
+            abierto
+        );
+
+
+        document.body.classList.toggle(
+            "menu-abierto",
+            abierto
+        );
+
+    }
+);
+
+
+/* =====================================================
+   SUBMENÚ PRODUCTOS
+===================================================== */
+
+botonProductos.addEventListener(
+    "click",
+    function(){
+
+        productosMovil.classList.toggle(
+            "abierto"
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CERRAR AL SELECCIONAR UN ENLACE
+===================================================== */
+
+const enlacesMovil =
+    menuMovil.querySelectorAll(
+        'a:not(#botonProductos)'
+    );
+
+
+enlacesMovil.forEach(
+    function(enlace){
+
+        enlace.addEventListener(
+            "click",
+            function(){
+
+                menuMovil.classList.remove(
+                    "abierto"
+                );
+
+
+                botonHamburguesa.classList.remove(
+                    "activo"
+                );
+
+
+                botonHamburguesa.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+
+                document.body.classList.remove(
+                    "menu-abierto"
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   CERRAR AL HACER CLICK FUERA
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        const dentroHeader =
+            event.target.closest("header");
+
+
+        if(!dentroHeader){
+
+            menuMovil.classList.remove(
+                "abierto"
+            );
+
+
+            botonHamburguesa.classList.remove(
+                "activo"
+            );
+
+
+            botonHamburguesa.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+
+            document.body.classList.remove(
+                "menu-abierto"
+            );
+
+        }
+
+    }
+);
+
 </script>
 
 
@@ -1024,5 +1867,6 @@ window.onload = function(){
 
 
 </body>
-</html>
 
+</html>
+ 

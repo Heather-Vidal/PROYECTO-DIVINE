@@ -204,7 +204,7 @@ $conn->close();
 
 <div class="botones">
 
-<a href="../totu.php" class="boton">⬅ Volver al inicio</a>
+<a href="readtodopedido.php" class="boton">⬅ Volver a lista de pedidos</a>
 
 <a href="readtodopedido.php" class="boton">Ver pedidos ➡</a>
 

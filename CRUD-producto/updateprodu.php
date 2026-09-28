@@ -1039,7 +1039,7 @@ body{
 
 
         <a
-            href="../totu.php"
+            href="../admin.php"
             class="boton"
         >
 

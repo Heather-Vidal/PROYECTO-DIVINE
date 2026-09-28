@@ -186,7 +186,8 @@ $puedeVerPedidos = (
     DIVINE | Detalle del Pedido
 </title>
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 
 /* ==================================================
@@ -1474,7 +1475,7 @@ body{
 
 <body>
 
-
+<div id="contenido">
 <!-- ==================================================
      HEADER
 ================================================== -->
@@ -2166,7 +2167,7 @@ else {
 
     class="btn btn-pdf"
 
-    onclick="window.print()"
+   onclick="descargarPDF()"
 
 >
 
@@ -2180,7 +2181,78 @@ else {
 
 </div>
 
+</div>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script>
+const idPedido = <?php echo json_encode($id_pedido); ?>;
+
+async function descargarPDF() {
+    const { jsPDF } = window.jspdf;
+
+    const elemento = document.getElementById("contenido");
+
+    const canvas = await html2canvas(elemento, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff"
+    });
+
+    const imagen = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const margen = 10;
+    const ancho = 190;
+    const altoPagina = 277;
+
+    const altoImagen = (canvas.height * ancho) / canvas.width;
+
+    if (altoImagen <= altoPagina) {
+
+        pdf.addImage(
+            imagen,
+            "PNG",
+            margen,
+            margen,
+            ancho,
+            altoImagen
+        );
+
+    } else {
+
+        let altoRestante = altoImagen;
+        let posicionY = margen;
+
+        while (altoRestante > 0) {
+
+            pdf.addImage(
+                imagen,
+                "PNG",
+                margen,
+                posicionY,
+                ancho,
+                altoImagen
+            );
+
+            altoRestante -= altoPagina;
+
+            if (altoRestante > 0) {
+                pdf.addPage();
+
+                posicionY =
+                    margen - (altoImagen - altoRestante);
+            }
+        }
+    }
+
+    // Nombre del archivo con el número del pedido
+    pdf.save("Detalles_Pedido_N°_" + idPedido + ".pdf");
+}
+</script>
+</script>
 </body>
 
 </html>

@@ -1,12 +1,13 @@
- 
+
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Registro - DIVINE</title>
+    <title>Crear cuenta | DIVINE</title>
 
     <!-- JQUERY -->
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
@@ -15,13 +16,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
 
     <!-- FUENTES -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 
     <style>
 
-        /* =====================================================
+        /* =========================================================
            CONFIGURACIÓN GENERAL
-        ===================================================== */
+        ========================================================= */
 
         * {
             box-sizing: border-box;
@@ -30,181 +32,276 @@
         }
 
         body {
+
             min-height: 100vh;
 
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
 
             display: flex;
             justify-content: center;
             align-items: center;
 
-            padding: 40px 20px;
+            padding: 35px 20px;
 
-            background-color: #e9e5dd;
+            background:
+                linear-gradient(
+                    rgba(250, 241, 243, 0.82),
+                    rgba(244, 229, 234, 0.88)
+                ),
+                url("../imagenes/fondote.png");
 
-            background-image: url("../imagenes/fondote.png");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
 
             position: relative;
+
+            overflow-x: hidden;
         }
 
-        /* Capa suave sobre el fondo */
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
 
-            background: rgba(255, 255, 255, 0.18);
+        /* =========================================================
+           DECORACIONES DEL FONDO
+        ========================================================= */
+
+        body::before {
+
+            content: "";
+
+            position: fixed;
+
+            width: 480px;
+            height: 480px;
+
+            border-radius: 50%;
+
+            background: rgba(226, 170, 190, 0.20);
+
+            top: -240px;
+            left: -220px;
+
+            filter: blur(4px);
 
             z-index: -1;
         }
 
 
-        /* =====================================================
-           FORMULARIO PRINCIPAL
-        ===================================================== */
+        body::after {
+
+            content: "";
+
+            position: fixed;
+
+            width: 420px;
+            height: 420px;
+
+            border-radius: 50%;
+
+            background: rgba(214, 169, 185, 0.20);
+
+            right: -200px;
+            bottom: -200px;
+
+            filter: blur(5px);
+
+            z-index: -1;
+        }
+
+
+        /* =========================================================
+           TARJETA PRINCIPAL
+        ========================================================= */
 
         form {
+
             position: relative;
 
             width: 100%;
-            max-width: 900px;
+            max-width: 980px;
 
-            min-height: 560px;
+            min-height: 610px;
 
-            padding: 42px 48px;
+            padding: 38px;
 
             display: grid;
 
-            grid-template-columns: 0.9fr 1.4fr;
+            grid-template-columns: 0.95fr 1.25fr;
 
             grid-template-rows: auto auto 1fr auto;
 
             grid-template-areas:
+
                 "imagen titulo"
                 "imagen leyenda"
                 "imagen campos"
                 "imagen boton";
 
-            column-gap: 45px;
-            row-gap: 10px;
+            column-gap: 55px;
 
-            background: rgba(255, 212, 234, 0.94);
+            background: rgba(255, 251, 252, 0.94);
 
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.95);
 
-            border-radius: 28px;
+            border-radius: 34px;
 
             box-shadow:
-                0 25px 60px rgba(90, 45, 68, 0.25),
-                0 5px 15px rgba(0, 0, 0, 0.08);
 
-            backdrop-filter: blur(5px);
+                0 35px 80px rgba(102, 58, 75, 0.18),
+
+                0 8px 25px rgba(102, 58, 75, 0.08);
+
+            backdrop-filter: blur(18px);
 
             overflow: hidden;
         }
 
 
-        /* Decoraciones */
+        /* Línea superior */
+
         form::before {
+
             content: "";
 
             position: absolute;
 
-            width: 180px;
-            height: 180px;
+            top: 0;
+            left: 0;
 
-            border-radius: 50%;
+            width: 100%;
+            height: 4px;
 
-            background: rgba(255, 255, 255, 0.20);
-
-            top: -90px;
-            right: -60px;
-        }
-
-        form::after {
-            content: "";
-
-            position: absolute;
-
-            width: 120px;
-            height: 120px;
-
-            border-radius: 50%;
-
-            background: rgba(255, 255, 255, 0.15);
-
-            bottom: -65px;
-            left: -45px;
+            background:
+                linear-gradient(
+                    90deg,
+                    #c68aa0,
+                    #ead0d9,
+                    #c68aa0
+                );
         }
 
 
-        /* =====================================================
+        /* =========================================================
            IMAGEN
-        ===================================================== */
+        ========================================================= */
 
         .imagen {
+
             grid-area: imagen;
 
-            min-height: 430px;
+            min-height: 530px;
 
-            border-radius: 22px;
+            border-radius: 28px;
+
+            position: relative;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(238, 204, 215, 0.75),
+                    rgba(255, 246, 249, 0.90)
+                );
 
             background-image:
+
                 linear-gradient(
-                    rgba(139, 79, 107, 0.08),
-                    rgba(139, 79, 107, 0.08)
+                    rgba(255, 232, 240, 0.10),
+                    rgba(255, 232, 240, 0.10)
                 ),
+
                 url("../imagenes/persona.png");
 
             background-position: center;
             background-size: contain;
             background-repeat: no-repeat;
 
-            position: relative;
+            box-shadow:
 
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
+                inset 0 0 0 1px rgba(255,255,255,0.8),
+
+                0 15px 35px rgba(105, 59, 77, 0.10);
+
+            overflow: hidden;
         }
 
-        /* Marco decorativo */
+
+        /* Marco interior */
+
         .imagen::before {
+
             content: "";
 
             position: absolute;
 
-            width: 85%;
-            height: 85%;
+            inset: 17px;
 
-            border: 1px solid rgba(139, 79, 107, 0.25);
+            border-radius: 23px;
 
-            border-radius: 25px;
+            border: 1px solid rgba(167, 104, 128, 0.25);
 
             pointer-events: none;
         }
 
 
-        /* =====================================================
+        /* Texto inferior */
+
+        .imagen::after {
+
+            content: "BELLEZA  •  CUIDADO  •  DIVINE";
+
+            position: absolute;
+
+            bottom: 20px;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            width: 82%;
+
+            padding: 10px 5px;
+
+            text-align: center;
+
+            border-radius: 50px;
+
+            background: rgba(255,255,255,0.78);
+
+            color: #8a5368;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            letter-spacing: 2px;
+
+            backdrop-filter: blur(10px);
+        }
+
+
+        /* =========================================================
            TÍTULO
-        ===================================================== */
+        ========================================================= */
 
         h2 {
+
             grid-area: titulo;
 
-            margin: 5px 0 2px;
+            margin-top: 5px;
 
             font-family: "Playfair Display", serif;
 
-            font-size: 36px;
+            font-size: 41px;
 
-            font-weight: 700;
+            font-weight: 600;
 
-            color: #713b55;
+            color: #693c50;
 
-            letter-spacing: 1.5px;
+            letter-spacing: 0.5px;
 
             line-height: 1.2;
 
@@ -212,62 +309,74 @@
 
             width: fit-content;
 
-            padding-bottom: 10px;
+            padding-bottom: 13px;
         }
 
+
         h2::after {
+
             content: "";
 
             position: absolute;
 
             left: 0;
+
             bottom: 0;
 
-            width: 75px;
+            width: 65px;
+
             height: 3px;
 
-            border-radius: 10px;
+            border-radius: 20px;
 
-            background: #d85b94;
+            background:
+                linear-gradient(
+                    90deg,
+                    #c76f91,
+                    #e4a9bd
+                );
         }
 
 
-        /* =====================================================
-           LEYENDA
-        ===================================================== */
+        /* =========================================================
+           SUBTÍTULO
+        ========================================================= */
 
         legend {
+
             grid-area: leyenda;
 
             display: block;
 
-            margin-top: 4px;
-            margin-bottom: 10px;
+            margin-top: 5px;
 
-            color: #8b4f6b;
+            margin-bottom: 12px;
 
             font-family: "Playfair Display", serif;
 
-            font-size: 18px;
+            font-size: 17px;
 
-            font-weight: 600;
+            font-weight: 500;
 
-            letter-spacing: 1px;
+            color: #a16d81;
+
+            letter-spacing: 1.7px;
         }
 
 
-        /* =====================================================
-           GRUPO DE CAMPOS
-        ===================================================== */
+        /* =========================================================
+           CAMPOS
+        ========================================================= */
 
         .grupo-campos {
+
             grid-area: campos;
 
             display: flex;
 
             flex-direction: column;
 
-            gap: 6px;
+            gap: 4px;
 
             position: relative;
 
@@ -275,26 +384,27 @@
         }
 
 
-        /* =====================================================
+        /* =========================================================
            LABELS
-        ===================================================== */
+        ========================================================= */
 
         label {
-            color: #864763;
 
-            font-size: 14px;
+            color: #795266;
 
-            font-weight: 500;
+            font-size: 13px;
 
-            margin-top: 5px;
+            font-weight: 600;
+
+            margin-top: 7px;
 
             letter-spacing: 0.2px;
         }
 
 
-        /* =====================================================
+        /* =========================================================
            INPUTS
-        ===================================================== */
+        ========================================================= */
 
         input[type="text"],
         input[type="number"],
@@ -303,166 +413,257 @@
 
             width: 100%;
 
-            padding: 13px 15px;
+            height: 47px;
 
-            border: 1px solid #d5a5ba;
+            padding: 12px 16px;
 
-            border-radius: 11px;
+            border: 1px solid #e4c4cf;
 
-            font-family: 'Poppins', sans-serif;
+            border-radius: 13px;
 
-            font-size: 14px;
+            background: rgba(255,255,255,0.95);
 
-            color: #5e3045;
+            color: #603d4d;
 
-            background: rgba(255, 255, 255, 0.96);
+            font-family: 'DM Sans', sans-serif;
+
+            font-size: 13px;
 
             outline: none;
 
-            transition:
-                border-color 0.3s ease,
-                box-shadow 0.3s ease,
-                transform 0.2s ease;
+            transition: all 0.3s ease;
         }
 
 
         /* Placeholder */
+
         input::placeholder {
-            color: #b89aaa;
+
+            color: #bca2ae;
+
+            font-weight: 300;
         }
 
 
         /* Focus */
+
         input[type="text"]:focus,
         input[type="number"]:focus,
         input[type="date"]:focus,
         select:focus {
 
-            border-color: #b94f7e;
+            border-color: #c47a98;
+
+            background: #ffffff;
 
             box-shadow:
-                0 0 0 3px rgba(216, 91, 148, 0.13);
+
+                0 0 0 4px rgba(196, 122, 152, 0.10),
+
+                0 6px 16px rgba(102, 58, 75, 0.07);
 
             transform: translateY(-1px);
         }
 
 
-        /* =====================================================
-           OCULTOS
-        ===================================================== */
+        /* =========================================================
+           INPUTS OCULTOS
+        ========================================================= */
 
         input[type="hidden"] {
+
             display: none;
         }
 
 
-        /* =====================================================
-           MENSAJES DE VALIDACIÓN
-        ===================================================== */
+        /* =========================================================
+           MENSAJES DE ERROR
+        ========================================================= */
 
         label.error {
-            color: #b3295d;
 
-            font-size: 12px;
+            color: #b4466d;
+
+            font-size: 11px;
 
             font-weight: 500;
 
             margin-top: 2px;
-            margin-bottom: 2px;
+
+            margin-bottom: 1px;
         }
+
 
         input.error,
         select.error {
 
-            border-color: #c94c75;
+            border-color: #ce7595;
 
             background: #fff8fa;
 
-            box-shadow: 0 0 0 2px rgba(201, 76, 117, 0.08);
+            box-shadow:
+
+                0 0 0 3px rgba(206,117,149,0.08);
         }
 
 
-        /* =====================================================
-           BOTÓN
-        ===================================================== */
+        /* =========================================================
+           CONTENEDOR DE BOTONES
+        ========================================================= */
 
-        input[type="submit"] {
+        .botones {
 
             grid-area: boton;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 9px;
 
             position: relative;
 
             z-index: 3;
+        }
+
+
+        /* =========================================================
+           BOTÓN REGISTRAR
+        ========================================================= */
+
+        input[type="submit"] {
 
             width: 100%;
 
-            margin-top: 12px;
+            height: 52px;
 
-            padding: 14px 20px;
+            margin-top: 17px;
 
             border: none;
 
-            border-radius: 12px;
+            border-radius: 14px;
 
-            background: linear-gradient(
-                135deg,
-                #63364b,
-                #7d415e
-            );
+            background:
 
-            color: #ffffff;
+                linear-gradient(
+                    135deg,
+                    #67394f,
+                    #8b4c68
+                );
 
-            font-family: 'Poppins', sans-serif;
+            color: white;
 
-            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+
+            font-size: 14px;
 
             font-weight: 600;
 
-            letter-spacing: 1px;
+            letter-spacing: 1.7px;
 
             cursor: pointer;
 
             box-shadow:
-                0 8px 18px rgba(99, 54, 75, 0.28);
 
-            transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease,
-                background 0.25s ease;
+                0 10px 25px rgba(103,57,79,0.22);
+
+            transition: all 0.3s ease;
         }
+
 
         input[type="submit"]:hover {
 
-            background: linear-gradient(
-                135deg,
-                #b85d87,
-                #c96b98
-            );
+            background:
 
-            transform: translateY(-2px);
+                linear-gradient(
+                    135deg,
+                    #8b4c68,
+                    #b66c8a
+                );
+
+            transform: translateY(-3px);
 
             box-shadow:
-                0 10px 22px rgba(99, 54, 75, 0.30);
+
+                0 15px 30px rgba(103,57,79,0.28);
         }
 
+
         input[type="submit"]:active {
+
             transform: translateY(0);
         }
 
 
-        /* =====================================================
-           RESPONSIVE - TABLET
-        ===================================================== */
+        /* =========================================================
+           BOTÓN INICIO
+        ========================================================= */
+
+        .btn-inicio {
+
+            width: 100%;
+
+            height: 48px;
+
+            border: 1px solid #d4a8b8;
+
+            border-radius: 14px;
+
+            background: rgba(255,255,255,0.78);
+
+            color: #75475c;
+
+            font-family: 'DM Sans', sans-serif;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            letter-spacing: 1.6px;
+
+            cursor: pointer;
+
+            transition: all 0.3s ease;
+        }
+
+
+        .btn-inicio:hover {
+
+            background: #f5e0e7;
+
+            border-color: #bd7795;
+
+            color: #653b50;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+
+                0 8px 18px rgba(103,57,79,0.10);
+        }
+
+
+        .btn-inicio:active {
+
+            transform: translateY(0);
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================= */
 
         @media (max-width: 800px) {
 
             body {
+
                 padding: 25px 15px;
             }
 
+
             form {
 
-                max-width: 600px;
+                max-width: 620px;
 
                 min-height: auto;
 
@@ -470,65 +671,78 @@
 
                 grid-template-columns: 1fr;
 
-                grid-template-rows: auto;
-
                 grid-template-areas:
+
                     "imagen"
                     "titulo"
                     "leyenda"
                     "campos"
                     "boton";
 
-                gap: 12px;
+                gap: 10px;
             }
+
 
             .imagen {
 
-                min-height: 260px;
+                min-height: 290px;
 
-                margin-bottom: 8px;
+                margin-bottom: 12px;
             }
+
 
             h2 {
-                font-size: 32px;
-            }
 
-            legend {
-                margin-bottom: 8px;
+                font-size: 35px;
             }
         }
 
 
-        /* =====================================================
-           RESPONSIVE - CELULAR
-        ===================================================== */
+        /* =========================================================
+           CELULAR
+        ========================================================= */
 
         @media (max-width: 500px) {
 
             body {
+
                 padding: 15px 10px;
             }
 
+
             form {
 
-                padding: 28px 22px;
+                padding: 27px 21px;
 
-                border-radius: 22px;
+                border-radius: 25px;
             }
+
 
             .imagen {
 
-                min-height: 210px;
+                min-height: 220px;
+
+                border-radius: 21px;
             }
+
+
+            .imagen::after {
+
+                font-size: 7px;
+
+                letter-spacing: 1.5px;
+            }
+
 
             h2 {
 
-                font-size: 27px;
+                width: 100%;
 
                 text-align: center;
 
-                width: 100%;
+                font-size: 29px;
             }
+
 
             h2::after {
 
@@ -537,18 +751,28 @@
                 transform: translateX(-50%);
             }
 
+
             legend {
 
                 text-align: center;
 
-                font-size: 16px;
+                font-size: 15px;
             }
+
 
             input[type="submit"] {
 
-                font-size: 15px;
+                height: 49px;
 
-                padding: 13px;
+                font-size: 13px;
+            }
+
+
+            .btn-inicio {
+
+                height: 46px;
+
+                font-size: 12px;
             }
         }
 
@@ -560,29 +784,38 @@
 <body>
 
 
-    <!-- =====================================================
+    <!-- =========================================================
          FORMULARIO DE REGISTRO
-    ====================================================== -->
+    ========================================================= -->
 
     <form action="createcliente.php" method="POST">
 
+
         <!-- IMAGEN -->
+
         <div class="imagen"></div>
 
 
         <!-- TÍTULO -->
+
         <h2>CREA TU CUENTA</h2>
 
 
         <!-- SUBTÍTULO -->
+
         <legend>DATOS PERSONALES</legend>
 
 
         <!-- CAMPOS -->
+
         <div class="grupo-campos">
 
+
             <!-- CI -->
-            <label for="CI">CI:</label>
+
+            <label for="CI">
+                CI:
+            </label>
 
             <input
                 type="number"
@@ -593,7 +826,10 @@
 
 
             <!-- NOMBRE -->
-            <label for="nombre">Nombre:</label>
+
+            <label for="nombre">
+                Nombre:
+            </label>
 
             <input
                 type="text"
@@ -604,7 +840,10 @@
 
 
             <!-- DIRECCIÓN -->
-            <label for="direccion">Dirección:</label>
+
+            <label for="direccion">
+                Dirección:
+            </label>
 
             <input
                 type="text"
@@ -615,7 +854,10 @@
 
 
             <!-- TELÉFONO -->
-            <label for="celular">Teléfono:</label>
+
+            <label for="celular">
+                Teléfono:
+            </label>
 
             <input
                 type="number"
@@ -626,6 +868,7 @@
 
 
             <!-- DATOS OCULTOS -->
+
             <input
                 type="hidden"
                 name="rol"
@@ -641,19 +884,40 @@
         </div>
 
 
-        <!-- BOTÓN -->
-        <input
-            type="submit"
-            value="Registrar"
-        >
+        <!-- =====================================================
+             BOTONES
+        ====================================================== -->
+
+        <div class="botones">
+
+            <!-- REGISTRAR -->
+
+            <input
+                type="submit"
+                value="REGISTRAR"
+            >
+
+
+            <!-- INICIO -->
+
+            <button
+                type="button"
+                class="btn-inicio"
+                onclick="window.location.href='index.php';"
+            >
+                INICIO
+            </button>
+
+        </div>
+
 
     </form>
 
 
 
-    <!-- =====================================================
+    <!-- =========================================================
          VALIDACIÓN JQUERY
-    ====================================================== -->
+    ========================================================= -->
 
     <script>
 
@@ -664,35 +928,55 @@
                 rules: {
 
                     CI: {
+
                         required: true,
+
                         number: true,
+
                         minlength: 7
                     },
 
+
                     nombre: {
+
                         required: true,
+
                         minlength: 3
                     },
 
+
                     direccion: {
+
                         required: true,
+
                         minlength: 5
                     },
 
+
                     celular: {
+
                         required: true,
+
                         number: true,
+
                         minlength: 7,
+
                         maxlength: 8
                     },
 
+
                     rol: {
+
                         required: true
                     },
 
+
                     estado: {
+
                         required: true,
+
                         minlength: 3,
+
                         maxlength: 44
                     }
 
@@ -702,35 +986,55 @@
                 messages: {
 
                     CI: {
+
                         required: "Ingrese su CI",
+
                         number: "Solo se permiten números",
+
                         minlength: "El CI debe tener mínimo 7 dígitos"
                     },
 
+
                     nombre: {
+
                         required: "Ingrese su nombre",
+
                         minlength: "El nombre debe tener mínimo 3 caracteres"
                     },
 
+
                     direccion: {
+
                         required: "Ingrese su dirección",
+
                         minlength: "La dirección debe tener mínimo 5 caracteres"
                     },
 
+
                     celular: {
+
                         required: "Ingrese su teléfono",
+
                         number: "Solo se permiten números",
-                        minlength: "El teléfono debe tener mínimo 6 dígitos",
-                        maxlength: "El teléfono debe tener máximo 11 dígitos"
+
+                        minlength: "El teléfono debe tener mínimo 7 dígitos",
+
+                        maxlength: "El teléfono debe tener máximo 8 dígitos"
                     },
 
+
                     rol: {
+
                         required: "Seleccione un rol"
                     },
 
+
                     estado: {
+
                         required: "Ingrese el estado",
+
                         minlength: "El estado debe tener mínimo 3 caracteres",
+
                         maxlength: "Límite de caracteres excedido"
                     }
 
@@ -751,4 +1055,4 @@
 </body>
 
 </html>
- 
+
