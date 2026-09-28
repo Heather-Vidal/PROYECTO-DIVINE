@@ -903,7 +903,7 @@
             <button
                 type="button"
                 class="btn-inicio"
-                onclick="window.location.href='index.php';"
+                onclick="window.location.href='../totu.php';"
             >
                 INICIO
             </button>
