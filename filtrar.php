@@ -56,7 +56,7 @@ $api_url = "https://integrate.api.nvidia.com/v1/chat/completions";
 =========================================================
 */
 
-$api_key = "";
+$api_key = " ";
 
 
 $modelo = "openai/gpt-oss-20b";
