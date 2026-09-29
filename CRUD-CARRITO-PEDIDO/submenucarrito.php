@@ -1042,7 +1042,7 @@ nav{
 
     <div class="logo">
 
-        <a href="../pagintrof.php">
+        <a href="../index.php">
 
             <img
                 src="../imagenes/DIVINE-removebg-preview.png"
