@@ -1,4 +1,63 @@
+<?php
+
+session_start();
+
+/* =====================================================
+   VERIFICAR SI HAY UNA SESIÓN INICIADA
+===================================================== */
+
+if (!isset($_SESSION['nombre']) || empty($_SESSION['nombre'])) {
+
+    header("Location: ../SESIONES/loginformcliente.php");
+    exit();
+
+}
+
+
+/* =====================================================
+   DATOS DE LA SESIÓN
+===================================================== */
+
+$nombreUsuario = $_SESSION['nombre'];
+$rol = strtolower(trim($_SESSION['rol'] ?? ''));
+
+
+/* =====================================================
+   VERIFICAR ROL
+===================================================== */
+
+/*
+   Se permite entrar al formulario tanto a:
+   - administrador
+   - vendedor
+*/
+
+if ($rol != "administrador" && $rol != "vendedor") {
+
+    header("Location: ../totu.php");
+    exit();
+
+}
+
+
+/* =====================================================
+   DETERMINAR PERFIL SEGÚN EL ROL
+===================================================== */
+
+if ($rol == "administrador") {
+
+    $perfilUsuario = "../admin.php";
+
+} else {
+
+    $perfilUsuario = "../perfilvendedor.php";
+
+}
+
+?>
+
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -25,10 +84,15 @@
 ===================================================== */
 
 * {
+
     margin: 0;
+
     padding: 0;
+
     box-sizing: border-box;
+
     font-family: 'Segoe UI', sans-serif;
+
 }
 
 
@@ -41,26 +105,37 @@ body {
     background:
 
         linear-gradient(
+
             rgba(0,0,0,.30),
+
             rgba(0,0,0,.30)
+
         ),
 
         url(
+
             "https://i.pinimg.com/736x/b0/c0/79/b0c07926edeca5c51deb5337f2735d36.jpg"
+
         );
 
     background-position: center;
+
     background-repeat: no-repeat;
+
     background-size: cover;
 
     display: flex;
+
     justify-content: center;
+
     align-items: center;
 
     min-height: 100vh;
 
     margin: 0;
+
     padding: 30px;
+
 }
 
 
@@ -83,11 +158,15 @@ form {
     border-radius: 15px;
 
     box-shadow:
+
         0 15px 35px
+
         rgba(0,0,0,.15);
 
     display: flex;
+
     flex-direction: column;
+
 }
 
 
@@ -98,20 +177,25 @@ form {
 .imagen {
 
     width: 100%;
+
     height: 200px;
 
     background:
 
         url(
+
             "https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg"
+
         )
 
         center center / cover
+
         no-repeat;
 
     border-radius: 20px;
 
     margin-bottom: 25px;
+
 }
 
 
@@ -130,8 +214,11 @@ h2 {
     font-size: 28px;
 
     font-family:
+
         'Playfair Display',
+
         serif;
+
 }
 
 
@@ -148,8 +235,11 @@ legend {
     margin-bottom: 20px;
 
     font-family:
+
         'Playfair Display',
+
         serif;
+
 }
 
 
@@ -160,7 +250,9 @@ legend {
 .grupo-campos {
 
     display: flex;
+
     flex-direction: column;
+
 }
 
 
@@ -173,11 +265,14 @@ label {
     margin-bottom: 8px;
 
     margin-top: 15px;
+
 }
 
 
 input[type="text"],
+
 input[type="number"],
+
 select {
 
     width: 100%;
@@ -197,18 +292,24 @@ select {
     font-size: 15px;
 
     background: rgba(255,255,255,.85);
+
 }
 
 
 input[type="text"]:focus,
+
 input[type="number"]:focus,
+
 select:focus {
 
     border-color: #c96f84;
 
     box-shadow:
+
         0 0 10px
+
         rgba(201,111,132,.25);
+
 }
 
 
@@ -223,6 +324,7 @@ select:focus {
     margin-top: 5px;
 
     margin-bottom: 22px;
+
 }
 
 
@@ -235,12 +337,14 @@ select:focus {
     font-weight: 600;
 
     margin-bottom: 10px;
+
 }
 
 
 input[type="file"] {
 
     display: none;
+
 }
 
 
@@ -271,6 +375,7 @@ input[type="file"] {
     padding: 20px;
 
     transition: all .3s ease;
+
 }
 
 
@@ -283,8 +388,11 @@ input[type="file"] {
     transform: translateY(-2px);
 
     box-shadow:
+
         0 8px 20px
+
         rgba(191,94,120,.18);
+
 }
 
 
@@ -293,6 +401,7 @@ input[type="file"] {
     font-size: 38px;
 
     margin-bottom: 8px;
+
 }
 
 
@@ -303,6 +412,7 @@ input[type="file"] {
     font-size: 17px;
 
     font-weight: bold;
+
 }
 
 
@@ -313,6 +423,7 @@ input[type="file"] {
     font-size: 13px;
 
     margin-top: 5px;
+
 }
 
 
@@ -339,6 +450,7 @@ input[type="file"] {
     text-overflow: ellipsis;
 
     white-space: nowrap;
+
 }
 
 
@@ -351,10 +463,15 @@ input[type="submit"] {
     width: 100%;
 
     background:
+
         linear-gradient(
+
             135deg,
+
             #c96f84,
+
             #b95670
+
         );
 
     color: white;
@@ -374,27 +491,38 @@ input[type="submit"] {
     transition: all .3s ease;
 
     box-shadow:
+
         0 8px 20px
+
         rgba(201,111,132,.35);
 
     letter-spacing: .5px;
+
 }
 
 
 input[type="submit"]:hover {
 
     background:
+
         linear-gradient(
+
             135deg,
+
             #b95670,
+
             #a84761
+
         );
 
     transform: translateY(-3px);
 
     box-shadow:
+
         0 12px 25px
+
         rgba(180,93,114,.45);
+
 }
 
 
@@ -403,8 +531,11 @@ input[type="submit"]:active {
     transform: translateY(0);
 
     box-shadow:
+
         0 5px 12px
+
         rgba(180,93,114,.30);
+
 }
 
 
@@ -441,8 +572,11 @@ input[type="submit"]:active {
     margin-top: 15px;
 
     box-shadow:
+
         0 5px 15px
+
         rgba(201,111,132,.15);
+
 }
 
 
@@ -455,8 +589,11 @@ input[type="submit"]:active {
     transform: translateY(-3px);
 
     box-shadow:
+
         0 10px 20px
+
         rgba(201,111,132,.30);
+
 }
 
 
@@ -471,8 +608,15 @@ input[type="submit"]:active {
     font-size: 14px;
 
     font-family:
+
         'Playfair Display',
+
         serif;
+
+    margin-top: -10px;
+
+    margin-bottom: 8px;
+
 }
 
 
@@ -485,6 +629,7 @@ input[type="submit"]:active {
     body {
 
         padding: 15px;
+
     }
 
 
@@ -493,18 +638,115 @@ input[type="submit"]:active {
         width: 100%;
 
         padding: 25px;
+
     }
 
 
     .imagen {
 
         height: 160px;
+
     }
 
 
     h2 {
 
         font-size: 23px;
+
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    body {
+
+        padding: 10px;
+
+        align-items: flex-start;
+
+    }
+
+
+    form {
+
+        padding: 20px;
+
+        border-radius: 12px;
+
+        margin-top: 10px;
+
+    }
+
+
+    .imagen {
+
+        height: 130px;
+
+        border-radius: 15px;
+
+    }
+
+
+    h2 {
+
+        font-size: 20px;
+
+        line-height: 1.3;
+
+    }
+
+
+    legend {
+
+        font-size: 17px;
+
+    }
+
+
+    input[type="text"],
+
+    input[type="number"],
+
+    select {
+
+        font-size: 14px;
+
+        padding: 11px 13px;
+
+    }
+
+
+    .selector-archivo {
+
+        min-height: 120px;
+
+    }
+
+
+    .icono-archivo {
+
+        font-size: 32px;
+
+    }
+
+
+    .texto-archivo {
+
+        font-size: 15px;
+
+    }
+
+
+    input[type="submit"],
+
+    .btn-volver {
+
+        font-size: 15px;
+
+        padding: 13px;
+
     }
 
 }
@@ -518,10 +760,15 @@ input[type="submit"]:active {
 
 
 <form
+
     id="formprodu"
+
     action="createprodu.php"
+
     method="POST"
+
     enctype="multipart/form-data"
+
 >
 
 
@@ -533,12 +780,16 @@ input[type="submit"]:active {
     <!-- TÍTULO -->
 
     <h2>
+
         REGISTRO DE PRODUCTOS DIVINE
+
     </h2>
 
 
     <legend>
+
         PRODUCTO:
+
     </legend>
 
 
@@ -548,50 +799,73 @@ input[type="submit"]:active {
         <!-- NOMBRE -->
 
         <label for="nombre">
+
             Nombre:
+
         </label>
 
         <input
+
             type="text"
+
             name="nombre"
+
             id="nombre"
+
         >
 
 
         <!-- DESCRIPCIÓN -->
 
         <label for="descripcion">
+
             Descripción:
+
         </label>
 
         <input
+
             type="text"
+
             name="descripcion"
+
             id="descripcion"
+
         >
 
 
         <!-- CATEGORÍA -->
 
         <label for="categoria">
+
             Categoría:
+
         </label>
 
         <select
+
             id="categoria"
+
             name="categoria"
+
         >
 
             <option value="">
+
                 Seleccione una categoría
+
             </option>
 
             <option value="SkinCare">
+
                 SkinCare
+
             </option>
 
             <option value="SkinHair">
+
                 SkinHair
+
             </option>
 
         </select>
@@ -600,52 +874,76 @@ input[type="submit"]:active {
         <!-- PRECIO -->
 
         <label for="precio">
+
             Precio:
+
         </label>
 
         <input
+
             type="number"
+
             name="precio"
+
             id="precio"
+
         >
 
 
         <!-- COSTO -->
 
         <label for="costo">
+
             Costo:
+
         </label>
 
         <input
+
             type="number"
+
             name="costo"
+
             id="costo"
+
         >
 
 
         <!-- STOCK -->
 
         <label for="stock">
+
             Stock:
+
         </label>
 
         <input
+
             type="number"
+
             name="stock"
+
             id="stock"
+
         >
 
 
         <!-- CÓDIGO -->
 
         <label for="codigo">
+
             Código:
+
         </label>
 
         <input
+
             type="number"
+
             name="codigo"
+
             id="codigo"
+
         >
 
 
@@ -654,44 +952,70 @@ input[type="submit"]:active {
         <div class="carga-imagen">
 
             <label
+
                 class="carga-imagen-titulo"
+
                 for="fileToUpload"
+
             >
+
                 Imagen del producto:
+
             </label>
 
 
             <label
+
                 for="fileToUpload"
+
                 class="selector-archivo"
+
             >
 
                 <div class="icono-archivo">
+
                     📷
+
                 </div>
+
 
                 <div class="texto-archivo">
+
                     Seleccionar imagen
+
                 </div>
+
 
                 <div class="texto-secundario">
+
                     Haz clic aquí para cargar una imagen
+
                 </div>
 
+
                 <div
+
                     class="nombre-archivo"
+
                     id="nombreArchivo"
+
                 >
+
                 </div>
 
             </label>
 
 
             <input
+
                 type="file"
+
                 id="fileToUpload"
+
                 name="fileToUpload"
+
                 accept="image/*"
+
             >
 
         </div>
@@ -702,18 +1026,31 @@ input[type="submit"]:active {
     <!-- BOTÓN ENVIAR -->
 
     <input
+
         type="submit"
+
         value="Enviar"
+
     >
 
 
-    <!-- BOTÓN VOLVER -->
+    <!-- =================================================
+         BOTÓN VOLVER AL PERFIL
+
+         PHP DECIDE AUTOMÁTICAMENTE EL PERFIL
+         SEGÚN EL ROL DE LA SESIÓN
+    ================================================== -->
 
     <a
-        href="../perfilvendedor.php"
+
+        href="<?php echo htmlspecialchars($perfilUsuario); ?>"
+
         class="btn-volver"
+
     >
+
         Volver al perfil
+
     </a>
 
 
@@ -727,38 +1064,48 @@ input[type="submit"]:active {
 <script>
 
 document
+
     .getElementById("fileToUpload")
+
     .addEventListener(
+
         "change",
+
         function () {
 
-            const archivo =
-                this.files[0];
+            const archivo = this.files[0];
 
             const nombre =
+
                 document.getElementById(
+
                     "nombreArchivo"
+
                 );
+
 
             if (archivo) {
 
                 nombre.textContent =
+
                     "✓ " + archivo.name;
 
                 nombre.style.display =
+
                     "inline-block";
 
             } else {
 
-                nombre.textContent =
-                    "";
+                nombre.textContent = "";
 
                 nombre.style.display =
+
                     "none";
 
             }
 
         }
+
     );
 
 </script>
@@ -769,75 +1116,149 @@ document
 ===================================================== -->
 
 <script>
+
 $(document).ready(function(){
+
     $("#formprodu").validate({
+
         rules: {
+
             nombre: {
+
                 required: true
+
             },
+
             descripcion: {
+
                 required: true
+
             },
+
             categoria: {
+
                 required: true
+
             },
+
             precio: {
+
                 required: true,
+
                 number: true
+
             },
+
             costo: {
+
                 required: true,
+
                 number: true
+
             },
+
             stock: {
+
                 required: true,
+
                 number: true
+
             },
+
             codigo: {
+
                 required: true,
+
                 number: true
+
             }
+
         },
+
+
         messages: {
+
             nombre: {
+
                 required:
+
                     "Ingrese el nombre del producto"
+
             },
+
             descripcion: {
+
                 required:
+
                     "Ingrese la descripción"
+
             },
+
             categoria: {
+
                 required:
+
                     "Seleccione una categoría"
+
             },
+
             precio: {
+
                 required:
-                  "Ingrese el precio",
+
+                    "Ingrese el precio",
+
                 number:
+
                     "Solo se permiten números"
+
             },
+
             costo: {
+
                 required:
+
                     "Ingrese el costo",
+
                 number:
+
                     "Solo se permiten números"
+
             },
+
             stock: {
+
                 required:
+
                     "Ingrese el stock",
+
                 number:
+
                     "Solo se permiten números"
+
             },
+
             codigo: {
+
                 required:
+
                     "Ingrese el código",
+
                 number:
+
                     "Solo se permiten números"
+
             }
+
         }
+
     });
+
 });
+
 </script>
+
+
 </body>
+
 </html>
