@@ -11,8 +11,13 @@ $conn = new mysqli(
    $contrasena,
    $bd
 );
- 
- 
+
+if($conn-> connect_error){
+    die ( "Conexion fallida: " .$conn->connect_error);
+}
+$sqlCarrito = "SELECT productos_id FROM carrito WHERE pedidos_id = '$pedidos_id'";
+$resultadoCarrito = $conn->query($sqlCarrito);
+
 // ==========================================
 // FUNCIÓN PARA MOSTRAR ERRORES COMO ALERTA
 // ==========================================
@@ -418,5 +423,40 @@ try {
 // ==========================================
  
 $conn->close();
- 
+
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="tabla">
+      <table>
+        <tr>
+            <th>Productos</th>
+            <th>Stock</th>
+        <tr>
+        <?php
+        if($resultadoCarrito->num_rows > =){
+            while($producto = $resultadoCarrito->fetch_assoc()){
+                $producto_id = $producto ['productos_id'];
+                $sqlProductos = "SELECT nombre, stock FROM productos WHERE id = '$productos_id'";
+                $resultadoProducto = $conn->query ($salProducto);
+                $datosProducto = $resultadoProducto->fetch_assoc();
+                $stock = $datosProducto ['stock'];
+            }
+        }
+        ?>
+        <tr>
+            <td><?php echo $datosProducto['nombre'];?><7td>
+            <td><?php echo $stock; ?></td>
+        </tr>
+</table>
+</div>
+
+</body>
+</html>
