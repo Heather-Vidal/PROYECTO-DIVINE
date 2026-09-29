@@ -1,43 +1,150 @@
 <?php
+// =====================================================
+// CONTROL DE SESIÓN Y ACCESO
+// =====================================================
+// En DIVINE:
+//
+// - SIN sesión = cliente
+// - administrador = puede administrar productos
+// - vendedor = puede ver productos como cliente
+//
+// Además:
+// - administrador = puede ver COSTO y CÓDIGO
+// - vendedor = NO puede ver COSTO ni CÓDIGO
+// - cliente sin sesión = NO puede ver COSTO ni CÓDIGO
+//
+// =====================================================
 
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+if (session_status() === PHP_SESSION_NONE) {
+session_start();
+}
 
-$conn = new mysqli(
-    $servidor,
-    $usuario,
-    $contraseña,
-    $nombreBD
-);
+// =====================================================
+// VERIFICAR ROL
+// =====================================================
+//
+// El administrador y el vendedor pueden acceder.
+// El vendedor tendrá los mismos permisos visuales
+// que un cliente sin sesión.
+//
+// Otros roles quedan bloqueados.
+//
 
+if (isset($_SESSION['rol'])) {
 
-if($conn->connect_error){
+if (
+    $_SESSION['rol'] !== 'administrador' &&
+    $_SESSION['rol'] !== 'vendedor'
+) {
 
-    echo "OCURRiO UN ERROR SORRYYYYYYYYYYYY UnU";
+    ?>
+    <!DOCTYPE html>
+
+    <html lang="es">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+
+        <title>Acceso denegado | DIVINE</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
+
+    <body>
+
+        <script>
+
+            Swal.fire({
+
+                icon: 'error',
+
+                title: 'Acceso denegado',
+
+                text: 'No tienes acceso a esta página.',
+
+                confirmButtonText: 'Volver',
+
+                confirmButtonColor: '#744653'
+
+            }).then(() => {
+
+                window.location.href = '../totu.php';
+
+            });
+
+        </script>
+
+    </body>
+
+    </html>
+
+    <?php
+
+    exit;
+}
 
 }
- 
+
+// =====================================================
+// CONEXIÓN A LA BASE DE DATOS
+// =====================================================
+
+$servidor = "localhost";
+
+$usuario = "root";
+
+$contraseña = "";
+
+$nombreBD = "DIVINE";
+
+$conn = new mysqli(
+$servidor,
+$usuario,
+$contraseña,
+$nombreBD
+);
+
+if ($conn->connect_error) {
+
+die(
+    "Ocurrió un error al conectar con la base de datos."
+);
+
+}
 
 // =====================================================
 // RECIBIR CÓDIGO
 // =====================================================
 
-$codigo = $_GET['codigo'];
-
+$codigo = isset($_GET['codigo'])
+? intval($_GET['codigo'])
+: 0;
 
 // =====================================================
 // CONSULTAR PRODUCTO
 // =====================================================
 
-$sql = "SELECT * FROM PRODUCTO WHERE codigo=$codigo";
+$stmt = $conn->prepare(
+"SELECT * FROM PRODUCTO WHERE codigo = ?"
+);
 
-$resultado = $conn->query($sql);
+$stmt->bind_param(
+"i",
+$codigo
+);
 
+$stmt->execute();
 
-if($resultado->num_rows > 0){
+$resultado = $stmt->get_result();
 
+if ($resultado->num_rows > 0) {
 
 // =====================================================
 // BUSCAR IMAGEN DEL PRODUCTO
@@ -47,7 +154,6 @@ $nombreArchivo = "p-" . $codigo;
 
 $directorio = "../PRODUCTO-img/";
 
-
 $extensiones = [
     "jpg",
     "jpeg",
@@ -55,21 +161,17 @@ $extensiones = [
     "gif"
 ];
 
-
 $imagenProducto = null;
 
-
-foreach($extensiones as $extension){
+foreach ($extensiones as $extension) {
 
     $ruta =
+        $directorio .
+        $nombreArchivo .
+        "." .
+        $extension;
 
-        $directorio
-        . $nombreArchivo
-        . "."
-        . $extension;
-
-
-    if(file_exists($ruta)){
+    if (file_exists($ruta)) {
 
         $imagenProducto = $ruta;
 
@@ -79,610 +181,1009 @@ foreach($extensiones as $extension){
 
 }
 
-
 // =====================================================
-// SI NO ENCUENTRA IMAGEN
-// USA UNA IMAGEN DE RESPALDO
+// IMAGEN DE RESPALDO
 // =====================================================
 
-if($imagenProducto === null){
+if ($imagenProducto === null) {
 
     $imagenProducto =
         "https://i.pinimg.com/1200x/43/31/47/433147cd3e9cdb74e27685ddbace85e8.jpg";
 
 }
 
+// =====================================================
+// DETERMINAR SI ES ADMINISTRADOR
+// =====================================================
+//
+// IMPORTANTE:
+// Solo el administrador obtiene permisos administrativos.
+//
+// El vendedor NO es administrador.
+//
+// Por lo tanto:
+//
+// vendedor = cliente
+// cliente sin sesión = cliente
+// administrador = administrador
+//
+
+$esAdministrador =
+    isset($_SESSION['rol']) &&
+    $_SESSION['rol'] === 'administrador';
 
 ?>
 
-<!DOCTYPE html>
-
-<html lang="es">
-
-
-<head>
-
-
-<meta charset="UTF-8">
-
-
+<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8">
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
->
+name="viewport"
+content="width=device-width, initial-scale=1"
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> Producto | DIVINE </title>  
 
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"> </script> 
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" >
+ <style>
 
-<title>
-    Detalle del Producto - DIVINE
-</title>
+/* =====================================================
+VARIABLES
+===================================================== */
 
+:root {
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap"
-    rel="stylesheet"
-/>
+--rosa: #d99aaa;
 
+--rosa-claro: #f6dfe4;
 
-<style>
+--rosa-muy-claro: #fff7f8;
 
+--crema: #fffaf5;
 
-body {
+--dorado: #c8a56a;
 
-    font-family:
-        "Playfair Display",
-        serif;
+--dorado-claro: #e8d1a4;
 
-    background:
-        #f5e9d8;
+--vino: #744653;
 
-    display:
-        flex;
+--texto: #40343a;
 
-    justify-content:
-        center;
+--blanco: #ffffff;
 
-    align-items:
-        center;
-
-    min-height:
-        100vh;
-
-    margin:
-        0;
-
-    color:
-        #2b2b2b;
+--sombra:
+    0 20px 50px rgba(116, 70, 83, 0.15);
 
 }
 
+/* =====================================================
+RESET
+===================================================== */
+
+{
+
+box-sizing: border-box;
+
+}
+
+body {
+
+margin: 0;
+
+min-height: 100vh;
+
+font-family:
+    "DM Sans",
+    sans-serif;
+
+color: var(--texto);
+
+background:
+
+    radial-gradient(
+        circle at top left,
+        #f9dce4 0%,
+        transparent 35%
+    ),
+
+    radial-gradient(
+        circle at bottom right,
+        #f0dfc0 0%,
+        transparent 30%
+    ),
+
+    linear-gradient(
+        135deg,
+        #fff8f5,
+        #f7e8e5
+    );
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+padding: 40px 20px;
+
+}
+
+/* =====================================================
+CONTENEDOR PRINCIPAL
+===================================================== */
 
 .contenedor {
 
-    background:
-        #e9e5dd;
+width: 100%;
 
-    padding:
-        40px;
+max-width: 1050px;
 
-    border-radius:
-        25px;
+background:
+    rgba(255, 255, 255, 0.88);
 
-    box-shadow:
-        0 10px 25px
-        rgba(0,0,0,0.3);
+backdrop-filter:
+    blur(12px);
 
-    width:
-        90%;
+border:
+    1px solid rgba(255,255,255,0.8);
 
-    max-width:
-        700px;
+border-radius:
+    35px;
 
-    display:
-        grid;
+box-shadow:
+    var(--sombra);
+
+padding:
+    35px;
+
+display:
+    grid;
+
+grid-template-columns:
+    0.95fr 1.05fr;
+
+gap:
+    45px;
+
+position:
+    relative;
+
+overflow:
+    hidden;
+
+}
+
+/* =====================================================
+DECORACIÓN
+===================================================== */
+
+.contenedor::before {
+
+content: "♡";
+
+position: absolute;
+
+top: -25px;
+
+right: 35px;
+
+font-size: 130px;
+
+color:
+    rgba(217,154,170,0.10);
+
+font-family:
+    Georgia,
+    serif;
+
+}
+
+/* =====================================================
+IMAGEN
+===================================================== */
+
+.imagen {
+
+min-height:
+    520px;
+
+border-radius:
+    28px;
+
+background-image:
+    url('<?php echo htmlspecialchars($imagenProducto); ?>');
+
+background-position:
+    center;
+
+background-size:
+    cover;
+
+background-repeat:
+    no-repeat;
+
+box-shadow:
+    0 15px 35px
+    rgba(116,70,83,0.20);
+
+position:
+    relative;
+
+overflow:
+    hidden;
+
+transition:
+    transform 0.4s ease;
+
+}
+
+.imagen:hover {
+
+transform:
+    scale(1.02);
+
+}
+
+/* =====================================================
+CAPA SOBRE LA IMAGEN
+===================================================== */
+
+.imagen::after {
+
+content: "";
+
+position: absolute;
+
+inset: 0;
+
+background:
+    linear-gradient(
+        to top,
+        rgba(70,35,45,0.20),
+        transparent 45%
+    );
+
+}
+
+/* =====================================================
+INFORMACIÓN
+===================================================== */
+
+.informacion {
+
+display:
+    flex;
+
+flex-direction:
+    column;
+
+justify-content:
+    center;
+
+position:
+    relative;
+
+z-index:
+    2;
+
+}
+
+/* =====================================================
+SUBTÍTULO
+===================================================== */
+
+.subtitulo {
+
+color:
+    var(--rosa);
+
+font-size:
+    13px;
+
+font-weight:
+    600;
+
+letter-spacing:
+    4px;
+
+text-transform:
+    uppercase;
+
+margin-bottom:
+    10px;
+
+}
+
+/* =====================================================
+TÍTULO
+===================================================== */
+
+.titulo {
+
+font-family:
+    "Playfair Display",
+    serif;
+
+color:
+    var(--vino);
+
+font-size:
+    clamp(34px, 5vw, 52px);
+
+line-height:
+    1.1;
+
+margin:
+    0 0 15px;
+
+font-weight:
+    600;
+
+}
+
+.linea {
+
+width:
+    70px;
+
+height:
+    3px;
+
+background:
+    linear-gradient(
+        90deg,
+        var(--rosa),
+        var(--dorado)
+    );
+
+border-radius:
+    20px;
+
+margin-bottom:
+    30px;
+
+}
+
+/* =====================================================
+TARJETA DE DATOS
+===================================================== */
+
+.item {
+
+background:
+    rgba(255,248,248,0.9);
+
+border:
+    1px solid
+    rgba(217,154,170,0.25);
+
+border-radius:
+    24px;
+
+padding:
+    25px;
+
+box-shadow:
+    0 10px 30px
+    rgba(116,70,83,0.08);
+
+}
+
+/* =====================================================
+DATOS
+===================================================== */
+
+.item p {
+
+margin:
+    0;
+
+padding:
+    14px 0;
+
+border-bottom:
+    1px solid
+    rgba(200,165,106,0.18);
+
+display:
+    flex;
+
+justify-content:
+    space-between;
+
+gap:
+    20px;
+
+font-size:
+    15px;
+
+line-height:
+    1.5;
+
+}
+
+.item p:last-child {
+
+border-bottom:
+    none;
+
+}
+
+.item span {
+
+color:
+    var(--vino);
+
+font-weight:
+    600;
+
+min-width:
+    110px;
+
+}
+
+.item p {
+
+color:
+    #66565d;
+
+}
+
+/* =====================================================
+PRECIO
+===================================================== */
+
+.item p.precio {
+
+background:
+    linear-gradient(
+        90deg,
+        #fff1f4,
+        #fffaf5
+    );
+
+margin:
+    5px -10px;
+
+padding:
+    15px 10px;
+
+border-radius:
+    12px;
+
+font-size:
+    18px;
+
+font-weight:
+    600;
+
+}
+
+.item p.precio span {
+
+color:
+    var(--rosa);
+
+}
+
+/* =====================================================
+BOTONES
+===================================================== */
+
+.botones {
+
+display:
+    flex;
+
+gap:
+    12px;
+
+margin-top:
+    25px;
+
+}
+
+.boton {
+
+flex:
+    1;
+
+text-align:
+    center;
+
+text-decoration:
+    none;
+
+padding:
+    13px 20px;
+
+border-radius:
+    30px;
+
+font-size:
+    14px;
+
+font-weight:
+    600;
+
+transition:
+    all 0.3s ease;
+
+}
+
+/* =====================================================
+EDITAR
+===================================================== */
+
+.boton:first-child {
+
+background:
+    var(--vino);
+
+color:
+    white;
+
+border:
+    1px solid var(--vino);
+
+}
+
+.boton:first-child:hover {
+
+background:
+    var(--rosa);
+
+border-color:
+    var(--rosa);
+
+transform:
+    translateY(-3px);
+
+box-shadow:
+    0 8px 20px
+    rgba(217,154,170,0.35);
+
+}
+
+/* =====================================================
+ELIMINAR
+===================================================== */
+
+.boton:last-child {
+
+background:
+    transparent;
+
+color:
+    #a45b69;
+
+border:
+    1px solid #d9a3ad;
+
+}
+
+.boton:last-child:hover {
+
+background:
+    #f9e1e5;
+
+transform:
+    translateY(-3px);
+
+}
+
+/* =====================================================
+BOTÓN CARRITO
+===================================================== */
+
+.boton-carrito {
+
+background:
+    linear-gradient(
+        135deg,
+        var(--rosa),
+        var(--dorado)
+    );
+
+color:
+    white;
+
+border:
+    1px solid var(--rosa);
+
+box-shadow:
+    0 8px 20px
+    rgba(217,154,170,0.25);
+
+}
+
+.boton-carrito:hover {
+
+transform:
+    translateY(-3px);
+
+box-shadow:
+    0 10px 25px
+    rgba(217,154,170,0.35);
+
+}
+
+/* =====================================================
+NAVEGACIÓN
+===================================================== */
+
+.navegacion {
+
+display:
+    flex;
+
+justify-content:
+    space-between;
+
+align-items:
+    center;
+
+margin-top:
+    20px;
+
+gap:
+    15px;
+
+}
+
+.boton2 {
+
+text-decoration:
+    none;
+
+color:
+    var(--vino);
+
+font-size:
+    14px;
+
+font-weight:
+    600;
+
+padding:
+    10px 5px;
+
+transition:
+    all 0.3s ease;
+
+}
+
+.boton2:hover {
+
+color:
+    var(--rosa);
+
+transform:
+    translateX(-3px);
+
+}
+
+.boton2:first-child:hover {
+
+transform:
+    translateY(-2px);
+
+}
+
+/* =====================================================
+DETALLE DORADO
+===================================================== */
+
+.decoracion {
+
+display:
+    flex;
+
+align-items:
+    center;
+
+gap:
+    10px;
+
+margin:
+    20px 0;
+
+color:
+    var(--dorado);
+
+font-size:
+    18px;
+
+}
+
+.decoracion::before,
+.decoracion::after {
+
+content: "";
+
+height:
+    1px;
+
+flex:
+    1;
+
+background:
+    linear-gradient(
+        90deg,
+        transparent,
+        var(--dorado-claro)
+    );
+
+}
+
+.decoracion::after {
+
+background:
+    linear-gradient(
+        90deg,
+        var(--dorado-claro),
+        transparent
+    );
+
+}
+
+/* =====================================================
+RESPONSIVE
+===================================================== */
+
+@media (max-width: 850px) {
+
+.contenedor {
 
     grid-template-columns:
         1fr;
 
-    grid-gap:
+    max-width:
+        600px;
+
+    padding:
+        25px;
+
+    gap:
+        30px;
+
+}
+
+.imagen {
+
+    min-height:
+        380px;
+
+}
+
+}
+
+@media (max-width: 500px) {
+
+body {
+
+    padding:
+        20px 12px;
+
+}
+
+.contenedor {
+
+    padding:
+        18px;
+
+    border-radius:
         25px;
 
 }
 
-
-/* =====================================================
-   IMAGEN REAL DEL PRODUCTO
-   ===================================================== */
-
 .imagen {
-
-    background-image:
-        url('<?php echo htmlspecialchars($imagenProducto); ?>');
-
-    background-position:
-        center center;
-
-    background-size:
-        cover;
-
-    background-repeat:
-        no-repeat;
-
-    border-radius:
-        20px;
 
     min-height:
         300px;
 
+    border-radius:
+        20px;
+
 }
-
-
-/* =====================================================
-   TÍTULO
-   ===================================================== */
 
 .titulo {
 
-    text-align:
-        center;
-
-    color:
-        #364e63;
-
     font-size:
-        32px;
-
-    font-weight:
-        700;
-
-    margin:
-        0;
-
-    letter-spacing:
-        2px;
-
-    border-bottom:
-        3px solid #c5a46d;
-
-    padding-bottom:
-        10px;
-
-    width:
-        fit-content;
-
-    margin-left:
-        auto;
-
-    margin-right:
-        auto;
+        35px;
 
 }
-
-
-/* =====================================================
-   INFORMACIÓN
-   ===================================================== */
 
 .item {
 
-    background:
-        #f5e9d8;
-
     padding:
-        25px;
-
-    border-radius:
-        20px;
-
-    box-shadow:
-        0 4px 10px
-        rgba(54,78,99,0.25);
-
-    transition:
-        transform 0.3s ease;
+        18px;
 
 }
-
-
-.item:hover {
-
-    transform:
-        translateY(-5px);
-
-}
-
 
 .item p {
-
-    margin:
-        8px 0;
-
-    color:
-        #2b2b2b;
-
-    font-size:
-        17px;
-
-}
-
-
-.item span {
-
-    font-weight:
-        bold;
-
-    color:
-        #364e63;
-
-}
-
-
-/* =====================================================
-   BOTONES
-   ===================================================== */
-
-.botones {
-
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
-    display:
-        flex;
-
-    justify-content:
-        center;
-
-    gap:
-        15px;
-
-}
-
-
-.boton {
-
-    background:
-        #364e63;
-
-    color:
-        #c5a46d;
-
-    padding:
-        10px 22px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        16px;
-
-    font-weight:
-        700;
-
-    text-decoration:
-        none;
-
-    transition:
-        0.3s ease;
-
-}
-
-
-.boton:hover {
-
-    background:
-        #c5a46d;
-
-    color:
-        #364e63;
-
-    transform:
-        scale(1.05);
-
-    box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
-
-}
-
-
-/* =====================================================
-   NAVEGACIÓN
-   ===================================================== */
-
-.navegacion {
-
-    margin-top:
-        20px;
-
-    text-align:
-        center;
-
-    display:
-        flex;
 
     flex-direction:
         column;
 
     gap:
-        12px;
+        4px;
 
 }
 
+.botones {
 
-.boton2 {
-
-    background:
-        #364e63;
-
-    color:
-        #c5a46d;
-
-    padding:
-        12px 28px;
-
-    border-radius:
-        28px;
-
-    font-size:
-        17px;
-
-    font-weight:
-        700;
-
-    text-decoration:
-        none;
-
-    transition:
-        0.3s ease;
+    flex-direction:
+        column;
 
 }
 
+.navegacion {
 
-.boton2:hover {
+    flex-direction:
+        column;
 
-    background:
-        #c5a46d;
-
-    color:
-        #364e63;
-
-    transform:
-        scale(1.04);
-
-    box-shadow:
-        0 5px 20px
-        rgba(197,164,109,0.7);
+    align-items:
+        center;
 
 }
 
-
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
-
-@media (max-width: 768px) {
-
-    .contenedor {
-
-        padding:
-            25px;
-
-    }
-
-
-    .imagen {
-
-        min-height:
-            200px;
-
-    }
-
 }
 
+</style> </head> <body> <div class="contenedor">
+<!-- =================================================
+     IMAGEN
+     ================================================= -->
 
-</style>
+<div
+    class="imagen"
+    aria-label="Imagen del producto"
+></div>
 
+<!-- =================================================
+     INFORMACIÓN
+     ================================================= -->
 
-</head>
+<div class="informacion">
 
+    <div class="subtitulo">
+        DIVINE · COLLECTION
+    </div>
 
-<body>
+    <h1 class="titulo">
+        Detalle del producto
+    </h1>
 
-
-<div class="contenedor">
-
-
-    <!-- =================================================
-         IMAGEN DEL PRODUCTO
-         ================================================= -->
-
-    <div class="imagen"></div>
-
-
-    <!-- =================================================
-         TÍTULO
-         ================================================= -->
-
-    <h2 class="titulo">
-
-        DETALLE DEL PRODUCTO
-
-    </h2>
-
-
-    <!-- =================================================
-         DATOS DEL PRODUCTO
-         ================================================= -->
+    <div class="linea"></div>
 
     <div class="item">
 
-
 <?php
+// =====================================================
+// MOSTRAR INFORMACIÓN DEL PRODUCTO
+// =====================================================
 
+while ($fila = $resultado->fetch_assoc()) {
 
-while(
-    $fila =
-    $resultado->fetch_assoc()
-){
+// =================================================
+// DATOS VISIBLES PARA TODOS
+// =================================================
 
+echo "
 
-    echo "
+    <p>
 
-        <p>
+        <span>
+            Nombre
+        </span>
 
-            <span>
-                Nombre:
-            </span>
+        "
+        . htmlspecialchars($fila['nombre'])
+        . "
 
-            "
-            . htmlspecialchars(
-                $fila['nombre']
-            )
-            . "
+    </p>
 
-        </p>
+    <p>
 
+        <span>
+            Descripción
+        </span>
 
-    ";
+        "
+        . htmlspecialchars($fila['descripcion'])
+        . "
 
+    </p>
 
-    echo "
+    <p>
 
-        <p>
+        <span>
+            Categoría
+        </span>
 
-            <span>
-                Descripción:
-            </span>
+        "
+        . htmlspecialchars($fila['categoria'])
+        . "
 
-            "
-            . htmlspecialchars(
-                $fila['descripcion']
-            )
-            . "
+    </p>
 
-        </p>
+    <p class='precio'>
 
+        <span>
+            Precio
+        </span>
 
-    ";
+        Bs. "
+        . htmlspecialchars($fila['precio'])
+        . "
 
+    </p>
 
+    <p>
 
+        <span>
+            Stock
+        </span>
 
-    
-    echo "
+        Unidades "
+        . htmlspecialchars($fila['stock'])
+        . "
 
-        <p>
+    </p>
 
-            <span>
-                Categoría:
-            </span>
+";
 
-            "
-            . htmlspecialchars(
-                $fila['categoria']
-            )
-            . "
+// =================================================
+// COSTO Y CÓDIGO
+// SOLO PARA ADMINISTRADOR
+// =================================================
 
-        </p>
-
-
-    ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Precio:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['precio']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
+if ($esAdministrador) {
 
     echo "
 
         <p>
 
             <span>
-                Costo:
+                Costo
             </span>
 
-            "
-            . htmlspecialchars(
-                $fila['costo']
-            )
+            Bs. "
+            . htmlspecialchars($fila['costo'])
             . "
 
         </p>
-
-
-    ";
-
-
-    echo "
 
         <p>
 
             <span>
-                Stock:
+                Código
             </span>
 
-            "
-            . htmlspecialchars(
-                $fila['stock']
-            )
+            #"
+            . htmlspecialchars($fila['codigo'])
             . "
 
         </p>
 
-
     ";
-
-
-    echo "
-
-        <p>
-
-            <span>
-                Código:
-            </span>
-
-            "
-            . htmlspecialchars(
-                $fila['codigo']
-            )
-            . "
-
-        </p>
-
-
-    ";
-
-
-    $codigo =
-        $fila['codigo'];
-
 
 }
 
+// =================================================
+// GUARDAR CÓDIGO PARA LOS BOTONES
+// =================================================
+
+$codigo = $fila['codigo'];
+
+}
 
 ?>
 
-
     </div>
 
+    <div class="decoracion">
+        ♡
+    </div>
 
     <!-- =================================================
          BOTONES
@@ -690,72 +1191,174 @@ while(
 
     <div class="botones">
 
+        <?php if ($esAdministrador): ?>
 
-        <a
-            href="updateformprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
+            <!-- =========================================
+                 ADMINISTRADOR
+                 ========================================= -->
 
-            Editar
+            <a
+                href="updateformprodu.php?codigo=<?php echo urlencode($codigo); ?>"
+                class="boton"
+            >
+                ✦ Editar producto
+            </a>
 
-        </a>
+            <a
+                href="deleteprodu.php?codigo=<?php echo urlencode($codigo); ?>"
+                class="boton"
+                onclick="return confirmarEliminacion(event);"
+            >
+                ♡ Eliminar
+            </a>
 
+        <?php else: ?>
 
-        <a
-            href="deleteprodu.php?codigo=<?php echo $codigo; ?>"
-            class="boton"
-        >
+            <!-- =========================================
+                 CLIENTE O VENDEDOR
+                 ========================================= -->
 
-            Eliminar
+            <a
+                href="../CRUD-CARRITO-PEDIDO/formpedido.php?codigo=<?php echo urlencode($codigo); ?>"
+                class="boton boton-carrito"
+            >
+                Agregar al carrito
+            </a>
 
-        </a>
-
+        <?php endif; ?>
 
     </div>
 
+    <!-- =================================================
+         SWEET ALERT PARA ELIMINAR
+         ================================================= -->
+
+    <script>
+
+        function confirmarEliminacion(event) {
+
+            event.preventDefault();
+
+            const url = event.currentTarget.href;
+
+            Swal.fire({
+
+                icon: 'warning',
+
+                title: '¿Eliminar producto?',
+
+                text: '¿Estás segura de que deseas eliminar este producto?',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Sí, eliminar',
+
+                cancelButtonText: 'Cancelar',
+
+                confirmButtonColor: '#a45b69',
+
+                cancelButtonColor: '#744653'
+
+            }).then((resultado) => {
+
+                if (resultado.isConfirmed) {
+
+                    window.location.href = url;
+
+                }
+
+            });
+
+            return false;
+
+        }
+
+    </script>
 
     <!-- =================================================
          NAVEGACIÓN
          ================================================= -->
 
-    <div class="navegacion">
+    <?php if ($esAdministrador): ?>
 
+        <div class="navegacion">
 
-        <a
-            href="readtodoprodu.php"
-            class="boton2"
+            <a
+                href="readtodoprodu.php"
+                class="boton2"
+            >
+                ← Ver productos
+            </a>
+
+            <a
+                href="../totu.php"
+                class="boton2"
+            >
+                Volver al inicio
+            </a>
+
+        </div>
+
+    <?php else: ?>
+
+        <!-- =============================================
+             CLIENTE O VENDEDOR
+             ============================================= -->
+
+        <div
+            class="navegacion"
+            style="justify-content: center;"
         >
 
-            Ver productos
+            <a
+                href="../produccomp.php"
+                class="boton2"
+            >
+                volver a productos
+            </a>
 
-        </a>
+        </div>
 
-
-        <a
-            href="../totu.php"
-            class="boton2"
-        >
-
-            ⬅ Volver al inicio
-
-        </a>
-
+    <?php endif; ?>
 
     </div>
 
-
 </div>
 
+</div> </body> </html> <?php
+} else {
 
-</body>
+// =====================================================
+// PRODUCTO NO ENCONTRADO
+// =====================================================
 
-</html>
+echo "
 
+    <div style='
+        font-family:Arial;
+        text-align:center;
+        padding:50px;
+    '>
 
-<?php
+        <h2>
+            Producto no encontrado ♡
+        </h2>
+
+        <a href='readtodoprodu.php'>
+            Volver a productos
+        </a>
+
+    </div>
+
+";
 
 }
 
+// =====================================================
+// CERRAR CONEXIÓN
+// =====================================================
+
+$stmt->close();
 
 $conn->close();
 

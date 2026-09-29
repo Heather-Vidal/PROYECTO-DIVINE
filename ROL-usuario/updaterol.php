@@ -1016,16 +1016,13 @@ if ($resultado->num_rows > 0) {
      VOLVER
      ================================================== -->
 
-<button
-    class="boton-volver"
-    type="button"
-    onclick="history.back()"
+<button 
+    class="boton-volver" 
+    type="button" 
+    onclick="window.location.href='../admin.php'"
 >
-
     ⬅
-
-    Volver atrás
-
+     Volver al pefil
 </button>
 
 

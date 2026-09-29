@@ -1,60 +1,154 @@
-<?php
+<?php 
 
-session_start();
+session_start(); 
+require_once "conexion.php"; 
+ 
+/* ========================================== 
+   RECIBIR DATOS DEL FORMULARIO 
+========================================== */ 
+ 
+$nombre    = trim($_POST["nombre"]    ?? ""); 
+$fecha     = trim($_POST["fecha"]     ?? ""); 
+$estado    = trim($_POST["estado"]    ?? ""); 
+$telefono  = trim($_POST["telefono"]  ?? ""); 
+$direccion = trim($_POST["direccion"] ?? ""); 
+ 
+ 
+/* ========================================== 
+   WHITELIST PARA EL ESTADO
+========================================== */ 
+ 
+$estadosValidos = ["Pendiente", "Rechazado", "Completado"]; 
 
-$servidor = "localhost";
-$usuario = "root";
-$contrasena = "";
-$bd = "DIVINE";
-
-$conn = new mysqli(  $servidor,  $usuario,  $contrasena,  $bd );
-
-
-if ($conn->connect_error) {
-
-    die(  "Error de conexión: " . $conn->connect_error  );
-}
+if (!in_array($estado, $estadosValidos, true)) { 
+    die("Estado no válido. Valor recibido: [" . $estado . "] longitud: " . strlen($estado)); 
+} 
+ 
+ 
+/* ========================================== 
+   NOMBRE DEL VENDEDOR
+========================================== */ 
+ 
+if (isset($_SESSION['nombre'])) { 
+    $nombrevendedor = $_SESSION['nombre']; 
+} else { 
+    $nombrevendedor = "DIVINE"; 
+} 
 
 
 /* ==========================================
-   RECIBIR DATOS DEL FORMULARIO
+   VALIDAR QUE EL CARRITO NO ESTÉ VACÍO
 ========================================== */
 
-$nombre = $_POST["nombre"];
-$fecha = $_POST["fecha"];
-$estado = $_POST["estado"];
-$telefono = $_POST["telefono"];
-$direccion = $_POST["direccion"];
+/*
+   El pedido todavía no existe, por lo tanto
+   primero revisamos si hay productos en el carrito
+   que correspondan a este proceso.
+
+   Si no hay ningún producto, no se permite
+   registrar el pedido.
+*/
+
+/* 
+   Si recibes un idPedido existente desde el formulario,
+   lo podemos comprobar directamente.
+*/
+$idPedido = $_POST["idPedido"] ?? $_GET["idPedido"] ?? null;
+
+if ($idPedido !== null && $idPedido !== "") {
+
+    if (!filter_var($idPedido, FILTER_VALIDATE_INT) || $idPedido <= 0) {
+
+        echo "<script>
+                alert('⚠️ El pedido no es válido.');
+                window.history.back();
+              </script>";
+        exit();
+
+    }
+
+    $sqlCarrito = "SELECT COUNT(*) AS total
+                   FROM CARRITO
+                   WHERE PEDIDOS_ID = ?";
+
+    $stmtCarrito = $conn->prepare($sqlCarrito);
+
+    if ($stmtCarrito === false) {
+        die("Error al preparar la validación del carrito: " . $conn->error);
+    }
+
+    $stmtCarrito->bind_param("i", $idPedido);
+    $stmtCarrito->execute();
+
+    $resultadoCarrito = $stmtCarrito->get_result();
+    $filaCarrito = $resultadoCarrito->fetch_assoc();
+
+    $totalProductos = (int)$filaCarrito["total"];
+
+    $stmtCarrito->close();
 
 
-if (isset($_SESSION['nombre'])) {
+    /* ==========================================
+       SI EL CARRITO ESTÁ VACÍO
+    ========================================== */
 
-    $nombrevendedor = $_SESSION['nombre'];
+    if ($totalProductos <= 0) {
 
-} else {
-
-    $nombrevendedor = "DIVINE";
-
+        echo "<script>
+                alert('⚠️ No puedes registrar un pedido vacío.\\n\\nAgrega al menos un producto al carrito antes de continuar.');
+                window.location.href = 'formcarrito.php?idPedido=" . urlencode($idPedido) . "';
+              </script>";
+        exit();
+    }
 }
 
-$sql = "INSERT INTO PEDIDOS  ( nombre, fecha,    estado,    telefono,    direccion,   nombrevendedor )
-        VALUES  (      '$nombre',     '$fecha',     '$estado',     '$telefono',     '$direccion',     '$nombrevendedor'
-        )";
 
-
+/* ========================================== 
+   INSERT CON PREPARED STATEMENT 
+========================================== */ 
  
+$sql = "INSERT INTO PEDIDOS 
+        (nombre, fecha, estado, telefono, direccion, nombrevendedor) 
+        VALUES (?, ?, ?, ?, ?, ?)"; 
+ 
+$stmt = $conn->prepare($sql); 
+ 
+if ($stmt === false) { 
+    die("Error al preparar la consulta: " . $conn->error); 
+} 
+ 
+$stmt->bind_param( 
+    "ssssss", 
+    $nombre, 
+    $fecha, 
+    $estado, 
+    $telefono, 
+    $direccion, 
+    $nombrevendedor 
+); 
+ 
+ 
+/* ========================================== 
+   EJECUTAR INSERT
+========================================== */ 
+ 
+if ($stmt->execute()) { 
+ 
+    $idNuevo = (int) $conn->insert_id; 
+ 
+    $stmt->close(); 
+    $conn->close(); 
+ 
+    header("Location: formcarrito.php?idPedido=" . urlencode($idNuevo)); 
+    exit(); 
+ 
+} else { 
 
-if ($conn->query($sql)) {
-+
+    echo "Error: " . $stmt->error; 
 
-    header(
-        "Location: formcarrito.php?idPedido="
-        . $conn->insert_id
-    );
-    exit();
-
-} else {   echo "Error: " . $conn->error; }
-
-$conn->close();
-
+    $stmt->close(); 
+} 
+ 
+$conn->close(); 
+ 
 ?>

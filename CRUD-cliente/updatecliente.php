@@ -1,9 +1,9 @@
- <?php
+<?php
 $servidor="localhost";
 $usuario="root";
 $contraseña="";
 $nombreBD="DIVINE";
-
+ 
 $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 ?>
 <!DOCTYPE html>
@@ -13,7 +13,7 @@ $conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Modificar Cliente - DIVINE</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
-
+ 
 <style>
 *{
     margin:0;
@@ -134,50 +134,81 @@ body{
 }
 }
 </style>
-
+ 
 </head>
-
+ 
 <body>
-
+ 
   <div class="contenedor">
     
     <div class="encabezado">Modificado!</div>
-
+ 
     <div class="contenido">
-
+ 
       <img src="https://cdn-icons-png.flaticon.com/512/3106/3106921.png" class="icono">
-
+ 
 <?php
-
+ 
 if($conn->connect_error){
+ 
     echo '<div class="mensaje error">❌ No se pudo conectar con la base de datos</div>';
-}
-
-$CI= $_POST['CI'];
-$nombre= $_POST['nombre'];
-$direccion= $_POST['direccion'];
-$celular= $_POST['celular'];
-$rol=$_POST['rol'];
-$estado=$_POST['estado'];
-
-$sql="UPDATE CLIENTE SET nombre='$nombre',direccion='$direccion',celular='$celular',rol='$rol',estado='$estado' WHERE CI=$CI";
-
-if ($conn->query($sql)=== TRUE){
-    echo '<div class="mensaje exito">✔ El cliente se modificó exitosamente</div>';
+ 
 } else {
-    echo '<div class="mensaje error">❌ No se pudo guardar la modificación</div>';
+ 
+    // Recibir los datos y limpiar espacios innecesarios
+    $CI = trim($_POST['CI'] ?? '');
+    $nombre = trim($_POST['nombre'] ?? '');
+    $direccion = trim($_POST['direccion'] ?? '');
+    $celular = trim($_POST['celular'] ?? '');
+    $rol = trim($_POST['rol'] ?? '');
+    $estado = trim($_POST['estado'] ?? '');
+ 
+    // CI y celular son columnas numéricas (int) en la base de datos
+    if($CI === '' || !ctype_digit($CI) || $celular === '' || !ctype_digit($celular)){
+ 
+        echo '<div class="mensaje error">❌ El CI y el celular deben contener solo números</div>';
+ 
+    } else {
+ 
+        // Convertir a entero los datos que deben ser numéricos
+        $CI = (int) $CI;
+        $celular = (int) $celular;
+ 
+        // Consulta preparada: los datos van separados de la consulta SQL
+        $sql = "UPDATE CLIENTE SET nombre=?, direccion=?, celular=?, rol=?, estado=? WHERE CI=?";
+        $stmt = $conn->prepare($sql);
+ 
+        if(!$stmt){
+ 
+            echo '<div class="mensaje error">❌ No se pudo guardar la modificación</div>';
+ 
+        } else {
+ 
+            // s = texto, i = entero
+            // nombre=s, direccion=s, celular=i, rol=s, estado=s, CI=i
+            $stmt->bind_param("ssissi", $nombre, $direccion, $celular, $rol, $estado, $CI);
+ 
+            if ($stmt->execute()){
+                echo '<div class="mensaje exito">✔ El cliente se modificó exitosamente</div>';
+            } else {
+                echo '<div class="mensaje error">❌ No se pudo guardar la modificación</div>';
+            }
+ 
+            $stmt->close();
+        }
+    }
 }
-
+ 
 ?>
-
+ 
     </div>
-
+ 
     <div class="botones">
-      <a href="paginaprinc2.php" class="boton">⬅ Volver al inicio</a>
+      <a href="../admin.php" class="boton">⬅ Volver al inicio</a>
       <a href="readtodocliente.php" class="boton">Ver clientes ➡</a>
     </div>
-
+ 
   </div>
-
+ 
 </body>
 </html>

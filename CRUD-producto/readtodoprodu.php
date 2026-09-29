@@ -1431,7 +1431,7 @@ function confirmarEliminacion(codigo) {
     });
 };
 <?php
-   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 3";
+   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 5";
    $resultadoBajos = $conn->query($bajos);
    $arrayBajos = [];
    while ($filaBajos = $resultadoBajos->fetch_assoc()) {

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
@@ -20,11 +21,9 @@
 ================================================== */
 
 *{
-
     margin:0;
     padding:0;
     box-sizing:border-box;
-
 }
 
 
@@ -33,11 +32,14 @@
 ================================================== */
 
 body{
-
     overflow-x:hidden;
 
-    padding-top:80px;
-
+    /*
+       IMPORTANTE:
+       Ya no necesitamos padding-top porque
+       el header NO es fixed.
+    */
+    padding-top:0;
 }
 
 
@@ -48,15 +50,49 @@ body{
 header{
 
     background:transparent;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     padding:10px 40px;
+
     width:100%;
-    position:fixed;
+
+    /*
+       YA NO ES FIXED.
+       De esta manera el header se mueve
+       con la página y NO sigue al cursor.
+    */
+    position:absolute;
+
     top:0;
     left:0;
+
     z-index:10000;
+
+    /*
+       Animación para ocultarlo suavemente
+       cuando se hace scroll.
+    */
+    transition:
+        transform .35s ease,
+        opacity .35s ease;
+
+}
+
+
+/* ==================================================
+   HEADER OCULTO AL HACER SCROLL
+================================================== */
+
+header.ocultar-header{
+
+    transform:translateY(-100%);
+
+    opacity:0;
+
+    pointer-events:none;
 
 }
 
@@ -66,13 +102,9 @@ header{
 ================================================== */
 
 a{
-
     text-decoration:none;
-
     color:inherit;
-
     font-family:"Lora",serif;
-
 }
 
 
@@ -81,20 +113,13 @@ a{
 ================================================== */
 
 .logo{
-
     display:flex;
-
     align-items:center;
-
 }
 
-
 .logo img{
-
     width:160px;
-
     display:block;
-
 }
 
 
@@ -103,49 +128,29 @@ a{
 ================================================== */
 
 nav{
-
     display:flex;
-
 }
-
 
 .menu{
-
     display:flex;
-
     list-style:none;
-
     align-items:center;
-
 }
-
 
 .menu li{
-
     position:relative;
-
 }
-
 
 .menu li a{
-
     display:block;
-
     padding:15px 20px;
-
     font-size:20px;
-
     transition:.3s;
-
     border-radius:10px;
-
 }
 
-
 .menu li a:hover{
-
     transform:translateY(3px);
-
 }
 
 
@@ -154,44 +159,28 @@ nav{
 ================================================== */
 
 .submenu{
-
     display:none;
-
     position:absolute;
-
     top:100%;
-
     left:0;
-
     min-width:220px;
-
     list-style:none;
-
     background:white;
-
     border-radius:12px;
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.15);
 
     z-index:9999;
-
 }
-
 
 .submenu li a{
-
     padding:12px 20px;
-
     font-size:17px;
-
 }
 
-
 .menu li:hover > .submenu{
-
     display:block;
-
 }
 
 
@@ -200,13 +189,9 @@ nav{
 ================================================== */
 
 .iconos-derecha{
-
     display:flex;
-
     gap:20px;
-
     align-items:center;
-
 }
 
 
@@ -215,13 +200,9 @@ nav{
 ================================================== */
 
 .buscador{
-
     display:flex;
-
     align-items:center;
-
     position:relative;
-
 }
 
 
@@ -230,13 +211,10 @@ nav{
 ================================================== */
 
 .buscador-contenedor{
-
     display:flex;
-
     align-items:center;
 
     width:40px;
-
     height:40px;
 
     overflow:hidden;
@@ -247,7 +225,6 @@ nav{
         width .5s ease,
         background .3s ease,
         box-shadow .3s ease;
-
 }
 
 
@@ -256,14 +233,12 @@ nav{
 ================================================== */
 
 .buscador-contenedor:hover{
-
     width:260px;
 
     background:white;
 
     box-shadow:
         0 5px 20px rgba(0,0,0,.15);
-
 }
 
 
@@ -272,13 +247,10 @@ nav{
 ================================================== */
 
 .buscador-contenedor input{
-
     width:0;
-
     opacity:0;
 
     border:none;
-
     outline:none;
 
     background:transparent;
@@ -286,14 +258,12 @@ nav{
     padding:0;
 
     font-size:15px;
-
     color:#444;
 
     transition:
         width .4s ease,
         opacity .3s ease,
         padding .4s ease;
-
 }
 
 
@@ -302,14 +272,11 @@ nav{
 ================================================== */
 
 .buscador-contenedor:hover input{
-
     width:190px;
-
     opacity:1;
 
     padding:
         0 10px 0 15px;
-
 }
 
 
@@ -318,11 +285,8 @@ nav{
 ================================================== */
 
 .boton-buscar{
-
     width:40px;
-
     min-width:40px;
-
     height:40px;
 
     border:none;
@@ -332,35 +296,25 @@ nav{
     cursor:pointer;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
     padding:0;
-
 }
 
-
 .boton-buscar img{
-
     width:25px;
-
     height:25px;
 
     object-fit:contain;
 
     transition:
         transform .3s ease;
-
 }
 
-
 .boton-buscar:hover img{
-
     transform:
         scale(1.1);
-
 }
 
 
@@ -369,24 +323,18 @@ nav{
 ================================================== */
 
 .iconos-derecha > a img{
-
     width:25px;
-
     height:25px;
 
     object-fit:contain;
 
     transition:
         transform .3s ease;
-
 }
 
-
 .iconos-derecha > a:hover img{
-
     transform:
         scale(1.1);
-
 }
 
 
@@ -395,19 +343,14 @@ nav{
 ================================================== */
 
 .carrito-contenedor{
-
     position:relative;
 
     width:30px;
-
     height:30px;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
 }
 
 
@@ -416,19 +359,15 @@ nav{
 ================================================== */
 
 .estrellita-carrito{
-
     position:absolute;
 
     top:-10px;
-
     right:-10px;
 
     width:18px;
-
     height:18px;
 
     background:#c96f84;
-
     color:white;
 
     border-radius:50%;
@@ -436,11 +375,9 @@ nav{
     display:none;
 
     justify-content:center;
-
     align-items:center;
 
     font-size:12px;
-
     font-weight:bold;
 
     box-shadow:
@@ -449,14 +386,10 @@ nav{
     animation:
         aparecerEstrella .5s ease,
         pulsarEstrella 1.5s infinite;
-
 }
 
-
 .estrellita-carrito.activa{
-
     display:flex;
-
 }
 
 
@@ -465,42 +398,32 @@ nav{
 ================================================== */
 
 .contador-carrito{
-
     position:absolute;
 
     top:-12px;
-
     left:-10px;
 
     min-width:18px;
-
     height:18px;
 
     padding:2px 5px;
 
     background:#713d4d;
-
     color:white;
 
     border-radius:20px;
 
     font-size:10px;
-
     font-weight:bold;
 
     display:none;
 
     justify-content:center;
-
     align-items:center;
-
 }
 
-
 .contador-carrito.activo{
-
     display:flex;
-
 }
 
 
@@ -511,49 +434,36 @@ nav{
 @keyframes aparecerEstrella{
 
     from{
-
         opacity:0;
 
         transform:
             scale(0);
-
     }
 
     to{
-
         opacity:1;
 
         transform:
             scale(1);
-
     }
-
 }
-
 
 @keyframes pulsarEstrella{
 
     0%{
-
         transform:
             scale(1);
-
     }
 
     50%{
-
         transform:
             scale(1.18);
-
     }
 
     100%{
-
         transform:
             scale(1);
-
     }
-
 }
 
 
@@ -562,7 +472,6 @@ nav{
 ================================================== */
 
 .hamburger{
-
     display:none;
 
     font-size:34px;
@@ -570,7 +479,6 @@ nav{
     cursor:pointer;
 
     z-index:10001;
-
 }
 
 
@@ -579,9 +487,7 @@ nav{
 ================================================== */
 
 .close-menu{
-
     display:none;
-
 }
 
 
@@ -594,39 +500,30 @@ nav{
     position:fixed;
 
     top:0;
-
     left:0;
 
     width:100%;
-
     height:100%;
 
     background:
         rgba(0,0,0,.45);
 
     opacity:0;
-
     visibility:hidden;
 
     transition:.3s;
 
     z-index:9998;
-
 }
 
-
 .overlay.active{
-
     opacity:1;
-
     visibility:visible;
-
 }
 
 
 /* ==================================================
-   ⭐ VENTANA DEL CARRITO
-   CORREGIDO Y CENTRADO
+   VENTANA DEL CARRITO
 ================================================== */
 
 .modal-carrito{
@@ -634,11 +531,9 @@ nav{
     position:fixed;
 
     top:0;
-
     left:0;
 
     width:100vw;
-
     height:100vh;
 
     background:
@@ -647,13 +542,11 @@ nav{
     display:none;
 
     justify-content:center;
-
     align-items:center;
 
     z-index:20000;
 
     padding:20px;
-
 }
 
 
@@ -662,21 +555,17 @@ nav{
 ================================================== */
 
 .modal-carrito.activo{
-
     display:flex;
-
 }
 
 
 /*
-   ESTA REGLA TAMBIÉN PERMITE QUE TU JAVASCRIPT
-   ACTUAL PUEDA USAR style.display = "block".
+   PERMITE QUE TU JAVASCRIPT ACTUAL
+   USE style.display = "block".
 */
 
 .modal-carrito[style*="display: block"]{
-
     display:flex !important;
-
 }
 
 
@@ -687,7 +576,6 @@ nav{
 .carrito-ventana{
 
     width:90%;
-
     max-width:1000px;
 
     height:auto;
@@ -695,7 +583,6 @@ nav{
     max-height:85vh;
 
     overflow-y:auto;
-
     overflow-x:hidden;
 
     background:white;
@@ -709,7 +596,6 @@ nav{
 
     animation:
         aparecerCarrito .3s ease;
-
 }
 
 
@@ -726,7 +612,6 @@ nav{
         transform:
             translateY(30px)
             scale(.95);
-
     }
 
     to{
@@ -736,9 +621,7 @@ nav{
         transform:
             translateY(0)
             scale(1);
-
     }
-
 }
 
 
@@ -751,7 +634,6 @@ nav{
     display:flex;
 
     justify-content:space-between;
-
     align-items:center;
 
     border-bottom:
@@ -760,9 +642,7 @@ nav{
     padding-bottom:15px;
 
     margin-bottom:20px;
-
 }
-
 
 .carrito-cabecera h2{
 
@@ -773,7 +653,6 @@ nav{
         serif;
 
     font-weight:400;
-
 }
 
 
@@ -790,7 +669,6 @@ nav{
     color:#713d4d;
 
     width:35px;
-
     height:35px;
 
     border-radius:50%;
@@ -800,9 +678,7 @@ nav{
     font-size:20px;
 
     transition:.3s;
-
 }
-
 
 .cerrar-carrito:hover{
 
@@ -812,7 +688,6 @@ nav{
 
     transform:
         rotate(90deg);
-
 }
 
 
@@ -825,7 +700,6 @@ nav{
     min-height:100px;
 
     width:100%;
-
 }
 
 
@@ -838,7 +712,6 @@ nav{
     display:flex;
 
     justify-content:space-between;
-
     align-items:center;
 
     gap:15px;
@@ -853,16 +726,11 @@ nav{
 
     border:
         1px solid #f0d6dc;
-
 }
-
 
 .producto-carrito-info{
-
     flex:1;
-
 }
-
 
 .producto-carrito-nombre{
 
@@ -871,25 +739,20 @@ nav{
     font-weight:bold;
 
     margin-bottom:5px;
-
 }
-
 
 .producto-carrito-datos{
 
     color:#777;
 
     font-size:14px;
-
 }
-
 
 .producto-carrito-total{
 
     color:#b45d72;
 
     font-weight:bold;
-
 }
 
 
@@ -904,7 +767,6 @@ nav{
     padding:35px 20px;
 
     color:#777;
-
 }
 
 
@@ -935,9 +797,7 @@ nav{
     cursor:pointer;
 
     transition:.3s;
-
 }
-
 
 .boton-actualizar-carrito:hover{
 
@@ -945,7 +805,6 @@ nav{
 
     transform:
         translateY(-2px);
-
 }
 
 
@@ -956,9 +815,7 @@ nav{
 @media(max-width:768px){
 
     body{
-
-        padding-top:65px;
-
+        padding-top:0;
     }
 
 
@@ -967,25 +824,21 @@ nav{
         padding:
             10px 20px;
 
-        background:white;
+        background:transparent;
 
-        box-shadow:
-            0 3px 15px rgba(0,0,0,.08);
+        box-shadow:none;
 
     }
 
 
     .logo img{
-
         width:120px;
-
     }
 
 
     .hamburger{
 
         display:block;
-
     }
 
 
@@ -994,11 +847,9 @@ nav{
         position:fixed;
 
         top:0;
-
         left:-300px;
 
         width:280px;
-
         height:100vh;
 
         background:white;
@@ -1011,14 +862,11 @@ nav{
         z-index:10000;
 
         padding-top:70px;
-
     }
 
 
     nav.active{
-
         left:0;
-
     }
 
 
@@ -1029,14 +877,11 @@ nav{
         width:100%;
 
         align-items:flex-start;
-
     }
 
 
     .menu li{
-
         width:100%;
-
     }
 
 
@@ -1048,7 +893,6 @@ nav{
             18px 25px;
 
         font-size:18px;
-
     }
 
 
@@ -1063,11 +907,9 @@ nav{
         background:#f7f7f7;
 
         margin-left:15px;
-
         margin-right:15px;
 
         border-radius:10px;
-
     }
 
 
@@ -1077,7 +919,6 @@ nav{
 
         padding:
             12px 18px;
-
     }
 
 
@@ -1088,52 +929,40 @@ nav{
         position:absolute;
 
         top:15px;
-
         right:20px;
 
         font-size:28px;
 
         cursor:pointer;
-
     }
 
 
     .iconos-derecha{
-
         gap:12px;
-
     }
 
 
     /* BUSCADOR EN CELULAR */
 
     .buscador-contenedor{
-
         width:40px;
-
     }
 
 
     .buscador-contenedor:hover{
-
         width:200px;
-
     }
 
 
     .buscador-contenedor:hover input{
-
         width:150px;
-
     }
 
 
     .iconos-derecha > a img{
 
         width:22px;
-
         height:22px;
-
     }
 
 
@@ -1145,7 +974,6 @@ nav{
 
         padding:
             12px;
-
     }
 
 
@@ -1160,7 +988,6 @@ nav{
         padding:20px;
 
         border-radius:20px;
-
     }
 
 }
@@ -1177,7 +1004,6 @@ nav{
         flex-direction:column;
 
         align-items:flex-start;
-
     }
 
 
@@ -1190,14 +1016,11 @@ nav{
         padding:18px;
 
         border-radius:18px;
-
     }
 
 
     .carrito-cabecera h2{
-
         font-size:20px;
-
     }
 
 }
@@ -1219,7 +1042,7 @@ nav{
 
     <div class="logo">
 
-        <a href="pagintrof.php">
+        <a href="../index.php">
 
             <img
                 src="../imagenes/DIVINE-removebg-preview.png"
@@ -1240,9 +1063,7 @@ nav{
         class="hamburger"
         onclick="toggleMenu()"
     >
-
         ☰
-
     </div>
 
 
@@ -1258,9 +1079,7 @@ nav{
             class="close-menu"
             onclick="toggleMenu()"
         >
-
             ✕
-
         </div>
 
 
@@ -1270,9 +1089,7 @@ nav{
             <li>
 
                 <a href="../totu.php">
-
                     Inicio
-
                 </a>
 
             </li>
@@ -1282,9 +1099,7 @@ nav{
             <li>
 
                 <a href="../produccomp.php">
-
                     Productos
-
                 </a>
 
 
@@ -1294,9 +1109,7 @@ nav{
                     <li>
 
                         <a href="skincare.php">
-
                             Skin Care
-
                         </a>
 
                     </li>
@@ -1305,9 +1118,7 @@ nav{
                     <li>
 
                         <a href="mascarillas.php">
-
-                            Mascarillas
-
+                            Skin Hair
                         </a>
 
                     </li>
@@ -1322,9 +1133,7 @@ nav{
             <li>
 
                 <a href="../mision-vision.php">
-
                     Historia
-
                 </a>
 
             </li>
@@ -1333,22 +1142,8 @@ nav{
 
             <li>
 
-                <a href="#ofertas">
-
-                    Ofertas
-
-                </a>
-
-            </li>
-
-
-
-            <li>
-
-                <a href="#contacto">
-
+                <a href="../contactanos.php">
                     Contacto
-
                 </a>
 
             </li>
@@ -1357,10 +1152,8 @@ nav{
 
             <li>
 
-                <a href="#consulta">
-
-                    Consulta Personal
-
+                <a href="../CONSULTA-pedido/formreadpedido.php">
+                    Consulta
                 </a>
 
             </li>
@@ -1390,28 +1183,24 @@ nav{
 
 
                 <input
-                    type="text"
+                    type="readonly"
                     id="textoBuscar"
-                    placeholder="Buscar producto..."
+                    placeholder="Revisa tu carrito!"
                 >
+
 
 
                 <button
+                    type="button"
                     class="boton-buscar"
                     onclick="buscar()"
-                    type="button"
                 >
 
-                    <img
-                        src="../imagenes/lupa-removebg-preview.png"
-                        alt="Buscar"
-                    >
-
+                  
                 </button>
 
 
             </div>
-
 
         </div>
 
@@ -1443,9 +1232,7 @@ nav{
                     id="estrellitaCarrito"
                     class="estrellita-carrito"
                 >
-
                     ✦
-
                 </span>
 
 
@@ -1455,14 +1242,11 @@ nav{
                     id="contadorCarrito"
                     class="contador-carrito"
                 >
-
                     0
-
                 </span>
 
 
             </div>
-
 
         </a>
 
@@ -1496,9 +1280,7 @@ nav{
 <div
     class="overlay"
     id="overlay"
-    onclick="toggleMenu()"
 >
-
 </div>
 
 
@@ -1524,9 +1306,7 @@ nav{
 
 
             <h2>
-
                 Mi carrito
-
             </h2>
 
 
@@ -1535,9 +1315,7 @@ nav{
                 class="cerrar-carrito"
                 onclick="cerrarCarrito()"
             >
-
                 ×
-
             </button>
 
 
@@ -1553,9 +1331,7 @@ nav{
 
 
             <div class="carrito-vacio">
-
                 Cargando carrito...
-
             </div>
 
 
@@ -1572,9 +1348,7 @@ nav{
             class="boton-actualizar-carrito"
             onclick="abrirCarrito()"
         >
-
             ↻ Actualizar carrito
-
         </button>
 
 
@@ -1614,7 +1388,6 @@ function toggleMenu(){
 function buscar(){
 
     var nombre =
-
         document
         .getElementById("textoBuscar")
         .value;
@@ -1637,26 +1410,21 @@ function buscar(){
 
 
     .then(
-
         res =>
             res.json()
-
     )
 
 
     .then(
-
         data => {
 
             console.log(data);
 
         }
-
     )
 
 
     .catch(
-
         error => {
 
             console.error(
@@ -1665,10 +1433,90 @@ function buscar(){
             );
 
         }
-
     );
 
 }
+
+
+/* ==================================================
+   OCULTAR HEADER AL HACER SCROLL
+================================================== */
+
+let ultimaPosicionScroll = window.scrollY;
+
+const header =
+    document.querySelector("header");
+
+
+window.addEventListener(
+    "scroll",
+    function(){
+
+        const posicionActual =
+            window.scrollY;
+
+
+        /*
+           Si estamos prácticamente
+           arriba de la página,
+           mostramos el header.
+        */
+
+        if(posicionActual <= 20){
+
+            header.classList.remove(
+                "ocultar-header"
+            );
+
+            ultimaPosicionScroll =
+                posicionActual;
+
+            return;
+
+        }
+
+
+        /*
+           Si bajamos, ocultamos
+           el header.
+        */
+
+        if(
+            posicionActual >
+            ultimaPosicionScroll
+        ){
+
+            header.classList.add(
+                "ocultar-header"
+            );
+
+        }
+
+
+        /*
+           Si subimos, vuelve a aparecer.
+        */
+
+        else if(
+            posicionActual <
+            ultimaPosicionScroll
+        ){
+
+            header.classList.remove(
+                "ocultar-header"
+            );
+
+        }
+
+
+        ultimaPosicionScroll =
+            posicionActual;
+
+    },
+    {
+        passive:true
+    }
+);
 
 </script>
 

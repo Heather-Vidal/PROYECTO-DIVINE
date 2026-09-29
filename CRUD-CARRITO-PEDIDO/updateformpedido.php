@@ -1,22 +1,23 @@
 <?php
 
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
+require_once "conexion.php";
 
-$conn = new mysqli($servidor,$usuario,$contraseña,$nombreBD);
+/* idPedido debe ser numérico: si no lo es, cortamos aquí */
+$idPedidoCrudo = trim($_GET['idPedido'] ?? '');
 
-if($conn->connect_error){
-    die("Error de conexión");
+if ($idPedidoCrudo === '' || !is_numeric($idPedidoCrudo)) {
+    die("Pedido no válido");
 }
 
-$idPedido = $_GET['idPedido'];
+$idPedido = (int) $idPedidoCrudo;
 
-$sql = "SELECT * FROM PEDIDOS WHERE ID='$idPedido'";
-$resultado = $conn->query($sql);
+$sql = "SELECT * FROM PEDIDOS WHERE ID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $idPedido);
+$stmt->execute();
+$resultado = $stmt->get_result();
 
-if($resultado->num_rows > 0){
+if ($resultado->num_rows > 0) {
 
     $fila = $resultado->fetch_assoc();
 
@@ -27,7 +28,11 @@ if($resultado->num_rows > 0){
     $estado = $fila['estado'];
     $vendedor = $fila['nombrevendedor'];
 
+} else {
+    die("Pedido no encontrado");
 }
+
+$stmt->close();
 
 ?>
 
@@ -241,16 +246,16 @@ font-size:24px;
 
 <form action="updatepedido.php" method="POST">
 
-<input type="hidden" name="idPedido" value="<?= $idPedido ?>">
+<input type="hidden" name="idPedido" value="<?= htmlspecialchars($idPedido) ?>">
 
 <label>Nombre:</label>
-<input type="text" name="nombre" value="<?= $nombre ?>" required>
+<input type="text" name="nombre" value="<?= htmlspecialchars($nombre) ?>" required>
 
 <label>Teléfono:</label>
-<input type="text" name="telefono" value="<?= $telefono ?>" required>
+<input type="text" name="telefono" value="<?= htmlspecialchars($telefono) ?>" required>
 
 <label>Dirección:</label>
-<input type="text" name="direccion" value="<?= $direccion ?>" required>
+<input type="text" name="direccion" value="<?= htmlspecialchars($direccion) ?>" required>
 
 <label for="estado">Estado:</label>
 
@@ -271,10 +276,10 @@ font-size:24px;
 </div>
 
 <label>Fecha:</label>
-<input type="date" name="fecha" value="<?= $fecha ?>" required>
+<input type="date" name="fecha" value="<?= htmlspecialchars($fecha) ?>" required>
 
 <label>Nombre Vendedor:</label>
-<input type="text" name="nombrevendedor" value="<?= $vendedor ?>" readonly>
+<input type="text" name="nombrevendedor" value="<?= htmlspecialchars($vendedor) ?>" readonly>
 
 <input type="submit" value="Actualizar Pedido">
 

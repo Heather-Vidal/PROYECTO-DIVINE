@@ -787,7 +787,6 @@ body{
     animation:aparecer 0.3s ease;
 }
 
-
 .icono-exito{
 
     width:65px;
@@ -872,7 +871,6 @@ body{
         <h2>¡Pedido actualizado!</h2>
 
         <p>
-
             <?php
             echo htmlspecialchars($mensaje);
             ?>
@@ -882,18 +880,10 @@ body{
         <button onclick="cerrarMensaje()">
             Aceptar
         </button>
-
     </div>
-
 </div>
 
 <?php endif; ?>
-
-
-
-<!-- ==================================================
-     ENCABEZADO
-================================================== -->
 
 <div class="header">
 
@@ -913,31 +903,18 @@ body{
 
 
     <div class="header-linea"></div>
-
-
 </div>
-
-
 <div class="contenedor">
-
-
     <div class="titulo-lista">
-
         <p>
             Gestión de pedidos
         </p>
-
         <h2>
             Lista de pedidos registrados
         </h2>
-
     </div>
 
-
-
     <div class="lista">
-
-
 <?php
 
 if($resultado && $resultado->num_rows > 0){
@@ -947,12 +924,7 @@ if($resultado && $resultado->num_rows > 0){
         $idPedido = $fila['ID'];
 
 ?>
-
-
-
         <div class="item">
-
-
             <div class="info">
 
 
@@ -961,7 +933,6 @@ if($resultado && $resultado->num_rows > 0){
                     PEDIDO #<?php echo $idPedido; ?>
 
                 </div>
-
 
 
                 <div class="datos">
@@ -1065,16 +1036,10 @@ if($resultado && $resultado->num_rows > 0){
                     <a
                         href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Aceptado"
                     >
-
                         <button type="button">
-
                             Aceptar
-
                         </button>
-
                     </a>
-
-
                     <button
                         type="button"
                         class="btn-rechazar"
@@ -1090,35 +1055,16 @@ if($resultado && $resultado->num_rows > 0){
 
 
             </div>
-
-
-
-            <!-- ==================================================
-                 BOTONES DE ACCIONES
-            ================================================== -->
-
             <div class="botones">
-
-
-                <!-- ==================================================
-                     VER
-                     ADMINISTRADOR Y VENDEDOR
-                ================================================== -->
-
                 <a
                     href="readunopedido.php?idPedido=<?php echo $idPedido; ?>"
                 >
-
                     <button type="button">
 
                         Ver
-
                     </button>
 
                 </a>
-
-
-
                 <!-- ==================================================
                      EDITAR Y ELIMINAR
                      SOLAMENTE ADMINISTRADOR
@@ -1192,25 +1138,41 @@ if($resultado && $resultado->num_rows > 0){
 
 ?>
 
+ 
 
     </div>
+ 
+<?php
+ 
 
+$rol = $_SESSION['rol'] ?? '';
 
+if ($rol === 'vendedor') {
+    $rutaVolver = '../perfilvendedor.php';
+} elseif ($rol === 'administrador') {
+    $rutaVolver = '../admin.php';
+} else {
+    $rutaVolver = '../SESIONES/loginformcliente.php';
+}
+?>
 
-    <div class="volver">
+<div class="volver">
 
-        <a href="../perfilvendedor.php">
-
-            Volver al perfil
-
-        </a>
-
-    </div>
-
+    <a href="<?php echo $rutaVolver; ?>">
+        Volver al perfil
+    </a>
 
 </div>
 
 
+</div>
+
+<script>
+    if (estado.pendiente === "entregado" && estado.entregado === "pendiente ")
+     {     throw new Error("No se puede cambiar un pedido Entregado a Pendiente"); } 
+     estado.entregado = estado.pendiente;
+    
+</script>
 
 <script>
 

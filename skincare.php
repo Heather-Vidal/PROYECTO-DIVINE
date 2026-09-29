@@ -111,7 +111,7 @@ body {
             rgba(255,250,247,.50) 65%,
             rgba(255,250,247,.15) 100%
         ),
-        url("https://i.pinimg.com/1200x/1f/26/54/1f26549252eb96e33b406c7f71b381f1.jpg");
+                url("./imagenes/catalogo.jpg");
 
     background-size: cover;
     background-position: center;

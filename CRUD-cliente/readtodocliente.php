@@ -1,44 +1,33 @@
- 
 <?php
+
 session_start();
 
-if (!isset($_SESSION['nombre']) || $_SESSION['nombre'] == null) {
+// Verificar sesión
+if (!isset($_SESSION['nombre'])) {
     header("Location: loginformcliente.php");
     exit();
 }
-?>
-<?php
 
- 
-if (
-    !isset($_SESSION['rol']) ||
-    $_SESSION['rol'] != "administrador"
-) {
-
+// Verificar que sea administrador
+if ($_SESSION['rol'] != "administrador") {
     echo "<script>
-        alert('ACCESO DENEGADO: Solo los administradores pueden entrar a esta página.');
-        window.location.href = './SESIONES/loginformcliente.php';
-    </script>";
-
+            alert('No tienes permisos para acceder a esta página.');
+            window.location.href = './SESIONES/loginformcliente.php';
+          </script>";
     exit();
 }
 
-?>
+// Conexión a la base de datos
+$conexion = new mysqli("localhost", "root", "", "DIVINE");
 
-<?php
-$servidor="localhost";
-$usuario="root";
-$contraseña="";
-$nombreBD="DIVINE";
-
-$conn= new mysqli($servidor,$usuario,$contraseña,$nombreBD);
-
-if($conn->connect_error){
-  echo"OCURRIÓ UN ERROR SORRY UnU";
+if ($conexion->connect_error) {
+    die("Error de conexión: " . $conexion->connect_error);
 }
 
-$sql="SELECT * FROM CLIENTE";
-$resultado=$conn->query($sql);
+// Obtener clientes
+$sql = "SELECT * FROM CLIENTE";
+$resultado = $conexion->query($sql);
+
 ?>
 
 <!DOCTYPE html>
@@ -46,386 +35,1165 @@ $resultado=$conn->query($sql);
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Clientes | DIVINE</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            color: #4a3339;
+
+            background:
+                radial-gradient(circle at 10% 10%, rgba(255, 220, 228, 0.75), transparent 30%),
+                radial-gradient(circle at 90% 15%, rgba(244, 211, 220, 0.65), transparent 28%),
+                radial-gradient(circle at 50% 100%, rgba(255, 236, 229, 0.8), transparent 35%),
+                #fffaf8;
+
+            overflow-x: hidden;
+        }
+
+        /* =========================
+           DECORACIONES DE FONDO
+        ========================= */
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: rgba(218, 164, 178, 0.10);
+            top: -160px;
+            left: -150px;
+            z-index: -1;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: rgba(173, 111, 128, 0.07);
+            bottom: -230px;
+            right: -180px;
+            z-index: -1;
+        }
+
+        /* =========================
+           CONTENEDOR
+        ========================= */
+
+        .pagina {
+            width: 100%;
+            min-height: 100vh;
+            padding: 45px 7%;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .marca {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(
+                145deg,
+                #c98b9d,
+                #9e6274
+            );
+
+            color: white;
+
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 27px;
+            font-weight: 600;
+
+            box-shadow:
+                0 10px 25px rgba(145, 85, 103, 0.22);
+        }
+
+        .nombre-marca {
+            line-height: 1;
+        }
+
+        .nombre-marca h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            letter-spacing: 4px;
+            color: #6d414e;
+            font-weight: 600;
+        }
+
+        .nombre-marca span {
+            display: block;
+            font-size: 8px;
+            letter-spacing: 4px;
+            color: #ae7b89;
+            margin-top: 4px;
+        }
+
+        .usuario {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 10px 18px;
+
+            border: 1px solid rgba(177, 123, 137, 0.20);
+            border-radius: 30px;
+
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(12px);
+
+            font-size: 12px;
+            color: #77535d;
+        }
+
+        .usuario-icono {
+            width: 31px;
+            height: 31px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #f3dce2;
+            color: #8f5969;
+            font-size: 13px;
+        }
+
+        /* =========================
+           ENCABEZADO
+        ========================= */
+
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            gap: 30px;
+            margin-bottom: 42px;
+        }
+
+        .titulo-area {
+            max-width: 700px;
+        }
+
+        .mini-titulo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: #b07787;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 4px;
+
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .mini-titulo::before {
+            content: "";
+            width: 35px;
+            height: 1px;
+            background: #c98b9d;
+        }
 
-<title>Clientes DIVINE</title>
+        .titulo-area h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(48px, 6vw, 76px);
+            line-height: 0.9;
+            font-weight: 500;
+            color: #593842;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
-<!-- LIBRERÍA SWEETALERT2 NECESARIA PARA LAS ALERTAS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        .titulo-area h1 em {
+            color: #b87789;
+            font-weight: 400;
+        }
 
-<style>
+        .descripcion {
+            margin-top: 17px;
+            max-width: 570px;
 
-body {
-  font-family: 'Playfair Display', serif;
-  background: url("../imagenes/fondu.jpg") center center / cover no-repeat;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #8f4973;
-}
+            font-size: 14px;
+            line-height: 1.8;
 
+            color: #8a6b72;
+            font-weight: 400;
+        }
 
-/* CONTENEDOR */
+        /* =========================
+           CONTADOR
+        ========================= */
 
-.contenedor {
-  background: url("/imagenes/fondu.jpg") center center / cover no-repeat;
-  padding: 40px;
-  border-radius: 25px;
-  box-shadow: 0 10px 25px rgba(124, 81, 106, 0.54);
-  width: 90%;
-  max-width: 1000px;
+        .contador {
+            min-width: 170px;
 
-  display: grid;
+            padding: 18px 22px;
 
-  grid-template-columns: 1fr 1fr;
+            border-radius: 18px;
 
-  grid-gap: 25px;
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(193, 139, 153, 0.18);
 
-  grid-template-areas:
-    "imagen titulo"
-    "imagen lista"
-    "imagen lista";
-}
+            box-shadow:
+                0 15px 45px rgba(111, 70, 82, 0.08);
 
+            text-align: center;
+        }
 
-/* IMAGEN */
+        .contador-numero {
+            display: block;
 
-.imagen {
-  grid-area: imagen;
-  background: url("../imagenes/pelito.jpg")
-  center center / cover no-repeat;
-  border-radius: 20px;
-  min-height: 400px;
-}
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 38px;
 
+            color: #9d6374;
+            line-height: 1;
+        }
 
-/* TITULO */
+        .contador-texto {
+            display: block;
 
-.titulo {
-  grid-area: titulo;
-  text-align: left;
-  color: #ff50a5;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin: 0;
-  align-self: end;
-  border-bottom: 3px solid #cc438a;
-  padding-bottom: 6px;
-  width: fit-content;
-}
+            margin-top: 6px;
 
+            font-size: 10px;
+            letter-spacing: 2px;
 
-/* LISTA */
+            text-transform: uppercase;
+            color: #a7838c;
+        }
 
-.lista {
-  grid-area: lista;
+        /* =========================
+           LISTA DE CLIENTES
+        ========================= */
 
-  display: flex;
+        .clientes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 24px;
+        }
 
-  flex-direction: column;
+        /* =========================
+           TARJETA
+        ========================= */
 
-  gap: 15px;
-}
+        .cliente {
+            position: relative;
 
+            padding: 27px;
 
-/* TARJETA DE CLIENTE */
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(15px);
 
-.item {
-  background: #3f1d23;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(96, 31, 31, 0.44);
-  transition: 0.3s ease;
-}
+            border: 1px solid rgba(187, 130, 146, 0.18);
+            border-radius: 27px;
 
+            box-shadow:
+                0 20px 55px rgba(99, 58, 70, 0.08);
 
-.item:hover {
-  background: #f1dee9;
-  transform: translateY(-5px);
-}
+            overflow: hidden;
 
+            transition:
+                transform 0.35s ease,
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+        }
 
-.item p {
-  margin: 6px 0;
-  color: #ff4f92;
-  font-size: 16px;
-}
+        .cliente::before {
+            content: "";
 
+            position: absolute;
 
-.item span {
-  font-weight: bold;
-  color: #ff48a3;
-}
+            width: 130px;
+            height: 130px;
 
+            border-radius: 50%;
 
-/* BOTONES */
+            background: rgba(230, 187, 198, 0.17);
 
-.botones {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+            top: -65px;
+            right: -55px;
+        }
 
+        .cliente:hover {
+            transform: translateY(-7px);
 
-.boton {
-  background: #e873a0;
-  color: #ffffff;
-  border: none;
-  border-radius: 25px;
-  padding: 10px 22px;
-  cursor: pointer;
-  font-family: 'Playfair Display', serif;
-  font-weight: 600;
-  font-size: 15px;
-  text-decoration: none;
-  display: inline-block;
-  transition: 0.3s ease;
-   box-shadow: 0 3px 8px rgba(255, 1, 166, 0.3);
-}
+            border-color: rgba(177, 110, 128, 0.30);
 
+            box-shadow:
+                0 28px 65px rgba(99, 58, 70, 0.13);
+        }
 
-.boton:hover {
-  background: #ed1da0;
+        /* =========================
+           PARTE SUPERIOR TARJETA
+        ========================= */
 
-  color: #fcfcfc;
+        .cliente-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
 
-  transform: scale(1.05);
+            position: relative;
+            z-index: 2;
 
-  box-shadow: 0 6px 15px rgba(255, 77, 175, 0.8);
-}
+            margin-bottom: 22px;
+        }
 
+        .avatar {
+            width: 62px;
+            height: 62px;
 
-/* CONTENEDOR BOTÓN VOLVER */
+            border-radius: 50%;
 
-.volver {
-  grid-column: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  text-align: center;
+            background:
+                linear-gradient(
+                    145deg,
+                    #f2d6de,
+                    #e7bdc9
+                );
 
-  margin-top: 20px;
-}
+            border: 5px solid #fff;
 
+            box-shadow:
+                0 7px 20px rgba(137, 78, 96, 0.15);
 
-/* BOTÓN VOLVER */
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 27px;
 
-.boton-volver {
-  background: #593145;
+            color: #92596a;
+        }
 
-  color: #ff0884;
+        .cliente-numero {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #b18c94;
+        }
 
-  border: none;
+        /* =========================
+           INFORMACIÓN
+        ========================= */
 
-  border-radius: 30px;
+        .cliente h3 {
+            position: relative;
+            z-index: 2;
 
-  padding: 14px 38px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 31px;
+            font-weight: 600;
 
-  font-family: 'Playfair Display', serif;
+            color: #5d3d46;
 
-  font-weight: 700;
+            margin-bottom: 20px;
+        }
 
-  font-size: 17px;
+        .dato {
+            display: flex;
+            align-items: center;
 
-  cursor: pointer;
+            gap: 12px;
+            margin-bottom: 13px;
 
-  box-shadow: 0 4px 15px rgba(69, 20, 36, 0.6);
+            font-size: 12.5px;
+            color: #80656d;
+        }
 
-  transition: 0.3s ease;
-}
+        .dato-icono {
+            width: 33px;
+            height: 33px;
 
+            flex-shrink: 0;
 
-.boton-volver:hover {
-  background: #ff8bd8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  color: #ffffff;
+            border-radius: 10px;
 
-  transform: scale(1.06);
+            background: #f8e9ed;
+            color: #a66779;
 
-  box-shadow: 0 6px 18px rgba(124, 73, 105, 0.8);
-}
+            font-size: 13px;
+        }
 
+        .dato-texto {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
 
-/* RESPONSIVE */
+        /* =========================
+           ROL Y ESTADO
+        ========================= */
 
-@media (max-width: 768px) {
+        .dato-especial {
+            display: flex;
+            align-items: center;
+            gap: 12px;
 
-  .contenedor {
+            margin-bottom: 13px;
 
-    grid-template-columns: 1fr;
+            font-size: 12.5px;
+            color: #80656d;
+        }
 
-    grid-template-areas:
-      "imagen"
-      "titulo"
-      "lista";
+        .dato-especial .dato-icono {
+            width: 33px;
+            height: 33px;
 
-    padding: 25px;
-  }
+            flex-shrink: 0;
 
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-  .imagen {
-    min-height: 220px;
-  }
+            border-radius: 10px;
 
+            background: #f8e9ed;
+            color: #a66779;
 
-  .titulo {
-    text-align: center;
+            font-size: 13px;
+        }
 
-    margin: auto;
-  }
+        .etiqueta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
 
+            padding: 6px 11px;
 
-  .volver {
-    grid-column: auto;
-  }
+            border-radius: 20px;
 
-}
+            font-size: 10px;
+            font-weight: 600;
 
-</style>
+            letter-spacing: 0.5px;
+
+            text-transform: uppercase;
+        }
+
+        .rol-vendedor {
+            background: #f4e3e8;
+            color: #92596a;
+        }
+
+        .rol-administrador {
+            background: #eadde9;
+            color: #76516f;
+        }
+
+        .estado-activo {
+            background: #e5f1e8;
+            color: #63806b;
+        }
+
+        .estado-bloqueado {
+            background: #f4dfe1;
+            color: #a05c69;
+        }
+
+        /* =========================
+           LINEA
+        ========================= */
+
+        .separador {
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    #ead4da,
+                    transparent
+                );
+
+            margin: 23px 0;
+        }
+
+        /* =========================
+           BOTONES
+        ========================= */
+
+        .acciones {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr 1fr;
+
+            gap: 8px;
+        }
+
+        .btn {
+            border: none;
+            text-decoration: none;
+
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            font-family: 'Montserrat', sans-serif;
+
+            font-size: 10px;
+            font-weight: 600;
+
+            letter-spacing: 0.5px;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.25s ease,
+                background 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-ver {
+            background: #f5e4e9;
+            color: #92596a;
+        }
+
+        .btn-ver:hover {
+            background: #edd1da;
+        }
+
+        .btn-editar {
+            background: #eadde0;
+            color: #76525c;
+        }
+
+        .btn-editar:hover {
+            background: #dfcbd1;
+        }
+
+        .btn-eliminar {
+            background: #f2d9dc;
+            color: #a05c69;
+        }
+
+        .btn-eliminar:hover {
+            background: #eac3ca;
+        }
+
+        /* =========================
+           BOTÓN VOLVER
+        ========================= */
+
+        .volver-area {
+            display: flex;
+            justify-content: center;
+
+            margin-top: 48px;
+            padding-bottom: 15px;
+        }
+
+        .btn-volver {
+            position: relative;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 14px 28px;
+
+            border: 1px solid rgba(167, 105, 121, 0.25);
+            border-radius: 30px;
+
+            background: rgba(255,255,255,0.70);
+
+            color: #805562;
+
+            font-family: 'Montserrat', sans-serif;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            letter-spacing: 1.5px;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 12px 30px rgba(105, 61, 73, 0.07);
+
+            transition: all 0.3s ease;
+        }
+
+        .btn-volver:hover {
+            background: #a96c7e;
+            color: white;
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 15px 35px rgba(144, 82, 101, 0.20);
+        }
+
+        /* =========================
+           SIN CLIENTES
+        ========================= */
+
+        .sin-clientes {
+            grid-column: 1 / -1;
+
+            padding: 70px 20px;
+
+            text-align: center;
+
+            border-radius: 30px;
+
+            background: rgba(255,255,255,0.70);
+
+            border: 1px solid rgba(185, 129, 144, 0.15);
+        }
+
+        .sin-clientes .icono {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .sin-clientes h2 {
+            font-family: 'Cormorant Garamond', serif;
+
+            font-size: 32px;
+            font-weight: 500;
+
+            color: #704751;
+        }
+
+        .sin-clientes p {
+            margin-top: 8px;
+
+            font-size: 13px;
+
+            color: #a0848b;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 850px) {
+
+            .pagina {
+                padding: 30px 5%;
+            }
+
+            .encabezado {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .contador {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .usuario {
+                display: none;
+            }
+
+            .nombre-marca h2 {
+                font-size: 26px;
+            }
+
+            .titulo-area h1 {
+                font-size: 52px;
+            }
+
+            .descripcion {
+                font-size: 13px;
+            }
+
+            .clientes {
+                grid-template-columns: 1fr;
+            }
+
+            .cliente {
+                padding: 23px;
+            }
+
+            .cliente h3 {
+                font-size: 29px;
+            }
+
+            .dato,
+            .dato-especial {
+                font-size: 12px;
+            }
+
+            .acciones {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                height: 42px;
+            }
+        }
+
+    </style>
 
 </head>
 
-
 <body>
 
-<div class="contenedor">
+<div class="pagina">
 
+    <!-- =========================
+         TOP BAR
+    ========================== -->
 
-  <!-- IMAGEN -->
+    <div class="topbar">
 
-  <div class="imagen"></div>
+        <div class="marca">
 
+            <div class="logo">
+                D
+            </div>
 
-  <!-- TITULO -->
+            <div class="nombre-marca">
 
-  <h2 class="titulo">
-    LISTA DE CLIENTES
-  </h2>
+                <h2>DIVINE</h2>
 
+                <span>
+                    BEAUTY & CARE
+                </span>
 
-  <!-- LISTA DE CLIENTES -->
+            </div>
 
-  <div class="lista">
+        </div>
 
-<?php
+        <div class="usuario">
 
-if($resultado->num_rows > 0){
+            <div class="usuario-icono">
+                ♡
+            </div>
 
-  while($fila=$resultado->fetch_assoc()){
+            <span>
+                <?php echo htmlspecialchars($_SESSION['nombre']); ?>
+            </span>
 
-    $CI=$fila['CI'];
+        </div>
 
-?>
-
-    <div class="item">
-
-      <p>
-        <span>CI:</span>
-        <?php echo $fila['CI']; ?>
-      </p>
-
-      <p>
-        <span>Nombre:</span>
-        <?php echo $fila['nombre']; ?>
-      </p>
-
-      <p>
-        <span>Dirección:</span>
-        <?php echo $fila['direccion']; ?>
-      </p>
-
-      <p>
-        <span>Celular:</span>
-        <?php echo $fila['celular']; ?>
-      </p>
-
-      <p>
-        <span>Rol:</span>
-        <?php echo $fila['rol']; ?>
-      </p>
-
-      <p>
-        <span>Estado:</span>
-        <?php echo $fila['estado']; ?>
-      </p>
-
-
-      <!-- BOTONES -->
-
-      <div class="botones">
-
-        <a class="boton" href="readunocliente.php?CI=<?php echo $CI; ?>">
-          Detalles
-        </a>
-
-        <a class="boton" href="updateformcliente.php?CI=<?php echo $CI; ?>">
-          Editar
-        </a>
-
-<?php
-        echo "
-                    <a
-                        href='#'
-                        onclick='confirmarEliminacion($CI)'
-                    >
-
-                        <button class='boton'>
-
-                            Eliminar
-
-                        </button>
-
-                    </a>
-
-                    ";
-?>
-      </div>
     </div>
-<?php
-  }
-} else {
-  echo "<p>No hay clientes registrados.</p>";
-}
-?>
-  </div>
-  <!-- BOTÓN VOLVER -->
-  <div class="volver">
-    <button
-      class="boton-volver"
-      type="button"
-      onclick="history.back()">
 
-      ⬅ Volver atrás
-    </button>
-  </div>
+
+    <!-- =========================
+         ENCABEZADO
+    ========================== -->
+
+    <div class="encabezado">
+
+        <div class="titulo-area">
+
+            <div class="mini-titulo">
+                Gestión de clientes
+            </div>
+
+            <h1>
+                Nuestros <em>clientes</em>
+            </h1>
+
+            <p class="descripcion">
+                Administra de manera sencilla y elegante la información
+                de las personas registradas en DIVINE. Consulta sus datos,
+                actualiza su información o elimina registros cuando sea necesario.
+            </p>
+
+        </div>
+
+
+        <div class="contador">
+
+            <span class="contador-numero">
+                <?php echo $resultado->num_rows; ?>
+            </span>
+
+            <span class="contador-texto">
+                Clientes registrados
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CLIENTES
+    ========================== -->
+
+    <div class="clientes">
+
+        <?php
+
+        if ($resultado->num_rows > 0) {
+
+            $numero = 1;
+
+            while ($fila = $resultado->fetch_assoc()) {
+
+                $CI = $fila['CI'];
+                $nombre = $fila['nombre'];
+                $direccion = $fila['direccion'];
+                $celular = $fila['celular'];
+
+                // NUEVOS DATOS
+                $rol = $fila['rol'];
+                $estado = $fila['estado'];
+
+                // Primera letra para el avatar
+                $inicial = strtoupper(substr($nombre, 0, 1));
+
+        ?>
+
+        <div class="cliente">
+
+            <!-- Parte superior -->
+
+            <div class="cliente-top">
+
+                <div class="avatar">
+
+                    <?php echo htmlspecialchars($inicial); ?>
+
+                </div>
+
+                <div class="cliente-numero">
+
+                    CLIENTE #
+                    <?php echo str_pad($numero, 2, '0', STR_PAD_LEFT); ?>
+
+                </div>
+
+            </div>
+
+
+            <!-- Nombre -->
+
+            <h3>
+
+                <?php echo htmlspecialchars($nombre); ?>
+
+            </h3>
+
+
+            <!-- CI -->
+
+            <div class="dato">
+
+                <div class="dato-icono">
+                    ♙
+                </div>
+
+                <div class="dato-texto">
+
+                    CI:
+                    <?php echo htmlspecialchars($CI); ?>
+
+                </div>
+
+            </div>
+
+
+            <!-- Dirección -->
+
+            <div class="dato">
+
+                <div class="dato-icono">
+                    ♧
+                </div>
+
+                <div class="dato-texto">
+
+                    <?php echo htmlspecialchars($direccion); ?>
+
+                </div>
+
+            </div>
+
+
+            <!-- Celular -->
+
+            <div class="dato">
+
+                <div class="dato-icono">
+                    ☎
+                </div>
+
+                <div class="dato-texto">
+
+                    <?php echo htmlspecialchars($celular); ?>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROL -->
+
+            <div class="dato-especial">
+
+                <div class="dato-icono">
+                    ♛
+                </div>
+
+                <div class="dato-texto">
+
+                    Rol:
+
+                    <?php
+
+                    $claseRol = strtolower($rol) === 'administrador'
+                        ? 'rol-administrador'
+                        : 'rol-vendedor';
+
+                    ?>
+
+                    <span class="etiqueta <?php echo $claseRol; ?>">
+
+                        <?php echo htmlspecialchars($rol); ?>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ESTADO -->
+
+            <div class="dato-especial">
+
+                <div class="dato-icono">
+                    ●
+                </div>
+
+                <div class="dato-texto">
+
+                    Estado:
+
+                    <?php
+
+                    $claseEstado = strtoupper($estado) === 'ACTIVO'
+                        ? 'estado-activo'
+                        : 'estado-bloqueado';
+
+                    ?>
+
+                    <span class="etiqueta <?php echo $claseEstado; ?>">
+
+                        <?php echo htmlspecialchars($estado); ?>
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="separador"></div>
+
+
+            <!-- Acciones -->
+
+            <div class="acciones">
+
+                <a
+                    href="readunocliente.php?CI=<?php echo urlencode($CI); ?>"
+                    class="btn btn-ver">
+
+                    DETALLES
+
+                </a>
+
+
+                <a
+                    href="updateformcliente.php?CI=<?php echo urlencode($CI); ?>"
+                    class="btn btn-editar">
+
+                    EDITAR
+
+                </a>
+
+
+                <button
+                    type="button"
+                    class="btn btn-eliminar"
+                    onclick="confirmarEliminacion('<?php echo htmlspecialchars($CI, ENT_QUOTES); ?>')">
+
+                    ELIMINAR
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <?php
+
+                $numero++;
+
+            }
+
+        } else {
+
+        ?>
+
+            <div class="sin-clientes">
+
+                <div class="icono">
+                    ♡
+                </div>
+
+                <h2>
+                    Aún no hay clientes registrados
+                </h2>
+
+                <p>
+                    Los clientes que registres aparecerán aquí.
+                </p>
+
+            </div>
+
+        <?php
+
+        }
+
+        ?>
+
+    </div>
+
+
+    <!-- =========================
+         VOLVER
+    ========================== -->
+
+    <div class="volver-area">
+
+        <button
+            class="btn-volver"
+            onclick="window.location.href='../admin.php';">
+
+            ←
+            VOLVER AL PERFIL
+
+        </button>
+
+    </div>
+
 </div>
 
+
 <script>
-  function confirmarEliminacion(CI) {
+
+function confirmarEliminacion(CI) {
+
     Swal.fire({
-        title: "¿Estás seguro?",
-        text: "No podrás revertir esta acción",
-        icon: "warning",
+
+        title: '¿Eliminar cliente?',
+
+        text: 'Esta acción eliminará el registro del cliente.',
+
+        icon: 'warning',
+
         showCancelButton: true,
-        confirmButtonColor: "#532e4e",
-        cancelButtonColor: "#2B140D",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location =
-                "deletecliente.php?CI=" + CI;
+
+        confirmButtonText: 'Sí, eliminar',
+
+        cancelButtonText: 'Cancelar',
+
+        reverseButtons: true,
+
+        background: '#fffaf8',
+
+        color: '#593842',
+
+        confirmButtonColor: '#a96c7e',
+
+        cancelButtonColor: '#d9c3c9',
+
+        customClass: {
+            popup: 'divine-alert'
         }
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href =
+                'deletecliente.php?CI=' + encodeURIComponent(CI);
+
+        }
+
     });
+
 }
+
 </script>
 
 </body>
+
 </html>
+
 <?php
-$conn->close();
+
+$conexion->close();
+
 ?>
