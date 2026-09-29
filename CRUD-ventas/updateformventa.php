@@ -30,6 +30,8 @@ if ($conn->connect_error) {
 
 }
 
+$conn->set_charset("utf8mb4");
+
 
 // ==================================================
 // RECIBIR ID
@@ -37,33 +39,35 @@ if ($conn->connect_error) {
 
 $id = $_GET['id'] ?? null;
 
-
 if ($id === null || !is_numeric($id)) {
 
-    die(
-        "No se recibió un ID de venta válido."
-    );
+    die("No se recibió un ID de venta válido.");
 
 }
+
+$id = (int)$id;
 
 
 // ==================================================
 // BUSCAR VENTA
 // ==================================================
 
-$sql = "
-
+$stmt = $conn->prepare("
     SELECT *
-
     FROM VENTAS
+    WHERE id = ?
+");
 
-    WHERE id = $id
+$stmt->bind_param("i", $id);
 
-";
+$stmt->execute();
+
+$resultado = $stmt->get_result();
 
 
-$resultado = $conn->query($sql);
-
+// ==================================================
+// COMPROBAR CONSULTA
+// ==================================================
 
 if (!$resultado) {
 
@@ -94,16 +98,13 @@ if ($resultado->num_rows == 0) {
 
 $fila = $resultado->fetch_assoc();
 
-
 $idVenta = $fila['id'];
-
 $estado = $fila['estado'];
-
 $metodo = $fila['metodo'];
-
 $costoTotal = $fila['costototal'];
-
 $idPedido = $fila['PEDIDOS_ID'];
+
+$stmt->close();
 
 ?>
 
@@ -125,207 +126,390 @@ $idPedido = $fila['PEDIDOS_ID'];
 </title>
 
 
+<!-- ==================================================
+     GOOGLE FONTS
+     ================================================== -->
+
 <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet"
 >
+
+
+<!-- ==================================================
+     SWEET ALERT 2
+     ================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <style>
 
 /* ==================================================
-   GENERAL
+   VARIABLES
+   ================================================== */
+
+:root {
+
+    --rosa-principal: #c86f89;
+
+    --rosa-oscuro: #a9516c;
+
+    --rosa-suave: #f8e3e9;
+
+    --rosa-muy-suave: #fff7f9;
+
+    --rosa-borde: #efd5dc;
+
+    --rosa-texto: #805463;
+
+    --texto: #514047;
+
+    --texto-suave: #9b858d;
+
+    --blanco: #ffffff;
+
+}
+
+
+/* ==================================================
+   RESET
    ================================================== */
 
 * {
 
-    box-sizing:border-box;
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
 
 }
 
 
 body {
 
-    margin:0;
+    margin: 0;
 
-    min-height:100vh;
+    min-height: 100vh;
 
     font-family:
         'DM Sans',
         sans-serif;
 
+    color: var(--texto);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 40px 20px;
+
+    position: relative;
+
+    overflow-x: hidden;
+
     background:
 
-        radial-gradient(
-            circle at 10% 10%,
-            #f9dfe7 0,
-            transparent 28%
+        linear-gradient(
+            rgba(255, 247, 249, .78),
+            rgba(255, 247, 249, .78)
         ),
 
-        radial-gradient(
-            circle at 90% 85%,
-            #f4d4de 0,
-            transparent 30%
-        ),
+        url("../imagenes/fondote.png")
+        center / cover
+        no-repeat fixed;
 
-        #fcf8f9;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:45px 20px;
-
-    color:#4b3b41;
-    
-background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), url("../imagenes/fondote.png") center / cover no-repeat fixed;
 }
 
 
 /* ==================================================
-   CONTENEDOR PRINCIPAL
+   DECORACIONES DEL FONDO
+   ================================================== */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    width: 380px;
+
+    height: 380px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(225, 157, 177, .18);
+
+    filter: blur(20px);
+
+    top: -160px;
+
+    left: -120px;
+
+    pointer-events: none;
+
+}
+
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    width: 420px;
+
+    height: 420px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(240, 190, 205, .18);
+
+    filter: blur(25px);
+
+    right: -180px;
+
+    bottom: -180px;
+
+    pointer-events: none;
+
+}
+
+
+/* ==================================================
+   CONTENEDOR
    ================================================== */
 
 .contenedor {
 
-    width:100%;
+    width: 100%;
 
-    max-width:850px;
+    max-width: 900px;
 
-    background:#ffffff;
+    position: relative;
 
-    border-radius:32px;
+    z-index: 2;
 
-    overflow:hidden;
+    background:
+        rgba(255,255,255,.94);
+
+    border:
+
+        1px solid
+        rgba(255,255,255,.9);
+
+    border-radius: 34px;
+
+    overflow: hidden;
 
     box-shadow:
 
-        0 25px 70px
-        rgba(133,76,93,.15);
+        0 35px 90px
+        rgba(117, 65, 82, .18),
 
-    border:
-        1px solid #f1e0e5;
+        0 8px 25px
+        rgba(117, 65, 82, .07);
+
+    animation:
+
+        aparecer .7s ease;
 
 }
 
-     
+
+/* ==================================================
+   ANIMACIÓN
+   ================================================== */
+
+@keyframes aparecer {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(.98);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
 /* ==================================================
    CABECERA
    ================================================== */
 
 .cabecera {
 
-    padding:35px 45px;
+    padding: 34px 45px;
 
     background:
 
         linear-gradient(
-            120deg,
-            #fff8fa,
-            #fcecf1
+            135deg,
+            #fffafd 0%,
+            #fbe8ee 100%
         );
 
     border-bottom:
-        1px solid #f1dce2;
+        1px solid
+        var(--rosa-borde);
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    justify-content:space-between;
+    justify-content: space-between;
 
-    gap:20px;
+    gap: 25px;
 
 }
 
 
+/* ==================================================
+   MARCA
+   ================================================== */
+
 .marca {
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    gap:16px;
+    gap: 17px;
 
 }
 
 
 .icono {
 
-    width:55px;
+    width: 60px;
 
-    height:55px;
+    height: 60px;
 
-    border-radius:18px;
+    flex-shrink: 0;
 
-    display:flex;
+    border-radius: 20px;
 
-    align-items:center;
+    display: flex;
 
-    justify-content:center;
+    align-items: center;
 
-    background:#c9788d;
+    justify-content: center;
 
-    color:white;
+    background:
 
-    font-size:24px;
+        linear-gradient(
+            135deg,
+            #d8879c,
+            #b65e77
+        );
+
+    color: white;
+
+    font-size: 25px;
 
     box-shadow:
 
-        0 8px 20px
-        rgba(201,120,141,.25);
+        0 10px 25px
+        rgba(182,94,119,.28);
+
+    position: relative;
+
+}
+
+
+.icono::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 4px;
+
+    border-radius: 16px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.3);
 
 }
 
 
 .marca h1 {
 
-    margin:0;
+    margin: 0;
 
     font-family:
         'Playfair Display',
         serif;
 
-    color:#925365;
+    color: #914f64;
 
-    font-size:28px;
+    font-size: 30px;
+
+    letter-spacing: .5px;
 
 }
 
 
 .marca p {
 
-    margin:5px 0 0;
+    margin: 5px 0 0;
 
-    color:#9d858d;
+    color: #a0838c;
 
-    font-size:13px;
+    font-size: 13px;
 
 }
 
 
 /* ==================================================
-   ID
+   BADGE ID
    ================================================== */
 
 .id-badge {
 
-    padding:10px 16px;
+    padding: 11px 18px;
 
-    border-radius:30px;
+    border-radius: 50px;
 
-    background:#fff;
+    background:
+        rgba(255,255,255,.85);
 
     border:
-        1px solid #edccd5;
+        1px solid
+        #ebcbd5;
 
-    color:#b46378;
+    color:
+        var(--rosa-oscuro);
 
-    font-size:13px;
+    font-size: 13px;
 
-    font-weight:700;
+    font-weight: 700;
+
+    box-shadow:
+        0 5px 15px
+        rgba(160,81,108,.06);
 
 }
 
@@ -336,44 +520,48 @@ background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), url("
 
 .contenido {
 
-    padding:40px 45px 35px;
+    padding:
+        42px 45px 38px;
 
 }
 
 
 /* ==================================================
-   TÍTULO
+   TITULO
    ================================================== */
 
 .titulo-seccion {
 
-    margin-bottom:28px;
+    margin-bottom: 30px;
 
 }
 
 
 .titulo-seccion h2 {
 
-    margin:0;
+    margin: 0;
 
-    color:#4b3b41;
+    color: #493a40;
 
     font-family:
         'Playfair Display',
         serif;
 
-    font-size:25px;
+    font-size: 28px;
+
+    font-weight: 600;
 
 }
 
 
 .titulo-seccion p {
 
-    margin:7px 0 0;
+    margin: 8px 0 0;
 
-    color:#9a858c;
+    color:
+        var(--texto-suave);
 
-    font-size:13px;
+    font-size: 13px;
 
 }
 
@@ -384,30 +572,61 @@ background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), url("
 
 .informacion {
 
-    display:grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap:18px;
+    gap: 18px;
 
 }
 
 
 /* ==================================================
-   TARJETA DE DATO
+   CAMPOS
    ================================================== */
 
 .campo {
 
-    padding:18px 20px;
+    padding: 21px;
 
     border:
-        1px solid #f0e0e5;
+        1px solid
+        #f0dfe4;
 
-    border-radius:18px;
+    border-radius: 20px;
 
-    background:#fffafa;
+    background:
+
+        linear-gradient(
+            145deg,
+            #fffefe,
+            #fff9fb
+        );
+
+    box-shadow:
+        0 5px 18px
+        rgba(120,70,85,.035);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+
+}
+
+
+.campo:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        #e8c5d0;
+
+    box-shadow:
+        0 10px 25px
+        rgba(120,70,85,.07);
 
 }
 
@@ -426,73 +645,68 @@ background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), url("
 
 .campo-label {
 
-    display:block;
+    display: block;
 
-    margin-bottom:9px;
+    margin-bottom: 10px;
 
-    color:#9b8189;
+    color:
+        #a0848d;
 
-    font-size:12px;
+    font-size: 11px;
 
-    font-weight:600;
+    font-weight: 700;
 
-    text-transform:uppercase;
+    text-transform: uppercase;
 
-    letter-spacing:.8px;
+    letter-spacing: 1px;
 
 }
 
 
 /* ==================================================
-   VALOR
+   VALORES
    ================================================== */
 
 .campo-valor {
 
-    color:#55444a;
+    color:
+        #55434a;
 
-    font-size:16px;
+    font-size: 16px;
 
-    font-weight:600;
+    font-weight: 600;
 
 }
 
-
-/* ==================================================
-   ID
-   ================================================== */
 
 .valor-id {
 
-    color:#b46479;
+    color:
+        #b45e76;
 
 }
 
-
-/* ==================================================
-   PEDIDO
-   ================================================== */
 
 .valor-pedido {
 
-    color:#765766;
+    color:
+        #765564;
 
 }
 
 
-/* ==================================================
-   TOTAL
-   ================================================== */
-
 .valor-total {
 
-    color:#a9546b;
+    color:
+        #a84f69;
 
     font-family:
         'Playfair Display',
         serif;
 
-    font-size:23px;
+    font-size: 27px;
+
+    font-weight: 600;
 
 }
 
@@ -501,48 +715,88 @@ background: linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)), url("
    SELECT
    ================================================== */
 
+.select-wrapper {
+
+    position: relative;
+
+}
+
+
 select {
 
-    width:100%;
+    width: 100%;
 
-    padding:14px 16px;
+    appearance: none;
+
+    -webkit-appearance: none;
+
+    padding: 14px 45px 14px 16px;
 
     border:
-        1.5px solid #e9cbd4;
+        1.5px solid
+        #e9ccd5;
 
-    border-radius:14px;
+    border-radius: 15px;
 
-    background:#fff;
+    background:
+        #fff;
 
-    color:#59474e;
+    color:
+        #59474e;
 
     font-family:
         'DM Sans',
         sans-serif;
 
-    font-size:14px;
+    font-size: 14px;
 
-    font-weight:600;
+    font-weight: 600;
 
-    outline:none;
+    outline: none;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    transition:.25s;
+    transition:
+        .25s ease;
+
+}
+
+
+.select-wrapper::after {
+
+    content: "⌄";
+
+    position: absolute;
+
+    right: 17px;
+
+    top: 50%;
+
+    transform:
+        translateY(-55%);
+
+    color:
+        #b9677d;
+
+    font-size: 19px;
+
+    pointer-events: none;
 
 }
 
 
 select:hover {
 
-    border-color:#ce8396;
+    border-color:
+        #ce8396;
 
 }
 
 
 select:focus {
 
-    border-color:#bd6b80;
+    border-color:
+        #bd6b80;
 
     box-shadow:
 
@@ -553,35 +807,51 @@ select:focus {
 
 
 /* ==================================================
-   INDICADOR DE ESTADO
+   ESTADO ACTUAL
    ================================================== */
 
 .estado-actual {
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    gap:8px;
+    flex-wrap: wrap;
 
-    margin-top:10px;
+    gap: 7px;
 
-    color:#9b8189;
+    margin-top: 11px;
 
-    font-size:12px;
+    color:
+        #a18a92;
+
+    font-size: 11px;
+
+}
+
+
+.estado-actual strong {
+
+    color:
+        #875466;
 
 }
 
 
 .punto {
 
-    width:8px;
+    width: 8px;
 
-    height:8px;
+    height: 8px;
 
-    border-radius:50%;
+    border-radius: 50%;
 
-    background:#c9788d;
+    background:
+        #ca7188;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(202,113,136,.10);
 
 }
 
@@ -592,71 +862,87 @@ select:focus {
 
 .separador {
 
-    height:1px;
+    height: 1px;
 
-    background:#f0e1e5;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #efdce2,
+            transparent
+        );
 
-    margin:30px 0;
+    margin:
+        32px 0 25px;
 
 }
 
 
 /* ==================================================
-   BOTONES
+   ACCIONES
    ================================================== */
 
 .acciones {
 
-    display:flex;
+    display: flex;
 
-    justify-content:flex-end;
+    justify-content: flex-end;
 
-    align-items:center;
+    align-items: center;
 
-    gap:12px;
+    gap: 12px;
 
 }
 
 
 /* ==================================================
-   BOTÓN VOLVER
+   BOTÓN CANCELAR
    ================================================== */
 
 .volver {
 
-    display:inline-flex;
+    display: inline-flex;
 
-    align-items:center;
+    align-items: center;
 
-    justify-content:center;
+    justify-content: center;
 
-    padding:13px 22px;
+    padding: 13px 23px;
 
-    border-radius:50px;
+    border-radius: 50px;
 
     border:
-        1px solid #ead5db;
+        1px solid
+        #ead4db;
 
-    background:#fff;
+    background:
+        #fff;
 
-    color:#986072;
+    color:
+        #986072;
 
-    text-decoration:none;
+    text-decoration: none;
 
-    font-size:13px;
+    font-size: 13px;
 
-    font-weight:600;
+    font-weight: 600;
 
-    transition:.25s;
+    transition:
+        .25s ease;
 
 }
 
 
 .volver:hover {
 
-    background:#fff5f7;
+    background:
+        #fff5f7;
 
-    border-color:#d69aaa;
+    border-color:
+        #d69aaa;
+
+    transform:
+        translateY(-2px);
 
 }
 
@@ -667,47 +953,70 @@ select:focus {
 
 .actualizar {
 
-    border:none;
+    border: none;
 
-    padding:14px 27px;
+    padding:
+        14px 27px;
 
-    border-radius:50px;
+    border-radius: 50px;
 
-    background:#bd6b80;
+    background:
 
-    color:white;
+        linear-gradient(
+            135deg,
+            #cf7890,
+            #b45b75
+        );
+
+    color:
+        white;
 
     font-family:
         'DM Sans',
         sans-serif;
 
-    font-size:14px;
+    font-size: 14px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    cursor:pointer;
+    cursor: pointer;
 
     box-shadow:
 
-        0 8px 20px
-        rgba(189,107,128,.25);
+        0 10px 25px
+        rgba(180,91,117,.25);
 
-    transition:.25s;
+    transition:
+        .25s ease;
 
 }
 
 
 .actualizar:hover {
 
-    background:#a9576d;
+    background:
+
+        linear-gradient(
+            135deg,
+            #c66b84,
+            #a9506a
+        );
 
     transform:
         translateY(-2px);
 
     box-shadow:
 
-        0 12px 25px
-        rgba(189,107,128,.30);
+        0 14px 30px
+        rgba(180,91,117,.32);
+
+}
+
+
+.actualizar:active {
+
+    transform:
+        translateY(0);
 
 }
 
@@ -718,22 +1027,113 @@ select:focus {
 
 .nota {
 
-    margin-top:22px;
+    margin-top: 22px;
 
-    padding:14px 17px;
+    padding: 15px 18px;
 
-    border-radius:14px;
+    border-radius: 16px;
 
-    background:#fff7f9;
+    background:
+        linear-gradient(
+            135deg,
+            #fff7f9,
+            #fffafb
+        );
 
     border:
-        1px solid #f2dfe4;
+        1px solid
+        #f1dfe4;
 
-    color:#947d85;
+    color:
+        #947d85;
 
-    font-size:12px;
+    font-size: 12px;
 
-    line-height:1.5;
+    line-height: 1.6;
+
+}
+
+
+.nota span {
+
+    color:
+        #b25e76;
+
+    font-weight: 700;
+
+}
+
+
+/* ==================================================
+   SWEET ALERT PERSONALIZADO
+   ================================================== */
+
+.swal2-popup {
+
+    border-radius: 26px !important;
+
+    padding: 2em !important;
+
+    font-family:
+        'DM Sans',
+        sans-serif !important;
+
+    box-shadow:
+        0 25px 70px
+        rgba(100,55,70,.20) !important;
+
+}
+
+
+.swal2-title {
+
+    font-family:
+        'Playfair Display',
+        serif !important;
+
+    color:
+        #694552 !important;
+
+}
+
+
+.swal2-html-container {
+
+    color:
+        #917983 !important;
+
+    font-size: 14px !important;
+
+}
+
+
+.swal2-confirm {
+
+    border-radius: 50px !important;
+
+    padding:
+        12px 25px !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #cf7890,
+            #b45b75
+        ) !important;
+
+    box-shadow:
+        0 8px 20px
+        rgba(180,91,117,.22) !important;
+
+}
+
+
+.swal2-cancel {
+
+    border-radius: 50px !important;
+
+    padding:
+        12px 25px !important;
 
 }
 
@@ -742,52 +1142,75 @@ select:focus {
    RESPONSIVE
    ================================================== */
 
-@media(max-width:650px) {
+@media(max-width: 700px) {
 
     body {
 
-        padding:20px 12px;
+        padding:
+            20px 12px;
 
-        align-items:flex-start;
+        align-items:
+            flex-start;
+
+    }
+
+
+    .contenedor {
+
+        border-radius:
+            26px;
+
+        margin:
+            15px 0;
 
     }
 
 
     .cabecera {
 
-        padding:28px 25px;
+        padding:
+            28px 24px;
 
-        flex-direction:column;
+        flex-direction:
+            column;
 
-        align-items:flex-start;
+        align-items:
+            flex-start;
 
     }
 
 
     .contenido {
 
-        padding:30px 25px;
+        padding:
+            30px 24px;
 
     }
 
 
     .informacion {
 
-        grid-template-columns:1fr;
+        grid-template-columns:
+            1fr;
 
     }
 
 
     .campo.completo {
 
-        grid-column:auto;
+        grid-column:
+            auto;
 
     }
 
 
     .acciones {
 
-        flex-direction:column-reverse;
+        flex-direction:
+            column-reverse;
+
+        align-items:
+            stretch;
 
     }
 
@@ -795,9 +1218,45 @@ select:focus {
     .volver,
     .actualizar {
 
-        width:100%;
+        width:
+            100%;
 
-        text-align:center;
+        text-align:
+            center;
+
+    }
+
+}
+
+
+@media(max-width: 420px) {
+
+    .marca h1 {
+
+        font-size:
+            26px;
+
+    }
+
+
+    .icono {
+
+        width:
+            52px;
+
+        height:
+            52px;
+
+        border-radius:
+            17px;
+
+    }
+
+
+    .titulo-seccion h2 {
+
+        font-size:
+            24px;
 
     }
 
@@ -888,7 +1347,8 @@ select:focus {
 
             <p>
 
-                Actualiza el estado y el método de pago de esta venta.
+                Actualiza los datos permitidos de esta venta
+                de manera rápida y segura.
 
             </p>
 
@@ -900,14 +1360,15 @@ select:focus {
              ================================================== -->
 
         <form
+            id="formVenta"
             action="updateventa.php"
             method="POST"
         >
 
 
-            <!-- ==============================================
-                 ID OCULTO
-                 ============================================== -->
+            <!-- ==================================================
+                 DATOS OCULTOS
+                 ================================================== -->
 
             <input
                 type="hidden"
@@ -920,10 +1381,6 @@ select:focus {
             >
 
 
-            <!-- ==============================================
-                 PEDIDO OCULTO
-                 ============================================== -->
-
             <input
                 type="hidden"
                 name="PEDIDOS_ID"
@@ -934,10 +1391,6 @@ select:focus {
                 ?>"
             >
 
-
-            <!-- ==============================================
-                 COSTO OCULTO
-                 ============================================== -->
 
             <input
                 type="hidden"
@@ -953,9 +1406,9 @@ select:focus {
             <div class="informacion">
 
 
-                <!-- ==========================================
+                <!-- ==================================================
                      ID
-                     ========================================== -->
+                     ================================================== -->
 
                 <div class="campo">
 
@@ -985,9 +1438,9 @@ select:focus {
                 </div>
 
 
-                <!-- ==========================================
+                <!-- ==================================================
                      PEDIDO
-                     ========================================== -->
+                     ================================================== -->
 
                 <div class="campo">
 
@@ -1017,9 +1470,9 @@ select:focus {
                 </div>
 
 
-                <!-- ==========================================
+                <!-- ==================================================
                      ESTADO
-                     ========================================== -->
+                     ================================================== -->
 
                 <div class="campo">
 
@@ -1034,96 +1487,100 @@ select:focus {
                     </label>
 
 
-                    <select
-                        id="estado"
-                        name="estado"
-                        required
-                    >
+                    <div class="select-wrapper">
 
-
-                        <option
-                            value="En proceso"
-
-                            <?php
-
-                            if (
-                                strtolower(
-                                    trim($estado)
-                                )
-                                ==
-                                "en proceso"
-                            ) {
-
-                                echo "selected";
-
-                            }
-
-                            ?>
+                        <select
+                            id="estado"
+                            name="estado"
+                            required
                         >
 
-                            En proceso
 
-                        </option>
+                            <option
+                                value="En proceso"
 
+                                <?php
 
-                        <option
-                            value="Completado"
+                                if (
+                                    strtolower(
+                                        trim($estado)
+                                    )
+                                    ==
+                                    "en proceso"
+                                ) {
 
-                            <?php
+                                    echo "selected";
 
-                            if (
-                                strtolower(
-                                    trim($estado)
-                                )
-                                ==
-                                "completado"
-                            ) {
+                                }
 
-                                echo "selected";
+                                ?>
+                            >
 
-                            }
+                                En proceso
 
-                            ?>
-                        >
-
-                            Completado
-
-                        </option>
+                            </option>
 
 
-                        <option
-                            value="Cancelado"
+                            <option
+                                value="Completado"
 
-                            <?php
+                                <?php
 
-                            if (
-                                strtolower(
-                                    trim($estado)
-                                )
-                                ==
-                                "cancelado"
-                            ) {
+                                if (
+                                    strtolower(
+                                        trim($estado)
+                                    )
+                                    ==
+                                    "completado"
+                                ) {
 
-                                echo "selected";
+                                    echo "selected";
 
-                            }
+                                }
 
-                            ?>
-                        >
+                                ?>
+                            >
 
-                            Cancelado
+                                Completado
 
-                        </option>
+                            </option>
 
 
-                    </select>
+                            <option
+                                value="Cancelado"
+
+                                <?php
+
+                                if (
+                                    strtolower(
+                                        trim($estado)
+                                    )
+                                    ==
+                                    "cancelado"
+                                ) {
+
+                                    echo "selected";
+
+                                }
+
+                                ?>
+                            >
+
+                                Cancelado
+
+                            </option>
+
+
+                        </select>
+
+                    </div>
 
 
                     <div class="estado-actual">
 
                         <span class="punto"></span>
 
-                        Estado registrado actualmente:
+                        Estado actual:
 
                         <strong>
 
@@ -1143,9 +1600,9 @@ select:focus {
                 </div>
 
 
-                <!-- ==========================================
-                     MÉTODO
-                     ========================================== -->
+                <!-- ==================================================
+                     MÉTODO DE PAGO
+                     ================================================== -->
 
                 <div class="campo">
 
@@ -1160,118 +1617,123 @@ select:focus {
                     </label>
 
 
-                    <select
-                        id="metodo"
-                        name="metodo"
-                        required
-                    >
+                    <div class="select-wrapper">
 
-
-                        <option
-                            value=""
-                            disabled
-                            <?php
-
-                            if (
-                                empty($metodo)
-                            ) {
-
-                                echo "selected";
-
-                            }
-
-                            ?>
+                        <select
+                            id="metodo"
+                            name="metodo"
+                            required
                         >
 
-                            Selecciona un método
 
-                        </option>
+                            <option
+                                value=""
+                                disabled
 
+                                <?php
 
-                        <option
-                            value="Efectivo"
+                                if (
+                                    empty($metodo)
+                                ) {
 
-                            <?php
+                                    echo "selected";
 
-                            if (
-                                strtolower(
-                                    trim($metodo)
-                                )
-                                ==
-                                "efectivo"
-                            ) {
+                                }
 
-                                echo "selected";
+                                ?>
+                            >
 
-                            }
+                                Selecciona un método
 
-                            ?>
-                        >
-
-                            Efectivo
-
-                        </option>
+                            </option>
 
 
-                        <option
-                            value="Tarjeta"
+                            <option
+                                value="Efectivo"
 
-                            <?php
+                                <?php
 
-                            if (
-                                strtolower(
-                                    trim($metodo)
-                                )
-                                ==
-                                "tarjeta"
-                            ) {
+                                if (
+                                    strtolower(
+                                        trim($metodo)
+                                    )
+                                    ==
+                                    "efectivo"
+                                ) {
 
-                                echo "selected";
+                                    echo "selected";
 
-                            }
+                                }
 
-                            ?>
-                        >
+                                ?>
+                            >
 
-                            Tarjeta
+                                💵 Efectivo
 
-                        </option>
-
-
-                        <option
-                            value="QR"
-
-                            <?php
-
-                            if (
-                                strtolower(
-                                    trim($metodo)
-                                )
-                                ==
-                                "qr"
-                            ) {
-
-                                echo "selected";
-
-                            }
-
-                            ?>
-                        >
-
-                            QR
-
-                        </option>
+                            </option>
 
 
-                    </select>
+                            <option
+                                value="Tarjeta"
+
+                                <?php
+
+                                if (
+                                    strtolower(
+                                        trim($metodo)
+                                    )
+                                    ==
+                                    "tarjeta"
+                                ) {
+
+                                    echo "selected";
+
+                                }
+
+                                ?>
+                            >
+
+                                💳 Tarjeta
+
+                            </option>
+
+
+                            <option
+                                value="QR"
+
+                                <?php
+
+                                if (
+                                    strtolower(
+                                        trim($metodo)
+                                    )
+                                    ==
+                                    "qr"
+                                ) {
+
+                                    echo "selected";
+
+                                }
+
+                                ?>
+                            >
+
+                                📱 QR
+
+                            </option>
+
+
+                        </select>
+
+                    </div>
 
 
                 </div>
 
 
-                <!-- ==========================================
+                <!-- ==================================================
                      TOTAL
-                     ========================================== -->
+                     ================================================== -->
 
                 <div class="campo completo">
 
@@ -1334,7 +1796,7 @@ select:focus {
                     class="actualizar"
                 >
 
-                    ✓ Guardar cambios
+                    ✨ Guardar cambios
 
                 </button>
 
@@ -1348,9 +1810,11 @@ select:focus {
 
             <div class="nota">
 
+                <span>♡ Nota:</span>
+
                 Puedes modificar el estado y el método de pago.
                 El número de venta, el pedido asociado y el costo
-                total se mantienen como datos originales de la venta.
+                total se mantienen como datos originales.
 
             </div>
 
@@ -1362,6 +1826,149 @@ select:focus {
 
 
 </div>
+
+
+<!-- ==================================================
+     SWEET ALERT
+     ================================================== -->
+
+<script>
+
+const formulario =
+    document.getElementById("formVenta");
+
+
+formulario.addEventListener(
+    "submit",
+    function(event) {
+
+        event.preventDefault();
+
+
+        const estado =
+            document.getElementById("estado").value;
+
+        const metodo =
+            document.getElementById("metodo").value;
+
+
+        Swal.fire({
+
+            title: "¿Guardar cambios? ✨",
+
+            html:
+                `
+                <div style="
+                    color:#927982;
+                    line-height:1.7;
+                ">
+
+                    Estás a punto de actualizar esta venta.
+
+                    <br><br>
+
+                    <span style="
+                        color:#a95870;
+                        font-weight:700;
+                    ">
+                        Estado:
+                    </span>
+
+                    ${estado}
+
+                    <br>
+
+                    <span style="
+                        color:#a95870;
+                        font-weight:700;
+                    ">
+                        Método de pago:
+                    </span>
+
+                    ${metodo}
+
+                </div>
+                `,
+
+            icon: "question",
+
+            iconColor: "#c8758c",
+
+            showCancelButton: true,
+
+            confirmButtonText:
+                "Sí, guardar 💗",
+
+            cancelButtonText:
+                "No, revisar",
+
+            reverseButtons: true,
+
+            background: "#fffafb",
+
+            color: "#59474e",
+
+            buttonsStyling: true,
+
+            customClass: {
+
+                popup:
+                    "sweet-popup",
+
+                title:
+                    "sweet-title"
+
+            }
+
+        }).then((resultado) => {
+
+
+            if (resultado.isConfirmed) {
+
+
+                Swal.fire({
+
+                    title:
+                        "Guardando cambios...",
+
+                    html:
+                        "Un momento, por favor 💕",
+
+                    allowOutsideClick:
+                        false,
+
+                    allowEscapeKey:
+                        false,
+
+                    showConfirmButton:
+                        false,
+
+                    background:
+                        "#fffafb",
+
+                    color:
+                        "#59474e",
+
+                    didOpen: () => {
+
+                        Swal.showLoading();
+
+                    }
+
+                });
+
+
+                formulario.submit();
+
+            }
+
+        });
+
+    }
+
+);
+
+</script>
 
 
 </body>
