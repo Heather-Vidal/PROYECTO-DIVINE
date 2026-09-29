@@ -1568,7 +1568,7 @@ body.menu-abierto{
         >
 
 
-        <a href="produccomp.php">
+        <a href="./CONSULTA-pedido/formreadpedido.php">
             ¡CONSULTA TU PEDIDO AQUÍ!
         </a>
 

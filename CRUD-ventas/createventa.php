@@ -1,462 +1,849 @@
 <?php
- 
+
+/* =========================================================
+   CONEXIÓN
+========================================================= */
+
 $servidor = "localhost";
 $usuario = "root";
 $contrasena = "";
-$bd = "DIVINE";
- 
+$nombreBD = "DIVINE";
+
 $conn = new mysqli(
-   $servidor,
-   $usuario,
-   $contrasena,
-   $bd
+    $servidor,
+    $usuario,
+    $contrasena,
+    $nombreBD
 );
 
-if($conn-> connect_error){
-    die ( "Conexion fallida: " .$conn->connect_error);
-}
-$sqlCarrito = "SELECT productos_id FROM carrito WHERE pedidos_id = '$pedidos_id'";
-$resultadoCarrito = $conn->query($sqlCarrito);
-
-// ==========================================
-// FUNCIÓN PARA MOSTRAR ERRORES COMO ALERTA
-// ==========================================
- 
-function alertaError($mensaje) {
- 
-   echo "
-   <script>
- 
-       alert(" . json_encode($mensaje) . ");
- 
-       history.back();
- 
-   </script>
-   ";
- 
-   exit();
- 
-}
- 
- 
-// ==========================================
-// VERIFICAR CONEXIÓN
-// ==========================================
- 
 if ($conn->connect_error) {
- 
-   // No se muestra el detalle técnico del error al usuario
-   alertaError(
-       "❌ Error de conexión con la base de datos."
-   );
+
+    die(
+        "Error al conectar con la base de datos."
+    );
 }
- 
- 
-// ==========================================
-// RECIBIR DATOS DE LA VENTA
-// ==========================================
- 
-$PEDIDOS_ID = trim($_POST["PEDIDOS_ID"] ?? '');
-$estado = trim($_POST["estado"] ?? '');
-$metodo = trim($_POST["metodo"] ?? '');
-$costototal = trim($_POST["costototal"] ?? '');
- 
- 
-// ==========================================
-// VALIDAR DATOS
-// ==========================================
- 
-// PEDIDOS_ID es int y costototal es double en la base de datos
-if ($PEDIDOS_ID === '' || !ctype_digit($PEDIDOS_ID)) {
- 
-   alertaError("❌ El pedido no es válido.");
- 
+
+$conn->set_charset("utf8mb4");
+
+
+/* =========================================================
+   FUNCIÓN PARA MOSTRAR MENSAJES
+========================================================= */
+
+function alertaError($mensaje)
+{
+    ?>
+
+    <!DOCTYPE html>
+
+    <html lang="es">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+
+        <title>DIVINE</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
+
+
+    <body>
+
+        <script>
+
+        Swal.fire({
+
+            title: "No se pudo completar",
+
+            text: <?php echo json_encode($mensaje); ?>,
+
+            icon: "error",
+
+            iconColor: "#b86f80",
+
+            confirmButtonText: "Entendido",
+
+            confirmButtonColor: "#8b4e5e",
+
+            background: "#fffdfb",
+
+            color: "#604e53"
+
+        }).then(function() {
+
+            history.back();
+
+        });
+
+        </script>
+
+    </body>
+
+    </html>
+
+    <?php
+
+    exit();
 }
- 
-if ($estado === '') {
- 
-   alertaError("❌ El estado no fue recibido.");
- 
+
+
+/* =========================================================
+   RECIBIR DATOS
+========================================================= */
+
+$PEDIDOS_ID = trim(
+    $_POST["PEDIDOS_ID"] ?? ""
+);
+
+$estado = trim(
+    $_POST["estado"] ?? ""
+);
+
+$metodo = trim(
+    $_POST["metodo"] ?? ""
+);
+
+$costototal = trim(
+    $_POST["costototal"] ?? ""
+);
+
+
+/* =========================================================
+   VALIDAR PEDIDO
+========================================================= */
+
+if (
+    $PEDIDOS_ID === ""
+    ||
+    !ctype_digit((string)$PEDIDOS_ID)
+) {
+
+    alertaError(
+        "El pedido recibido no es válido."
+    );
 }
- 
-if ($metodo === '') {
- 
-   alertaError("❌ Debe seleccionar un método de pago.");
- 
+
+
+$PEDIDOS_ID = (int)$PEDIDOS_ID;
+
+
+/* =========================================================
+   VALIDAR ESTADO
+========================================================= */
+
+if ($estado === "") {
+
+    $estado = "En proceso";
 }
- 
-if ($costototal === '' || !is_numeric($costototal)) {
- 
-   alertaError("❌ El costo total no es válido.");
- 
+
+
+/* =========================================================
+   VALIDAR MÉTODO
+========================================================= */
+
+$metodosPermitidos = [
+
+    "Efectivo",
+    "QR",
+    "Tarjeta"
+
+];
+
+if (
+    $metodo === ""
+    ||
+    !in_array(
+        $metodo,
+        $metodosPermitidos,
+        true
+    )
+) {
+
+    alertaError(
+        "Debes seleccionar un método de pago válido."
+    );
 }
- 
-// Convertir a los tipos que corresponden
-$PEDIDOS_ID = (int) $PEDIDOS_ID;
-$costototal = (float) $costototal;
- 
- 
-// =========================================
-// BUSCAR LOS PRODUCTOS DEL PEDIDO
-// ==========================================
- 
-// Consulta preparada: el dato va separado de la consulta SQL
-$sqlCarrito = "
-   SELECT PRODUCTO_codigo, cantidad
-   FROM CARRITO
-   WHERE PEDIDOS_ID = ?
+
+
+/* =========================================================
+   VALIDAR TOTAL
+========================================================= */
+
+if (
+    $costototal === ""
+    ||
+    !is_numeric($costototal)
+) {
+
+    alertaError(
+        "El costo total recibido no es válido."
+    );
+}
+
+
+$costototal = (float)$costototal;
+
+
+/* =========================================================
+   BUSCAR PEDIDO
+========================================================= */
+
+$sqlPedido = "
+
+    SELECT
+        ID,
+        nombre,
+        estado
+
+    FROM PEDIDOS
+
+    WHERE ID = ?
+
+    LIMIT 1
+
 ";
- 
-$stmtCarrito = $conn->prepare($sqlCarrito);
- 
- 
-// ==========================================
-// VERIFICAR CONSULTA
-// ==========================================
- 
+
+
+$stmtPedido = $conn->prepare(
+    $sqlPedido
+);
+
+
+if (!$stmtPedido) {
+
+    alertaError(
+        "No se pudo consultar el pedido."
+    );
+}
+
+
+$stmtPedido->bind_param(
+    "i",
+    $PEDIDOS_ID
+);
+
+
+$stmtPedido->execute();
+
+
+$resultadoPedido =
+    $stmtPedido->get_result();
+
+
+if (
+    $resultadoPedido->num_rows === 0
+) {
+
+    $stmtPedido->close();
+
+    alertaError(
+        "El pedido no existe."
+    );
+}
+
+
+$pedido =
+    $resultadoPedido->fetch_assoc();
+
+
+$stmtPedido->close();
+
+
+/* =========================================================
+   VERIFICAR SI YA EXISTE UNA VENTA
+========================================================= */
+
+$sqlVentaExistente = "
+
+    SELECT
+        id
+
+    FROM VENTAS
+
+    WHERE PEDIDOS_ID = ?
+
+    LIMIT 1
+
+";
+
+
+$stmtVentaExistente =
+    $conn->prepare(
+        $sqlVentaExistente
+    );
+
+
+if (!$stmtVentaExistente) {
+
+    alertaError(
+        "No se pudo verificar si la venta ya existe."
+    );
+}
+
+
+$stmtVentaExistente->bind_param(
+    "i",
+    $PEDIDOS_ID
+);
+
+
+$stmtVentaExistente->execute();
+
+
+$resultadoVentaExistente =
+    $stmtVentaExistente->get_result();
+
+
+if (
+    $resultadoVentaExistente->num_rows > 0
+) {
+
+    $stmtVentaExistente->close();
+
+    alertaError(
+        "Este pedido ya tiene una venta registrada."
+    );
+}
+
+
+$stmtVentaExistente->close();
+
+
+/* =========================================================
+   OBTENER PRODUCTOS DEL CARRITO
+========================================================= */
+
+$sqlCarrito = "
+
+    SELECT
+
+        c.PRODUCTO_codigo,
+
+        c.PEDIDOS_ID,
+
+        c.cantidad,
+
+        c.costototal,
+
+        p.nombre,
+
+        p.stock,
+
+        p.precio
+
+    FROM CARRITO c
+
+    INNER JOIN PRODUCTO p
+
+        ON c.PRODUCTO_codigo = p.codigo
+
+    WHERE c.PEDIDOS_ID = ?
+
+    ORDER BY p.nombre ASC
+
+";
+
+
+$stmtCarrito =
+    $conn->prepare(
+        $sqlCarrito
+    );
+
+
 if (!$stmtCarrito) {
- 
-   alertaError(
-       "❌ Error al buscar los productos."
-   );
- 
+
+    alertaError(
+        "No se pudieron consultar los productos del pedido."
+    );
 }
- 
-// i = entero
-$stmtCarrito->bind_param("i", $PEDIDOS_ID);
- 
+
+
+$stmtCarrito->bind_param(
+    "i",
+    $PEDIDOS_ID
+);
+
+
 $stmtCarrito->execute();
- 
-$resultadoCarrito = $stmtCarrito->get_result();
- 
-// Se guardan los productos del pedido para usarlos más abajo
-$productosPedido = $resultadoCarrito->fetch_all(MYSQLI_ASSOC);
- 
+
+
+$resultadoCarrito =
+    $stmtCarrito->get_result();
+
+
+$productosPedido = [];
+
+
+while (
+    $producto =
+    $resultadoCarrito->fetch_assoc()
+) {
+
+    $productosPedido[] =
+        $producto;
+}
+
+
 $stmtCarrito->close();
- 
- 
-// ==========================================
-// VERIFICAR QUE EL PEDIDO TENGA PRODUCTOS
-// ==========================================
- 
-if (count($productosPedido) == 0) {
- 
-   alertaError(
-       "❌ Este pedido no tiene productos."
-   );
- 
+
+
+/* =========================================================
+   VERIFICAR QUE HAYA PRODUCTOS
+========================================================= */
+
+if (
+    count($productosPedido) === 0
+) {
+
+    alertaError(
+        "Este pedido no tiene productos en el carrito."
+    );
 }
- 
- 
-// ==========================================
-// VERIFICAR EL STOCK
-// ==========================================
- 
-$hayStock = true;
- 
-$mensajeError = "";
- 
-foreach ($productosPedido as $producto) {
- 
-   // Código del producto
-   $codigo = (int) $producto["PRODUCTO_codigo"];
- 
-   // Cantidad solicitada
-   $cantidad = (int) $producto["cantidad"];
- 
- 
-   // ======================================
-   // BUSCAR PRODUCTO
-   // ======================================
- 
-   $sqlProducto = "
-       SELECT nombre, stock
-       FROM PRODUCTO
-       WHERE codigo = ?
-   ";
- 
-   $stmtProducto = $conn->prepare($sqlProducto);
- 
-   if (!$stmtProducto) {
- 
-       alertaError(
-           "❌ Error al consultar el producto."
-       );
- 
-   }
- 
-   // i = entero
-   $stmtProducto->bind_param("i", $codigo);
- 
-   $stmtProducto->execute();
- 
-   $resultadoProducto = $stmtProducto->get_result();
- 
- 
-   // ======================================
-   // VERIFICAR QUE EL PRODUCTO EXISTA
-   // ======================================
- 
-   if ($resultadoProducto->num_rows == 0) {
- 
-       $hayStock = false;
- 
-       $mensajeError =
-           "❌ El producto con código "
-           . $codigo
-           . " no existe.";
- 
-       $stmtProducto->close();
- 
-       break;
- 
-   }
- 
- 
-   // ======================================
-   // OBTENER DATOS DEL PRODUCTO
-   // ======================================
- 
-   $datosProducto =
-       $resultadoProducto->fetch_assoc();
- 
-   $stmtProducto->close();
- 
- 
-   $nombreProducto =
-       $datosProducto["nombre"];
- 
- 
-   $stockActual =
-       $datosProducto["stock"];
- 
- 
-   // ======================================
-   // COMPARAR STOCK
-   // ======================================
- 
-   if ($stockActual < $cantidad) {
- 
-       $hayStock = false;
- 
-       $mensajeError =
-           "❌ No hay suficiente stock de "
-           . $nombreProducto
-           . ". Stock disponible: "
-           . $stockActual
-           . " | Cantidad solicitada: "
-           . $cantidad;
- 
-       break;
- 
-   }
- 
+
+
+/* =========================================================
+   CALCULAR TOTAL REAL DESDE EL CARRITO
+========================================================= */
+
+$totalReal = 0;
+
+
+foreach (
+    $productosPedido
+    as $producto
+) {
+
+    $cantidad =
+        (int)$producto["cantidad"];
+
+    $subtotal =
+        (float)$producto["costototal"];
+
+
+    if ($cantidad <= 0) {
+
+        alertaError(
+            "La cantidad de uno de los productos no es válida."
+        );
+    }
+
+
+    $totalReal += $subtotal;
 }
- 
- 
-// ==========================================
-// SI NO HAY STOCK, NO HACER NADA
-// ==========================================
- 
-if (!$hayStock) {
- 
-   alertaError($mensajeError);
- 
-}
- 
- 
-// ==========================================
-// INICIAR TRANSACCIÓN
-// ==========================================
- 
+
+
+/*
+ * Se utiliza el total calculado directamente
+ * desde la base de datos.
+ */
+
+$costototal = $totalReal;
+
+
+/* =========================================================
+   INICIAR TRANSACCIÓN
+========================================================= */
+
 $conn->begin_transaction();
- 
- 
+
+
 try {
- 
- 
-   // ======================================
-   // INSERTAR LA VENTA
-   // ======================================
- 
-   $sql = "INSERT INTO VENTAS
-   (
-       estado,
-       metodo,
-       costototal,
-       PEDIDOS_ID
-   )
-   VALUES
-   (
-       ?,
-       ?,
-       ?,
-       ?
-   )";
- 
-   $stmtVenta = $conn->prepare($sql);
- 
-   if (!$stmtVenta) {
- 
-       throw new Exception(
-           "❌ Error al preparar el registro de la venta."
-       );
- 
-   }
- 
-   // s = texto, d = decimal, i = entero
-   // estado=s, metodo=s, costototal=d, PEDIDOS_ID=i
-   $stmtVenta->bind_param(
-       "ssdi",
-       $estado,
-       $metodo,
-       $costototal,
-       $PEDIDOS_ID
-   );
- 
-   if (!$stmtVenta->execute()) {
- 
-       throw new Exception(
-           "❌ Error al registrar la venta."
-       );
- 
-   }
- 
-   $stmtVenta->close();
- 
- 
-   // ======================================
-   // DESCONTAR STOCK
-   // ======================================
- 
-   // Consulta preparada una sola vez, se usa para cada producto
-   $sqlStock = "
-       UPDATE PRODUCTO
-       SET stock = stock - ?
-       WHERE codigo = ?
-   ";
- 
-   $stmtStock = $conn->prepare($sqlStock);
- 
-   if (!$stmtStock) {
- 
-       throw new Exception(
-           "❌ Error al preparar la actualización del stock."
-       );
- 
-   }
- 
-   foreach ($productosPedido as $producto) {
- 
- 
-       $codigo =
-           (int) $producto["PRODUCTO_codigo"];
- 
- 
-       $cantidad =
-           (int) $producto["cantidad"];
- 
- 
-       // ==================================
-       // ACTUALIZAR STOCK
-       // ==================================
- 
-       // i = entero
-       // cantidad=i, codigo=i
-       $stmtStock->bind_param(
-           "ii",
-           $cantidad,
-           $codigo
-       );
- 
-       if (!$stmtStock->execute()) {
- 
-           throw new Exception(
-               "❌ Error al actualizar el stock."
-           );
- 
-       }
- 
-   }
- 
-   $stmtStock->close();
- 
- 
-   // ======================================
-   // CONFIRMAR TODAS LAS OPERACIONES
-   // ======================================
- 
-   $conn->commit();
- 
- 
-   // ======================================
-   // REDIRECCIONAR
-   // ======================================
- 
-   header(
-       "Location: readtodoventa.php"
-   );
- 
-   exit();
- 
- 
+
+
+    /* =====================================================
+       1. VERIFICAR STOCK DE TODOS LOS PRODUCTOS
+    ====================================================== */
+
+    foreach (
+        $productosPedido
+        as $producto
+    ) {
+
+
+        $codigo =
+            (int)$producto["PRODUCTO_codigo"];
+
+
+        $cantidad =
+            (int)$producto["cantidad"];
+
+
+        $stockActual =
+            (int)$producto["stock"];
+
+
+        $nombreProducto =
+            $producto["nombre"];
+
+
+        if (
+            $cantidad <= 0
+        ) {
+
+            throw new Exception(
+                "La cantidad del producto "
+                . $nombreProducto
+                . " no es válida."
+            );
+        }
+
+
+        if (
+            $stockActual < $cantidad
+        ) {
+
+            throw new Exception(
+
+                "No hay suficiente stock de "
+                . $nombreProducto
+                . ". "
+                . "Disponible: "
+                . $stockActual
+                . " | Solicitado: "
+                . $cantidad
+
+            );
+        }
+
+    }
+
+
+    /* =====================================================
+       2. INSERTAR VENTA
+    ====================================================== */
+
+    $sqlVenta = "
+
+        INSERT INTO VENTAS
+        (
+            estado,
+            metodo,
+            costototal,
+            PEDIDOS_ID
+        )
+
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            ?
+        )
+
+    ";
+
+
+    $stmtVenta =
+        $conn->prepare(
+            $sqlVenta
+        );
+
+
+    if (!$stmtVenta) {
+
+        throw new Exception(
+            "No se pudo preparar el registro de la venta."
+        );
+    }
+
+
+    $stmtVenta->bind_param(
+
+        "ssdi",
+
+        $estado,
+
+        $metodo,
+
+        $costototal,
+
+        $PEDIDOS_ID
+
+    );
+
+
+    if (
+        !$stmtVenta->execute()
+    ) {
+
+        throw new Exception(
+            "No se pudo registrar la venta."
+        );
+    }
+
+
+    $idVenta =
+        $conn->insert_id;
+
+
+    $stmtVenta->close();
+
+
+    /* =====================================================
+       3. DESCONTAR STOCK
+    ====================================================== */
+
+    $sqlStock = "
+
+        UPDATE PRODUCTO
+
+        SET stock = stock - ?
+
+        WHERE codigo = ?
+
+        AND stock >= ?
+
+    ";
+
+
+    $stmtStock =
+        $conn->prepare(
+            $sqlStock
+        );
+
+
+    if (!$stmtStock) {
+
+        throw new Exception(
+            "No se pudo preparar la actualización del stock."
+        );
+    }
+
+
+    foreach (
+        $productosPedido
+        as $producto
+    ) {
+
+
+        $codigo =
+            (int)$producto["PRODUCTO_codigo"];
+
+
+        $cantidad =
+            (int)$producto["cantidad"];
+
+
+        $stmtStock->bind_param(
+
+            "iii",
+
+            $cantidad,
+
+            $codigo,
+
+            $cantidad
+
+        );
+
+
+        if (
+            !$stmtStock->execute()
+        ) {
+
+            throw new Exception(
+                "No se pudo actualizar el stock del producto."
+            );
+        }
+
+
+        /*
+         * Si affected_rows es 0 significa que el stock
+         * cambió entre la comprobación anterior y este UPDATE.
+         */
+
+        if (
+            $stmtStock->affected_rows !== 1
+        ) {
+
+            throw new Exception(
+
+                "No fue posible descontar el stock "
+                . "del producto con código "
+                . $codigo
+                . "."
+
+            );
+        }
+
+    }
+
+
+    $stmtStock->close();
+
+
+    /* =====================================================
+       4. CAMBIAR ESTADO DEL PEDIDO
+    ====================================================== */
+
+    $nuevoEstadoPedido =
+        "En proceso";
+
+
+    $sqlPedidoEstado = "
+
+        UPDATE PEDIDOS
+
+        SET estado = ?
+
+        WHERE ID = ?
+
+    ";
+
+
+    $stmtPedidoEstado =
+        $conn->prepare(
+            $sqlPedidoEstado
+        );
+
+
+    if (!$stmtPedidoEstado) {
+
+        throw new Exception(
+            "No se pudo actualizar el estado del pedido."
+        );
+    }
+
+
+    $stmtPedidoEstado->bind_param(
+
+        "si",
+
+        $nuevoEstadoPedido,
+
+        $PEDIDOS_ID
+
+    );
+
+
+    if (
+        !$stmtPedidoEstado->execute()
+    ) {
+
+        throw new Exception(
+            "No se pudo actualizar el estado del pedido."
+        );
+    }
+
+
+    $stmtPedidoEstado->close();
+
+
+    /* =====================================================
+       5. CONFIRMAR TRANSACCIÓN
+    ====================================================== */
+
+    $conn->commit();
+
+
+    /* =====================================================
+       6. CERRAR CONEXIÓN
+    ====================================================== */
+
+    $conn->close();
+
+
+    /* =====================================================
+       7. MOSTRAR ÉXITO
+    ====================================================== */
+
+    ?>
+
+    <!DOCTYPE html>
+
+    <html lang="es">
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        >
+
+        <title>Venta registrada | DIVINE</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
+
+
+    <body>
+
+        <script>
+
+        Swal.fire({
+
+            title: "¡Venta registrada!",
+
+            html:
+
+                "La venta del pedido " +
+
+                "<strong>#<?php echo $PEDIDOS_ID; ?></strong>" +
+
+                " fue registrada correctamente." +
+
+                "<br><br>" +
+
+                "El stock de los productos fue actualizado.",
+
+            icon: "success",
+
+            iconColor: "#b86f80",
+
+            confirmButtonText: "Ver ventas",
+
+            confirmButtonColor: "#8b4e5e",
+
+            background: "#fffdfb",
+
+            color: "#604e53",
+
+            allowOutsideClick: false
+
+        }).then(function() {
+
+            window.location.href =
+                "readtodoventa.php";
+
+        });
+
+        </script>
+
+    </body>
+
+    </html>
+
+    <?php
+
+    exit();
+
+
 } catch (Exception $e) {
- 
- 
-   // ======================================
-   // DESHACER TODO SI ALGO FALLA
-   // ======================================
- 
-   $conn->rollback();
- 
-   alertaError(
-       "❌ No se pudo registrar la venta."
-       . "\n\n"
-       . $e->getMessage()
-   );
- 
+
+
+    /* =====================================================
+       DESHACER TODO
+    ====================================================== */
+
+    $conn->rollback();
+
+
+    $conn->close();
+
+
+    alertaError(
+        $e->getMessage()
+    );
 }
- 
- 
-// ==========================================
-// CERRAR CONEXIÓN
-// ==========================================
- 
-$conn->close();
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-    <div class="tabla">
-      <table>
-        <tr>
-            <th>Productos</th>
-            <th>Stock</th>
-        <tr>
-        <?php
-        if($resultadoCarrito->num_rows > =){
-            while($producto = $resultadoCarrito->fetch_assoc()){
-                $producto_id = $producto ['productos_id'];
-                $sqlProductos = "SELECT nombre, stock FROM productos WHERE id = '$productos_id'";
-                $resultadoProducto = $conn->query ($salProducto);
-                $datosProducto = $resultadoProducto->fetch_assoc();
-                $stock = $datosProducto ['stock'];
-            }
-        }
-        ?>
-        <tr>
-            <td><?php echo $datosProducto['nombre'];?><7td>
-            <td><?php echo $stock; ?></td>
-        </tr>
-</table>
-</div>
-
-</body>
-</html>
