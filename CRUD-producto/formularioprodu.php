@@ -26,12 +26,6 @@ $rol = strtolower(trim($_SESSION['rol'] ?? ''));
    VERIFICAR ROL
 ===================================================== */
 
-/*
-   Se permite entrar al formulario tanto a:
-   - administrador
-   - vendedor
-*/
-
 if ($rol != "administrador" && $rol != "vendedor") {
 
     header("Location: ../totu.php");
@@ -68,14 +62,30 @@ if ($rol == "administrador") {
 
 <title>Formulario Productos DIVINE</title>
 
+
+<!-- =====================================================
+     JQUERY
+===================================================== -->
+
 <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 
+
+<!-- =====================================================
+     JQUERY VALIDATE
+===================================================== -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.js"></script>
+
+
+<!-- =====================================================
+     FUENTES
+===================================================== -->
 
 <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap"
     rel="stylesheet"
 >
+
 
 <style>
 
@@ -171,7 +181,7 @@ form {
 
 
 /* =====================================================
-   IMAGEN
+   IMAGEN SUPERIOR
 ===================================================== */
 
 .imagen {
@@ -347,6 +357,10 @@ input[type="file"] {
 
 }
 
+
+/* =====================================================
+   SELECTOR DE ARCHIVO
+===================================================== */
 
 .selector-archivo {
 
@@ -621,6 +635,29 @@ input[type="submit"]:active {
 
 
 /* =====================================================
+   ERROR DE IMAGEN
+===================================================== */
+
+label.error {
+
+    display: block;
+
+    width: 100%;
+
+    color: #d85a5a;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-top: 8px;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* =====================================================
    RESPONSIVE
 ===================================================== */
 
@@ -772,12 +809,16 @@ input[type="submit"]:active {
 >
 
 
-    <!-- IMAGEN SUPERIOR -->
+    <!-- =================================================
+         IMAGEN SUPERIOR
+    ================================================== -->
 
     <div class="imagen"></div>
 
 
-    <!-- TÍTULO -->
+    <!-- =================================================
+         TÍTULO
+    ================================================== -->
 
     <h2>
 
@@ -796,7 +837,9 @@ input[type="submit"]:active {
     <div class="grupo-campos">
 
 
-        <!-- NOMBRE -->
+        <!-- =================================================
+             NOMBRE
+        ================================================== -->
 
         <label for="nombre">
 
@@ -815,7 +858,9 @@ input[type="submit"]:active {
         >
 
 
-        <!-- DESCRIPCIÓN -->
+        <!-- =================================================
+             DESCRIPCIÓN
+        ================================================== -->
 
         <label for="descripcion">
 
@@ -834,7 +879,9 @@ input[type="submit"]:active {
         >
 
 
-        <!-- CATEGORÍA -->
+        <!-- =================================================
+             CATEGORÍA
+        ================================================== -->
 
         <label for="categoria">
 
@@ -871,7 +918,9 @@ input[type="submit"]:active {
         </select>
 
 
-        <!-- PRECIO -->
+        <!-- =================================================
+             PRECIO
+        ================================================== -->
 
         <label for="precio">
 
@@ -887,10 +936,14 @@ input[type="submit"]:active {
 
             id="precio"
 
+            step="any"
+
         >
 
 
-        <!-- COSTO -->
+        <!-- =================================================
+             COSTO
+        ================================================== -->
 
         <label for="costo">
 
@@ -906,10 +959,14 @@ input[type="submit"]:active {
 
             id="costo"
 
+            step="any"
+
         >
 
 
-        <!-- STOCK -->
+        <!-- =================================================
+             STOCK
+        ================================================== -->
 
         <label for="stock">
 
@@ -925,10 +982,14 @@ input[type="submit"]:active {
 
             id="stock"
 
+            min="0"
+
         >
 
 
-        <!-- CÓDIGO -->
+        <!-- =================================================
+             CÓDIGO
+        ================================================== -->
 
         <label for="codigo">
 
@@ -944,10 +1005,14 @@ input[type="submit"]:active {
 
             id="codigo"
 
+            min="1"
+
         >
 
 
-        <!-- CARGAR IMAGEN -->
+        <!-- =================================================
+             IMAGEN DEL PRODUCTO
+        ================================================== -->
 
         <div class="carga-imagen">
 
@@ -1006,6 +1071,13 @@ input[type="submit"]:active {
             </label>
 
 
+            <!--
+                IMPORTANTE:
+                Aunque esté oculto visualmente,
+                jQuery Validate lo validará porque
+                usamos ignore: []
+            -->
+
             <input
 
                 type="file"
@@ -1014,7 +1086,7 @@ input[type="submit"]:active {
 
                 name="fileToUpload"
 
-                accept="image/*"
+                accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp"
 
             >
 
@@ -1023,7 +1095,9 @@ input[type="submit"]:active {
     </div>
 
 
-    <!-- BOTÓN ENVIAR -->
+    <!-- =================================================
+         BOTÓN ENVIAR
+    ================================================== -->
 
     <input
 
@@ -1035,10 +1109,7 @@ input[type="submit"]:active {
 
 
     <!-- =================================================
-         BOTÓN VOLVER AL PERFIL
-
-         PHP DECIDE AUTOMÁTICAMENTE EL PERFIL
-         SEGÚN EL ROL DE LA SESIÓN
+         BOTÓN VOLVER
     ================================================== -->
 
     <a
@@ -1058,7 +1129,7 @@ input[type="submit"]:active {
 
 
 <!-- =====================================================
-     MOSTRAR NOMBRE DE IMAGEN
+     MOSTRAR NOMBRE DEL ARCHIVO
 ===================================================== -->
 
 <script>
@@ -1112,28 +1183,171 @@ document
 
 
 <!-- =====================================================
-     VALIDACIÓN
+     VALIDACIÓN JQUERY
 ===================================================== -->
 
 <script>
 
-$(document).ready(function(){
+$(document).ready(function () {
+
+
+    /* =================================================
+       VALIDACIÓN PERSONALIZADA PARA IMAGEN
+    ================================================= */
+
+    $.validator.addMethod(
+
+        "imagenValida",
+
+        function (value, element) {
+
+
+            /* -----------------------------------------
+               SI NO SE SELECCIONÓ NINGÚN ARCHIVO
+            ----------------------------------------- */
+
+            if (element.files.length === 0) {
+
+                return false;
+
+            }
+
+
+            /* -----------------------------------------
+               OBTENER ARCHIVO
+            ----------------------------------------- */
+
+            const archivo = element.files[0];
+
+
+            /* -----------------------------------------
+               EXTENSIONES PERMITIDAS
+            ----------------------------------------- */
+
+            const extensionesPermitidas = [
+
+                "jpg",
+
+                "jpeg",
+
+                "png",
+
+                "gif",
+
+                "webp"
+
+            ];
+
+
+            /* -----------------------------------------
+               OBTENER EXTENSIÓN
+            ----------------------------------------- */
+
+            const nombreArchivo =
+
+                archivo.name.toLowerCase();
+
+
+            const extension =
+
+                nombreArchivo
+
+                    .split(".")
+
+                    .pop();
+
+
+            /* -----------------------------------------
+               COMPROBAR EXTENSIÓN
+            ----------------------------------------- */
+
+            if (
+
+                !extensionesPermitidas.includes(
+
+                    extension
+
+                )
+
+            ) {
+
+                return false;
+
+            }
+
+
+            /* -----------------------------------------
+               COMPROBAR TAMAÑO
+               MÁXIMO 5 MB
+            ----------------------------------------- */
+
+            const maximo =
+
+                5 * 1024 * 1024;
+
+
+            if (archivo.size > maximo) {
+
+                return false;
+
+            }
+
+
+            /* -----------------------------------------
+               TODO CORRECTO
+            ----------------------------------------- */
+
+            return true;
+
+        },
+
+        "Seleccione una imagen válida (JPG, JPEG, PNG, GIF o WEBP) de máximo 5 MB."
+
+    );
+
+
+    /* =================================================
+       VALIDACIÓN DEL FORMULARIO
+    ================================================= */
 
     $("#formprodu").validate({
+
+        /*
+         * IMPORTANTE:
+         * jQuery Validate normalmente ignora
+         * elementos ocultos.
+         *
+         * Como nuestro input file tiene
+         * display:none, debemos permitir
+         * que también sea validado.
+         */
+
+        ignore: [],
+
+
+        /* =================================================
+           REGLAS
+        ================================================= */
 
         rules: {
 
             nombre: {
 
-                required: true
+                required: true,
+
+                minlength: 2
 
             },
+
 
             descripcion: {
 
-                required: true
+                required: true,
+
+                minlength: 3
 
             },
+
 
             categoria: {
 
@@ -1141,40 +1355,65 @@ $(document).ready(function(){
 
             },
 
+
             precio: {
 
                 required: true,
 
-                number: true
+                number: true,
+
+                min: 0
 
             },
+
 
             costo: {
 
                 required: true,
 
-                number: true
+                number: true,
+
+                min: 0
 
             },
+
 
             stock: {
 
                 required: true,
 
-                number: true
+                digits: true,
+
+                min: 0
 
             },
+
 
             codigo: {
 
                 required: true,
 
-                number: true
+                digits: true,
+
+                min: 1
+
+            },
+
+
+            fileToUpload: {
+
+                required: true,
+
+                imagenValida: true
 
             }
 
         },
 
+
+        /* =================================================
+           MENSAJES
+        ================================================= */
 
         messages: {
 
@@ -1182,17 +1421,27 @@ $(document).ready(function(){
 
                 required:
 
-                    "Ingrese el nombre del producto"
+                    "Ingrese el nombre del producto",
+
+                minlength:
+
+                    "Ingrese al menos 2 caracteres"
 
             },
+
 
             descripcion: {
 
                 required:
 
-                    "Ingrese la descripción"
+                    "Ingrese la descripción",
+
+                minlength:
+
+                    "Ingrese al menos 3 caracteres"
 
             },
+
 
             categoria: {
 
@@ -1202,6 +1451,7 @@ $(document).ready(function(){
 
             },
 
+
             precio: {
 
                 required:
@@ -1210,9 +1460,14 @@ $(document).ready(function(){
 
                 number:
 
-                    "Solo se permiten números"
+                    "Solo se permiten números",
+
+                min:
+
+                    "El precio no puede ser negativo"
 
             },
+
 
             costo: {
 
@@ -1222,9 +1477,14 @@ $(document).ready(function(){
 
                 number:
 
-                    "Solo se permiten números"
+                    "Solo se permiten números",
+
+                min:
+
+                    "El costo no puede ser negativo"
 
             },
+
 
             stock: {
 
@@ -1232,11 +1492,16 @@ $(document).ready(function(){
 
                     "Ingrese el stock",
 
-                number:
+                digits:
 
-                    "Solo se permiten números"
+                    "Ingrese únicamente números enteros",
+
+                min:
+
+                    "El stock no puede ser negativo"
 
             },
+
 
             codigo: {
 
@@ -1244,15 +1509,77 @@ $(document).ready(function(){
 
                     "Ingrese el código",
 
-                number:
+                digits:
 
-                    "Solo se permiten números"
+                    "Ingrese únicamente números enteros",
+
+                min:
+
+                    "El código debe ser mayor a 0"
+
+            },
+
+
+            fileToUpload: {
+
+                required:
+
+                    "Seleccione una imagen del producto",
+
+                imagenValida:
+
+                    "Seleccione una imagen válida (JPG, JPEG, PNG, GIF o WEBP) de máximo 5 MB"
 
             }
+
+        },
+
+
+        /* =================================================
+           TIPO DE MENSAJE
+        ================================================= */
+
+        errorElement: "label",
+
+        errorClass: "error",
+
+
+        /* =================================================
+           AL SELECCIONAR UNA IMAGEN
+           VOLVER A VALIDARLA
+        ================================================= */
+
+        onfocusout: function(element) {
+
+            this.element(element);
+
+        },
+
+
+        /* =================================================
+           AL CAMBIAR LA IMAGEN
+        ================================================= */
+
+        onchange: function(element) {
+
+            this.element(element);
 
         }
 
     });
+
+
+    /* =====================================================
+       CUANDO SE SELECCIONA UNA IMAGEN,
+       VALIDAR INMEDIATAMENTE
+    ===================================================== */
+
+    $("#fileToUpload").on("change", function () {
+
+        $("#formprodu").validate().element(this);
+
+    });
+
 
 });
 
