@@ -196,6 +196,21 @@ $mensaje = $_GET['mensaje'] ?? '';
 
 $error = $_GET['error'] ?? '';
 
+
+// =====================================================
+// RUTA DEL PERFIL SEGÚN EL ROL
+// =====================================================
+
+if ($rol == "administrador") {
+
+    $rutaPerfil = "../admin.php";
+
+} elseif ($rol == "vendedor") {
+
+    $rutaPerfil = "../perfilvendedor.php";
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -2084,11 +2099,11 @@ td{
 
 
     <!-- =================================================
-         BOTÓN VOLVER
+         BOTÓN VOLVER AL PERFIL SEGÚN EL ROL
          ================================================= -->
 
     <a
-        href="../admin.php"
+        href="<?php echo htmlspecialchars($rutaPerfil); ?>"
         class="volver"
     >
 
@@ -2104,7 +2119,6 @@ td{
 </body>
 
 </html>
-
 
 
 <?php
