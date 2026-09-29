@@ -1,4 +1,4 @@
- <?php
+<?php
 
 /* =========================================================
    CONEXIÓN A LA BASE DE DATOS
@@ -112,9 +112,11 @@ if ($resultadoVentaExistente->num_rows > 0) {
         <title>Venta existente | DIVINE</title>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
+
     <body>
 
     <script>
+
         Swal.fire({
             title: "Venta ya registrada",
             text: "Este pedido ya tiene una venta registrada.",
@@ -125,8 +127,11 @@ if ($resultadoVentaExistente->num_rows > 0) {
             background: "#fffdfb",
             color: "#604e53"
         }).then(function() {
+
             window.location.href = "readtodoventa.php";
+
         });
+
     </script>
 
     </body>
@@ -215,7 +220,15 @@ foreach ($productos as $producto) {
 
 
 /* =========================================================
-   DATOS SEGUROS PARA MOSTRAR
+   FECHA DE LA VENTA
+   SE GENERA AL MOMENTO DE ABRIR EL FORMULARIO
+========================================================= */
+
+$fechaVenta = date("Y-m-d H:i:s");
+
+
+/* =========================================================
+   DATOS SEGUROS
 ========================================================= */
 
 $nombreCliente = htmlspecialchars(
@@ -259,9 +272,6 @@ $direccionCliente = htmlspecialchars(
 
     <title>Registrar venta | DIVINE</title>
 
-
-    <!-- FUENTES -->
-
     <link
         rel="preconnect"
         href="https://fonts.googleapis.com"
@@ -278,16 +288,9 @@ $direccionCliente = htmlspecialchars(
         rel="stylesheet"
     >
 
-
-    <!-- JQUERY -->
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-
-    <!-- SWEETALERT -->
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 
     <style>
 
@@ -316,13 +319,11 @@ $direccionCliente = htmlspecialchars(
                 0 25px 70px rgba(91, 62, 68, 0.13);
         }
 
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
 
         body {
 
@@ -356,7 +357,6 @@ $direccionCliente = htmlspecialchars(
             padding: 35px 18px 50px;
         }
 
-
         .contenedor {
 
             width: 100%;
@@ -375,11 +375,6 @@ $direccionCliente = htmlspecialchars(
 
             box-shadow: var(--sombra);
         }
-
-
-        /* =====================================================
-           CABECERA
-        ====================================================== */
 
         .cabecera {
 
@@ -400,7 +395,6 @@ $direccionCliente = htmlspecialchars(
             overflow: hidden;
         }
 
-
         .cabecera::before {
 
             content: "";
@@ -419,7 +413,6 @@ $direccionCliente = htmlspecialchars(
                 rgba(184,111,128,.08);
         }
 
-
         .cabecera::after {
 
             content: "♡";
@@ -436,7 +429,6 @@ $direccionCliente = htmlspecialchars(
             color: rgba(184,111,128,.08);
         }
 
-
         .mini-marca {
 
             position: relative;
@@ -451,7 +443,6 @@ $direccionCliente = htmlspecialchars(
 
             margin-bottom: 14px;
         }
-
 
         .mini-icono {
 
@@ -481,7 +472,6 @@ $direccionCliente = htmlspecialchars(
                 0 9px 23px rgba(184,111,128,.24);
         }
 
-
         .mini-marca span {
 
             font-size: 11px;
@@ -492,7 +482,6 @@ $direccionCliente = htmlspecialchars(
 
             color: var(--rosa);
         }
-
 
         .cabecera h1 {
 
@@ -511,7 +500,6 @@ $direccionCliente = htmlspecialchars(
             margin-bottom: 8px;
         }
 
-
         .cabecera p {
 
             position: relative;
@@ -527,11 +515,6 @@ $direccionCliente = htmlspecialchars(
             line-height: 1.7;
         }
 
-
-        /* =====================================================
-           DATOS
-        ====================================================== */
-
         .datos {
 
             display: grid;
@@ -545,7 +528,6 @@ $direccionCliente = htmlspecialchars(
 
             background: white;
         }
-
 
         .dato {
 
@@ -566,7 +548,6 @@ $direccionCliente = htmlspecialchars(
             transition: .25s;
         }
 
-
         .dato:hover {
 
             transform: translateY(-2px);
@@ -574,7 +555,6 @@ $direccionCliente = htmlspecialchars(
             box-shadow:
                 0 10px 25px rgba(91,63,68,.06);
         }
-
 
         .dato-icono {
 
@@ -597,7 +577,6 @@ $direccionCliente = htmlspecialchars(
             font-size: 17px;
         }
 
-
         .dato small {
 
             display: block;
@@ -613,7 +592,6 @@ $direccionCliente = htmlspecialchars(
             letter-spacing: 1px;
         }
 
-
         .dato strong {
 
             color: var(--vino);
@@ -621,16 +599,10 @@ $direccionCliente = htmlspecialchars(
             font-size: 14px;
         }
 
-
-        /* =====================================================
-           CONTENIDO
-        ====================================================== */
-
         .contenido {
 
             padding: 5px 48px 45px;
         }
-
 
         .titulo {
 
@@ -643,7 +615,6 @@ $direccionCliente = htmlspecialchars(
             margin: 14px 0 20px;
         }
 
-
         .titulo h2 {
 
             font-family: "Playfair Display", serif;
@@ -654,7 +625,6 @@ $direccionCliente = htmlspecialchars(
 
             font-weight: 600;
         }
-
 
         .cantidad-total {
 
@@ -671,11 +641,6 @@ $direccionCliente = htmlspecialchars(
             font-weight: 700;
         }
 
-
-        /* =====================================================
-           TABLA
-        ====================================================== */
-
         .tabla {
 
             width: 100%;
@@ -690,7 +655,6 @@ $direccionCliente = htmlspecialchars(
                 0 10px 28px rgba(91,63,68,.06);
         }
 
-
         table {
 
             width: 100%;
@@ -701,7 +665,6 @@ $direccionCliente = htmlspecialchars(
 
             background: white;
         }
-
 
         th {
 
@@ -728,7 +691,6 @@ $direccionCliente = htmlspecialchars(
             border-bottom: 1px solid var(--borde);
         }
 
-
         td {
 
             padding: 17px;
@@ -740,28 +702,20 @@ $direccionCliente = htmlspecialchars(
             vertical-align: middle;
         }
 
-
         tbody tr {
 
             transition: .2s;
         }
-
 
         tbody tr:hover {
 
             background: #fdfaf8;
         }
 
-
         tbody tr:last-child td {
 
             border-bottom: none;
         }
-
-
-        /* =====================================================
-           PRODUCTO
-        ====================================================== */
 
         .producto {
 
@@ -771,7 +725,6 @@ $direccionCliente = htmlspecialchars(
 
             gap: 13px;
         }
-
 
         .producto-imagen {
 
@@ -788,6 +741,7 @@ $direccionCliente = htmlspecialchars(
             border-radius: 16px;
 
             background:
+
                 linear-gradient(
                     135deg,
                     #f8e9ec,
@@ -803,16 +757,6 @@ $direccionCliente = htmlspecialchars(
             overflow: hidden;
         }
 
-
-        .producto-imagen img {
-
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-        }
-
-
         .producto-nombre {
 
             color: #614d52;
@@ -822,14 +766,12 @@ $direccionCliente = htmlspecialchars(
             margin-bottom: 4px;
         }
 
-
         .producto-codigo {
 
             color: #a39396;
 
             font-size: 10px;
         }
-
 
         .cantidad {
 
@@ -853,7 +795,6 @@ $direccionCliente = htmlspecialchars(
             font-weight: 700;
         }
 
-
         .stock {
 
             display: inline-flex;
@@ -875,7 +816,6 @@ $direccionCliente = htmlspecialchars(
             font-weight: 600;
         }
 
-
         .stock-punto {
 
             width: 7px;
@@ -886,14 +826,12 @@ $direccionCliente = htmlspecialchars(
             background: #91ad82;
         }
 
-
         .precio {
 
             color: #8c7a7f;
 
             white-space: nowrap;
         }
-
 
         .subtotal {
 
@@ -903,11 +841,6 @@ $direccionCliente = htmlspecialchars(
 
             white-space: nowrap;
         }
-
-
-        /* =====================================================
-           INFERIOR
-        ====================================================== */
 
         .parte-inferior {
 
@@ -920,7 +853,6 @@ $direccionCliente = htmlspecialchars(
 
             margin-top: 25px;
         }
-
 
         .pago {
 
@@ -939,7 +871,6 @@ $direccionCliente = htmlspecialchars(
                 );
         }
 
-
         .pago h3 {
 
             font-family: "Playfair Display", serif;
@@ -951,7 +882,6 @@ $direccionCliente = htmlspecialchars(
             margin-bottom: 5px;
         }
 
-
         .pago p {
 
             color: var(--texto-suave);
@@ -962,7 +892,6 @@ $direccionCliente = htmlspecialchars(
 
             margin-bottom: 20px;
         }
-
 
         select {
 
@@ -989,7 +918,6 @@ $direccionCliente = htmlspecialchars(
             cursor: pointer;
         }
 
-
         select:focus {
 
             border-color: var(--rosa);
@@ -997,11 +925,6 @@ $direccionCliente = htmlspecialchars(
             box-shadow:
                 0 0 0 4px rgba(184,111,128,.09);
         }
-
-
-        /* =====================================================
-           RESUMEN
-        ====================================================== */
 
         .resumen {
 
@@ -1027,7 +950,6 @@ $direccionCliente = htmlspecialchars(
                 0 17px 35px rgba(119,68,82,.23);
         }
 
-
         .resumen::before {
 
             content: "";
@@ -1046,7 +968,6 @@ $direccionCliente = htmlspecialchars(
                 rgba(255,255,255,.08);
         }
 
-
         .resumen-titulo {
 
             position: relative;
@@ -1062,7 +983,6 @@ $direccionCliente = htmlspecialchars(
             margin-bottom: 7px;
         }
 
-
         .total {
 
             position: relative;
@@ -1073,7 +993,6 @@ $direccionCliente = htmlspecialchars(
 
             margin-bottom: 20px;
         }
-
 
         .resumen-linea {
 
@@ -1092,28 +1011,20 @@ $direccionCliente = htmlspecialchars(
             font-size: 12px;
         }
 
-
         .resumen-linea:last-child {
 
             border-bottom: none;
         }
-
 
         .resumen-linea span {
 
             color: rgba(255,255,255,.72);
         }
 
-
         .resumen-linea strong {
 
             color: white;
         }
-
-
-        /* =====================================================
-           BOTONES
-        ====================================================== */
 
         .acciones {
 
@@ -1127,7 +1038,6 @@ $direccionCliente = htmlspecialchars(
 
             margin-top: 28px;
         }
-
 
         .btn-volver {
 
@@ -1159,7 +1069,6 @@ $direccionCliente = htmlspecialchars(
             transition: .25s;
         }
 
-
         .btn-volver:hover {
 
             color: var(--vino);
@@ -1168,7 +1077,6 @@ $direccionCliente = htmlspecialchars(
 
             transform: translateY(-2px);
         }
-
 
         .btn-registrar {
 
@@ -1204,7 +1112,6 @@ $direccionCliente = htmlspecialchars(
             transition: .25s;
         }
 
-
         .btn-registrar:hover {
 
             transform: translateY(-3px);
@@ -1212,7 +1119,6 @@ $direccionCliente = htmlspecialchars(
             box-shadow:
                 0 15px 29px rgba(137,76,92,.30);
         }
-
 
         .pie {
 
@@ -1225,16 +1131,10 @@ $direccionCliente = htmlspecialchars(
             font-size: 11px;
         }
 
-
         .pie span {
 
             color: var(--rosa);
         }
-
-
-        /* =====================================================
-           RESPONSIVE
-        ====================================================== */
 
         @media (max-width: 850px) {
 
@@ -1246,13 +1146,11 @@ $direccionCliente = htmlspecialchars(
                 padding-right: 25px;
             }
 
-
             .cabecera {
 
                 padding-left: 25px;
                 padding-right: 25px;
             }
-
 
             .contenido {
 
@@ -1260,13 +1158,11 @@ $direccionCliente = htmlspecialchars(
                 padding-right: 25px;
             }
 
-
             .parte-inferior {
 
                 grid-template-columns: 1fr;
             }
         }
-
 
         @media (max-width: 600px) {
 
@@ -1275,24 +1171,20 @@ $direccionCliente = htmlspecialchars(
                 padding: 12px;
             }
 
-
             .contenedor {
 
                 border-radius: 23px;
             }
-
 
             .cabecera h1 {
 
                 font-size: 32px;
             }
 
-
             .titulo {
 
                 display: block;
             }
-
 
             .cantidad-total {
 
@@ -1301,12 +1193,10 @@ $direccionCliente = htmlspecialchars(
                 margin-top: 8px;
             }
 
-
             .acciones {
 
                 flex-direction: column-reverse;
             }
-
 
             .btn-volver,
             .btn-registrar {
@@ -1319,16 +1209,9 @@ $direccionCliente = htmlspecialchars(
 
 </head>
 
-
 <body>
 
-
 <div class="contenedor">
-
-
-    <!-- =====================================================
-         CABECERA
-    ====================================================== -->
 
     <div class="cabecera">
 
@@ -1344,11 +1227,9 @@ $direccionCliente = htmlspecialchars(
 
         </div>
 
-
         <h1>
             Registrar venta
         </h1>
-
 
         <p>
             Revisa los productos del pedido, verifica el stock,
@@ -1359,12 +1240,7 @@ $direccionCliente = htmlspecialchars(
     </div>
 
 
-    <!-- =====================================================
-         INFORMACIÓN DEL PEDIDO
-    ====================================================== -->
-
     <div class="datos">
-
 
         <div class="dato">
 
@@ -1428,16 +1304,10 @@ $direccionCliente = htmlspecialchars(
 
         </div>
 
-
     </div>
 
 
-    <!-- =====================================================
-         CONTENIDO
-    ====================================================== -->
-
     <div class="contenido">
-
 
         <div class="titulo">
 
@@ -1456,10 +1326,6 @@ $direccionCliente = htmlspecialchars(
         </div>
 
 
-        <!-- =================================================
-             TABLA
-        ================================================== -->
-
         <div class="tabla">
 
             <table>
@@ -1468,51 +1334,33 @@ $direccionCliente = htmlspecialchars(
 
                     <tr>
 
-                        <th>
-                            Producto
-                        </th>
+                        <th>Producto</th>
 
-                        <th>
-                            Precio
-                        </th>
+                        <th>Precio</th>
 
-                        <th>
-                            Cantidad
-                        </th>
+                        <th>Cantidad</th>
 
-                        <th>
-                            Stock actual
-                        </th>
+                        <th>Stock actual</th>
 
-                        <th>
-                            Subtotal
-                        </th>
+                        <th>Subtotal</th>
 
                     </tr>
 
                 </thead>
 
-
                 <tbody>
-
 
                 <?php foreach ($productos as $producto): ?>
 
                     <tr>
-
-
-                        <!-- PRODUCTO -->
 
                         <td>
 
                             <div class="producto">
 
                                 <div class="producto-imagen">
-
                                     ♡
-
                                 </div>
-
 
                                 <div>
 
@@ -1529,7 +1377,6 @@ $direccionCliente = htmlspecialchars(
                                         ?>
 
                                     </div>
-
 
                                     <div class="producto-codigo">
 
@@ -1554,8 +1401,6 @@ $direccionCliente = htmlspecialchars(
                         </td>
 
 
-                        <!-- PRECIO -->
-
                         <td>
 
                             <span class="precio">
@@ -1576,8 +1421,6 @@ $direccionCliente = htmlspecialchars(
                         </td>
 
 
-                        <!-- CANTIDAD -->
-
                         <td>
 
                             <span class="cantidad">
@@ -1592,8 +1435,6 @@ $direccionCliente = htmlspecialchars(
 
                         </td>
 
-
-                        <!-- STOCK -->
 
                         <td>
 
@@ -1614,8 +1455,6 @@ $direccionCliente = htmlspecialchars(
                         </td>
 
 
-                        <!-- SUBTOTAL -->
-
                         <td>
 
                             <span class="subtotal">
@@ -1635,11 +1474,9 @@ $direccionCliente = htmlspecialchars(
 
                         </td>
 
-
                     </tr>
 
                 <?php endforeach; ?>
-
 
                 </tbody>
 
@@ -1658,13 +1495,11 @@ $direccionCliente = htmlspecialchars(
             id="formVenta"
         >
 
-
             <input
                 type="hidden"
                 name="PEDIDOS_ID"
                 value="<?php echo $idPedido; ?>"
             >
-
 
             <input
                 type="hidden"
@@ -1672,18 +1507,21 @@ $direccionCliente = htmlspecialchars(
                 value="<?php echo $totalVenta; ?>"
             >
 
-
             <input
                 type="hidden"
                 name="estado"
                 value="En proceso"
             >
 
+            <!-- FECHA QUE SE ENVÍA A createventa.php -->
+            <input
+                type="hidden"
+                name="fecha"
+                value="<?php echo htmlspecialchars($fechaVenta, ENT_QUOTES, 'UTF-8'); ?>"
+            >
+
 
             <div class="parte-inferior">
-
-
-                <!-- PAGO -->
 
                 <div class="pago">
 
@@ -1691,12 +1529,10 @@ $direccionCliente = htmlspecialchars(
                         Método de pago
                     </h3>
 
-
                     <p>
                         Selecciona el método utilizado por el
                         cliente para realizar el pago.
                     </p>
-
 
                     <select
                         name="metodo"
@@ -1725,14 +1561,11 @@ $direccionCliente = htmlspecialchars(
                 </div>
 
 
-                <!-- RESUMEN -->
-
                 <div class="resumen">
 
                     <div class="resumen-titulo">
                         Total de la venta
                     </div>
-
 
                     <div class="total">
 
@@ -1749,7 +1582,6 @@ $direccionCliente = htmlspecialchars(
 
                     </div>
 
-
                     <div class="resumen-linea">
 
                         <span>
@@ -1761,7 +1593,6 @@ $direccionCliente = htmlspecialchars(
                         </strong>
 
                     </div>
-
 
                     <div class="resumen-linea">
 
@@ -1775,6 +1606,17 @@ $direccionCliente = htmlspecialchars(
 
                     </div>
 
+                    <div class="resumen-linea">
+
+                        <span>
+                            Fecha
+                        </span>
+
+                        <strong>
+                            <?php echo date("d/m/Y H:i", strtotime($fechaVenta)); ?>
+                        </strong>
+
+                    </div>
 
                     <div class="resumen-linea">
 
@@ -1793,10 +1635,7 @@ $direccionCliente = htmlspecialchars(
             </div>
 
 
-            <!-- BOTONES -->
-
             <div class="acciones">
-
 
                 <a
                     href="../CRUD-CARRITO-PEDIDO/readtodopedido.php"
@@ -1821,9 +1660,7 @@ $direccionCliente = htmlspecialchars(
 
                 </button>
 
-
             </div>
-
 
         </form>
 
@@ -1838,7 +1675,6 @@ $direccionCliente = htmlspecialchars(
 
         </div>
 
-
     </div>
 
 </div>
@@ -1848,16 +1684,9 @@ $direccionCliente = htmlspecialchars(
 
 $(document).ready(function() {
 
-
     $("#formVenta").on("submit", function(e) {
 
-
         var metodo = $("#metodo").val();
-
-
-        /* ==============================================
-           VALIDAR MÉTODO
-        ============================================== */
 
         if (metodo === "") {
 
@@ -1889,12 +1718,7 @@ $(document).ready(function() {
         }
 
 
-        /* ==============================================
-           CONFIRMAR
-        ============================================== */
-
         e.preventDefault();
-
 
         Swal.fire({
 
@@ -1907,6 +1731,10 @@ $(document).ready(function() {
                 "<br><br>" +
 
                 "Total: <b>Bs. <?php echo number_format($totalVenta, 2); ?></b>" +
+
+                "<br><br>" +
+
+                "Fecha: <b><?php echo date("d/m/Y H:i", strtotime($fechaVenta)); ?></b>" +
 
                 "<br><br>" +
 
@@ -1934,7 +1762,6 @@ $(document).ready(function() {
 
         }).then(function(result) {
 
-
             if (result.isConfirmed) {
 
                 $("#formVenta")[0].submit();
@@ -1948,7 +1775,6 @@ $(document).ready(function() {
 });
 
 </script>
-
 
 </body>
 

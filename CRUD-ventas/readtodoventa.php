@@ -1,4 +1,4 @@
- <?php
+<?php
 
 session_start();
 
@@ -9,6 +9,7 @@ session_start();
 if (!isset($_SESSION['nombre']) || empty($_SESSION['nombre'])) {
 
     header("Location: ../SESIONES/loginform.php");
+
     exit();
 
 }
@@ -19,6 +20,7 @@ if (!isset($_SESSION['nombre']) || empty($_SESSION['nombre'])) {
 ========================================================= */
 
 $nombreUsuario = trim($_SESSION['nombre']);
+
 $rol = strtolower(trim($_SESSION['rol'] ?? ''));
 
 
@@ -29,6 +31,7 @@ $rol = strtolower(trim($_SESSION['rol'] ?? ''));
 if ($rol !== 'administrador' && $rol !== 'vendedor') {
 
     header("Location: ../SESIONES/loginform.php");
+
     exit();
 
 }
@@ -39,8 +42,11 @@ if ($rol !== 'administrador' && $rol !== 'vendedor') {
 ========================================================= */
 
 $servidor = "localhost";
+
 $usuario = "root";
+
 $contraseña = "";
+
 $nombreBD = "DIVINE";
 
 $conn = new mysqli(
@@ -52,7 +58,10 @@ $conn = new mysqli(
 
 if ($conn->connect_error) {
 
-    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: " . $conn->connect_error);
+    die(
+        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: "
+        . $conn->connect_error
+    );
 
 }
 
@@ -76,28 +85,43 @@ $conn->set_charset("utf8mb4");
 if ($rol === 'administrador') {
 
     $sql = "
+
         SELECT
+
             v.id AS id_venta,
+
             v.estado AS estado_venta,
+
             v.metodo,
+
             v.costototal,
+
             v.PEDIDOS_ID,
+
             v.fecha,
 
             p.ID AS id_pedido,
+
             p.nombre AS cliente,
+
             p.fecha AS fecha_pedido,
+
             p.estado AS estado_pedido,
+
             p.nombrevendedor,
+
             p.telefono,
+
             p.direccion
 
         FROM VENTAS v
 
         INNER JOIN PEDIDOS p
+
             ON v.PEDIDOS_ID = p.ID
 
         ORDER BY v.id DESC
+
     ";
 
     $stmt = $conn->prepare($sql);
@@ -111,30 +135,45 @@ if ($rol === 'administrador') {
     */
 
     $sql = "
+
         SELECT
+
             v.id AS id_venta,
+
             v.estado AS estado_venta,
+
             v.metodo,
+
             v.costototal,
+
             v.PEDIDOS_ID,
+
             v.fecha,
 
             p.ID AS id_pedido,
+
             p.nombre AS cliente,
+
             p.fecha AS fecha_pedido,
+
             p.estado AS estado_pedido,
+
             p.nombrevendedor,
+
             p.telefono,
+
             p.direccion
 
         FROM VENTAS v
 
         INNER JOIN PEDIDOS p
+
             ON v.PEDIDOS_ID = p.ID
 
         WHERE p.nombrevendedor = ?
 
         ORDER BY v.id DESC
+
     ";
 
     $stmt = $conn->prepare($sql);
@@ -144,6 +183,7 @@ if ($rol === 'administrador') {
         $stmt->bind_param("s", $nombreUsuario);
 
     }
+
 }
 
 
@@ -154,8 +194,11 @@ if ($rol === 'administrador') {
 if (!$stmt) {
 
     die(
+
         "ERROR EN LA CONSULTA: " .
+
         htmlspecialchars($conn->error)
+
     );
 
 }
@@ -168,8 +211,11 @@ if (!$stmt) {
 if (!$stmt->execute()) {
 
     die(
+
         "ERROR AL EJECUTAR LA CONSULTA: " .
+
         htmlspecialchars($stmt->error)
+
     );
 
 }
@@ -208,10 +254,23 @@ $stmt->close();
 
     <title>DIVINE | Ventas</title>
 
+
+    <!-- =====================================================
+         FUENTES
+    ====================================================== -->
+
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
         rel="stylesheet"
     >
+
+
+    <!-- =====================================================
+         SWEETALERT2
+    ====================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <style>
 
@@ -221,20 +280,31 @@ $stmt->close();
             box-sizing: border-box;
         }
 
+
         body {
 
             font-family: 'DM Sans', sans-serif;
 
             background:
+
                 radial-gradient(
+
                     circle at top left,
+
                     rgba(205, 157, 174, 0.16),
+
                     transparent 35%
+
                 ),
+
                 linear-gradient(
+
                     135deg,
+
                     #f8f1eb,
+
                     #eee1d8
+
                 );
 
             min-height: 100vh;
@@ -266,10 +336,15 @@ $stmt->close();
         .encabezado {
 
             background:
+
                 linear-gradient(
+
                     135deg,
+
                     #9d6073,
+
                     #b8798d
+
                 );
 
             border-radius: 28px;
@@ -279,7 +354,10 @@ $stmt->close();
             color: white;
 
             box-shadow:
-                0 18px 45px rgba(104, 69, 80, 0.18);
+
+                0 18px 45px
+
+                rgba(104, 69, 80, 0.18);
 
             position: relative;
 
@@ -297,13 +375,17 @@ $stmt->close();
             position: absolute;
 
             width: 230px;
+
             height: 230px;
 
             border-radius: 50%;
 
-            background: rgba(255,255,255,0.08);
+            background:
+
+                rgba(255,255,255,0.08);
 
             right: -80px;
+
             top: -100px;
 
         }
@@ -316,13 +398,17 @@ $stmt->close();
             position: absolute;
 
             width: 140px;
+
             height: 140px;
 
             border-radius: 50%;
 
-            background: rgba(255,255,255,0.06);
+            background:
+
+                rgba(255,255,255,0.06);
 
             right: 120px;
+
             bottom: -80px;
 
         }
@@ -339,7 +425,11 @@ $stmt->close();
 
         .marca {
 
-            font-family: 'Playfair Display', serif;
+            font-family:
+
+                'Playfair Display',
+
+                serif;
 
             font-size: 18px;
 
@@ -356,7 +446,11 @@ $stmt->close();
 
         .titulo {
 
-            font-family: 'Playfair Display', serif;
+            font-family:
+
+                'Playfair Display',
+
+                serif;
 
             font-size: 38px;
 
@@ -392,9 +486,15 @@ $stmt->close();
 
             padding: 9px 15px;
 
-            background: rgba(255,255,255,0.15);
+            background:
 
-            border: 1px solid rgba(255,255,255,0.18);
+                rgba(255,255,255,0.15);
+
+            border:
+
+                1px solid
+
+                rgba(255,255,255,0.18);
 
             border-radius: 30px;
 
@@ -416,16 +516,25 @@ $stmt->close();
 
         .tarjeta {
 
-            background: rgba(255,255,255,0.91);
+            background:
+
+                rgba(255,255,255,0.91);
 
             border-radius: 28px;
 
             padding: 28px;
 
             box-shadow:
-                0 15px 45px rgba(95, 69, 78, 0.10);
 
-            border: 1px solid rgba(151, 111, 123, 0.10);
+                0 15px 45px
+
+                rgba(95, 69, 78, 0.10);
+
+            border:
+
+                1px solid
+
+                rgba(151, 111, 123, 0.10);
 
             backdrop-filter: blur(10px);
 
@@ -455,7 +564,11 @@ $stmt->close();
 
         .barra h2 {
 
-            font-family: 'Playfair Display', serif;
+            font-family:
+
+                'Playfair Display',
+
+                serif;
 
             color: #704653;
 
@@ -493,7 +606,11 @@ $stmt->close();
 
             border-radius: 20px;
 
-            border: 1px solid #eadbd7;
+            border:
+
+                1px solid
+
+                #eadbd7;
 
         }
 
@@ -504,7 +621,7 @@ $stmt->close();
 
             border-collapse: collapse;
 
-            min-width: 1100px;
+            min-width: 1250px;
 
             background: white;
 
@@ -514,10 +631,15 @@ $stmt->close();
         thead {
 
             background:
+
                 linear-gradient(
+
                     135deg,
+
                     #f5e8e5,
+
                     #f0dfdb
+
                 );
 
         }
@@ -548,7 +670,11 @@ $stmt->close();
 
             padding: 17px 15px;
 
-            border-top: 1px solid #f0e5e2;
+            border-top:
+
+                1px solid
+
+                #f0e5e2;
 
             color: #62565b;
 
@@ -706,6 +832,146 @@ $stmt->close();
 
 
         /* =================================================
+           BOTONES DE ACCIONES
+        ================================================= */
+
+        .acciones {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            white-space: nowrap;
+
+        }
+
+
+        .btn-accion {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            padding: 8px 11px;
+
+            border-radius: 12px;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            border: none;
+
+            cursor: pointer;
+
+            transition:
+
+                transform 0.2s ease,
+
+                box-shadow 0.2s ease,
+
+                background 0.2s ease;
+
+        }
+
+
+        .btn-accion:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+
+        /* DETALLES */
+
+        .btn-detalles {
+
+            background: #f1e5ed;
+
+            color: #81566c;
+
+        }
+
+
+        .btn-detalles:hover {
+
+            background: #e7d6e0;
+
+            box-shadow:
+
+                0 5px 12px
+
+                rgba(129, 86, 108, 0.15);
+
+        }
+
+
+        /* EDITAR */
+
+        .btn-editar {
+
+            background: #eee5f2;
+
+            color: #765780;
+
+        }
+
+
+        .btn-editar:hover {
+
+            background: #e1d5e8;
+
+            box-shadow:
+
+                0 5px 12px
+
+                rgba(118, 87, 128, 0.15);
+
+        }
+
+
+        /* ELIMINAR */
+
+        .btn-eliminar {
+
+            background: #f6e3e3;
+
+            color: #995d63;
+
+        }
+
+
+        .btn-eliminar:hover {
+
+            background: #efd2d4;
+
+            box-shadow:
+
+                0 5px 12px
+
+                rgba(153, 93, 99, 0.15);
+
+        }
+
+
+        .icono-btn {
+
+            font-size: 14px;
+
+            line-height: 1;
+
+        }
+
+
+        /* =================================================
            SIN RESULTADOS
         ================================================= */
 
@@ -745,7 +1011,11 @@ $stmt->close();
 
         .sin-resultados h3 {
 
-            font-family: 'Playfair Display', serif;
+            font-family:
+
+                'Playfair Display',
+
+                serif;
 
             color: #704653;
 
@@ -782,10 +1052,15 @@ $stmt->close();
             text-decoration: none;
 
             background:
+
                 linear-gradient(
+
                     135deg,
+
                     #9d6073,
+
                     #b7798c
+
                 );
 
             color: white;
@@ -799,7 +1074,10 @@ $stmt->close();
             font-weight: 600;
 
             box-shadow:
-                0 8px 20px rgba(143, 83, 101, 0.20);
+
+                0 8px 20px
+
+                rgba(143, 83, 101, 0.20);
 
             transition: 0.25s ease;
 
@@ -808,10 +1086,15 @@ $stmt->close();
 
         .volver:hover {
 
-            transform: translateY(-2px);
+            transform:
+
+                translateY(-2px);
 
             box-shadow:
-                0 12px 25px rgba(143, 83, 101, 0.28);
+
+                0 12px 25px
+
+                rgba(143, 83, 101, 0.28);
 
         }
 
@@ -880,11 +1163,15 @@ $stmt->close();
         <div class="encabezado-contenido">
 
             <div class="marca">
+
                 DIVINE
+
             </div>
 
             <div class="titulo">
+
                 Registro de Ventas
+
             </div>
 
             <div class="subtitulo">
@@ -907,16 +1194,31 @@ $stmt->close();
                 <span>♡</span>
 
                 <span>
+
                     Sesión:
+
                     <strong>
-                        <?php echo htmlspecialchars($nombreUsuario); ?>
+
+                        <?php
+
+                        echo htmlspecialchars($nombreUsuario);
+
+                        ?>
+
                     </strong>
+
                 </span>
 
                 <span>•</span>
 
                 <span>
-                    <?php echo htmlspecialchars(ucfirst($rol)); ?>
+
+                    <?php
+
+                    echo htmlspecialchars(ucfirst($rol));
+
+                    ?>
+
                 </span>
 
             </div>
@@ -927,7 +1229,7 @@ $stmt->close();
 
 
     <!-- =====================================================
-         TARJETA
+         TARJETA PRINCIPAL
     ====================================================== -->
 
     <div class="tarjeta">
@@ -936,14 +1238,28 @@ $stmt->close();
         <div class="barra">
 
             <h2>
+
                 Ventas registradas
+
             </h2>
 
             <div class="contador">
 
-                <?php echo $totalVentas; ?>
+                <?php
 
-                <?php echo ($totalVentas == 1) ? ' venta' : ' ventas'; ?>
+                echo $totalVentas;
+
+                ?>
+
+                <?php
+
+                echo ($totalVentas == 1)
+
+                    ? ' venta'
+
+                    : ' ventas';
+
+                ?>
 
             </div>
 
@@ -962,39 +1278,63 @@ $stmt->close();
                         <tr>
 
                             <th>
+
                                 ID Venta
+
                             </th>
 
                             <th>
+
                                 Pedido
+
                             </th>
 
                             <th>
+
                                 Cliente
+
                             </th>
 
                             <th>
+
                                 Vendedor
+
                             </th>
 
                             <th>
+
                                 Teléfono
+
                             </th>
 
                             <th>
+
                                 Método
+
                             </th>
 
                             <th>
+
                                 Total
+
                             </th>
 
                             <th>
+
                                 Estado
+
                             </th>
 
                             <th>
+
                                 Fecha
+
+                            </th>
+
+                            <th>
+
+                                Acciones
+
                             </th>
 
                         </tr>
@@ -1010,44 +1350,84 @@ $stmt->close();
 
                         <?php
 
-                        $estadoVenta = trim($venta['estado_venta'] ?? '');
+                        /* =================================================
+                           ESTADO DE LA VENTA
+                        ================================================= */
 
-                        $estadoClase = 'estado-normal';
+                        $estadoVenta =
 
-                        $estadoNormalizado = strtolower($estadoVenta);
+                            trim(
+
+                                $venta['estado_venta'] ?? ''
+
+                            );
+
+                        $estadoClase =
+
+                            'estado-normal';
+
+                        $estadoNormalizado =
+
+                            strtolower(
+
+                                $estadoVenta
+
+                            );
 
 
                         if (
+
                             $estadoNormalizado === 'aceptado'
+
                         ) {
 
-                            $estadoClase = 'estado-aceptado';
+                            $estadoClase =
+
+                                'estado-aceptado';
 
                         } elseif (
+
                             $estadoNormalizado === 'en proceso'
+
                             ||
+
                             $estadoNormalizado === 'enproceso'
+
                         ) {
 
-                            $estadoClase = 'estado-proceso';
+                            $estadoClase =
+
+                                'estado-proceso';
 
                         } elseif (
+
                             $estadoNormalizado === 'completado'
+
                         ) {
 
-                            $estadoClase = 'estado-completado';
+                            $estadoClase =
+
+                                'estado-completado';
 
                         } elseif (
+
                             $estadoNormalizado === 'rechazado'
+
                         ) {
 
-                            $estadoClase = 'estado-rechazado';
+                            $estadoClase =
+
+                                'estado-rechazado';
 
                         } elseif (
+
                             $estadoNormalizado === 'pendiente'
+
                         ) {
 
-                            $estadoClase = 'estado-pendiente';
+                            $estadoClase =
+
+                                'estado-pendiente';
 
                         }
 
@@ -1057,14 +1437,22 @@ $stmt->close();
                         <tr>
 
 
-                            <!-- ID VENTA -->
+                            <!-- =========================================
+                                 ID VENTA
+                            ========================================== -->
 
                             <td>
 
                                 <span class="numero">
 
-                                    #<?php
-                                    echo (int)$venta['id_venta'];
+                                    #
+
+                                    <?php
+
+                                    echo (int)
+
+                                        $venta['id_venta'];
+
                                     ?>
 
                                 </span>
@@ -1072,14 +1460,22 @@ $stmt->close();
                             </td>
 
 
-                            <!-- ID PEDIDO -->
+                            <!-- =========================================
+                                 ID PEDIDO
+                            ========================================== -->
 
                             <td>
 
                                 <span class="numero">
 
-                                    #<?php
-                                    echo (int)$venta['PEDIDOS_ID'];
+                                    #
+
+                                    <?php
+
+                                    echo (int)
+
+                                        $venta['PEDIDOS_ID'];
+
                                     ?>
 
                                 </span>
@@ -1087,7 +1483,9 @@ $stmt->close();
                             </td>
 
 
-                            <!-- CLIENTE -->
+                            <!-- =========================================
+                                 CLIENTE
+                            ========================================== -->
 
                             <td>
 
@@ -1096,7 +1494,11 @@ $stmt->close();
                                     <?php
 
                                     echo htmlspecialchars(
-                                        $venta['cliente'] ?? 'Sin nombre'
+
+                                        $venta['cliente']
+
+                                        ?? 'Sin nombre'
+
                                     );
 
                                     ?>
@@ -1106,7 +1508,9 @@ $stmt->close();
                             </td>
 
 
-                            <!-- VENDEDOR -->
+                            <!-- =========================================
+                                 VENDEDOR
+                            ========================================== -->
 
                             <td>
 
@@ -1115,7 +1519,11 @@ $stmt->close();
                                     <?php
 
                                     echo htmlspecialchars(
-                                        $venta['nombrevendedor'] ?? 'Sin vendedor'
+
+                                        $venta['nombrevendedor']
+
+                                        ?? 'Sin vendedor'
+
                                     );
 
                                     ?>
@@ -1125,14 +1533,20 @@ $stmt->close();
                             </td>
 
 
-                            <!-- TELÉFONO -->
+                            <!-- =========================================
+                                 TELÉFONO
+                            ========================================== -->
 
                             <td>
 
                                 <?php
 
                                 echo htmlspecialchars(
-                                    $venta['telefono'] ?? 'Sin teléfono'
+
+                                    $venta['telefono']
+
+                                    ?? 'Sin teléfono'
+
                                 );
 
                                 ?>
@@ -1140,7 +1554,9 @@ $stmt->close();
                             </td>
 
 
-                            <!-- MÉTODO -->
+                            <!-- =========================================
+                                 MÉTODO
+                            ========================================== -->
 
                             <td>
 
@@ -1149,7 +1565,11 @@ $stmt->close();
                                     <?php
 
                                     echo htmlspecialchars(
-                                        $venta['metodo'] ?? 'Sin método'
+
+                                        $venta['metodo']
+
+                                        ?? 'Sin método'
+
                                     );
 
                                     ?>
@@ -1159,20 +1579,34 @@ $stmt->close();
                             </td>
 
 
-                            <!-- TOTAL -->
+                            <!-- =========================================
+                                 TOTAL
+                            ========================================== -->
 
                             <td>
 
                                 <span class="total">
 
                                     Bs.
+
                                     <?php
 
                                     echo number_format(
-                                        (float)($venta['costototal'] ?? 0),
+
+                                        (float)(
+
+                                            $venta['costototal']
+
+                                            ?? 0
+
+                                        ),
+
                                         2,
+
                                         '.',
+
                                         ','
+
                                     );
 
                                     ?>
@@ -1182,18 +1616,28 @@ $stmt->close();
                             </td>
 
 
-                            <!-- ESTADO -->
+                            <!-- =========================================
+                                 ESTADO
+                            ========================================== -->
 
                             <td>
 
-                                <span class="estado <?php echo $estadoClase; ?>">
+                                <span
+
+                                    class="estado <?php echo $estadoClase; ?>"
+
+                                >
 
                                     <?php
 
                                     echo htmlspecialchars(
+
                                         $estadoVenta !== ''
+
                                             ? $estadoVenta
+
                                             : 'Sin estado'
+
                                     );
 
                                     ?>
@@ -1203,17 +1647,123 @@ $stmt->close();
                             </td>
 
 
-                            <!-- FECHA -->
+                            <!-- =========================================
+                                 FECHA
+                            ========================================== -->
 
                             <td>
 
                                 <?php
 
                                 echo htmlspecialchars(
-                                    $venta['fecha'] ?? ''
+
+                                    $venta['fecha']
+
+                                    ?? ''
+
                                 );
 
                                 ?>
+
+                            </td>
+
+
+                            <!-- =========================================
+                                 ACCIONES
+                            ========================================== -->
+
+                            <td>
+
+                                <div class="acciones">
+
+
+                                    <!-- =================================
+                                         DETALLES
+                                         LO PUEDEN VER AMBOS ROLES
+                                    ================================== -->
+
+                                    <a
+
+                                        href="readunoventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                        class="btn-accion btn-detalles"
+
+                                        title="Ver detalles de la venta"
+
+                                    >
+
+                                        <span class="icono-btn">
+
+                                            ♡
+
+                                        </span>
+
+                                        Detalles
+
+                                    </a>
+
+
+                                    <!-- =================================
+                                         SOLO ADMINISTRADOR
+                                         EDITAR
+                                    ================================== -->
+
+                                    <?php if ($rol === 'administrador'): ?>
+
+
+                                        <a
+
+                                            href="updateformventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                            class="btn-accion btn-editar"
+
+                                            title="Editar venta"
+
+                                        >
+
+                                            <span class="icono-btn">
+
+                                                ✎
+
+                                            </span>
+
+                                            Editar
+
+                                        </a>
+
+
+                                        <!-- =============================
+                                             SOLO ADMINISTRADOR
+                                             ELIMINAR
+                                        ============================== -->
+
+                                        <a
+
+                                            href="deleteventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                            class="btn-accion btn-eliminar"
+
+                                            title="Eliminar venta"
+
+                                            onclick="confirmarEliminacion(event, <?php echo (int)$venta['id_venta']; ?>)"
+
+                                        >
+
+                                            <span class="icono-btn">
+
+                                                🗑
+
+                                            </span>
+
+                                            Eliminar
+
+                                        </a>
+
+
+                                    <?php endif; ?>
+
+
+                                </div>
 
                             </td>
 
@@ -1237,18 +1787,24 @@ $stmt->close();
             <div class="sin-resultados">
 
                 <div class="sin-icono">
+
                     ♡
+
                 </div>
 
                 <h3>
+
                     No hay ventas registradas
+
                 </h3>
 
                 <p>
 
                     <?php if ($rol === 'administrador'): ?>
 
-                        Actualmente no existen ventas registradas en el sistema.
+                        Actualmente no existen ventas registradas
+
+                        en el sistema.
 
                     <?php else: ?>
 
@@ -1265,26 +1821,40 @@ $stmt->close();
 
 
         <!-- =================================================
-             VOLVER
+             BOTÓN VOLVER
         ================================================== -->
 
         <?php if ($rol === 'administrador'): ?>
 
+
             <a
-                href="../ADMINISTRADOR/index.php"
+
+                href="../admin.php"
+
                 class="volver"
+
             >
+
                 ← Volver al administrador
+
             </a>
+
 
         <?php else: ?>
 
+
             <a
-                href="../VENDEDOR/index.php"
+
+                href="../perfilvendedor.php"
+
                 class="volver"
+
             >
+
                 ← Volver al vendedor
+
             </a>
+
 
         <?php endif; ?>
 
@@ -1293,6 +1863,243 @@ $stmt->close();
 
 
 </div>
+
+
+<!-- =====================================================
+     SWEETALERT PARA ELIMINAR
+====================================================== -->
+
+<script>
+
+function confirmarEliminacion(event, idVenta) {
+
+    event.preventDefault();
+
+    const enlace = event.currentTarget;
+
+    Swal.fire({
+
+        title: '¿Eliminar esta venta?',
+
+        html:
+            'La venta <strong>#' +
+            idVenta +
+            '</strong> será eliminada del registro.',
+
+        icon: 'warning',
+
+        iconColor: '#b76e83',
+
+        showCancelButton: true,
+
+        confirmButtonText: 'Sí, eliminar',
+
+        cancelButtonText: 'Cancelar',
+
+        reverseButtons: true,
+
+        focusCancel: true,
+
+        background: '#fff9f8',
+
+        color: '#604b53',
+
+        buttonsStyling: false,
+
+        customClass: {
+
+            popup: 'sweet-divine',
+
+            title: 'sweet-titulo',
+
+            htmlContainer: 'sweet-texto',
+
+            confirmButton: 'sweet-confirmar',
+
+            cancelButton: 'sweet-cancelar'
+
+        }
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href = enlace.href;
+
+        }
+
+    });
+
+}
+
+</script>
+
+
+<!-- =====================================================
+     ESTILOS DEL SWEETALERT
+====================================================== -->
+
+<style>
+
+    .sweet-divine {
+
+        border-radius: 28px !important;
+
+        padding: 30px !important;
+
+        box-shadow:
+
+            0 20px 60px
+
+            rgba(126, 79, 96, 0.22) !important;
+
+        border:
+
+            1px solid
+
+            rgba(183, 110, 131, 0.15) !important;
+
+    }
+
+
+    .sweet-titulo {
+
+        font-family:
+
+            'Playfair Display',
+
+            serif !important;
+
+        color: #704653 !important;
+
+        font-size: 28px !important;
+
+        font-weight: 600 !important;
+
+    }
+
+
+    .sweet-texto {
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        color: #806d74 !important;
+
+        font-size: 14px !important;
+
+        line-height: 1.6 !important;
+
+    }
+
+
+    .sweet-confirmar {
+
+        border: none !important;
+
+        outline: none !important;
+
+        background:
+
+            linear-gradient(
+
+                135deg,
+
+                #a9657b,
+
+                #c18498
+
+            ) !important;
+
+        color: white !important;
+
+        padding: 11px 22px !important;
+
+        border-radius: 14px !important;
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        font-size: 13px !important;
+
+        font-weight: 700 !important;
+
+        cursor: pointer !important;
+
+        margin: 0 5px !important;
+
+        box-shadow:
+
+            0 7px 18px
+
+            rgba(169, 101, 123, 0.25) !important;
+
+        transition: 0.2s ease !important;
+
+    }
+
+
+    .sweet-confirmar:hover {
+
+        transform: translateY(-2px) !important;
+
+        box-shadow:
+
+            0 10px 22px
+
+            rgba(169, 101, 123, 0.32) !important;
+
+    }
+
+
+    .sweet-cancelar {
+
+        border: none !important;
+
+        outline: none !important;
+
+        background: #f2e5e5 !important;
+
+        color: #8b626b !important;
+
+        padding: 11px 22px !important;
+
+        border-radius: 14px !important;
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        font-size: 13px !important;
+
+        font-weight: 600 !important;
+
+        cursor: pointer !important;
+
+        margin: 0 5px !important;
+
+        transition: 0.2s ease !important;
+
+    }
+
+
+    .sweet-cancelar:hover {
+
+        background: #ead7d9 !important;
+
+        transform: translateY(-2px) !important;
+
+    }
+
+</style>
 
 
 </body>

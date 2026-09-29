@@ -53,36 +53,35 @@ function alertaError($mensaje)
 
     </head>
 
-
     <body>
 
-        <script>
+    <script>
 
-        Swal.fire({
+    Swal.fire({
 
-            title: "No se pudo completar",
+        title: "No se pudo completar",
 
-            text: <?php echo json_encode($mensaje); ?>,
+        text: <?php echo json_encode($mensaje); ?>,
 
-            icon: "error",
+        icon: "error",
 
-            iconColor: "#b86f80",
+        iconColor: "#b86f80",
 
-            confirmButtonText: "Entendido",
+        confirmButtonText: "Entendido",
 
-            confirmButtonColor: "#8b4e5e",
+        confirmButtonColor: "#8b4e5e",
 
-            background: "#fffdfb",
+        background: "#fffdfb",
 
-            color: "#604e53"
+        color: "#604e53"
 
-        }).then(function() {
+    }).then(function() {
 
-            history.back();
+        history.back();
 
-        });
+    });
 
-        </script>
+    </script>
 
     </body>
 
@@ -114,6 +113,23 @@ $costototal = trim(
     $_POST["costototal"] ?? ""
 );
 
+/*
+ * RECIBIR FECHA
+ */
+$fecha = trim(
+    $_POST["fecha"] ?? ""
+);
+
+
+/* =========================================================
+   SI NO LLEGA FECHA, GENERARLA AUTOMÁTICAMENTE
+========================================================= */
+
+if ($fecha === "") {
+
+    $fecha = date("Y-m-d H:i:s");
+}
+
 
 /* =========================================================
    VALIDAR PEDIDO
@@ -129,7 +145,6 @@ if (
         "El pedido recibido no es válido."
     );
 }
-
 
 $PEDIDOS_ID = (int)$PEDIDOS_ID;
 
@@ -187,8 +202,31 @@ if (
     );
 }
 
-
 $costototal = (float)$costototal;
+
+
+/* =========================================================
+   VALIDAR FECHA
+========================================================= */
+
+$fechaObjeto = DateTime::createFromFormat(
+    "Y-m-d H:i:s",
+    $fecha
+);
+
+if (
+    !$fechaObjeto
+    ||
+    $fechaObjeto->format("Y-m-d H:i:s") !== $fecha
+) {
+
+    /*
+     * Si la fecha recibida no tiene el formato correcto,
+     * se genera nuevamente.
+     */
+
+    $fecha = date("Y-m-d H:i:s");
+}
 
 
 /* =========================================================
@@ -210,11 +248,9 @@ $sqlPedido = "
 
 ";
 
-
 $stmtPedido = $conn->prepare(
     $sqlPedido
 );
-
 
 if (!$stmtPedido) {
 
@@ -223,19 +259,15 @@ if (!$stmtPedido) {
     );
 }
 
-
 $stmtPedido->bind_param(
     "i",
     $PEDIDOS_ID
 );
 
-
 $stmtPedido->execute();
-
 
 $resultadoPedido =
     $stmtPedido->get_result();
-
 
 if (
     $resultadoPedido->num_rows === 0
@@ -248,10 +280,8 @@ if (
     );
 }
 
-
 $pedido =
     $resultadoPedido->fetch_assoc();
-
 
 $stmtPedido->close();
 
@@ -273,12 +303,10 @@ $sqlVentaExistente = "
 
 ";
 
-
 $stmtVentaExistente =
     $conn->prepare(
         $sqlVentaExistente
     );
-
 
 if (!$stmtVentaExistente) {
 
@@ -287,19 +315,15 @@ if (!$stmtVentaExistente) {
     );
 }
 
-
 $stmtVentaExistente->bind_param(
     "i",
     $PEDIDOS_ID
 );
 
-
 $stmtVentaExistente->execute();
-
 
 $resultadoVentaExistente =
     $stmtVentaExistente->get_result();
-
 
 if (
     $resultadoVentaExistente->num_rows > 0
@@ -311,7 +335,6 @@ if (
         "Este pedido ya tiene una venta registrada."
     );
 }
-
 
 $stmtVentaExistente->close();
 
@@ -350,12 +373,10 @@ $sqlCarrito = "
 
 ";
 
-
 $stmtCarrito =
     $conn->prepare(
         $sqlCarrito
     );
-
 
 if (!$stmtCarrito) {
 
@@ -364,22 +385,17 @@ if (!$stmtCarrito) {
     );
 }
 
-
 $stmtCarrito->bind_param(
     "i",
     $PEDIDOS_ID
 );
 
-
 $stmtCarrito->execute();
-
 
 $resultadoCarrito =
     $stmtCarrito->get_result();
 
-
 $productosPedido = [];
-
 
 while (
     $producto =
@@ -389,7 +405,6 @@ while (
     $productosPedido[] =
         $producto;
 }
-
 
 $stmtCarrito->close();
 
@@ -414,7 +429,6 @@ if (
 
 $totalReal = 0;
 
-
 foreach (
     $productosPedido
     as $producto
@@ -426,7 +440,6 @@ foreach (
     $subtotal =
         (float)$producto["costototal"];
 
-
     if ($cantidad <= 0) {
 
         alertaError(
@@ -434,15 +447,8 @@ foreach (
         );
     }
 
-
     $totalReal += $subtotal;
 }
-
-
-/*
- * Se utiliza el total calculado directamente
- * desde la base de datos.
- */
 
 $costototal = $totalReal;
 
@@ -458,7 +464,7 @@ try {
 
 
     /* =====================================================
-       1. VERIFICAR STOCK DE TODOS LOS PRODUCTOS
+       1. VERIFICAR STOCK
     ====================================================== */
 
     foreach (
@@ -466,26 +472,19 @@ try {
         as $producto
     ) {
 
-
         $codigo =
             (int)$producto["PRODUCTO_codigo"];
-
 
         $cantidad =
             (int)$producto["cantidad"];
 
-
         $stockActual =
             (int)$producto["stock"];
-
 
         $nombreProducto =
             $producto["nombre"];
 
-
-        if (
-            $cantidad <= 0
-        ) {
+        if ($cantidad <= 0) {
 
             throw new Exception(
                 "La cantidad del producto "
@@ -494,10 +493,7 @@ try {
             );
         }
 
-
-        if (
-            $stockActual < $cantidad
-        ) {
+        if ($stockActual < $cantidad) {
 
             throw new Exception(
 
@@ -511,12 +507,11 @@ try {
 
             );
         }
-
     }
 
 
     /* =====================================================
-       2. INSERTAR VENTA
+       2. INSERTAR VENTA CON FECHA
     ====================================================== */
 
     $sqlVenta = "
@@ -526,11 +521,13 @@ try {
             estado,
             metodo,
             costototal,
-            PEDIDOS_ID
+            PEDIDOS_ID,
+            fecha
         )
 
         VALUES
         (
+            ?,
             ?,
             ?,
             ?,
@@ -539,12 +536,10 @@ try {
 
     ";
 
-
     $stmtVenta =
         $conn->prepare(
             $sqlVenta
         );
-
 
     if (!$stmtVenta) {
 
@@ -554,9 +549,19 @@ try {
     }
 
 
+    /*
+     * ssdis
+     *
+     * s = estado
+     * s = metodo
+     * d = costototal
+     * i = PEDIDOS_ID
+     * s = fecha
+     */
+
     $stmtVenta->bind_param(
 
-        "ssdi",
+        "ssdis",
 
         $estado,
 
@@ -564,7 +569,9 @@ try {
 
         $costototal,
 
-        $PEDIDOS_ID
+        $PEDIDOS_ID,
+
+        $fecha
 
     );
 
@@ -602,12 +609,10 @@ try {
 
     ";
 
-
     $stmtStock =
         $conn->prepare(
             $sqlStock
         );
-
 
     if (!$stmtStock) {
 
@@ -622,10 +627,8 @@ try {
         as $producto
     ) {
 
-
         $codigo =
             (int)$producto["PRODUCTO_codigo"];
-
 
         $cantidad =
             (int)$producto["cantidad"];
@@ -654,11 +657,6 @@ try {
         }
 
 
-        /*
-         * Si affected_rows es 0 significa que el stock
-         * cambió entre la comprobación anterior y este UPDATE.
-         */
-
         if (
             $stmtStock->affected_rows !== 1
         ) {
@@ -672,7 +670,6 @@ try {
 
             );
         }
-
     }
 
 
@@ -697,12 +694,10 @@ try {
 
     ";
 
-
     $stmtPedidoEstado =
         $conn->prepare(
             $sqlPedidoEstado
         );
-
 
     if (!$stmtPedidoEstado) {
 
@@ -775,49 +770,52 @@ try {
 
     </head>
 
-
     <body>
 
-        <script>
+    <script>
 
-        Swal.fire({
+    Swal.fire({
 
-            title: "¡Venta registrada!",
+        title: "¡Venta registrada!",
 
-            html:
+        html:
 
-                "La venta del pedido " +
+            "La venta del pedido " +
 
-                "<strong>#<?php echo $PEDIDOS_ID; ?></strong>" +
+            "<strong>#<?php echo $PEDIDOS_ID; ?></strong>" +
 
-                " fue registrada correctamente." +
+            " fue registrada correctamente." +
 
-                "<br><br>" +
+            "<br><br>" +
 
-                "El stock de los productos fue actualizado.",
+            "Fecha: <strong><?php echo date("d/m/Y H:i:s", strtotime($fecha)); ?></strong>" +
 
-            icon: "success",
+            "<br><br>" +
 
-            iconColor: "#b86f80",
+            "El stock de los productos fue actualizado.",
 
-            confirmButtonText: "Ver ventas",
+        icon: "success",
 
-            confirmButtonColor: "#8b4e5e",
+        iconColor: "#b86f80",
 
-            background: "#fffdfb",
+        confirmButtonText: "Ver ventas",
 
-            color: "#604e53",
+        confirmButtonColor: "#8b4e5e",
 
-            allowOutsideClick: false
+        background: "#fffdfb",
 
-        }).then(function() {
+        color: "#604e53",
 
-            window.location.href =
-                "readtodoventa.php";
+        allowOutsideClick: false
 
-        });
+    }).then(function() {
 
-        </script>
+        window.location.href =
+            "readtodoventa.php";
+
+    });
+
+    </script>
 
     </body>
 
@@ -837,9 +835,7 @@ try {
 
     $conn->rollback();
 
-
     $conn->close();
-
 
     alertaError(
         $e->getMessage()
