@@ -1,989 +1,960 @@
-<!DOCTYPE html> <html lang="es"> <head>
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Asistente DIVINE</title>
-
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-
-        font-family:
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
-
-        max-width: 800px;
-
-        margin: 40px auto;
-
-        padding: 0 20px;
-
-        color: #333;
-
-        background: #fafafa;
-
-    }
-
-    h1 {
-
-        margin-bottom: 5px;
-
-    }
-
-    .descripcion {
-
-        color: #666;
-
-        margin-bottom: 25px;
-
-        line-height: 1.6;
-
-    }
-
-    .buscador-contenedor {
-
-        display: flex;
-
-        gap: 10px;
-
-        margin-bottom: 20px;
-
-    }
-
-    input {
-
-        flex: 1;
-
-        padding: 14px;
-
-        border: 1px solid #ccc;
-
-        border-radius: 8px;
-
-        font-size: 16px;
-
-        outline: none;
-
-    }
-
-    input:focus {
-
-        border-color: #2a75d3;
-
-    }
-
-    button {
-
-        padding: 14px 25px;
-
-        background: #2a75d3;
-
-        color: white;
-
-        border: none;
-
-        border-radius: 8px;
-
-        cursor: pointer;
-
-        font-weight: bold;
-
-        font-size: 15px;
-
-    }
-
-    button:hover {
-
-        background: #1c5fa3;
-
-    }
-
-    button:disabled {
-
-        opacity: 0.6;
-
-        cursor: not-allowed;
-
-    }
-
-    #status {
-
-        display: none;
-
-        margin-bottom: 20px;
-
-        padding: 15px;
-
-        background: #f4f4f9;
-
-        border-left: 4px solid #2a75d3;
-
-        border-radius: 6px;
-
-        font-size: 14px;
-
-        white-space: pre-wrap;
-
-        overflow-wrap: anywhere;
-
-    }
-
-    #status.error {
-
-        background: #fff0f0;
-
-        border-left-color: #d32f2f;
-
-        color: #a00000;
-
-    }
-
-    #status.exito {
-
-        background: #effff3;
-
-        border-left-color: #1b8a3c;
-
-        color: #145d2b;
-
-    }
-
-    .respuesta-ia {
-
-        padding: 20px;
-
-        margin-bottom: 20px;
-
-        border: 1px solid #ddd;
-
-        border-radius: 10px;
-
-        background: white;
-
-        box-shadow:
-            0 2px 7px rgba(0, 0, 0, 0.05);
-
-        line-height: 1.7;
-
-    }
-
-    .producto {
-
-        padding: 18px;
-
-        margin-bottom: 12px;
-
-        border: 1px solid #e3e3e3;
-
-        border-radius: 10px;
-
-        background: white;
-
-        box-shadow:
-            0 2px 7px rgba(0, 0, 0, 0.05);
-
-    }
-
-    .producto h3 {
-
-        margin-top: 0;
-
-        margin-bottom: 8px;
-
-    }
-
-    .producto p {
-
-        margin: 6px 0;
-
-        color: #555;
-
-    }
-
-    .sin-resultados {
-
-        padding: 20px;
-
-        background: white;
-
-        border-radius: 8px;
-
-        border: 1px solid #ddd;
-
-    }
-
-    .ejemplos {
-
-        margin-top: 20px;
-
-        padding: 15px;
-
-        background: #f4f4f9;
-
-        border-radius: 8px;
-
-    }
-
-    .ejemplos p {
-
-        margin: 7px 0;
-
-    }
-
-    @media (max-width: 600px) {
+ <!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Asistente DIVINE</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+
+            color: #333;
+            background: #fafafa;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        .descripcion {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
 
         .buscador-contenedor {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-            flex-direction: column;
+        input {
+            flex: 1;
+            padding: 14px;
 
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: #2a75d3;
         }
 
         button {
+            padding: 14px 25px;
 
-            width: 100%;
+            background: #2a75d3;
+            color: white;
+
+            border: none;
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #1c5fa3;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #status {
+            display: none;
+
+            margin-bottom: 20px;
+            padding: 15px;
+
+            background: #f4f4f9;
+
+            border-left: 4px solid #2a75d3;
+            border-radius: 6px;
+
+            font-size: 14px;
+
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        #status.error {
+            background: #fff0f0;
+            border-left-color: #d32f2f;
+            color: #a00000;
+        }
+
+        #status.exito {
+            background: #effff3;
+            border-left-color: #1b8a3c;
+            color: #145d2b;
+        }
+
+        .respuesta-ia {
+            padding: 20px;
+            margin-bottom: 20px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            background: white;
+
+            box-shadow:
+                0 2px 7px rgba(0, 0, 0, 0.05);
+
+            line-height: 1.7;
+        }
+
+        .respuesta-ia strong {
+            color: #2a75d3;
+        }
+
+        .producto {
+            padding: 18px;
+            margin-bottom: 12px;
+
+            border: 1px solid #e3e3e3;
+            border-radius: 10px;
+
+            background: white;
+
+            box-shadow:
+                0 2px 7px rgba(0, 0, 0, 0.05);
+        }
+
+        .producto h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .producto p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .sin-resultados {
+            padding: 20px;
+
+            background: white;
+
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .ejemplos {
+            margin-top: 20px;
+            padding: 15px;
+
+            background: #f4f4f9;
+
+            border-radius: 8px;
+        }
+
+        .ejemplos p {
+            margin: 7px 0;
+        }
+
+        @media (max-width: 600px) {
+
+            .buscador-contenedor {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
 
         }
 
-    }
+    </style>
 
-</style>
+</head>
 
-</head> <body>
-<h1>Asistente DIVINE</h1>
 
-<p class="descripcion">
+<body>
 
-    Puedes buscar productos de DIVINE o hacer preguntas generales
-    sobre cuidado de la piel y cabello.
+    <h1>Asistente DIVINE</h1>
 
-</p>
-
-<div class="buscador-contenedor">
-
-    <input
-        type="text"
-        id="busquedaInput"
-        placeholder="Escribe tu pregunta o búsqueda..."
-        autocomplete="off"
-    >
-
-    <button
-        id="botonBuscar"
-        type="button"
-    >
-        Buscar
-    </button>
-
-</div>
-
-<div class="ejemplos">
-
-    <strong>Ejemplos:</strong>
-
-    <p>
-        productos para hidratar la piel
+    <p class="descripcion">
+        Puedes buscar productos de DIVINE o hacer preguntas generales
+        sobre cuidado de la piel y cabello.
     </p>
 
-    <p>
-        aceite de argán de menos de 70
-    </p>
 
-    <p>
-        ¿Qué puedo hacer si tengo piel grasa?
-    </p>
+    <div class="buscador-contenedor">
 
-    <p>
-        ¿Qué rutina me recomiendas para mi piel?
-    </p>
+        <input
+            type="text"
+            id="busquedaInput"
+            placeholder="Escribe tu pregunta o búsqueda..."
+            autocomplete="off"
+        >
 
-    <p>
-        ¿Qué hago si mi piel se descama?
-    </p>
+        <button
+            id="botonBuscar"
+            type="button"
+        >
+            Buscar
+        </button>
 
-</div>
+    </div>
 
-<div id="status"></div>
 
-<div id="respuestaIA"></div>
+    <div class="ejemplos">
 
-<div id="resultados"></div>
+        <strong>Ejemplos:</strong>
 
-<script>
-// ======================================================
-// ELEMENTOS
-// ======================================================
+        <p>
+            productos para hidratar la piel
+        </p>
 
-const inputBusqueda =
-document.getElementById(
-"busquedaInput"
-);
+        <p>
+            aceite de argán de menos de 70
+        </p>
 
-const resultadosDiv =
-document.getElementById(
-"resultados"
-);
+        <p>
+            ¿Qué puedo hacer si tengo piel grasa?
+        </p>
 
-const respuestaIADiv =
-document.getElementById(
-"respuestaIA"
-);
+        <p>
+            ¿Qué rutina me recomiendas para mi piel?
+        </p>
 
-const statusDiv =
-document.getElementById(
-"status"
-);
+        <p>
+            ¿Qué hago si mi piel se descama?
+        </p>
 
-const botonBuscar =
-document.getElementById(
-"botonBuscar"
-);
+    </div>
 
-// ======================================================
-// ENTER
-// ======================================================
 
-inputBusqueda.addEventListener(
+    <div id="status"></div>
 
-"keydown",
+    <div id="respuestaIA"></div>
 
-function(event) {
+    <div id="resultados"></div>
 
-    if (event.key === "Enter") {
 
-        event.preventDefault();
+    <script>
 
-        buscarConIA();
+        // ======================================================
+        // ELEMENTOS
+        // ======================================================
 
-    }
+        const inputBusqueda =
+            document.getElementById(
+                "busquedaInput"
+            );
 
-}
+        const resultadosDiv =
+            document.getElementById(
+                "resultados"
+            );
 
-);
+        const respuestaIADiv =
+            document.getElementById(
+                "respuestaIA"
+            );
 
-// ======================================================
-// CLICK
-// ======================================================
+        const statusDiv =
+            document.getElementById(
+                "status"
+            );
 
-botonBuscar.addEventListener(
+        const botonBuscar =
+            document.getElementById(
+                "botonBuscar"
+            );
 
-"click",
 
-buscarConIA
+        // ======================================================
+        // ENTER
+        // ======================================================
 
-);
+        inputBusqueda.addEventListener(
+            "keydown",
+            function(event) {
 
-// ======================================================
-// MOSTRAR ESTADO
-// ======================================================
+                if (event.key === "Enter") {
 
-function mostrarEstado(
-mensaje,
-tipo = ""
-) {
+                    event.preventDefault();
 
-statusDiv.style.display =
-    "block";
+                    buscarConIA();
 
-statusDiv.className =
-    tipo;
+                }
 
-statusDiv.innerText =
-    mensaje;
+            }
+        );
 
-}
 
-// ======================================================
-// OCULTAR ESTADO
-// ======================================================
+        // ======================================================
+        // CLICK
+        // ======================================================
 
-function ocultarEstado() {
+        botonBuscar.addEventListener(
+            "click",
+            buscarConIA
+        );
 
-statusDiv.style.display =
-    "none";
 
-statusDiv.innerText =
-    "";
+        // ======================================================
+        // MOSTRAR ESTADO
+        // ======================================================
 
-}
+        function mostrarEstado(
+            mensaje,
+            tipo = ""
+        ) {
 
-// ======================================================
-// FUNCIÓN PRINCIPAL
-// ======================================================
+            statusDiv.style.display =
+                "block";
 
-async function buscarConIA() {
+            statusDiv.className =
+                tipo;
 
-const busqueda =
-    inputBusqueda.value.trim();
+            statusDiv.innerText =
+                mensaje;
 
-resultadosDiv.innerHTML =
-    "";
+        }
 
-respuestaIADiv.innerHTML =
-    "";
 
-// ==================================================
-// VALIDAR
-// ==================================================
+        // ======================================================
+        // OCULTAR ESTADO
+        // ======================================================
 
-if (!busqueda) {
+        function ocultarEstado() {
 
-    mostrarEstado(
+            statusDiv.style.display =
+                "none";
 
-        "Escribe primero una pregunta o búsqueda.",
+            statusDiv.innerText =
+                "";
 
-        "error"
+            statusDiv.className =
+                "";
 
-    );
+        }
 
-    inputBusqueda.focus();
 
-    return;
+        // ======================================================
+        // FUNCIÓN PRINCIPAL
+        // ======================================================
 
-}
+        async function buscarConIA() {
 
-// ==================================================
-// ESTADO
-// ==================================================
+            const busqueda =
+                inputBusqueda.value.trim();
 
-botonBuscar.disabled =
-    true;
 
-botonBuscar.innerText =
-    "Pensando...";
+            // ==================================================
+            // LIMPIAR RESULTADOS ANTERIORES
+            // ==================================================
 
-mostrarEstado(
+            resultadosDiv.innerHTML =
+                "";
 
-    "Consultando al asistente...",
+            respuestaIADiv.innerHTML =
+                "";
 
-    ""
+            ocultarEstado();
 
-);
 
-try {
+            // ==================================================
+            // VALIDAR
+            // ==================================================
 
-    // ==================================================
-    // LLAMAR A PHP
-    // ==================================================
+            if (!busqueda) {
 
-    const response =
-        await fetch(
+                mostrarEstado(
+                    "Escribe primero una pregunta o búsqueda.",
+                    "error"
+                );
 
-            "./filtrar.php",
+                inputBusqueda.focus();
 
-            {
-
-                method:
-                    "POST",
-
-                headers:
-                    {
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                body:
-                    JSON.stringify(
-
-                        {
-
-                            busqueda:
-                                busqueda
-
-                        }
-
-                    )
+                return;
 
             }
 
-        );
 
-    // ==================================================
-    // LEER RESPUESTA
-    // ==================================================
+            // ==================================================
+            // ESTADO DE CARGA
+            // ==================================================
 
-    const textoRespuesta =
-        await response.text();
+            botonBuscar.disabled =
+                true;
 
-    console.log(
-        "Respuesta PHP:",
-        textoRespuesta
-    );
+            botonBuscar.innerText =
+                "Pensando...";
 
-    // ==================================================
-    // CONVERTIR A JSON
-    // ==================================================
-
-    let data;
-
-    try {
-
-        data =
-            JSON.parse(
-                textoRespuesta
+            mostrarEstado(
+                "Consultando al asistente...",
+                ""
             );
 
-    }
 
-    catch (error) {
-
-        console.error(
-            "PHP respondió:",
-            textoRespuesta
-        );
-
-        mostrarEstado(
-
-            "El servidor PHP no devolvió JSON válido.\n\n" +
-
-            "Respuesta recibida:\n\n" +
-
-            textoRespuesta,
-
-            "error"
-
-        );
-
-        return;
-
-    }
-
-    // ==================================================
-    // ERROR HTTP
-    // ==================================================
-
-    if (!response.ok) {
-
-        let mensaje =
-
-            "Error del servidor PHP (" +
-
-            response.status +
-
-            ")" ;
-
-        if (data.error) {
-
-            mensaje +=
-
-                "\n\n" +
-
-                data.error;
-
-        }
-
-        if (data.detalle) {
-
-            mensaje +=
-
-                "\n\nDetalle:\n" +
-
-                data.detalle;
-
-        }
-
-        mostrarEstado(
-
-            mensaje,
-
-            "error"
-
-        );
-
-        return;
-
-    }
-
-    // ==================================================
-    // ERROR DEVUELTO POR PHP
-    // ==================================================
-
-    if (data.error) {
-
-        mostrarEstado(
-
-            data.error,
-
-            "error"
-
-        );
-
-        return;
-
-    }
-
-    // ==================================================
-    // RESPUESTA GENERAL DE IA
-    // ==================================================
-
-    if (
-
-        data.respuestaIA &&
-
-        typeof data.respuestaIA === "string"
-
-    ) {
-
-        respuestaIADiv.innerHTML =
-
-            `
-
-            <div class="respuesta-ia">
-
-                <strong>Asistente DIVINE</strong>
-
-                <br><br>
-
-                ${formatearRespuesta(
-                    data.respuestaIA
-                )}
-
-            </div>
-
-            `;
-
-    }
-
-    // ==================================================
-    // PRODUCTOS
-    // ==================================================
-
-    const productos =
-
-        Array.isArray(
-            data.productos
-        )
-
-            ? data.productos
-
-            : [];
-
-    // ==================================================
-    // MOSTRAR PRODUCTOS
-    // ==================================================
-
-    if (productos.length > 0) {
-
-        const filtros =
-
-            data.filtrosAplicados ||
-
-            {};
-
-        let mensaje =
-
-            "Productos encontrados: " +
-
-            productos.length;
-
-        if (
-            filtros.categoria
-        ) {
-
-            mensaje +=
-
-                "\nCategoría: " +
-
-                filtros.categoria;
-
-        }
-
-        if (
-            Number(
-                filtros.precio_maximo
-            ) > 0
-        ) {
-
-            mensaje +=
-
-                "\nPrecio máximo: $" +
-
-                filtros.precio_maximo;
-
-        }
-
-        mostrarEstado(
-
-            mensaje,
-
-            "exito"
-
-        );
-
-        productos.forEach(
-
-            function(prod) {
-
-                const div =
-
-                    document.createElement(
-                        "div"
+            try {
+
+                // ==================================================
+                // LLAMAR A FILTRAR.PHP
+                // ==================================================
+
+                const response =
+                    await fetch(
+                        "./filtrar.php",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    busqueda:
+                                        busqueda
+                                })
+                        }
                     );
 
-                div.className =
-                    "producto";
 
-                div.innerHTML = `
+                // ==================================================
+                // LEER RESPUESTA
+                // ==================================================
 
-                    <h3>
+                const textoRespuesta =
+                    await response.text();
 
-                        ${escapeHTML(
-                            prod.nombre
-                        )}
 
-                    </h3>
+                console.log(
+                    "Respuesta PHP:",
+                    textoRespuesta
+                );
 
-                    <p>
 
-                        <b>Código:</b>
+                // ==================================================
+                // CONVERTIR RESPUESTA A JSON
+                // ==================================================
 
-                        ${escapeHTML(
-                            prod.codigo
-                        )}
+                let data;
 
-                    </p>
 
-                    <p>
+                try {
 
-                        <b>Descripción:</b>
+                    data =
+                        JSON.parse(
+                            textoRespuesta
+                        );
 
-                        ${escapeHTML(
-                            prod.descripcion
-                        )}
+                }
 
-                    </p>
+                catch (error) {
 
-                    <p>
+                    console.error(
+                        "PHP respondió:",
+                        textoRespuesta
+                    );
 
-                        <b>Categoría:</b>
+                    mostrarEstado(
 
-                        ${escapeHTML(
-                            prod.categoria
-                        )}
+                        "El servidor PHP no devolvió JSON válido.\n\n" +
 
-                    </p>
+                        "Respuesta recibida:\n\n" +
 
-                    <p>
+                        textoRespuesta,
 
-                        <b>Precio:</b>
+                        "error"
 
-                        $${formatearNumero(
-                            prod.precio
-                        )}
+                    );
 
-                    </p>
+                    return;
 
-                    <p>
+                }
 
-                        <b>Stock:</b>
 
-                        ${formatearNumero(
-                            prod.stock
-                        )}
+                // ==================================================
+                // ERROR HTTP
+                // ==================================================
 
-                    </p>
+                if (!response.ok) {
 
-                `;
+                    let mensaje =
+                        "Error del servidor PHP (" +
+                        response.status +
+                        ")";
 
-                resultadosDiv.appendChild(
-                    div
+
+                    if (data.error) {
+
+                        mensaje +=
+                            "\n\n" +
+                            data.error;
+
+                    }
+
+
+                    if (data.detalle) {
+
+                        mensaje +=
+                            "\n\nDetalle:\n" +
+                            data.detalle;
+
+                    }
+
+
+                    mostrarEstado(
+                        mensaje,
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                // ==================================================
+                // ERROR DEVUELTO POR PHP
+                // ==================================================
+
+                if (data.error) {
+
+                    mostrarEstado(
+                        data.error,
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                // ==================================================
+                // OBTENER RESPUESTA DE LA IA
+                //
+                // IMPORTANTE:
+                //
+                // filtrar.php devuelve:
+                //
+                // "respuesta": "..."
+                //
+                // NO devuelve:
+                //
+                // "respuestaIA"
+                // ==================================================
+
+                const respuestaIA =
+                    typeof data.respuesta === "string"
+                        ? data.respuesta.trim()
+                        : "";
+
+
+                // ==================================================
+                // MOSTRAR RESPUESTA DE LA IA
+                // ==================================================
+
+                if (respuestaIA !== "") {
+
+                    respuestaIADiv.innerHTML =
+
+                        `
+                        <div class="respuesta-ia">
+
+                            <strong>
+                                Asistente DIVINE
+                            </strong>
+
+                            <br><br>
+
+                            ${formatearRespuesta(
+                                respuestaIA
+                            )}
+
+                        </div>
+                        `;
+
+                }
+
+
+                // ==================================================
+                // OBTENER PRODUCTOS
+                //
+                // Si PHP no manda productos,
+                // simplemente usamos [].
+                // Esto NO es un error.
+                // ==================================================
+
+                const productos =
+                    Array.isArray(
+                        data.productos
+                    )
+                        ? data.productos
+                        : [];
+
+
+                // ==================================================
+                // SI ES UNA PREGUNTA GENERAL
+                //
+                // NO NECESITA PRODUCTOS
+                // ==================================================
+
+                if (
+                    data.tipo === "pregunta"
+                ) {
+
+                    if (respuestaIA !== "") {
+
+                        mostrarEstado(
+                            "Respuesta generada correctamente.",
+                            "exito"
+                        );
+
+                    }
+
+                    return;
+
+                }
+
+
+                // ==================================================
+                // MOSTRAR PRODUCTOS
+                // ==================================================
+
+                if (productos.length > 0) {
+
+                    const filtros =
+                        data.filtrosAplicados ||
+                        {};
+
+
+                    let mensaje =
+                        "Productos encontrados: " +
+                        productos.length;
+
+
+                    if (
+                        filtros.categoria
+                    ) {
+
+                        mensaje +=
+                            "\nCategoría: " +
+                            filtros.categoria;
+
+                    }
+
+
+                    if (
+                        Number(
+                            filtros.precio_maximo
+                        ) > 0
+                    ) {
+
+                        mensaje +=
+                            "\nPrecio máximo: $" +
+                            filtros.precio_maximo;
+
+                    }
+
+
+                    mostrarEstado(
+                        mensaje,
+                        "exito"
+                    );
+
+
+                    // ==================================================
+                    // RECORRER PRODUCTOS
+                    // ==================================================
+
+                    productos.forEach(
+                        function(prod) {
+
+                            const div =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            div.className =
+                                "producto";
+
+
+                            div.innerHTML = `
+
+                                <h3>
+                                    ${escapeHTML(
+                                        prod.nombre
+                                    )}
+                                </h3>
+
+
+                                <p>
+                                    <b>Código:</b>
+                                    ${escapeHTML(
+                                        prod.codigo
+                                    )}
+                                </p>
+
+
+                                <p>
+                                    <b>Descripción:</b>
+                                    ${escapeHTML(
+                                        prod.descripcion
+                                    )}
+                                </p>
+
+
+                                <p>
+                                    <b>Categoría:</b>
+                                    ${escapeHTML(
+                                        prod.categoria
+                                    )}
+                                </p>
+
+
+                                <p>
+                                    <b>Precio:</b>
+                                    $${formatearNumero(
+                                        prod.precio
+                                    )}
+                                </p>
+
+
+                                <p>
+                                    <b>Stock:</b>
+                                    ${formatearNumero(
+                                        prod.stock
+                                    )}
+                                </p>
+
+                            `;
+
+
+                            resultadosDiv.appendChild(
+                                div
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                // ==================================================
+                // NO HAY PRODUCTOS
+                // ==================================================
+
+                else {
+
+                    // Si la IA sí respondió,
+                    // NO mostramos "No se encontraron productos"
+                    // porque puede tratarse de una pregunta mixta.
+
+                    if (respuestaIA !== "") {
+
+                        mostrarEstado(
+                            "Respuesta generada correctamente.",
+                            "exito"
+                        );
+
+                    }
+
+                    else {
+
+                        mostrarEstado(
+                            "No se encontraron productos.",
+                            ""
+                        );
+
+
+                        resultadosDiv.innerHTML =
+
+                            `
+                            <div class="sin-resultados">
+
+                                <b>
+                                    No se encontraron productos.
+                                </b>
+
+                                <p>
+                                    Intenta realizar otra búsqueda.
+                                </p>
+
+                            </div>
+                            `;
+
+                    }
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.error(
+                    "Error:",
+                    error
+                );
+
+
+                mostrarEstado(
+
+                    "No se pudo conectar con filtrar.php.\n\n" +
+
+                    "Comprueba que:\n" +
+
+                    "• Apache esté iniciado.\n" +
+
+                    "• PHP esté funcionando.\n" +
+
+                    "• index.html esté dentro de htdocs.\n" +
+
+                    "• filtrar.php esté en la misma carpeta.\n\n" +
+
+                    "Error técnico:\n" +
+
+                    error.message,
+
+                    "error"
+
                 );
 
             }
 
-        );
+            finally {
 
-    }
+                botonBuscar.disabled =
+                    false;
 
-    else {
+                botonBuscar.innerText =
+                    "Buscar";
 
-        // ==================================================
-        // SI HAY RESPUESTA IA
-        // ==================================================
+            }
 
-        if (
-            data.respuestaIA
+        }
+
+
+        // ======================================================
+        // FORMATEAR RESPUESTA IA
+        // ======================================================
+
+        function formatearRespuesta(
+            texto
         ) {
 
-            mostrarEstado(
+            let resultado =
+                escapeHTML(texto);
 
-                "Respuesta generada correctamente.",
 
-                "exito"
+            // ==================================================
+            // NEGRITAS DE MARKDOWN
+            // Convierte **texto** en <strong>texto</strong>
+            // ==================================================
 
+            resultado =
+                resultado.replace(
+                    /\*\*(.*?)\*\*/g,
+                    "<strong>$1</strong>"
+                );
+
+
+            // ==================================================
+            // SALTOS DE LÍNEA
+            // ==================================================
+
+            resultado =
+                resultado.replace(
+                    /\n/g,
+                    "<br>"
+                );
+
+
+            return resultado;
+
+        }
+
+
+        // ======================================================
+        // FORMATEAR NÚMEROS
+        // ======================================================
+
+        function formatearNumero(
+            numero
+        ) {
+
+            const valor =
+                Number(numero);
+
+
+            if (
+                Number.isNaN(valor)
+            ) {
+
+                return "0";
+
+            }
+
+
+            return valor.toLocaleString(
+                "es-ES"
             );
 
         }
 
-        else {
 
-            mostrarEstado(
+        // ======================================================
+        // SEGURIDAD HTML
+        // ======================================================
 
-                "No se encontraron productos.",
+        function escapeHTML(
+            texto
+        ) {
 
-                ""
+            const div =
+                document.createElement(
+                    "div"
+                );
 
-            );
 
-            resultadosDiv.innerHTML =
+            div.textContent =
+                String(
+                    texto ?? ""
+                );
 
-                `
 
-                <div class="sin-resultados">
-
-                    <b>
-                        No se encontraron productos.
-                    </b>
-
-                    <p>
-
-                        Intenta realizar otra búsqueda.
-
-                    </p>
-
-                </div>
-
-                `;
+            return div.innerHTML;
 
         }
 
-    }
+    </script>
 
-}
+</body>
 
-catch (error) {
-
-    console.error(
-        "Error:",
-        error
-    );
-
-    mostrarEstado(
-
-        "No se pudo conectar con filtrar.php.\n\n" +
-
-        "Comprueba que:\n" +
-
-        "• Apache esté iniciado.\n" +
-
-        "• PHP esté funcionando.\n" +
-
-        "• index.html esté dentro de htdocs.\n" +
-
-        "• filtrar.php esté en la misma carpeta.\n\n" +
-
-        "Error técnico:\n" +
-
-        error.message,
-
-        "error"
-
-    );
-
-}
-
-finally {
-
-    botonBuscar.disabled =
-        false;
-
-    botonBuscar.innerText =
-        "Buscar";
-
-}
-
-}
-
-// ======================================================
-// FORMATEAR RESPUESTA IA
-// ======================================================
-
-function formatearRespuesta(
-texto
-) {
-
-let resultado =
-    escapeHTML(texto);
-
-resultado =
-    resultado.replace(
-
-        /\*\*(.*?)\*\*/g,
-
-        "<strong>$1</strong>"
-
-    );
-
-resultado =
-    resultado.replace(
-
-        /\n/g,
-
-        "<br>"
-
-    );
-
-return resultado;
-
-}
-
-// ======================================================
-// FORMATEAR NÚMEROS
-// ======================================================
-
-function formatearNumero(
-numero
-) {
-
-const valor =
-    Number(numero);
-
-if (
-    Number.isNaN(valor)
-) {
-
-    return "0";
-
-}
-
-return valor.toLocaleString(
-    "es-ES"
-);
-
-}
-
-// ======================================================
-// SEGURIDAD HTML
-// ======================================================
-
-function escapeHTML(
-texto
-) {
-
-const div =
-    document.createElement(
-        "div"
-    );
-
-div.textContent =
-    String(
-        texto ?? ""
-    );
-
-return div.innerHTML;
-
-}
-
-</script> </body> </html>
+</html>
