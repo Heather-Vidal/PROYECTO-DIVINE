@@ -78,23 +78,9 @@ $nombreSeguro = $conn->real_escape_string($nombreUsuario);
 
 // =====================================================
 // CONSULTAR VENTAS
-//
-// IMPORTANTE:
-//
-// 1. VENTAS no se filtra por su estado
-// 2. PEDIDOS debe estar ACEPTADO
-//
-// VENDEDOR:
-// Solo ventas cuyo PEDIDOS.nombrevendedor
-// sea igual al usuario de la sesión.
-//
-// ADMINISTRADOR:
-// Puede ver todas las ventas.
 // =====================================================
 
-
 if ($rol == "vendedor") {
-
 
     // =================================================
     // VENDEDOR
@@ -137,7 +123,6 @@ if ($rol == "vendedor") {
 
 
 } else {
-
 
     // =================================================
     // ADMINISTRADOR
@@ -198,11 +183,6 @@ if (!$resultado) {
 
 // =====================================================
 // CANTIDAD DE VENTAS
-//
-// ESTE NÚMERO ES EXACTAMENTE LA CANTIDAD
-// DE FILAS QUE SE VAN A MOSTRAR.
-//
-// Por eso debe coincidir con el perfil.
 // =====================================================
 
 $totalVentas = $resultado->num_rows;
@@ -217,8 +197,6 @@ $mensaje = $_GET['mensaje'] ?? '';
 $error = $_GET['error'] ?? '';
 
 ?>
-
-
 
 <!DOCTYPE html>
 
@@ -237,7 +215,6 @@ $error = $_GET['error'] ?? '';
 
 
 <style>
-
 
 /* =====================================================
    CONFIGURACIÓN GENERAL
@@ -764,7 +741,6 @@ td{
 
 /* =====================================================
    DETALLES
-   VISIBLE PARA ADMINISTRADOR Y VENDEDOR
    ===================================================== */
 
 .btn-detalles{
@@ -793,7 +769,6 @@ td{
 
 /* =====================================================
    MODIFICAR
-   SOLO ADMINISTRADOR
    ===================================================== */
 
 .btn-editar{
@@ -822,7 +797,6 @@ td{
 
 /* =====================================================
    ELIMINAR
-   SOLO ADMINISTRADOR
    ===================================================== */
 
 .btn-eliminar{
@@ -1138,8 +1112,7 @@ td{
 
         opacity:0;
 
-        transform:
-            translateX(40px);
+        transform:translateX(40px);
 
     }
 
@@ -1147,8 +1120,7 @@ td{
 
         opacity:1;
 
-        transform:
-            translateX(0);
+        transform:translateX(0);
 
     }
 
@@ -1156,14 +1128,14 @@ td{
 
 
 /* =====================================================
-   RESPONSIVE
+   RESPONSIVE - TABLETS
    ===================================================== */
 
-@media(max-width:700px){
+@media (max-width:1000px){
 
     body{
 
-        padding:25px 12px;
+        padding:30px 15px;
 
     }
 
@@ -1172,12 +1144,70 @@ td{
 
         width:100%;
 
-        padding:25px 15px;
-
-        border-radius:25px;
+        padding:30px 20px;
 
     }
 
+
+    .encabezado{
+
+        flex-wrap:wrap;
+
+    }
+
+
+    h1{
+
+        font-size:28px;
+
+    }
+
+
+    .tabla-contenedor{
+
+        overflow-x:auto;
+
+        -webkit-overflow-scrolling:touch;
+
+    }
+
+
+    table{
+
+        min-width:950px;
+
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - CELULARES
+   ===================================================== */
+
+@media (max-width:700px){
+
+    body{
+
+        padding:15px 10px;
+
+        background-attachment:scroll;
+
+    }
+
+
+    .contenedor{
+
+        width:100%;
+
+        padding:22px 12px;
+
+        border-radius:22px;
+
+    }
+
+
+    /* ENCABEZADO */
 
     .encabezado{
 
@@ -1185,34 +1215,126 @@ td{
 
         align-items:flex-start;
 
+        gap:15px;
+
+        margin-bottom:25px;
+
+    }
+
+
+    .titulo{
+
+        width:100%;
+
+        gap:10px;
+
+    }
+
+
+    .icono{
+
+        width:48px;
+
+        height:48px;
+
+        font-size:23px;
+
+        border-radius:15px;
+
+        flex-shrink:0;
+
     }
 
 
     h1{
 
-        font-size:25px;
+        font-size:24px;
 
     }
 
+
+    .subtitulo{
+
+        font-size:12px;
+
+    }
+
+
+    /* CONTADOR */
 
     .contador{
 
         align-self:flex-start;
 
+        padding:9px 16px;
+
+        font-size:13px;
+
     }
 
 
-    th,
+    /* INDICADOR DE ROL */
+
+    .rol-indicador{
+
+        padding:12px 14px;
+
+        font-size:13px;
+
+        line-height:1.6;
+
+        margin-bottom:20px;
+
+    }
+
+
+    /* TABLA */
+
+    .tabla-contenedor{
+
+        width:100%;
+
+        overflow-x:auto;
+
+        border-radius:16px;
+
+        -webkit-overflow-scrolling:touch;
+
+    }
+
+
+    table{
+
+        min-width:950px;
+
+    }
+
+
+    th{
+
+        padding:13px 10px;
+
+        font-size:11px;
+
+    }
+
+
     td{
 
         padding:13px 10px;
 
+        font-size:12px;
+
     }
 
+
+    /* BOTONES */
 
     .acciones{
 
         flex-direction:column;
+
+        gap:6px;
 
     }
 
@@ -1221,19 +1343,142 @@ td{
 
         width:100%;
 
+        min-width:100px;
+
+        padding:8px 12px;
+
+        font-size:12px;
+
     }
 
+
+    /* BOTÓN VOLVER */
+
+    .volver{
+
+        margin-top:22px;
+
+        padding:11px 18px;
+
+        font-size:13px;
+
+    }
+
+
+    /* MENSAJES */
 
     .mensaje-exito,
     .mensaje-error{
 
-        top:20px;
+        top:15px;
 
-        right:15px;
+        right:12px;
 
-        left:15px;
+        left:12px;
 
         min-width:auto;
+
+        max-width:none;
+
+        padding:14px 15px;
+
+        border-radius:16px;
+
+    }
+
+
+    .mensaje-icono{
+
+        min-width:38px;
+
+        width:38px;
+
+        height:38px;
+
+        font-size:18px;
+
+    }
+
+
+    .mensaje-exito strong,
+    .mensaje-error strong{
+
+        font-size:14px;
+
+    }
+
+
+    .mensaje-exito p,
+    .mensaje-error p{
+
+        font-size:12px;
+
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - CELULARES MUY PEQUEÑOS
+   ===================================================== */
+
+@media (max-width:400px){
+
+    body{
+
+        padding:10px 6px;
+
+    }
+
+
+    .contenedor{
+
+        padding:18px 9px;
+
+        border-radius:18px;
+
+    }
+
+
+    h1{
+
+        font-size:21px;
+
+    }
+
+
+    .icono{
+
+        width:43px;
+
+        height:43px;
+
+        font-size:20px;
+
+    }
+
+
+    .contador{
+
+        font-size:12px;
+
+        padding:8px 13px;
+
+    }
+
+
+    .rol-indicador{
+
+        font-size:12px;
+
+    }
+
+
+    .volver{
+
+        width:100%;
+
+        justify-content:center;
 
     }
 
@@ -1843,11 +2088,13 @@ td{
          ================================================= -->
 
     <a
-    href="../admin.php"
-    class="volver"
->
-    ← Volver al perfil
-</a>
+        href="../admin.php"
+        class="volver"
+    >
+
+        ← Volver al perfil
+
+    </a>
 
 
 </div>
