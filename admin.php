@@ -2401,8 +2401,6 @@ body::after{
 
                     <div class="informe-icon">
 
-                        🏆
-
                     </div>
 
                     <h3>
@@ -2478,8 +2476,6 @@ body::after{
                 >
 
                     <div class="informe-icon">
-
-                        📊
 
                     </div>
 
