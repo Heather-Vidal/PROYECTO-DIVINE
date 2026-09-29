@@ -2122,7 +2122,7 @@ body::after{
 
                     <h2 class="informe-titulo">
 
-                        Informes importantes del negocio ✨
+                        Informes importantes del negocio 
 
                     </h2>
 
@@ -2137,7 +2137,7 @@ body::after{
 
                 <div class="informe-badge">
 
-                    📊 Panel de control
+                     Panel de control
 
                 </div>
 
@@ -2153,9 +2153,7 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
-
-                        👥
-
+                         
                     </div>
 
                     <h3>
@@ -2200,8 +2198,6 @@ body::after{
 
                     <div class="informe-icon">
 
-                        📦
-
                     </div>
 
                     <h3>
@@ -2240,9 +2236,7 @@ body::after{
                     <div>
 
                         <div class="informe-icon">
-
-                            ⚠️
-
+                            !
                         </div>
 
                         <h3>
@@ -2304,8 +2298,6 @@ body::after{
 
                     <div class="informe-icon">
 
-                        🛍️
-
                     </div>
 
                     <h3>
@@ -2349,8 +2341,6 @@ body::after{
                 <div class="informe-card informe-destacado">
 
                     <div class="informe-icon">
-
-                        💰
 
                     </div>
 
@@ -2574,8 +2564,6 @@ body::after{
                 <div class="informe-card">
 
                     <div class="informe-icon">
-
-                        📋
 
                     </div>
 
