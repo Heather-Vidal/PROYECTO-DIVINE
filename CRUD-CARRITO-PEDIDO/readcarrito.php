@@ -1335,15 +1335,6 @@ if(!$hayProductos){
     </a>
 
 
-    <a
-        class="btn"
-        href="readunopedido.php?idPedido=<?php echo $idpedido; ?>"
-    >
-
-        Finalizar compra
-
-    </a>
-
 
 </div>
 
