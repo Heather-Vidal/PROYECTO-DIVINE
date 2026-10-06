@@ -1861,7 +1861,7 @@ document.addEventListener(
 );
 
 </script>
-
+<?php include './index1.php'; ?>
 
 <?php include 'submenpiepag.php'; ?>
 
