@@ -2,199 +2,240 @@
 
 session_start();
 
+/* =========================================================
+   VALIDAR SESIÓN
+========================================================= */
 
-// =====================================================
-// DATOS DE SESIÓN
-// =====================================================
+if (!isset($_SESSION['nombre']) || empty($_SESSION['nombre'])) {
 
-$nombreUsuario = $_SESSION['nombre'] ?? '';
-$rol = $_SESSION['rol'] ?? '';
-
-
-// =====================================================
-// VALIDAR SESIÓN
-// =====================================================
-
-if ($nombreUsuario == '') {
-
-    header("Location: ../SESIONES/loginformcliente.php");
-    exit();
-
-}
-
-
-// =====================================================
-// VALIDAR ROL
-// =====================================================
-
-if ($rol != "vendedor" && $rol != "administrador") {
-
-    echo "
-    <script>
-        alert('ACCESO DENEGADO: No tienes permisos para entrar aquí.');
-        window.location.href='../SESIONES/loginformcliente.php';
-    </script>
-    ";
+    header("Location: ../SESIONES/loginform.php");
 
     exit();
 
 }
 
 
-// =====================================================
-// CONEXIÓN A LA BASE DE DATOS
-// =====================================================
+/* =========================================================
+   DATOS DE SESIÓN
+========================================================= */
+
+$nombreUsuario = trim($_SESSION['nombre']);
+
+$rol = strtolower(trim($_SESSION['rol'] ?? ''));
+
+
+/* =========================================================
+   VALIDAR ROL
+========================================================= */
+
+if ($rol !== 'administrador' && $rol !== 'vendedor') {
+
+    header("Location: ../SESIONES/loginform.php");
+
+    exit();
+
+}
+
+
+/* =========================================================
+   CONEXIÓN A LA BASE DE DATOS
+========================================================= */
 
 $servidor = "localhost";
-$usuario = "root";
-$contrasena = "";
-$bd = "DIVINE";
 
+$usuario = "root";
+
+$contraseña = "";
+
+$nombreBD = "DIVINE";
 
 $conn = new mysqli(
     $servidor,
     $usuario,
-    $contrasena,
-    $bd
+    $contraseña,
+    $nombreBD
 );
-
 
 if ($conn->connect_error) {
 
     die(
-        "Error de conexión: "
+        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS: "
         . $conn->connect_error
     );
 
 }
 
-
-// =====================================================
-// PROTEGER NOMBRE DEL USUARIO
-// =====================================================
-
-$nombreSeguro = $conn->real_escape_string($nombreUsuario);
+$conn->set_charset("utf8mb4");
 
 
-// =====================================================
-// CONSULTAR VENTAS
-// =====================================================
+/* =========================================================
+   CONSULTA DE VENTAS
+========================================================= */
 
-if ($rol == "vendedor") {
+/*
+    ADMINISTRADOR:
+    Puede ver TODAS las ventas.
 
-    // =================================================
-    // VENDEDOR
-    // SOLO SUS VENTAS CON PEDIDO ACEPTADO
-    // =================================================
+    VENDEDOR:
+    Solamente puede ver las ventas correspondientes
+    a los pedidos donde nombrevendedor sea igual
+    al nombre guardado en su sesión.
+*/
+
+if ($rol === 'administrador') {
 
     $sql = "
 
         SELECT
 
-            VENTAS.*,
+            v.id AS id_venta,
 
-            PEDIDOS.nombre,
+            v.estado AS estado_venta,
 
-            PEDIDOS.nombrevendedor,
+            v.metodo,
 
-            PEDIDOS.estado AS estado_pedido
+            v.costototal,
 
-        FROM VENTAS
+            v.PEDIDOS_ID,
 
-        INNER JOIN PEDIDOS
+            v.fecha,
 
-            ON VENTAS.PEDIDOS_ID = PEDIDOS.ID
+            p.ID AS id_pedido,
 
-        WHERE
+            p.nombre AS cliente,
 
-            LOWER(TRIM(PEDIDOS.estado)) = 'aceptado'
+            p.fecha AS fecha_pedido,
 
-            AND PEDIDOS.nombrevendedor = '$nombreSeguro'
+            p.estado AS estado_pedido,
 
-        ORDER BY
+            p.nombrevendedor,
 
-            DATE(VENTAS.fecha) = CURDATE() DESC,
+            p.telefono,
 
-            VENTAS.fecha DESC,
+            p.direccion
 
-            VENTAS.id DESC
+        FROM VENTAS v
+
+        INNER JOIN PEDIDOS p
+
+            ON v.PEDIDOS_ID = p.ID
+
+        ORDER BY v.id DESC
 
     ";
 
+    $stmt = $conn->prepare($sql);
 
 } else {
 
-    // =================================================
-    // ADMINISTRADOR
-    // TODAS LAS VENTAS CON PEDIDO ACEPTADO
-    // =================================================
+    /*
+        VENDEDOR:
+        La venta solamente aparece si el nombre del vendedor
+        registrado en PEDIDOS coincide con el nombre de su sesión.
+    */
 
     $sql = "
 
         SELECT
 
-            VENTAS.*,
+            v.id AS id_venta,
 
-            PEDIDOS.nombre,
+            v.estado AS estado_venta,
 
-            PEDIDOS.nombrevendedor,
+            v.metodo,
 
-            PEDIDOS.estado AS estado_pedido
+            v.costototal,
 
-        FROM VENTAS
+            v.PEDIDOS_ID,
 
-        INNER JOIN PEDIDOS
+            v.fecha,
 
-            ON VENTAS.PEDIDOS_ID = PEDIDOS.ID
+            p.ID AS id_pedido,
 
-        WHERE
+            p.nombre AS cliente,
 
-            LOWER(TRIM(PEDIDOS.estado)) = 'aceptado'
+            p.fecha AS fecha_pedido,
 
-        ORDER BY
+            p.estado AS estado_pedido,
 
-            DATE(VENTAS.fecha) = CURDATE() DESC,
+            p.nombrevendedor,
 
-            VENTAS.fecha DESC,
+            p.telefono,
 
-            VENTAS.id DESC
+            p.direccion
+
+        FROM VENTAS v
+
+        INNER JOIN PEDIDOS p
+
+            ON v.PEDIDOS_ID = p.ID
+
+        WHERE p.nombrevendedor = ?
+
+        ORDER BY v.id DESC
 
     ";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt) {
+
+        $stmt->bind_param("s", $nombreUsuario);
+
+    }
 
 }
 
 
-// =====================================================
-// EJECUTAR CONSULTA
-// =====================================================
+/* =========================================================
+   COMPROBAR PREPARACIÓN
+========================================================= */
 
-$resultado = $conn->query($sql);
-
-
-if (!$resultado) {
+if (!$stmt) {
 
     die(
-        "Error en la consulta: "
-        . $conn->error
+
+        "ERROR EN LA CONSULTA: " .
+
+        htmlspecialchars($conn->error)
+
     );
 
 }
 
 
-// =====================================================
-// CANTIDAD DE VENTAS
-// =====================================================
+/* =========================================================
+   EJECUTAR CONSULTA
+========================================================= */
+
+if (!$stmt->execute()) {
+
+    die(
+
+        "ERROR AL EJECUTAR LA CONSULTA: " .
+
+        htmlspecialchars($stmt->error)
+
+    );
+
+}
+
+
+$resultado = $stmt->get_result();
+
+
+/* =========================================================
+   CONTAR VENTAS
+========================================================= */
 
 $totalVentas = $resultado->num_rows;
 
 
-// =====================================================
-// MENSAJES
-// =====================================================
+/* =========================================================
+   CERRAR STATEMENT
+========================================================= */
 
-$mensaje = $_GET['mensaje'] ?? '';
-
-$error = $_GET['error'] ?? '';
+$stmt->close();
 
 ?>
 
@@ -204,1287 +245,905 @@ $error = $_GET['error'] ?? '';
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Ventas</title>
+    <title>DIVINE | Ventas</title>
 
 
-<style>
+    <!-- =====================================================
+         FUENTES
+    ====================================================== -->
 
-/* =====================================================
-   CONFIGURACIÓN GENERAL
-   ===================================================== */
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
 
-*{
 
-    margin:0;
+    <!-- =====================================================
+         SWEETALERT2
+    ====================================================== -->
 
-    padding:0;
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    box-sizing:border-box;
 
-    font-family:'Segoe UI',sans-serif;
+    <style>
 
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
 
-body{
+        body {
 
-    min-height:100vh;
+            font-family: 'DM Sans', sans-serif;
 
-    background:
+            background:
 
-    linear-gradient(
-        rgba(0,0,0,.25),
-        rgba(0,0,0,.25)
-    ),
+                radial-gradient(
 
-    url('../imagenes/fondote.png');
+                    circle at top left,
 
-    background-position:center;
+                    rgba(205, 157, 174, 0.16),
 
-    background-repeat:no-repeat;
+                    transparent 35%
 
-    background-size:cover;
+                ),
 
-    background-attachment:fixed;
+                linear-gradient(
 
-    padding:45px 25px;
+                    135deg,
 
-}
+                    #f8f1eb,
 
+                    #eee1d8
 
-/* =====================================================
-   CONTENEDOR PRINCIPAL
-   ===================================================== */
+                );
 
-.contenedor{
+            min-height: 100vh;
 
-    width:95%;
+            color: #51454a;
 
-    max-width:1400px;
+        }
 
-    margin:auto;
 
-    background:rgba(255,255,255,.78);
+        /* =================================================
+           CONTENEDOR PRINCIPAL
+        ================================================= */
 
-    backdrop-filter:blur(12px);
+        .contenedor {
 
-    -webkit-backdrop-filter:blur(12px);
+            width: 94%;
 
-    padding:40px;
+            max-width: 1450px;
 
-    border-radius:35px;
+            margin: 40px auto;
 
-    box-shadow:
+        }
 
-        0 20px 50px rgba(0,0,0,.15);
 
-    border:
+        /* =================================================
+           ENCABEZADO
+        ================================================= */
 
-        1px solid rgba(255,255,255,.7);
+        .encabezado {
 
-}
+            background:
 
+                linear-gradient(
 
-/* =====================================================
-   ENCABEZADO
-   ===================================================== */
+                    135deg,
 
-.encabezado{
+                    #9d6073,
 
-    display:flex;
+                    #b8798d
 
-    justify-content:space-between;
+                );
 
-    align-items:center;
+            border-radius: 28px;
 
-    margin-bottom:35px;
+            padding: 30px 35px;
 
-    gap:20px;
+            color: white;
 
-}
+            box-shadow:
 
+                0 18px 45px
 
-.titulo{
+                rgba(104, 69, 80, 0.18);
 
-    display:flex;
+            position: relative;
 
-    align-items:center;
+            overflow: hidden;
 
-    gap:15px;
+            margin-bottom: 25px;
 
-}
+        }
 
 
-.icono{
+        .encabezado::before {
 
-    width:55px;
+            content: "";
 
-    height:55px;
+            position: absolute;
 
-    border-radius:18px;
+            width: 230px;
 
-    background:#fdf5f7;
+            height: 230px;
 
-    display:flex;
+            border-radius: 50%;
 
-    justify-content:center;
+            background:
 
-    align-items:center;
+                rgba(255,255,255,0.08);
 
-    font-size:27px;
+            right: -80px;
 
-    box-shadow:
+            top: -100px;
 
-        0 8px 20px rgba(201,111,132,.15);
+        }
 
-}
 
+        .encabezado::after {
 
-h1{
+            content: "";
 
-    color:#bf7485;
+            position: absolute;
 
-    font-size:31px;
+            width: 140px;
 
-    letter-spacing:.5px;
+            height: 140px;
 
-}
+            border-radius: 50%;
 
+            background:
 
-.subtitulo{
+                rgba(255,255,255,0.06);
 
-    color:#888;
+            right: 120px;
 
-    font-size:14px;
+            bottom: -80px;
 
-    margin-top:4px;
+        }
 
-}
 
+        .encabezado-contenido {
 
-/* =====================================================
-   CONTADOR
-   ===================================================== */
+            position: relative;
 
-.contador{
+            z-index: 2;
 
-    background:#c96f84;
+        }
 
-    color:white;
 
-    padding:11px 20px;
+        .marca {
 
-    border-radius:50px;
+            font-family:
 
-    font-weight:600;
+                'Playfair Display',
 
-    box-shadow:
+                serif;
 
-        0 8px 20px rgba(201,111,132,.25);
+            font-size: 18px;
 
-}
+            letter-spacing: 3px;
 
+            text-transform: uppercase;
 
-/* =====================================================
-   AVISO DE ROL
-   ===================================================== */
+            opacity: 0.9;
 
-.rol-indicador{
+            margin-bottom: 8px;
 
-    margin-bottom:25px;
+        }
 
-    padding:14px 18px;
 
-    border-radius:18px;
+        .titulo {
 
-    background:#fff5f7;
+            font-family:
 
-    border:1px solid #f2d8df;
+                'Playfair Display',
 
-    color:#9d5368;
+                serif;
 
-    font-size:14px;
+            font-size: 38px;
 
-}
+            font-weight: 600;
 
+            margin-bottom: 8px;
 
-.rol-indicador strong{
+        }
 
-    color:#bf7485;
 
-}
+        .subtitulo {
 
+            font-size: 14px;
 
-/* =====================================================
-   TABLA
-   ===================================================== */
+            opacity: 0.88;
 
-.tabla-contenedor{
+        }
 
-    overflow-x:auto;
 
-    border-radius:22px;
+        /* =================================================
+           INFORMACIÓN DEL USUARIO
+        ================================================= */
 
-    box-shadow:
+        .usuario {
 
-        0 10px 30px rgba(0,0,0,.07);
+            margin-top: 22px;
 
-}
+            display: inline-flex;
 
+            align-items: center;
 
-table{
+            gap: 10px;
 
-    width:100%;
+            padding: 9px 15px;
 
-    min-width:1100px;
+            background:
 
-    border-collapse:collapse;
+                rgba(255,255,255,0.15);
 
-    background:rgba(255,255,255,.92);
+            border:
 
-}
+                1px solid
 
+                rgba(255,255,255,0.18);
 
-/* =====================================================
-   CABECERA
-   ===================================================== */
+            border-radius: 30px;
 
-thead{
+            font-size: 13px;
 
-    background:#c96f84;
+        }
 
-    color:white;
 
-}
+        .usuario strong {
 
+            font-weight: 700;
 
-th{
+        }
 
-    padding:17px 15px;
 
-    font-size:13px;
+        /* =================================================
+           TARJETA PRINCIPAL
+        ================================================= */
 
-    text-transform:uppercase;
+        .tarjeta {
 
-    letter-spacing:.6px;
+            background:
 
-    font-weight:600;
+                rgba(255,255,255,0.91);
 
-}
+            border-radius: 28px;
 
+            padding: 28px;
 
-th:first-child{
+            box-shadow:
 
-    border-radius:20px 0 0 0;
+                0 15px 45px
 
-}
+                rgba(95, 69, 78, 0.10);
 
+            border:
 
-th:last-child{
+                1px solid
 
-    border-radius:0 20px 0 0;
+                rgba(151, 111, 123, 0.10);
 
-}
+            backdrop-filter: blur(10px);
 
+        }
 
-/* =====================================================
-   FILAS
-   ===================================================== */
 
-tbody tr{
+        /* =================================================
+           BARRA SUPERIOR
+        ================================================= */
 
-    transition:.25s;
+        .barra {
 
-}
+            display: flex;
 
+            justify-content: space-between;
 
-tbody tr:hover{
+            align-items: center;
 
-    background:#fff7f9;
+            gap: 20px;
 
-    transform:scale(1.002);
+            margin-bottom: 25px;
 
-}
+            flex-wrap: wrap;
 
+        }
 
-td{
 
-    padding:17px 15px;
+        .barra h2 {
 
-    text-align:center;
+            font-family:
 
-    border-bottom:1px solid #f4e1e5;
+                'Playfair Display',
 
-    color:#666;
+                serif;
 
-    font-size:14px;
+            color: #704653;
 
-}
+            font-size: 25px;
 
+        }
 
-/* =====================================================
-   ID VENTA
-   ===================================================== */
 
-.id-venta{
+        .contador {
 
-    color:#bf7485;
+            background: #f5e7e4;
 
-    font-weight:700;
+            color: #875565;
 
-}
+            padding: 10px 18px;
 
+            border-radius: 30px;
 
-/* =====================================================
-   PEDIDO
-   ===================================================== */
+            font-size: 14px;
 
-.id-pedido{
+            font-weight: 600;
 
-    display:inline-block;
+        }
 
-    background:#fdf0f3;
 
-    color:#bf7485;
+        /* =================================================
+           TABLA
+        ================================================= */
 
-    padding:6px 12px;
+        .tabla-contenedor {
 
-    border-radius:50px;
+            width: 100%;
 
-    font-weight:700;
+            overflow-x: auto;
 
-}
+            border-radius: 20px;
 
+            border:
 
-/* =====================================================
-   CLIENTE
-   ===================================================== */
+                1px solid
 
-.cliente{
+                #eadbd7;
 
-    color:#555;
+        }
 
-    font-weight:600;
 
-}
+        table {
 
+            width: 100%;
 
-/* =====================================================
-   VENDEDOR
-   ===================================================== */
+            border-collapse: collapse;
 
-.vendedor{
+            min-width: 1250px;
 
-    color:#bf7485;
+            background: white;
 
-    font-weight:700;
+        }
 
-    white-space:nowrap;
 
-}
+        thead {
 
+            background:
 
-.vendedor .yo{
+                linear-gradient(
 
-    display:inline-block;
+                    135deg,
 
-    margin-left:5px;
+                    #f5e8e5,
 
-    padding:4px 8px;
+                    #f0dfdb
 
-    border-radius:20px;
+                );
 
-    background:#fdf0f3;
+        }
 
-    color:#b45d72;
 
-    font-size:11px;
+        th {
 
-    font-weight:700;
+            padding: 17px 15px;
 
-}
+            text-align: left;
 
+            color: #704653;
 
-/* =====================================================
-   ESTADO
-   ===================================================== */
+            font-size: 12px;
 
-.estado{
+            text-transform: uppercase;
 
-    display:inline-block;
+            letter-spacing: 0.7px;
 
-    padding:7px 14px;
+            font-weight: 700;
 
-    border-radius:50px;
+            white-space: nowrap;
 
-    background:#eaf8ee;
+        }
 
-    color:#3f8c58;
 
-    font-size:13px;
+        td {
 
-    font-weight:700;
+            padding: 17px 15px;
 
-}
+            border-top:
 
+                1px solid
 
-.estado::before{
+                #f0e5e2;
 
-    content:"✓";
+            color: #62565b;
 
-    margin-right:5px;
+            font-size: 14px;
 
-}
+            vertical-align: middle;
 
+        }
 
-/* =====================================================
-   MÉTODO DE PAGO
-   ===================================================== */
 
-.metodo{
+        tbody tr {
 
-    color:#666;
+            transition: 0.2s ease;
 
-    font-weight:600;
+        }
 
-}
 
+        tbody tr:hover {
 
-.metodo::before{
+            background: #fdf8f7;
 
-    content:"";
+        }
 
-    display:inline-block;
 
-    width:7px;
+        .numero {
 
-    height:7px;
+            font-weight: 700;
 
-    background:#d992a2;
+            color: #8f5365;
 
-    border-radius:50%;
+        }
 
-    margin-right:7px;
 
-}
+        .cliente {
 
+            font-weight: 600;
 
-/* =====================================================
-   TOTAL
-   ===================================================== */
+            color: #5b4a50;
 
-.total{
+        }
 
-    color:#bf7485;
 
-    font-size:16px;
+        .vendedor {
 
-    font-weight:700;
+            color: #80606a;
 
-    white-space:nowrap;
+            font-weight: 500;
 
-}
+        }
 
 
-/* =====================================================
-   ACCIONES
-   ===================================================== */
+        .total {
 
-.acciones{
+            font-size: 16px;
 
-    display:flex;
+            font-weight: 700;
 
-    justify-content:center;
+            color: #814c5d;
 
-    align-items:center;
+            white-space: nowrap;
 
-    gap:8px;
+        }
 
-    flex-wrap:wrap;
 
-}
+        .metodo {
 
+            display: inline-block;
 
-.btn{
+            padding: 7px 12px;
 
-    display:inline-flex;
+            border-radius: 20px;
 
-    align-items:center;
+            background: #f7ece9;
 
-    justify-content:center;
+            color: #7b5260;
 
-    padding:9px 14px;
+            font-size: 12px;
 
-    border-radius:50px;
+            font-weight: 600;
 
-    text-decoration:none;
+        }
 
-    font-size:13px;
 
-    font-weight:600;
+        /* =================================================
+           ESTADOS
+        ================================================= */
 
-    transition:.3s;
+        .estado {
 
-    border:none;
+            display: inline-block;
 
-    white-space:nowrap;
+            padding: 7px 12px;
 
-}
+            border-radius: 20px;
 
+            font-size: 12px;
 
-/* =====================================================
-   DETALLES
-   ===================================================== */
+            font-weight: 700;
 
-.btn-detalles{
+        }
 
-    background:#eee6f8;
 
-    color:#765b96;
+        .estado-aceptado {
 
-}
+            background: #f6eadf;
 
+            color: #986b45;
 
-.btn-detalles:hover{
+        }
 
-    background:#765b96;
 
-    color:white;
+        .estado-proceso {
 
-    transform:translateY(-2px);
+            background: #eee8f5;
 
-    box-shadow:
+            color: #725582;
 
-        0 6px 15px rgba(118,91,150,.25);
+        }
 
-}
 
+        .estado-completado {
 
-/* =====================================================
-   MODIFICAR
-   ===================================================== */
+            background: #e6f2e8;
 
-.btn-editar{
+            color: #50765a;
 
-    background:#f8dce2;
+        }
 
-    color:#a8586b;
 
-}
+        .estado-rechazado {
 
+            background: #f8e5e5;
 
-.btn-editar:hover{
+            color: #9a5555;
 
-    background:#c96f84;
+        }
 
-    color:white;
 
-    transform:translateY(-2px);
+        .estado-pendiente {
 
-    box-shadow:
+            background: #f4eee3;
 
-        0 6px 15px rgba(201,111,132,.25);
+            color: #8c744b;
 
-}
+        }
 
 
-/* =====================================================
-   ELIMINAR
-   ===================================================== */
+        .estado-normal {
 
-.btn-eliminar{
+            background: #f1ebec;
 
-    background:#f9e1e1;
+            color: #76666b;
 
-    color:#c15b5b;
+        }
 
-}
 
+        /* =================================================
+           BOTONES DE ACCIONES
+        ================================================= */
 
-.btn-eliminar:hover{
+        .acciones {
 
-    background:#d85a5a;
+            display: flex;
 
-    color:white;
+            align-items: center;
 
-    transform:translateY(-2px);
+            gap: 7px;
 
-    box-shadow:
+            white-space: nowrap;
 
-        0 6px 15px rgba(216,90,90,.25);
+        }
 
-}
 
+        .btn-accion {
 
-/* =====================================================
-   SIN VENTAS
-   ===================================================== */
+            display: inline-flex;
 
-.sin-ventas{
+            align-items: center;
 
-    background:white;
+            justify-content: center;
 
-    border-radius:25px;
+            gap: 5px;
 
-    padding:55px 20px;
+            padding: 8px 11px;
 
-    text-align:center;
+            border-radius: 12px;
 
-    color:#888;
+            text-decoration: none;
 
-}
+            font-size: 12px;
 
+            font-weight: 600;
 
-.sin-ventas-icono{
+            border: none;
 
-    font-size:45px;
+            cursor: pointer;
 
-    margin-bottom:15px;
+            transition:
 
-    opacity:.6;
+                transform 0.2s ease,
 
-}
+                box-shadow 0.2s ease,
 
+                background 0.2s ease;
 
-.sin-ventas h2{
+        }
 
-    color:#bf7485;
 
-    margin-bottom:8px;
+        .btn-accion:hover {
 
-}
+            transform: translateY(-2px);
 
+        }
 
-.sin-ventas p{
 
-    color:#999;
+        /* DETALLES */
 
-}
+        .btn-detalles {
 
+            background: #f1e5ed;
 
-/* =====================================================
-   BOTÓN VOLVER
-   ===================================================== */
+            color: #81566c;
 
-.volver{
+        }
 
-    display:inline-flex;
 
-    align-items:center;
+        .btn-detalles:hover {
 
-    gap:7px;
+            background: #e7d6e0;
 
-    margin-top:30px;
+            box-shadow:
 
-    padding:12px 22px;
+                0 5px 12px
 
-    border-radius:50px;
+                rgba(129, 86, 108, 0.15);
 
-    background:white;
+        }
 
-    color:#bf7485;
 
-    text-decoration:none;
+        /* EDITAR */
 
-    font-weight:600;
+        .btn-editar {
 
-    box-shadow:
+            background: #eee5f2;
 
-        0 6px 18px rgba(0,0,0,.08);
+            color: #765780;
 
-    transition:.3s;
+        }
 
-}
 
+        .btn-editar:hover {
 
-.volver:hover{
+            background: #e1d5e8;
 
-    background:#c96f84;
+            box-shadow:
 
-    color:white;
+                0 5px 12px
 
-    transform:translateY(-2px);
+                rgba(118, 87, 128, 0.15);
 
-}
+        }
 
 
-/* =====================================================
-   MENSAJE DE ÉXITO
-   ===================================================== */
+        /* ELIMINAR */
 
-.mensaje-exito{
+        .btn-eliminar {
 
-    position:fixed;
+            background: #f6e3e3;
 
-    top:30px;
+            color: #995d63;
 
-    right:30px;
+        }
 
-    z-index:9999;
 
-    min-width:340px;
+        .btn-eliminar:hover {
 
-    max-width:450px;
+            background: #efd2d4;
 
-    display:flex;
+            box-shadow:
 
-    align-items:center;
+                0 5px 12px
 
-    gap:15px;
+                rgba(153, 93, 99, 0.15);
 
-    padding:18px 20px;
+        }
 
-    background:rgba(255,255,255,.96);
 
-    backdrop-filter:blur(12px);
+        .icono-btn {
 
-    border-radius:20px;
+            font-size: 14px;
 
-    border-left:5px solid #c96f84;
+            line-height: 1;
 
-    box-shadow:
+        }
 
-        0 15px 40px rgba(0,0,0,.15);
 
-    animation:mensajeEntrada .4s ease;
+        /* =================================================
+           SIN RESULTADOS
+        ================================================= */
 
-}
+        .sin-resultados {
 
+            text-align: center;
 
-/* =====================================================
-   MENSAJE ERROR
-   ===================================================== */
+            padding: 70px 20px;
 
-.mensaje-error{
+        }
 
-    position:fixed;
 
-    top:30px;
+        .sin-icono {
 
-    right:30px;
+            width: 75px;
 
-    z-index:9999;
+            height: 75px;
 
-    min-width:340px;
+            margin: 0 auto 18px;
 
-    max-width:450px;
+            border-radius: 50%;
 
-    display:flex;
+            display: flex;
 
-    align-items:center;
+            align-items: center;
 
-    gap:15px;
+            justify-content: center;
 
-    padding:18px 20px;
+            background: #f4e6e5;
 
-    background:rgba(255,255,255,.96);
+            color: #9d6474;
 
-    backdrop-filter:blur(12px);
+            font-size: 32px;
 
-    border-radius:20px;
+        }
 
-    border-left:5px solid #d85a5a;
 
-    box-shadow:
+        .sin-resultados h3 {
 
-        0 15px 40px rgba(0,0,0,.15);
+            font-family:
 
-    animation:mensajeEntrada .4s ease;
+                'Playfair Display',
 
-}
+                serif;
 
+            color: #704653;
 
-/* =====================================================
-   ICONO MENSAJE
-   ===================================================== */
+            font-size: 24px;
 
-.mensaje-icono{
+            margin-bottom: 8px;
 
-    min-width:45px;
+        }
 
-    width:45px;
 
-    height:45px;
+        .sin-resultados p {
 
-    border-radius:50%;
+            color: #897b80;
 
-    display:flex;
+            font-size: 14px;
 
-    align-items:center;
+        }
 
-    justify-content:center;
 
-    background:#f8dce2;
+        /* =================================================
+           BOTÓN VOLVER
+        ================================================= */
 
-    color:#bf7485;
+        .volver {
 
-    font-size:22px;
+            display: inline-flex;
 
-    font-weight:bold;
+            align-items: center;
 
-}
+            gap: 8px;
 
+            margin-top: 25px;
 
-/* =====================================================
-   TEXTO MENSAJE
-   ===================================================== */
+            text-decoration: none;
 
-.mensaje-exito strong,
-.mensaje-error strong{
+            background:
 
-    display:block;
+                linear-gradient(
 
-    color:#bf7485;
+                    135deg,
 
-    font-size:16px;
+                    #9d6073,
 
-    margin-bottom:3px;
+                    #b7798c
 
-}
+                );
 
+            color: white;
 
-.mensaje-exito p,
-.mensaje-error p{
+            padding: 12px 20px;
 
-    margin:0;
+            border-radius: 30px;
 
-    color:#777;
+            font-size: 13px;
 
-    font-size:13px;
+            font-weight: 600;
 
-}
+            box-shadow:
 
+                0 8px 20px
 
-/* =====================================================
-   BOTÓN CERRAR
-   ===================================================== */
+                rgba(143, 83, 101, 0.20);
 
-.mensaje-exito button,
-.mensaje-error button{
+            transition: 0.25s ease;
 
-    margin-left:auto;
+        }
 
-    border:none;
 
-    background:transparent;
+        .volver:hover {
 
-    color:#999;
+            transform:
 
-    font-size:23px;
+                translateY(-2px);
 
-    cursor:pointer;
+            box-shadow:
 
-    line-height:1;
+                0 12px 25px
 
-    transition:.2s;
+                rgba(143, 83, 101, 0.28);
 
-}
+        }
 
 
-.mensaje-exito button:hover{
+        /* =================================================
+           RESPONSIVE
+        ================================================= */
 
-    color:#bf7485;
+        @media (max-width: 700px) {
 
-}
+            .contenedor {
 
+                width: 95%;
 
-.mensaje-error button:hover{
+                margin: 20px auto;
 
-    color:#d85a5a;
+            }
 
-}
+            .encabezado {
 
+                padding: 25px 22px;
 
-/* =====================================================
-   ANIMACIÓN
-   ===================================================== */
+                border-radius: 22px;
 
-@keyframes mensajeEntrada{
+            }
 
-    from{
+            .titulo {
 
-        opacity:0;
+                font-size: 30px;
 
-        transform:translateX(40px);
+            }
 
-    }
+            .tarjeta {
 
-    to{
+                padding: 18px;
 
-        opacity:1;
+                border-radius: 22px;
 
-        transform:translateX(0);
+            }
 
-    }
+            .barra h2 {
 
-}
+                font-size: 22px;
 
+            }
 
-/* =====================================================
-   RESPONSIVE - TABLETS
-   ===================================================== */
+        }
 
-@media (max-width:1000px){
-
-    body{
-
-        padding:30px 15px;
-
-    }
-
-
-    .contenedor{
-
-        width:100%;
-
-        padding:30px 20px;
-
-    }
-
-
-    .encabezado{
-
-        flex-wrap:wrap;
-
-    }
-
-
-    h1{
-
-        font-size:28px;
-
-    }
-
-
-    .tabla-contenedor{
-
-        overflow-x:auto;
-
-        -webkit-overflow-scrolling:touch;
-
-    }
-
-
-    table{
-
-        min-width:950px;
-
-    }
-
-}
-
-
-/* =====================================================
-   RESPONSIVE - CELULARES
-   ===================================================== */
-
-@media (max-width:700px){
-
-    body{
-
-        padding:15px 10px;
-
-        background-attachment:scroll;
-
-    }
-
-
-    .contenedor{
-
-        width:100%;
-
-        padding:22px 12px;
-
-        border-radius:22px;
-
-    }
-
-
-    /* ENCABEZADO */
-
-    .encabezado{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:15px;
-
-        margin-bottom:25px;
-
-    }
-
-
-    .titulo{
-
-        width:100%;
-
-        gap:10px;
-
-    }
-
-
-    .icono{
-
-        width:48px;
-
-        height:48px;
-
-        font-size:23px;
-
-        border-radius:15px;
-
-        flex-shrink:0;
-
-    }
-
-
-    h1{
-
-        font-size:24px;
-
-    }
-
-
-    .subtitulo{
-
-        font-size:12px;
-
-    }
-
-
-    /* CONTADOR */
-
-    .contador{
-
-        align-self:flex-start;
-
-        padding:9px 16px;
-
-        font-size:13px;
-
-    }
-
-
-    /* INDICADOR DE ROL */
-
-    .rol-indicador{
-
-        padding:12px 14px;
-
-        font-size:13px;
-
-        line-height:1.6;
-
-        margin-bottom:20px;
-
-    }
-
-
-    /* TABLA */
-
-    .tabla-contenedor{
-
-        width:100%;
-
-        overflow-x:auto;
-
-        border-radius:16px;
-
-        -webkit-overflow-scrolling:touch;
-
-    }
-
-
-    table{
-
-        min-width:950px;
-
-    }
-
-
-    th{
-
-        padding:13px 10px;
-
-        font-size:11px;
-
-    }
-
-
-    td{
-
-        padding:13px 10px;
-
-        font-size:12px;
-
-    }
-
-
-    /* BOTONES */
-
-    .acciones{
-
-        flex-direction:column;
-
-        gap:6px;
-
-    }
-
-
-    .btn{
-
-        width:100%;
-
-        min-width:100px;
-
-        padding:8px 12px;
-
-        font-size:12px;
-
-    }
-
-
-    /* BOTÓN VOLVER */
-
-    .volver{
-
-        margin-top:22px;
-
-        padding:11px 18px;
-
-        font-size:13px;
-
-    }
-
-
-    /* MENSAJES */
-
-    .mensaje-exito,
-    .mensaje-error{
-
-        top:15px;
-
-        right:12px;
-
-        left:12px;
-
-        min-width:auto;
-
-        max-width:none;
-
-        padding:14px 15px;
-
-        border-radius:16px;
-
-    }
-
-
-    .mensaje-icono{
-
-        min-width:38px;
-
-        width:38px;
-
-        height:38px;
-
-        font-size:18px;
-
-    }
-
-
-    .mensaje-exito strong,
-    .mensaje-error strong{
-
-        font-size:14px;
-
-    }
-
-
-    .mensaje-exito p,
-    .mensaje-error p{
-
-        font-size:12px;
-
-    }
-
-}
-
-
-/* =====================================================
-   RESPONSIVE - CELULARES MUY PEQUEÑOS
-   ===================================================== */
-
-@media (max-width:400px){
-
-    body{
-
-        padding:10px 6px;
-
-    }
-
-
-    .contenedor{
-
-        padding:18px 9px;
-
-        border-radius:18px;
-
-    }
-
-
-    h1{
-
-        font-size:21px;
-
-    }
-
-
-    .icono{
-
-        width:43px;
-
-        height:43px;
-
-        font-size:20px;
-
-    }
-
-
-    .contador{
-
-        font-size:12px;
-
-        padding:8px 13px;
-
-    }
-
-
-    .rol-indicador{
-
-        font-size:12px;
-
-    }
-
-
-    .volver{
-
-        width:100%;
-
-        justify-content:center;
-
-    }
-
-}
-
-</style>
+    </style>
 
 </head>
 
@@ -1492,619 +1151,960 @@ td{
 <body>
 
 
-<!-- =================================================
-     MENSAJE DE ÉXITO
-     ================================================= -->
-
-<?php if ($mensaje != "") { ?>
-
-    <div class="mensaje-exito">
-
-        <div class="mensaje-icono">
-
-            ✓
-
-        </div>
-
-
-        <div>
-
-            <strong>
-
-                ¡Listo!
-
-            </strong>
-
-
-            <p>
-
-                <?php
-
-                echo htmlspecialchars($mensaje);
-
-                ?>
-
-            </p>
-
-        </div>
-
-
-        <button
-            type="button"
-            onclick="this.parentElement.remove();"
-        >
-
-            ×
-
-        </button>
-
-    </div>
-
-<?php } ?>
-
-
-<!-- =================================================
-     MENSAJE DE ERROR
-     ================================================= -->
-
-<?php if ($error != "") { ?>
-
-    <div class="mensaje-error">
-
-        <div class="mensaje-icono">
-
-            !
-
-        </div>
-
-
-        <div>
-
-            <strong>
-
-                Ocurrió un problema
-
-            </strong>
-
-
-            <p>
-
-                <?php
-
-                echo htmlspecialchars($error);
-
-                ?>
-
-            </p>
-
-        </div>
-
-
-        <button
-            type="button"
-            onclick="this.parentElement.remove();"
-        >
-
-            ×
-
-        </button>
-
-    </div>
-
-<?php } ?>
-
-
-
 <div class="contenedor">
 
 
-    <!-- =================================================
+    <!-- =====================================================
          ENCABEZADO
-         ================================================= -->
+    ====================================================== -->
 
     <div class="encabezado">
 
+        <div class="encabezado-contenido">
 
-        <div class="titulo">
+            <div class="marca">
 
+                DIVINE
 
-            <div class="icono">
+            </div>
 
-                🧾
+            <div class="titulo">
+
+                Registro de Ventas
+
+            </div>
+
+            <div class="subtitulo">
+
+                <?php if ($rol === 'administrador'): ?>
+
+                    Visualización general de todas las ventas registradas.
+
+                <?php else: ?>
+
+                    Visualización de las ventas correspondientes a tu cuenta.
+
+                <?php endif; ?>
 
             </div>
 
 
-            <div>
+            <div class="usuario">
 
-                <h1>
+                <span>♡</span>
 
-                    Ventas
+                <span>
 
-                </h1>
+                    Sesión:
 
+                    <strong>
 
-                <div class="subtitulo">
+                        <?php
 
-                    Registro de ventas realizadas
+                        echo htmlspecialchars($nombreUsuario);
 
-                </div>
+                        ?>
+
+                    </strong>
+
+                </span>
+
+                <span>•</span>
+
+                <span>
+
+                    <?php
+
+                    echo htmlspecialchars(ucfirst($rol));
+
+                    ?>
+
+                </span>
 
             </div>
 
-
         </div>
-
-
-        <!-- =================================================
-             CONTADOR
-             ================================================= -->
-
-        <div class="contador">
-
-            <?php
-
-            echo $totalVentas;
-
-            ?>
-
-            ventas
-
-        </div>
-
 
     </div>
 
 
+    <!-- =====================================================
+         TARJETA PRINCIPAL
+    ====================================================== -->
 
-    <!-- =================================================
-         INDICADOR DEL ROL
-         ================================================= -->
+    <div class="tarjeta">
 
-    <div class="rol-indicador">
 
-        <?php if ($rol == "vendedor") { ?>
+        <div class="barra">
 
-            👤
+            <h2>
 
-            <strong>Vendedor:</strong>
+                Ventas registradas
 
-            Mostrando únicamente tus ventas.
+            </h2>
 
-            <br>
-
-            <small>
-
-                Vendedor:
+            <div class="contador">
 
                 <?php
 
-                echo htmlspecialchars($nombreUsuario);
+                echo $totalVentas;
 
                 ?>
 
-            </small>
+                <?php
 
-        <?php } else { ?>
+                echo ($totalVentas == 1)
 
-            👑
+                    ? ' venta'
 
-            <strong>Administrador:</strong>
+                    : ' ventas';
 
-            Mostrando todas las ventas del sistema.
+                ?>
 
-        <?php } ?>
+            </div>
 
-    </div>
+        </div>
 
 
+        <?php if ($totalVentas > 0): ?>
 
-    <!-- =================================================
-         TABLA
-         ================================================= -->
 
-    <div class="tabla-contenedor">
+            <div class="tabla-contenedor">
 
+                <table>
 
-    <?php if ($resultado->num_rows > 0): ?>
+                    <thead>
 
+                        <tr>
 
-        <table>
+                            <th>
 
+                                ID Venta
 
-            <thead>
+                            </th>
 
+                            <th>
 
-                <tr>
+                                Pedido
 
+                            </th>
 
-                    <th>
+                            <th>
 
-                        Venta
+                                Cliente
 
-                    </th>
+                            </th>
 
+                            <th>
 
-                    <th>
+                                Vendedor
 
-                        Pedido
+                            </th>
 
-                    </th>
+                            <th>
 
+                                Teléfono
 
-                    <th>
+                            </th>
 
-                        Cliente
+                            <th>
 
-                    </th>
+                                Método
 
+                            </th>
 
-                    <th>
+                            <th>
 
-                        Vendedor
+                                Total
 
-                    </th>
+                            </th>
 
+                            <th>
 
-                    <th>
+                                Estado
 
-                        Estado
+                            </th>
 
-                    </th>
+                            <th>
 
+                                Fecha
 
-                    <th>
+                            </th>
 
-                        Método
+                            <th>
 
-                    </th>
+                                Acciones
 
+                            </th>
 
-                    <th>
+                        </tr>
 
-                        Total
+                    </thead>
 
-                    </th>
 
+                    <tbody>
 
-                    <th>
 
-                        Acciones
+                    <?php while ($venta = $resultado->fetch_assoc()): ?>
 
-                    </th>
-
-
-                </tr>
-
-
-            </thead>
-
-
-
-            <tbody>
-
-
-            <?php while ($fila = $resultado->fetch_assoc()): ?>
-
-
-                <tr>
-
-
-                    <!-- =====================================
-                         ID VENTA
-                         ===================================== -->
-
-                    <td class="id-venta">
-
-                        #
 
                         <?php
 
-                        echo htmlspecialchars(
-                            $fila['id']
-                        );
+                        /* =================================================
+                           ESTADO DE LA VENTA
+                        ================================================= */
 
-                        ?>
+                        $estadoVenta =
 
-                    </td>
+                            trim(
 
+                                $venta['estado_venta'] ?? ''
 
-
-                    <!-- =====================================
-                         ID PEDIDO
-                         ===================================== -->
-
-                    <td>
-
-                        <span class="id-pedido">
-
-                            Pedido #
-
-                            <?php
-
-                            echo htmlspecialchars(
-                                $fila['PEDIDOS_ID']
                             );
 
-                            ?>
+                        $estadoClase =
 
-                        </span>
+                            'estado-normal';
 
-                    </td>
+                        $estadoNormalizado =
 
+                            strtolower(
 
+                                $estadoVenta
 
-                    <!-- =====================================
-                         CLIENTE
-                         ===================================== -->
-
-                    <td class="cliente">
-
-                        <?php
-
-                        echo htmlspecialchars(
-                            $fila['nombre']
-                        );
-
-                        ?>
-
-                    </td>
-
-
-
-                    <!-- =====================================
-                         VENDEDOR
-                         ===================================== -->
-
-                    <td class="vendedor">
-
-                        <?php
-
-                        echo htmlspecialchars(
-                            $fila['nombrevendedor']
-                        );
+                            );
 
 
                         if (
-                            $fila['nombrevendedor']
-                            == $nombreUsuario
+
+                            $estadoNormalizado === 'aceptado'
+
                         ) {
 
-                        ?>
+                            $estadoClase =
 
-                            <span class="yo">
+                                'estado-aceptado';
 
-                                (yo)
+                        } elseif (
 
-                            </span>
+                            $estadoNormalizado === 'en proceso'
 
-                        <?php
+                            ||
+
+                            $estadoNormalizado === 'enproceso'
+
+                        ) {
+
+                            $estadoClase =
+
+                                'estado-proceso';
+
+                        } elseif (
+
+                            $estadoNormalizado === 'completado'
+
+                        ) {
+
+                            $estadoClase =
+
+                                'estado-completado';
+
+                        } elseif (
+
+                            $estadoNormalizado === 'rechazado'
+
+                        ) {
+
+                            $estadoClase =
+
+                                'estado-rechazado';
+
+                        } elseif (
+
+                            $estadoNormalizado === 'pendiente'
+
+                        ) {
+
+                            $estadoClase =
+
+                                'estado-pendiente';
 
                         }
 
                         ?>
 
-                    </td>
+
+                        <tr>
 
 
+                            <!-- =========================================
+                                 ID VENTA
+                            ========================================== -->
 
-                    <!-- =====================================
-                         ESTADO
-                         ===================================== -->
+                            <td>
 
-                    <td>
+                                <span class="numero">
 
-                        <span class="estado">
+                                    #
 
-                            <?php
+                                    <?php
 
-                            echo htmlspecialchars(
-                                $fila['estado']
-                            );
+                                    echo (int)
 
-                            ?>
+                                        $venta['id_venta'];
 
-                        </span>
+                                    ?>
 
-                    </td>
+                                </span>
 
-
-
-                    <!-- =====================================
-                         MÉTODO
-                         ===================================== -->
-
-                    <td class="metodo">
-
-                        <?php
-
-                        echo htmlspecialchars(
-                            $fila['metodo']
-                        );
-
-                        ?>
-
-                    </td>
+                            </td>
 
 
+                            <!-- =========================================
+                                 ID PEDIDO
+                            ========================================== -->
 
-                    <!-- =====================================
-                         TOTAL
-                         ===================================== -->
+                            <td>
 
-                    <td class="total">
+                                <span class="numero">
 
-                        Bs.
+                                    #
 
-                        <?php
+                                    <?php
 
-                        echo number_format(
-                            (float)$fila['costototal'],
-                            2
-                        );
+                                    echo (int)
 
-                        ?>
+                                        $venta['PEDIDOS_ID'];
 
-                    </td>
+                                    ?>
 
+                                </span>
 
-
-                    <!-- =====================================
-                         ACCIONES
-                         ===================================== -->
-
-                    <td>
+                            </td>
 
 
-                        <div class="acciones">
+                            <!-- =========================================
+                                 CLIENTE
+                            ========================================== -->
+
+                            <td>
+
+                                <span class="cliente">
+
+                                    <?php
+
+                                    echo htmlspecialchars(
+
+                                        $venta['cliente']
+
+                                        ?? 'Sin nombre'
+
+                                    );
+
+                                    ?>
+
+                                </span>
+
+                            </td>
 
 
-                            <!-- =================================
-                                 DETALLES
-                                 ADMIN + VENDEDOR
-                                 ================================= -->
+                            <!-- =========================================
+                                 VENDEDOR
+                            ========================================== -->
 
-                            <a
-                                href="readunoventa.php?id=<?php echo $fila['id']; ?>"
-                                class="btn btn-detalles"
-                            >
+                            <td>
 
-                                🔎 Detalles
+                                <span class="vendedor">
 
-                            </a>
+                                    <?php
+
+                                    echo htmlspecialchars(
+
+                                        $venta['nombrevendedor']
+
+                                        ?? 'Sin vendedor'
+
+                                    );
+
+                                    ?>
+
+                                </span>
+
+                            </td>
 
 
+                            <!-- =========================================
+                                 TELÉFONO
+                            ========================================== -->
 
-                            <!-- =================================
-                                 SOLO ADMINISTRADOR
-                                 ================================= -->
+                            <td>
 
-                            <?php if ($rol == "administrador") { ?>
+                                <?php
+
+                                echo htmlspecialchars(
+
+                                    $venta['telefono']
+
+                                    ?? 'Sin teléfono'
+
+                                );
+
+                                ?>
+
+                            </td>
 
 
-                                <!-- MODIFICAR -->
+                            <!-- =========================================
+                                 MÉTODO
+                            ========================================== -->
 
-                                <a
-                                    href="updateformventa.php?id=<?php echo $fila['id']; ?>"
-                                    class="btn btn-editar"
+                            <td>
+
+                                <span class="metodo">
+
+                                    <?php
+
+                                    echo htmlspecialchars(
+
+                                        $venta['metodo']
+
+                                        ?? 'Sin método'
+
+                                    );
+
+                                    ?>
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- =========================================
+                                 TOTAL
+                            ========================================== -->
+
+                            <td>
+
+                                <span class="total">
+
+                                    Bs.
+
+                                    <?php
+
+                                    echo number_format(
+
+                                        (float)(
+
+                                            $venta['costototal']
+
+                                            ?? 0
+
+                                        ),
+
+                                        2,
+
+                                        '.',
+
+                                        ','
+
+                                    );
+
+                                    ?>
+
+                                </span>
+
+                            </td>
+
+
+                            <!-- =========================================
+                                 ESTADO
+                            ========================================== -->
+
+                            <td>
+
+                                <span
+
+                                    class="estado <?php echo $estadoClase; ?>"
+
                                 >
 
-                                    ✏️ Modificar
+                                    <?php
 
-                                </a>
+                                    echo htmlspecialchars(
 
+                                        $estadoVenta !== ''
 
+                                            ? $estadoVenta
 
-                                <!-- ELIMINAR -->
+                                            : 'Sin estado'
 
-                                <a
-                                    href="deleteventa.php?id=<?php echo $fila['id']; ?>"
-                                    class="btn btn-eliminar"
+                                    );
 
-                                    onclick="
-                                        return confirm(
-                                            '¿Está seguro de eliminar esta venta?'
-                                        );
-                                    "
-                                >
+                                    ?>
 
-                                    🗑️ Eliminar
+                                </span>
 
-                                </a>
+                            </td>
 
 
-                            <?php } ?>
+                            <!-- =========================================
+                                 FECHA
+                            ========================================== -->
+
+                            <td>
+
+                                <?php
+
+                                echo htmlspecialchars(
+
+                                    $venta['fecha']
+
+                                    ?? ''
+
+                                );
+
+                                ?>
+
+                            </td>
 
 
-                        </div>
+                            <!-- =========================================
+                                 ACCIONES
+                            ========================================== -->
+
+                            <td>
+
+                                <div class="acciones">
 
 
-                    </td>
+                                    <!-- =================================
+                                         DETALLES
+                                         LO PUEDEN VER AMBOS ROLES
+                                    ================================== -->
+
+                                    <a
+
+                                        href="readunoventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                        class="btn-accion btn-detalles"
+
+                                        title="Ver detalles de la venta"
+
+                                    >
+
+                                        <span class="icono-btn">
+
+                                            ♡
+
+                                        </span>
+
+                                        Detalles
+
+                                    </a>
 
 
-                </tr>
+                                    <!-- =================================
+                                         SOLO ADMINISTRADOR
+                                         EDITAR
+                                    ================================== -->
+
+                                    <?php if ($rol === 'administrador'): ?>
 
 
-            <?php endwhile; ?>
+                                        <a
+
+                                            href="updateformventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                            class="btn-accion btn-editar"
+
+                                            title="Editar venta"
+
+                                        >
+
+                                            <span class="icono-btn">
+
+                                                ✎
+
+                                            </span>
+
+                                            Editar
+
+                                        </a>
 
 
-            </tbody>
+                                        <!-- =============================
+                                             SOLO ADMINISTRADOR
+                                             ELIMINAR
+                                        ============================== -->
+
+                                        <a
+
+                                            href="deleteventa.php?id=<?php echo (int)$venta['id_venta']; ?>"
+
+                                            class="btn-accion btn-eliminar"
+
+                                            title="Eliminar venta"
+
+                                            onclick="confirmarEliminacion(event, <?php echo (int)$venta['id_venta']; ?>)"
+
+                                        >
+
+                                            <span class="icono-btn">
+
+                                                🗑
+
+                                            </span>
+
+                                            Eliminar
+
+                                        </a>
 
 
-        </table>
+                                    <?php endif; ?>
 
 
-    <?php else: ?>
+                                </div>
+
+                            </td>
 
 
-        <!-- =================================================
-             SIN VENTAS
-             ================================================= -->
-
-        <div class="sin-ventas">
+                        </tr>
 
 
-            <div class="sin-ventas-icono">
+                    <?php endwhile; ?>
 
-                🧾
+
+                    </tbody>
+
+                </table>
 
             </div>
 
 
-            <h2>
-
-                No hay ventas
-
-            </h2>
+        <?php else: ?>
 
 
-            <p>
+            <div class="sin-resultados">
 
-                <?php if ($rol == "vendedor") { ?>
+                <div class="sin-icono">
 
-                    Todavía no tienes ventas registradas con pedidos Aceptados.
+                    ♡
 
-                <?php } else { ?>
+                </div>
 
-                    Todavía no existen ventas en el sistema.
+                <h3>
 
-                <?php } ?>
+                    No hay ventas registradas
 
-            </p>
+                </h3>
+
+                <p>
+
+                    <?php if ($rol === 'administrador'): ?>
+
+                        Actualmente no existen ventas registradas
+
+                        en el sistema.
+
+                    <?php else: ?>
+
+                        No existen ventas registradas a tu nombre.
+
+                    <?php endif; ?>
+
+                </p>
+
+            </div>
 
 
-        </div>
+        <?php endif; ?>
 
 
-    <?php endif; ?>
+        <!-- =================================================
+             BOTÓN VOLVER
+        ================================================== -->
+
+        <?php if ($rol === 'administrador'): ?>
+
+
+            <a
+
+                href="../admin.php"
+
+                class="volver"
+
+            >
+
+                ← Volver al administrador
+
+            </a>
+
+
+        <?php else: ?>
+
+
+            <a
+
+                href="../perfilvendedor.php"
+
+                class="volver"
+
+            >
+
+                ← Volver al vendedor
+
+            </a>
+
+
+        <?php endif; ?>
 
 
     </div>
 
 
-
-    <!-- =================================================
-         BOTÓN VOLVER
-         ================================================= -->
-
-    <a
-        href="../admin.php"
-        class="volver"
-    >
-
-        ← Volver al perfil
-
-    </a>
-
-
 </div>
 
+
+<!-- =====================================================
+     SWEETALERT PARA ELIMINAR
+====================================================== -->
+
+<script>
+
+function confirmarEliminacion(event, idVenta) {
+
+    event.preventDefault();
+
+    const enlace = event.currentTarget;
+
+    Swal.fire({
+
+        title: '¿Eliminar esta venta?',
+
+        html:
+            'La venta <strong>#' +
+            idVenta +
+            '</strong> será eliminada del registro.',
+
+        icon: 'warning',
+
+        iconColor: '#b76e83',
+
+        showCancelButton: true,
+
+        confirmButtonText: 'Sí, eliminar',
+
+        cancelButtonText: 'Cancelar',
+
+        reverseButtons: true,
+
+        focusCancel: true,
+
+        background: '#fff9f8',
+
+        color: '#604b53',
+
+        buttonsStyling: false,
+
+        customClass: {
+
+            popup: 'sweet-divine',
+
+            title: 'sweet-titulo',
+
+            htmlContainer: 'sweet-texto',
+
+            confirmButton: 'sweet-confirmar',
+
+            cancelButton: 'sweet-cancelar'
+
+        }
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href = enlace.href;
+
+        }
+
+    });
+
+}
+
+</script>
+
+
+<!-- =====================================================
+     ESTILOS DEL SWEETALERT
+====================================================== -->
+
+<style>
+
+    .sweet-divine {
+
+        border-radius: 28px !important;
+
+        padding: 30px !important;
+
+        box-shadow:
+
+            0 20px 60px
+
+            rgba(126, 79, 96, 0.22) !important;
+
+        border:
+
+            1px solid
+
+            rgba(183, 110, 131, 0.15) !important;
+
+    }
+
+
+    .sweet-titulo {
+
+        font-family:
+
+            'Playfair Display',
+
+            serif !important;
+
+        color: #704653 !important;
+
+        font-size: 28px !important;
+
+        font-weight: 600 !important;
+
+    }
+
+
+    .sweet-texto {
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        color: #806d74 !important;
+
+        font-size: 14px !important;
+
+        line-height: 1.6 !important;
+
+    }
+
+
+    .sweet-confirmar {
+
+        border: none !important;
+
+        outline: none !important;
+
+        background:
+
+            linear-gradient(
+
+                135deg,
+
+                #a9657b,
+
+                #c18498
+
+            ) !important;
+
+        color: white !important;
+
+        padding: 11px 22px !important;
+
+        border-radius: 14px !important;
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        font-size: 13px !important;
+
+        font-weight: 700 !important;
+
+        cursor: pointer !important;
+
+        margin: 0 5px !important;
+
+        box-shadow:
+
+            0 7px 18px
+
+            rgba(169, 101, 123, 0.25) !important;
+
+        transition: 0.2s ease !important;
+
+    }
+
+
+    .sweet-confirmar:hover {
+
+        transform: translateY(-2px) !important;
+
+        box-shadow:
+
+            0 10px 22px
+
+            rgba(169, 101, 123, 0.32) !important;
+
+    }
+
+
+    .sweet-cancelar {
+
+        border: none !important;
+
+        outline: none !important;
+
+        background: #f2e5e5 !important;
+
+        color: #8b626b !important;
+
+        padding: 11px 22px !important;
+
+        border-radius: 14px !important;
+
+        font-family:
+
+            'DM Sans',
+
+            sans-serif !important;
+
+        font-size: 13px !important;
+
+        font-weight: 600 !important;
+
+        cursor: pointer !important;
+
+        margin: 0 5px !important;
+
+        transition: 0.2s ease !important;
+
+    }
+
+
+    .sweet-cancelar:hover {
+
+        background: #ead7d9 !important;
+
+        transform: translateY(-2px) !important;
+
+    }
+
+</style>
 
 
 </body>
 
 </html>
-
 
 
 <?php

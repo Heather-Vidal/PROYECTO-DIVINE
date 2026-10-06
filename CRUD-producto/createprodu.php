@@ -19,6 +19,7 @@ $conn = new mysqli(
 
 $tipoMensaje = "";
 $mensaje = "";
+$detalleMensaje = "";
 
 
 // =====================================================
@@ -48,171 +49,282 @@ if ($conn->connect_error) {
 
 
     // =================================================
-    // VERIFICAR QUE EXISTA LA IMAGEN
+    // INSERTAR PRODUCTO EN LA BASE DE DATOS
     // =================================================
 
-    if (
-        !isset($_FILES["fileToUpload"]) ||
-        $_FILES["fileToUpload"]["error"] != 0
-    ) {
+    $sql = "
+        INSERT INTO PRODUCTO
+        (
+            nombre,
+            descripcion,
+            categoria,
+            precio,
+            costo,
+            stock,
+            codigo
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ";
 
-        $tipoMensaje = "error";
 
-        $mensaje = "se subio correctamente el producto pero no se registro ninguna imagen";
-
-    } else {
+    $stmt = $conn->prepare($sql);
 
 
-        // =================================================
-        // DATOS DE LA IMAGEN
-        // =================================================
+    if ($stmt) {
 
-        $target_dir = "../PRODUCTO-img/";
-
-        $imageFileType = strtolower(
-            pathinfo(
-                $_FILES["fileToUpload"]["name"],
-                PATHINFO_EXTENSION
-            )
+        $stmt->bind_param(
+            "sssiiii",
+            $nombre,
+            $descripcion,
+            $categoria,
+            $precio,
+            $costo,
+            $stock,
+            $codigo
         );
 
 
         // =================================================
-        // NOMBRE DE LA IMAGEN
+        // GUARDAR PRODUCTO
         // =================================================
 
-        $newFileName = "P-" . $codigo . "." . $imageFileType;
-
-        $target_file = $target_dir . $newFileName;
+        if ($stmt->execute()) {
 
 
-        // =================================================
-        // BANDERA DE SUBIDA
-        // =================================================
+            // =================================================
+            // PRODUCTO GUARDADO CORRECTAMENTE
+            // AHORA SE PROCESA LA IMAGEN
+            // =================================================
 
-        $uploadOk = 1;
+            $productoGuardado = true;
+            $imagenGuardada = false;
 
-
-        // =================================================
-        // VERIFICAR SI YA EXISTE
-        // =================================================
-
-        if (file_exists($target_file)) {
-
-            $tipoMensaje = "warning";
-
-            $mensaje = "Ya existe una imagen registrada con este código de producto.";
-
-            $uploadOk = 0;
-
-        }
+            $mensaje = "PRODUCTO GUARDADO EXITOSAMENTE";
 
 
-        // =================================================
-        // VALIDAR EXTENSIÓN
-        // =================================================
-
-        $extensionesPermitidas = [
-            "jpg",
-            "jpeg",
-            "png",
-            "gif",
-            "webp"
-        ];
-
-
-        if (!in_array($imageFileType, $extensionesPermitidas)) {
-
-            $tipoMensaje = "warning";
-
-            $mensaje = "El formato de imagen no es válido. Solo se permiten JPG, JPEG, PNG, GIF o WEBP.";
-
-            $uploadOk = 0;
-
-        }
-
-
-        // =================================================
-        // SI TODO ESTÁ BIEN, SUBIR IMAGEN
-        // =================================================
-
-        if ($uploadOk == 1) {
-
+            // =================================================
+            // VERIFICAR SI SE ENVIÓ UNA IMAGEN
+            // =================================================
 
             if (
-                move_uploaded_file(
-                    $_FILES["fileToUpload"]["tmp_name"],
-                    $target_file
-                )
+                isset($_FILES["fileToUpload"]) &&
+                $_FILES["fileToUpload"]["error"] != UPLOAD_ERR_NO_FILE
             ) {
 
 
-                // =========================================
-                // INSERTAR PRODUCTO EN LA BASE DE DATOS
-                // =========================================
+                // =================================================
+                // VERIFICAR ERROR DE SUBIDA
+                // =================================================
 
-                $sql = "
-
-                    INSERT INTO PRODUCTO
-                    (
-                        nombre,
-                        descripcion,
-                        categoria,
-                        precio,
-                        costo,
-                        stock,
-                        codigo
-                    )
-
-                    VALUES
-                    (
-                        '$nombre',
-                        '$descripcion',
-                        '$categoria',
-                        '$precio',
-                        '$costo',
-                        '$stock',
-                        '$codigo'
-                    )
-
-                ";
+                if ($_FILES["fileToUpload"]["error"] == UPLOAD_ERR_OK) {
 
 
-                if ($conn->query($sql) === TRUE) {
+                    // =================================================
+                    // DATOS DE LA IMAGEN
+                    // =================================================
 
-                    $tipoMensaje = "exito";
+                    $target_dir = "../PRODUCTO-img/";
 
-                    $mensaje = "¡Producto guardado exitosamente!";
 
-                } else {
+                    // =================================================
+                    // OBTENER EXTENSIÓN
+                    // =================================================
 
-                    // =====================================
-                    // SI FALLA BD, ELIMINAR IMAGEN
-                    // =====================================
+                    $imageFileType = strtolower(
+                        pathinfo(
+                            $_FILES["fileToUpload"]["name"],
+                            PATHINFO_EXTENSION
+                        )
+                    );
 
-                    if (file_exists($target_file)) {
 
-                        unlink($target_file);
+                    // =================================================
+                    // EXTENSIONES PERMITIDAS
+                    // =================================================
+
+                    $extensionesPermitidas = [
+                        "jpg",
+                        "jpeg",
+                        "png",
+                        "gif",
+                        "webp"
+                    ];
+
+
+                    // =================================================
+                    // VERIFICAR FORMATO
+                    // =================================================
+
+                    if (
+                        in_array(
+                            $imageFileType,
+                            $extensionesPermitidas
+                        )
+                    ) {
+
+
+                        // =================================================
+                        // NOMBRE DE LA IMAGEN
+                        // =================================================
+
+                        $newFileName =
+                            "P-" .
+                            $codigo .
+                            "." .
+                            $imageFileType;
+
+
+                        $target_file =
+                            $target_dir .
+                            $newFileName;
+
+
+                        // =================================================
+                        // VERIFICAR SI YA EXISTE
+                        // =================================================
+
+                        if (file_exists($target_file)) {
+
+                            $imagenGuardada = false;
+
+                            $detalleMensaje =
+                                "El producto fue registrado, pero la imagen no se pudo guardar porque ya existe una imagen registrada con este código.";
+
+                        } else {
+
+
+                            // =================================================
+                            // SUBIR IMAGEN
+                            // =================================================
+
+                            if (
+                                move_uploaded_file(
+                                    $_FILES["fileToUpload"]["tmp_name"],
+                                    $target_file
+                                )
+                            ) {
+
+                                $imagenGuardada = true;
+
+                            } else {
+
+                                $imagenGuardada = false;
+
+                                $detalleMensaje =
+                                    "El producto fue registrado, pero no se pudo guardar la imagen.";
+
+                            }
+
+                        }
+
+
+                    } else {
+
+
+                        // =================================================
+                        // FORMATO NO COMPATIBLE
+                        // =================================================
+
+                        $imagenGuardada = false;
+
+                        $detalleMensaje =
+                            "La imagen no se pudo guardar porque el formato no es compatible. Solo se permiten JPG, JPEG, PNG, GIF o WEBP.";
 
                     }
 
 
-                    $tipoMensaje = "error";
+                } else {
 
-                    $mensaje = "No se pudo guardar el producto en la base de datos.";
+
+                    // =================================================
+                    // ERROR AL SUBIR LA IMAGEN
+                    // =================================================
+
+                    $imagenGuardada = false;
+
+                    $detalleMensaje =
+                        "El producto fue registrado, pero la imagen no se pudo guardar correctamente.";
 
                 }
 
 
             } else {
 
-                $tipoMensaje = "error";
 
-                $mensaje = "No se pudo subir la imagen. Intenta nuevamente.";
+                // =================================================
+                // NO SE SELECCIONÓ IMAGEN
+                // =================================================
+
+                $imagenGuardada = false;
+
+                $detalleMensaje =
+                    "El producto fue registrado correctamente, pero no se añadió ninguna imagen.";
 
             }
 
+
+            // =================================================
+            // DETERMINAR MENSAJE FINAL
+            // =================================================
+
+            if ($imagenGuardada === true) {
+
+                $tipoMensaje = "exito-completo";
+
+                $mensaje =
+                    "PRODUCTO E IMAGEN REGISTRADOS EXITOSAMENTE";
+
+                $detalleMensaje =
+                    "El producto y su imagen fueron guardados correctamente en DIVINE.";
+
+            } else {
+
+                /*
+                 * IMPORTANTE:
+                 * EL PRODUCTO SÍ FUE GUARDADO.
+                 * SOLO LA IMAGEN TUVO UN PROBLEMA.
+                 */
+
+                $tipoMensaje = "exito-parcial";
+
+            }
+
+
+        } else {
+
+
+            // =================================================
+            // ERROR AL GUARDAR PRODUCTO
+            // =================================================
+
+            $tipoMensaje = "error";
+
+            $mensaje =
+                "NO SE PUDO GUARDAR EL PRODUCTO";
+
+            $detalleMensaje =
+                "Ocurrió un problema al registrar el producto en la base de datos.";
+
         }
+
+
+        $stmt->close();
+
+
+    } else {
+
+
+        // =================================================
+        // ERROR AL PREPARAR CONSULTA
+        // =================================================
+
+        $tipoMensaje = "error";
+
+        $mensaje =
+            "NO SE PUDO GUARDAR EL PRODUCTO";
+
+        $detalleMensaje =
+            "Ocurrió un problema al procesar la información.";
 
     }
 
@@ -406,7 +518,7 @@ body{
 
     border-radius:18px;
 
-    padding:25px 20px;
+    padding:28px 20px;
 
     font-weight:500;
 
@@ -425,11 +537,11 @@ body{
 
 .icono-mensaje{
 
-    width:65px;
+    width:70px;
 
-    height:65px;
+    height:70px;
 
-    margin:0 auto 15px;
+    margin:0 auto 18px;
 
     border-radius:50%;
 
@@ -439,7 +551,7 @@ body{
 
     justify-content:center;
 
-    font-size:30px;
+    font-size:32px;
 
     font-weight:700;
 
@@ -452,33 +564,58 @@ body{
 
 .mensaje-titulo{
 
-    font-size:21px;
+    font-size:23px;
 
     font-weight:700;
 
-    margin-bottom:8px;
+    margin-bottom:10px;
+
+    letter-spacing:.5px;
 
 }
 
 
 /* =====================================================
-   TEXTO DEL MENSAJE
+   TEXTO PRINCIPAL
    ===================================================== */
 
 .mensaje-texto{
 
     font-size:14px;
 
-    line-height:1.6;
+    line-height:1.7;
 
 }
 
 
 /* =====================================================
-   ÉXITO
+   DETALLE PEQUEÑO
    ===================================================== */
 
-.exito{
+.mensaje-detalle{
+
+    margin-top:12px;
+
+    padding-top:12px;
+
+    border-top:
+
+        1px solid rgba(0,0,0,.10);
+
+    font-size:12px;
+
+    line-height:1.6;
+
+    opacity:.85;
+
+}
+
+
+/* =====================================================
+   ÉXITO COMPLETO
+   ===================================================== */
+
+.exito-completo{
 
     background:
 
@@ -501,7 +638,7 @@ body{
 }
 
 
-.exito .icono-mensaje{
+.exito-completo .icono-mensaje{
 
     background:#c56d99;
 
@@ -510,6 +647,55 @@ body{
     box-shadow:
 
         0 8px 20px rgba(197,109,153,.30);
+
+}
+
+
+/* =====================================================
+   ÉXITO PARCIAL
+   PRODUCTO SÍ SE GUARDÓ
+   IMAGEN NO
+   ===================================================== */
+
+.exito-parcial{
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #fff4f8,
+            #fce0eb
+        );
+
+    color:#8e4565;
+
+    border:
+
+        1px solid #efb7ce;
+
+    box-shadow:
+
+        0 10px 25px rgba(197,109,153,.18);
+
+}
+
+
+.exito-parcial .icono-mensaje{
+
+    background:#c56d99;
+
+    color:white;
+
+    box-shadow:
+
+        0 8px 20px rgba(197,109,153,.30);
+
+}
+
+
+.exito-parcial .mensaje-detalle{
+
+    color:#8b5b70;
 
 }
 
@@ -550,46 +736,6 @@ body{
     box-shadow:
 
         0 8px 20px rgba(139,79,107,.30);
-
-}
-
-
-/* =====================================================
-   ADVERTENCIA
-   ===================================================== */
-
-.warning{
-
-    background:
-
-        linear-gradient(
-            135deg,
-            #fff9ef,
-            #fcebd2
-        );
-
-    color:#8b633d;
-
-    border:
-
-        1px solid #e9c994;
-
-    box-shadow:
-
-        0 10px 25px rgba(190,143,72,.16);
-
-}
-
-
-.warning .icono-mensaje{
-
-    background:#c9974e;
-
-    color:white;
-
-    box-shadow:
-
-        0 8px 20px rgba(190,143,72,.30);
 
 }
 
@@ -763,6 +909,13 @@ body{
     }
 
 
+    .mensaje-detalle{
+
+        font-size:11px;
+
+    }
+
+
     .botones{
 
         flex-direction:column;
@@ -857,6 +1010,13 @@ body{
     }
 
 
+    .mensaje-detalle{
+
+        font-size:10px;
+
+    }
+
+
     .boton{
 
         font-size:13px;
@@ -889,7 +1049,6 @@ body{
     </div>
 
 
-
     <!-- =================================================
          CONTENIDO
          ================================================= -->
@@ -897,10 +1056,14 @@ body{
     <div class="contenido">
 
 
-        <?php if ($tipoMensaje == "exito") { ?>
+        <?php if ($tipoMensaje == "exito-completo") { ?>
 
 
-            <div class="mensaje exito">
+            <!-- ==========================================
+                 PRODUCTO + IMAGEN GUARDADOS
+                 ========================================== -->
+
+            <div class="mensaje exito-completo">
 
 
                 <div class="icono-mensaje">
@@ -912,15 +1075,15 @@ body{
 
                 <div class="mensaje-titulo">
 
-                    ¡Producto guardado!
+                    PRODUCTO E IMAGEN REGISTRADOS EXITOSAMENTE
 
                 </div>
 
 
                 <div class="mensaje-texto">
 
-                    El producto se registró correctamente
-                    y la imagen fue subida con éxito.
+                    El producto y su imagen fueron guardados
+                    correctamente en DIVINE.
 
                 </div>
 
@@ -928,32 +1091,47 @@ body{
             </div>
 
 
-        <?php } elseif ($tipoMensaje == "warning") { ?>
+        <?php } elseif ($tipoMensaje == "exito-parcial") { ?>
 
 
-            <div class="mensaje warning">
+            <!-- ==========================================
+                 PRODUCTO GUARDADO
+                 IMAGEN NO GUARDADA
+                 ========================================== -->
+
+            <div class="mensaje exito-parcial">
 
 
                 <div class="icono-mensaje">
 
-                    !
+                    ✓
 
                 </div>
 
 
                 <div class="mensaje-titulo">
 
-                    ¡Atención!
+                    PRODUCTO GUARDADO EXITOSAMENTE
 
                 </div>
 
 
                 <div class="mensaje-texto">
 
+                    El producto fue registrado correctamente
+                    en la base de datos.
+
+                </div>
+
+
+                <div class="mensaje-detalle">
+
                     <?php
 
                     echo htmlspecialchars(
-                        $mensaje
+                        $detalleMensaje,
+                        ENT_QUOTES,
+                        'UTF-8'
                     );
 
                     ?>
@@ -967,6 +1145,10 @@ body{
         <?php } elseif ($tipoMensaje == "error") { ?>
 
 
+            <!-- ==========================================
+                 ERROR
+                 ========================================== -->
+
             <div class="mensaje error">
 
 
@@ -979,7 +1161,15 @@ body{
 
                 <div class="mensaje-titulo">
 
-                    Ocurrió un problema
+                    <?php
+
+                    echo htmlspecialchars(
+                        $mensaje,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+
+                    ?>
 
                 </div>
 
@@ -989,7 +1179,9 @@ body{
                     <?php
 
                     echo htmlspecialchars(
-                        $mensaje
+                        $detalleMensaje,
+                        ENT_QUOTES,
+                        'UTF-8'
                     );
 
                     ?>
@@ -1004,7 +1196,6 @@ body{
 
 
     </div>
-
 
 
     <!-- =================================================

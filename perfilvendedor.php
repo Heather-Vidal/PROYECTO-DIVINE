@@ -1623,7 +1623,7 @@ Cerrar Sesión
 <div class="metrics">
 
 <a
-href="./CRUD-producto/formularioprodu.php"
+href="./CRUD-producto/readtodoprodu.php"
 class="metric button-card"
 >
 
@@ -1638,7 +1638,7 @@ alt="Registrar"
 
 <p>
 
-Registrar producto
+Consultar Stock 
 
 </p>
 
@@ -1660,7 +1660,7 @@ alt="Pedido"
 
 <p>
 
-Actualizar pedido
+Gestionar pedidos
 
 </p>
 

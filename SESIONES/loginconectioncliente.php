@@ -489,7 +489,7 @@ font-size:32px;
     </div>
 
     <h2>
-       sesion cerrada
+       Contraseña incorrecta
     </h2>
 
     <div class="error">

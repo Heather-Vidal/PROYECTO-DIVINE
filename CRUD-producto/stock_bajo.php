@@ -1300,7 +1300,7 @@ body{
 
 
 
-<?php include '../submenu.php'; ?>
+
 
 
 

@@ -1,49 +1,138 @@
 <?php
 
+session_start();
+
+/* =====================================================
+   VERIFICAR SESIÓN
+===================================================== */
+
+if (!isset($_SESSION['nombre']) || empty($_SESSION['nombre'])) {
+
+    header("Location: ../SESIONES/loginformcliente.php");
+    exit();
+
+}
+
+
+/* =====================================================
+   OBTENER DATOS DE SESIÓN
+===================================================== */
+
+$nombreUsuario = $_SESSION['nombre'];
+
+$rol = strtolower(
+    trim(
+        $_SESSION['rol'] ?? ''
+    )
+);
+
+
+/* =====================================================
+   VERIFICAR ROL
+===================================================== */
+
+/*
+   SOLO PUEDEN ENTRAR:
+
+   - administrador
+   - vendedor
+*/
+
+if (
+
+    $rol != "administrador" &&
+
+    $rol != "vendedor"
+
+) {
+
+    header("Location: ../totu.php");
+
+    exit();
+
+}
+
+
+/* =====================================================
+   DETERMINAR PERFIL SEGÚN ROL
+===================================================== */
+
+if ($rol == "administrador") {
+
+    $perfilUsuario = "../admin.php";
+
+} else {
+
+    $perfilUsuario = "../perfilvendedor.php";
+
+}
+
+
+/* =====================================================
+   CONEXIÓN A LA BASE DE DATOS
+===================================================== */
+
 $servidor = "localhost";
+
 $usuario = "root";
+
 $contraseña = "";
+
 $nombreBD = "DIVINE";
 
 
-/* ==========================================
-   CONEXIÓN A LA BASE DE DATOS
-========================================== */
-
 $conn = new mysqli(
+
     $servidor,
+
     $usuario,
+
     $contraseña,
+
     $nombreBD
+
 );
 
 
 if ($conn->connect_error) {
 
-    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS.");
+    die(
+        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS."
+    );
 
 }
 
 
-/* ==========================================
+/* =====================================================
+   CONFIGURAR UTF-8
+===================================================== */
+
+$conn->set_charset("utf8");
+
+
+/* =====================================================
    CONSULTAR TODOS LOS PRODUCTOS
-========================================== */
+===================================================== */
 
 $sql = "SELECT * FROM PRODUCTO";
 
 $resultado = $conn->query($sql);
 
-
 ?>
 
-
 <!DOCTYPE html>
+
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta
     name="viewport"
-    content="width=device-width, initial-scale=1.0">
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>
 
     Productos DIVINE
@@ -51,11 +140,19 @@ $resultado = $conn->query($sql);
 </title>
 
 
+<!-- =====================================================
+     FUENTES
+===================================================== -->
+
 <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap"
     rel="stylesheet"
 >
 
+
+<!-- =====================================================
+     SWEET ALERT
+===================================================== -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/sweetalert2@11"
@@ -64,10 +161,9 @@ $resultado = $conn->query($sql);
 
 <style>
 
-
-/* ==========================================
+/* =====================================================
    ESTILOS GENERALES
-========================================== */
+===================================================== */
 
 * {
 
@@ -93,9 +189,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    CONTENEDOR PRINCIPAL
-========================================== */
+===================================================== */
 
 .contenedor {
 
@@ -112,14 +208,17 @@ body {
     border-radius: 30px;
 
     box-shadow:
-        0 15px 40px rgba(166, 91, 113, 0.15);
+
+        0 15px 40px
+
+        rgba(166, 91, 113, 0.15);
 
 }
 
 
-/* ==========================================
+/* =====================================================
    ENCABEZADO
-========================================== */
+===================================================== */
 
 .encabezado {
 
@@ -164,9 +263,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    BOTÓN AÑADIR PRODUCTO
-========================================== */
+===================================================== */
 
 .btn-agregar {
 
@@ -191,7 +290,10 @@ body {
     gap: 8px;
 
     box-shadow:
-        0 5px 15px rgba(166, 91, 113, 0.30);
+
+        0 5px 15px
+
+        rgba(166, 91, 113, 0.30);
 
     transition: all 0.3s ease;
 
@@ -205,14 +307,17 @@ body {
     transform: translateY(-3px);
 
     box-shadow:
-        0 8px 20px rgba(200, 117, 136, 0.35);
+
+        0 8px 20px
+
+        rgba(200, 117, 136, 0.35);
 
 }
 
 
-/* ==========================================
+/* =====================================================
    DECORACIÓN
-========================================== */
+===================================================== */
 
 .decoracion {
 
@@ -229,9 +334,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    LISTA DE PRODUCTOS
-========================================== */
+===================================================== */
 
 .lista {
 
@@ -244,9 +349,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    TARJETA PRODUCTO
-========================================== */
+===================================================== */
 
 .item {
 
@@ -259,7 +364,10 @@ body {
     border: 1px solid #e2c2c9;
 
     box-shadow:
-        0 5px 15px rgba(166, 91, 113, 0.08);
+
+        0 5px 15px
+
+        rgba(166, 91, 113, 0.08);
 
     transition: all 0.3s ease;
 
@@ -281,14 +389,17 @@ body {
     transform: translateY(-4px);
 
     box-shadow:
-        0 10px 25px rgba(166, 91, 113, 0.15);
+
+        0 10px 25px
+
+        rgba(166, 91, 113, 0.15);
 
 }
 
 
-/* ==========================================
+/* =====================================================
    INFORMACIÓN DEL PRODUCTO
-========================================== */
+===================================================== */
 
 .info-producto {
 
@@ -318,16 +429,23 @@ body {
 
 }
 
-/* ESTILO PARA STOCK BAJO */
+
+/* =====================================================
+   STOCK BAJO
+===================================================== */
+
 .stock-bajo {
+
     color: #d9534f !important;
+
     font-weight: 700;
+
 }
 
 
-/* ==========================================
+/* =====================================================
    IMAGEN DEL PRODUCTO
-========================================== */
+===================================================== */
 
 .imagen-producto {
 
@@ -352,7 +470,10 @@ body {
     overflow: hidden;
 
     box-shadow:
-        0 5px 15px rgba(166, 91, 113, 0.10);
+
+        0 5px 15px
+
+        rgba(166, 91, 113, 0.10);
 
 }
 
@@ -379,9 +500,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    CUANDO NO EXISTE IMAGEN
-========================================== */
+===================================================== */
 
 .imagen-no-disponible {
 
@@ -408,9 +529,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    BOTONES PRODUCTO
-========================================== */
+===================================================== */
 
 .botones {
 
@@ -455,9 +576,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    DETALLES
-========================================== */
+===================================================== */
 
 .btn-detalles {
 
@@ -475,9 +596,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    EDITAR
-========================================== */
+===================================================== */
 
 .btn-editar {
 
@@ -495,9 +616,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    ELIMINAR
-========================================== */
+===================================================== */
 
 .btn-eliminar {
 
@@ -515,9 +636,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    MENSAJE SIN PRODUCTOS
-========================================== */
+===================================================== */
 
 .sin-productos {
 
@@ -569,9 +690,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    BOTÓN PRIMER PRODUCTO
-========================================== */
+===================================================== */
 
 .btn-primer-producto {
 
@@ -592,7 +713,10 @@ body {
     font-weight: 500;
 
     box-shadow:
-        0 5px 15px rgba(200, 117, 136, 0.30);
+
+        0 5px 15px
+
+        rgba(200, 117, 136, 0.30);
 
     transition: all 0.3s ease;
 
@@ -606,14 +730,17 @@ body {
     transform: translateY(-3px);
 
     box-shadow:
-        0 8px 20px rgba(166, 91, 113, 0.35);
+
+        0 8px 20px
+
+        rgba(166, 91, 113, 0.35);
 
 }
 
 
-/* ==========================================
+/* =====================================================
    BOTONES INFERIORES
-========================================== */
+===================================================== */
 
 .volver {
 
@@ -689,9 +816,9 @@ body {
 }
 
 
-/* ==========================================
+/* =====================================================
    RESPONSIVE
-========================================== */
+===================================================== */
 
 @media (max-width: 768px) {
 
@@ -748,9 +875,7 @@ body {
     }
 
 
-    /* ======================================
-       TARJETA EN CELULAR
-    ====================================== */
+    /* TARJETA EN CELULAR */
 
     .item {
 
@@ -761,9 +886,7 @@ body {
     }
 
 
-    /* ======================================
-       IMAGEN EN CELULAR
-    ====================================== */
+    /* IMAGEN EN CELULAR */
 
     .imagen-producto {
 
@@ -783,9 +906,7 @@ body {
     }
 
 
-    /* ======================================
-       BOTONES
-    ====================================== */
+    /* BOTONES */
 
     .botones {
 
@@ -836,15 +957,14 @@ body {
 <div class="contenedor">
 
 
-    <!-- ==========================================
+    <!-- =================================================
          ENCABEZADO
-    =========================================== -->
+    ================================================== -->
 
     <div class="encabezado">
 
 
         <div>
-
 
             <h2 class="titulo">
 
@@ -859,23 +979,30 @@ body {
 
             </p>
 
-
         </div>
 
 
-        <!-- BOTÓN AÑADIR -->
+        <!-- =================================================
+             BOTÓN AÑADIR
 
-        <a
+             SOLO ADMINISTRADOR
+        ================================================== -->
 
-            href="formularioprodu.php"
+        <?php if ($rol == "administrador") { ?>
 
-            class="btn-agregar"
+            <a
 
-        >
+                href="formularioprodu.php"
 
-            ＋ Añadir producto
+                class="btn-agregar"
 
-        </a>
+            >
+
+                ＋ Añadir producto
+
+            </a>
+
+        <?php } ?>
 
 
     </div>
@@ -884,9 +1011,9 @@ body {
     <div class="decoracion"></div>
 
 
-    <!-- ==========================================
-         LISTA
-    =========================================== -->
+    <!-- =================================================
+         LISTA DE PRODUCTOS
+    ================================================== -->
 
     <div class="lista">
 
@@ -894,9 +1021,9 @@ body {
 <?php
 
 
-/* ==========================================
+/* =====================================================
    COMPROBAR PRODUCTOS
-========================================== */
+===================================================== */
 
 if (
 
@@ -914,9 +1041,9 @@ if (
     ) {
 
 
-        /* ==========================================
+        /* =================================================
            DATOS DEL PRODUCTO
-        ========================================== */
+        ================================================= */
 
         $nombre = htmlspecialchars(
 
@@ -967,25 +1094,16 @@ if (
         );
 
 
-        /* ==========================================
-           BUSCAR IMAGEN SEGÚN EL CÓDIGO
-
-           EJEMPLOS:
-
-           p-21.jpg
-           p-21.jpeg
-           p-21.png
-           p-21.gif
-
-           CARPETA:
-
-           ../PRODUCTO-img/
-        ========================================== */
+        /* =================================================
+           BUSCAR IMAGEN
+        ================================================= */
 
         $directorio = "../PRODUCTO-img/";
 
 
-        $nombreArchivo = "p-" . $fila['codigo'];
+        $nombreArchivo =
+
+            "p-" . $fila['codigo'];
 
 
         $extensiones = [
@@ -996,7 +1114,9 @@ if (
 
             "png",
 
-            "gif"
+            "gif",
+
+            "webp"
 
         ];
 
@@ -1031,7 +1151,6 @@ if (
 
                 $imagenProducto = $ruta;
 
-
                 break;
 
             }
@@ -1042,16 +1161,16 @@ if (
 ?>
 
 
-        <!-- ==========================================
-             TARJETA
-        =========================================== -->
+        <!-- =================================================
+             TARJETA DEL PRODUCTO
+        ================================================== -->
 
         <div class="item">
 
 
-            <!-- ======================================
+            <!-- =================================================
                  INFORMACIÓN
-            ======================================= -->
+            ================================================== -->
 
             <div class="info-producto">
 
@@ -1108,12 +1227,17 @@ if (
                 </p>
 
 
-            <p>
-                <span>Stock:</span>
-                <strong class="<?= ($stock <= 5) ? 'stock-bajo' : '' ?>">
-                    <?= $stock ?>
-                </strong>
-            </p>
+                <p>
+
+                    <span>
+
+                        Costo:
+
+                    </span>
+
+                    Bs. <?= $costo ?>
+
+                </p>
 
 
                 <p>
@@ -1124,7 +1248,22 @@ if (
 
                     </span>
 
-                    <?= $stock ?>
+
+                    <strong
+
+                        class="<?= ($fila['stock'] <= 5)
+
+                            ? 'stock-bajo'
+
+                            : ''
+
+                        ?>"
+
+                    >
+
+                        <?= $stock ?>
+
+                    </strong>
 
                 </p>
 
@@ -1142,14 +1281,18 @@ if (
                 </p>
 
 
-                <!-- ==================================
-                     BOTONES
-                =================================== -->
+                <!-- =================================================
+                     BOTONES SEGÚN ROL
+                ================================================== -->
 
                 <div class="botones">
 
 
-                    <!-- DETALLES -->
+                    <!-- =================================================
+                         DETALLES
+
+                         ADMINISTRADOR Y VENDEDOR
+                    ================================================== -->
 
                     <a
 
@@ -1172,68 +1315,98 @@ if (
                     </a>
 
 
-                    <!-- EDITAR -->
+                    <?php
 
-                    <a
+                    /*
+                       =================================================
+                       SOLO ADMINISTRADOR
+                       =================================================
 
-                        href="updateformprodu.php?codigo=<?= urlencode($fila['codigo']) ?>"
+                       El vendedor NO verá estos botones.
 
-                    >
+                       Como la condición se ejecuta en PHP,
+                       los botones ni siquiera se generan
+                       en el HTML para el vendedor.
+                    */
 
-                        <button
+                    if ($rol == "administrador") {
 
-                            type="button"
-
-                            class="btn-editar"
-
-                        >
-
-                            ✏ Editar
-
-                        </button>
-
-                    </a>
+                    ?>
 
 
-                    <!-- ELIMINAR -->
+                        <!-- =================================================
+                             EDITAR
+                        ================================================== -->
 
-                    <a
+                        <a
 
-                        href="#"
-
-                        onclick="
-
-                            confirmarEliminacion(
-
-                                '<?= htmlspecialchars(
-
-                                    $fila['codigo'],
-
-                                    ENT_QUOTES
-
-                                ) ?>'
-
-                            );
-
-                            return false;
-
-                        "
-
-                    >
-
-                        <button
-
-                            type="button"
-
-                            class="btn-eliminar"
+                            href="updateformprodu.php?codigo=<?= urlencode($fila['codigo']) ?>"
 
                         >
 
-                            🗑 Eliminar
+                            <button
 
-                        </button>
+                                type="button"
 
-                    </a>
+                                class="btn-editar"
+
+                            >
+
+                                ✏ Editar
+
+                            </button>
+
+                        </a>
+
+
+                        <!-- =================================================
+                             ELIMINAR
+                        ================================================== -->
+
+                        <a
+
+                            href="#"
+
+                            onclick="
+
+                                confirmarEliminacion(
+
+                                    '<?= htmlspecialchars(
+
+                                        $fila['codigo'],
+
+                                        ENT_QUOTES
+
+                                    ) ?>'
+
+                                );
+
+                                return false;
+
+                            "
+
+                        >
+
+                            <button
+
+                                type="button"
+
+                                class="btn-eliminar"
+
+                            >
+
+                                🗑 Eliminar
+
+                            </button>
+
+                        </a>
+
+
+                    <?php
+
+                    }
+
+                    ?>
 
 
                 </div>
@@ -1242,9 +1415,9 @@ if (
             </div>
 
 
-            <!-- ======================================
+            <!-- =================================================
                  IMAGEN DEL PRODUCTO
-            ======================================= -->
+            ================================================== -->
 
             <div class="imagen-producto">
 
@@ -1252,9 +1425,9 @@ if (
 <?php
 
 
-            /* ======================================
-               SI ENCONTRÓ LA IMAGEN
-            ======================================= */
+            /* =================================================
+               SI EXISTE IMAGEN
+            ================================================= */
 
             if (
 
@@ -1285,10 +1458,6 @@ if (
             } else {
 
 
-                /* ==================================
-                   SI NO ENCONTRÓ LA IMAGEN
-                =================================== */
-
 ?>
 
 
@@ -1306,7 +1475,6 @@ if (
 <?php
 
             }
-
 
 ?>
 
@@ -1329,9 +1497,9 @@ if (
 ?>
 
 
-        <!-- ==========================================
+        <!-- =================================================
              NO HAY PRODUCTOS
-        =========================================== -->
+        ================================================== -->
 
         <div class="sin-productos">
 
@@ -1361,17 +1529,21 @@ if (
             </p>
 
 
-            <a
+            <?php if ($rol == "administrador") { ?>
 
-                href="formularioprodu.php"
+                <a
 
-                class="btn-primer-producto"
+                    href="formularioprodu.php"
 
-            >
+                    class="btn-primer-producto"
 
-                ＋ Añadir primer producto
+                >
 
-            </a>
+                    ＋ Añadir primer producto
+
+                </a>
+
+            <?php } ?>
 
 
         </div>
@@ -1387,73 +1559,245 @@ if (
     </div>
 
 
-    <!-- ==========================================
+    <!-- =================================================
          BOTONES INFERIORES
-    =========================================== -->
+    ================================================== -->
 
     <div class="volver">
+
+
+        <!-- VOLVER -->
+
         <a
+
             href="javascript:history.back()"
+
             class="btn-volver"
+
         >
+
             ← Volver atrás
+
         </a>
-        <a
-            href="formularioprodu.php"
-            class="btn-registrar"
-        >
-            ＋ Registrar producto
-        </a>
+
+
+        <!-- =================================================
+             REGISTRAR PRODUCTO
+
+             SOLO ADMINISTRADOR
+        ================================================== -->
+
+        <?php if ($rol == "administrador") { ?>
+
+            <a
+
+                href="formularioprodu.php"
+
+                class="btn-registrar"
+
+            >
+
+                ＋ Registrar producto
+
+            </a>
+
+        <?php } ?>
+
+
     </div>
+
+
 </div>
+
+
+<!-- =====================================================
+     CONFIRMAR ELIMINACIÓN
+===================================================== -->
+
 <script>
+
 function confirmarEliminacion(codigo) {
+
+
     Swal.fire({
+
         title: "¿Eliminar producto?",
+
         text: "Esta acción no se puede deshacer.",
+
         icon: "warning",
+
         showCancelButton: true,
+
         confirmButtonColor: "#a65b71",
+
         cancelButtonColor: "#532e4e",
+
         confirmButtonText: "Sí, eliminar",
+
         cancelButtonText: "Cancelar",
+
         reverseButtons: true
-    }).then((result) => {
-        if (
-            result.isConfirmed
-        ) {
-            window.location.href =
 
-                "deleteprodu.php?codigo=" +
+    })
 
-                encodeURIComponent(codigo);
+
+    .then(
+
+        (result) => {
+
+
+            if (
+
+                result.isConfirmed
+
+            ) {
+
+
+                window.location.href =
+
+                    "deleteprodu.php?codigo=" +
+
+                    encodeURIComponent(codigo);
+
+            }
+
         }
-    });
-};
+
+    );
+
+}
+
+</script>
+
+
+<!-- =====================================================
+     ALERTA DE STOCK BAJO
+===================================================== -->
+
+<script>
+
 <?php
-   $bajos= "SELECT * FROM PRODUCTO WHERE stock <= 5";
-   $resultadoBajos = $conn->query($bajos);
-   $arrayBajos = [];
-   while ($filaBajos = $resultadoBajos->fetch_assoc()) {
-       $arrayBajos[] = $filaBajos['nombre'];
-   }
-    if (count($arrayBajos) > 0) {
-        $nombresBajos = implode(", ", $arrayBajos);
-        echo "window.onload = function() {
-            Swal.fire({
-                title: '¡Atención!',
-                html: 'Los siguientes productos tienen stock bajo: <br><strong>$nombresBajos</strong>',
-                icon: 'warning',
-                confirmButtonColor: '#a65b71',
-                confirmButtonText: 'Aceptar'
-            });
-        };";
+
+
+/* =====================================================
+   CONSULTAR PRODUCTOS CON STOCK BAJO
+===================================================== */
+
+$bajos =
+
+    "SELECT * FROM PRODUCTO WHERE stock <= 5";
+
+
+$resultadoBajos =
+
+    $conn->query($bajos);
+
+
+$arrayBajos = [];
+
+
+if ($resultadoBajos) {
+
+
+    while (
+
+        $filaBajos =
+
+            $resultadoBajos->fetch_assoc()
+
+    ) {
+
+
+        $arrayBajos[] =
+
+            $filaBajos['nombre'];
+
     }
 
+}
+
+
+if (
+
+    count($arrayBajos) > 0
+
+) {
+
+
+    $nombresBajos =
+
+        implode(
+
+            ", ",
+
+            array_map(
+
+                function ($nombre) {
+
+                    return htmlspecialchars(
+
+                        $nombre,
+
+                        ENT_QUOTES
+
+                    );
+
+                },
+
+                $arrayBajos
+
+            )
+
+        );
+
+
 ?>
-</script>
-</body>
-</html>
+
+
+window.onload = function () {
+
+
+    Swal.fire({
+
+        title: '¡Atención!',
+
+        html:
+
+            'Los siguientes productos tienen stock bajo:' +
+
+            '<br><br>' +
+
+            '<strong><?= $nombresBajos ?></strong>',
+
+        icon: 'warning',
+
+        confirmButtonColor: '#a65b71',
+
+        confirmButtonText: 'Aceptar'
+
+    });
+
+
+};
+
+
 <?php
+
+}
+
+?>
+
+</script>
+
+
+</body>
+
+</html>
+
+
+<?php
+
 $conn->close();
+
 ?>

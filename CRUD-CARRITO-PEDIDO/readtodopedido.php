@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 session_start();
 
@@ -20,7 +20,6 @@ $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-
 $conn = new mysqli(
     $servidor,
     $usuario,
@@ -28,14 +27,13 @@ $conn = new mysqli(
     $nombreBD
 );
 
-
 if ($conn->connect_error) {
 
-    die(
-        "OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS"
-    );
+    die("OCURRIÓ UN ERROR AL CONECTAR CON LA BASE DE DATOS");
 
 }
+
+$conn->set_charset("utf8mb4");
 
 
 // ==================================================
@@ -43,12 +41,6 @@ if ($conn->connect_error) {
 // ==================================================
 
 if ($rol == "vendedor") {
-
-
-    // ==================================================
-    // VENDEDOR
-    // SOLO SUS PROPIOS PEDIDOS
-    // ==================================================
 
     $nombreSeguro = $conn->real_escape_string($nombreUsuario);
 
@@ -59,14 +51,7 @@ if ($rol == "vendedor") {
         ORDER BY ID DESC
     ";
 
-
 } else {
-
-
-    // ==================================================
-    // ADMINISTRADOR
-    // TODOS LOS PEDIDOS
-    // ==================================================
 
     $sql = "
         SELECT *
@@ -83,8 +68,8 @@ $resultado = $conn->query($sql);
 if (!$resultado) {
 
     die(
-        "ERROR EN LA CONSULTA: "
-        . $conn->error
+        "ERROR EN LA CONSULTA: " .
+        $conn->error
     );
 
 }
@@ -97,7 +82,6 @@ if (!$resultado) {
 $mensaje = $_GET['mensaje'] ?? null;
 
 ?>
-
 
 <!DOCTYPE html>
 
@@ -114,51 +98,75 @@ $mensaje = $_GET['mensaje'] ?? null;
 
 <title>DIVINE | Pedidos</title>
 
-<!-- SWEETALERT2 -->
+
+<!-- ==================================================
+     SWEETALERT2
+================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <style>
 
-:root{
-    --rosa:#b86f80;
-    --rosa-claro:#d9a6b2;
-    --rosa-palido:#f7e9ec;
-    --crema:#fffaf8;
-    --texto:#57494c;
-    --gris:#817679;
-    --borde:#e3c5cd;
-    --vino:#8f5362;
-    --vino-oscuro:#713d4d;
+/* ==================================================
+   VARIABLES
+================================================== */
+
+:root {
+
+    --rosa: #b86f80;
+    --rosa-claro: #d9a6b2;
+    --rosa-palido: #f7e9ec;
+    --crema: #fffaf8;
+    --texto: #57494c;
+    --gris: #817679;
+    --borde: #e3c5cd;
+    --vino: #8f5362;
+    --vino-oscuro: #713d4d;
+
 }
 
 
-/* RESET */
+/* ==================================================
+   RESET
+================================================== */
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+* {
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
 }
 
 
-/* BODY */
+/* ==================================================
+   BODY
+================================================== */
 
-body{
-    min-height:100vh;
-    font-family:'Segoe UI',sans-serif;
-    color:var(--texto);
+body {
+
+    min-height: 100vh;
+
+    font-family: 'Segoe UI', sans-serif;
+
+    color: var(--texto);
 
     background:
-    linear-gradient(
-        rgba(255,250,248,.78),
-        rgba(247,233,236,.90)
-    ),
-    url("../imagenes/fondote.png");
 
-    background-size:cover;
-    background-position:center;
-    background-attachment:fixed;
+        linear-gradient(
+            rgba(255,250,248,.78),
+            rgba(247,233,236,.90)
+        ),
+
+        url("../imagenes/fondote.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-attachment: fixed;
+
 }
 
 
@@ -166,46 +174,67 @@ body{
    ENCABEZADO
 ================================================== */
 
-.header{
-    text-align:center;
-    padding:45px 20px 35px;
+.header {
+
+    text-align: center;
+
+    padding: 45px 20px 35px;
 
     background:
-    linear-gradient(
-        rgba(184,111,128,.88),
-        rgba(143,83,98,.94)
-    );
 
-    color:white;
+        linear-gradient(
+            rgba(184,111,128,.88),
+            rgba(143,83,98,.94)
+        );
+
+    color: white;
 
     box-shadow:
-    0 10px 35px rgba(100,70,80,.20);
+        0 10px 35px rgba(100,70,80,.20);
+
 }
 
 
-.header-pequeno{
-    font-size:.78rem;
-    text-transform:uppercase;
-    letter-spacing:5px;
-    margin-bottom:15px;
-    opacity:.9;
+.header-pequeno {
+
+    font-size: .78rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 5px;
+
+    margin-bottom: 15px;
+
+    opacity: .9;
+
 }
 
 
-.header h1{
-    font-family:Georgia,serif;
-    font-size:clamp(2.4rem,5vw,4rem);
-    font-weight:400;
-    letter-spacing:5px;
+.header h1 {
+
+    font-family: Georgia, serif;
+
+    font-size: clamp(2.4rem,5vw,4rem);
+
+    font-weight: 400;
+
+    letter-spacing: 5px;
+
 }
 
 
-.header-linea{
-    width:55px;
-    height:2px;
-    background:white;
-    margin:22px auto 0;
-    opacity:.75;
+.header-linea {
+
+    width: 55px;
+
+    height: 2px;
+
+    background: white;
+
+    margin: 22px auto 0;
+
+    opacity: .75;
+
 }
 
 
@@ -213,10 +242,14 @@ body{
    CONTENEDOR
 ================================================== */
 
-.contenedor{
-    width:90%;
-    max-width:1100px;
-    margin:60px auto;
+.contenedor {
+
+    width: 90%;
+
+    max-width: 1100px;
+
+    margin: 60px auto;
+
 }
 
 
@@ -224,26 +257,40 @@ body{
    TÍTULO LISTA
 ================================================== */
 
-.titulo-lista{
-    text-align:center;
-    margin-bottom:38px;
+.titulo-lista {
+
+    text-align: center;
+
+    margin-bottom: 38px;
+
 }
 
 
-.titulo-lista p{
-    color:var(--rosa);
-    font-size:.8rem;
-    text-transform:uppercase;
-    letter-spacing:3px;
-    margin-bottom:10px;
+.titulo-lista p {
+
+    color: var(--rosa);
+
+    font-size: .8rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 10px;
+
 }
 
 
-.titulo-lista h2{
-    font-family:Georgia,serif;
-    font-size:2rem;
-    font-weight:400;
-    color:var(--texto);
+.titulo-lista h2 {
+
+    font-family: Georgia, serif;
+
+    font-size: 2rem;
+
+    font-weight: 400;
+
+    color: var(--texto);
+
 }
 
 
@@ -251,10 +298,14 @@ body{
    LISTA
 ================================================== */
 
-.lista{
-    display:flex;
-    flex-direction:column;
-    gap:28px;
+.lista {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 28px;
+
 }
 
 
@@ -262,42 +313,53 @@ body{
    TARJETA PEDIDO
 ================================================== */
 
-.item{
-    background:rgba(250,243,244,.94);
+.item {
 
-    border:1px solid rgba(184,111,128,.25);
+    background: rgba(250,243,244,.94);
 
-    border-radius:24px;
+    border: 1px solid rgba(184,111,128,.25);
 
-    padding:30px 32px;
+    border-radius: 24px;
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+    padding: 30px 32px;
 
-    gap:35px;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 35px;
 
     box-shadow:
-    0 12px 35px rgba(100,70,80,.13),
 
-    inset 0 1px 0 rgba(255,255,255,.8);
+        0 12px 35px rgba(100,70,80,.13),
+
+        inset 0 1px 0 rgba(255,255,255,.8);
 
     transition:
-    transform .35s ease,
-    box-shadow .35s ease,
-    background .35s ease;
 
-    animation:aparecer .6s ease;
+        transform .35s ease,
+
+        box-shadow .35s ease,
+
+        background .35s ease;
+
+    animation: aparecer .6s ease;
+
 }
 
 
-.item:hover{
-    transform:translateY(-6px);
+.item:hover {
 
-    background:rgba(248,236,239,.98);
+    transform: translateY(-6px);
+
+    background: rgba(248,236,239,.98);
 
     box-shadow:
-    0 20px 45px rgba(100,70,80,.18);
+
+        0 20px 45px rgba(100,70,80,.18);
+
 }
 
 
@@ -305,9 +367,12 @@ body{
    INFORMACIÓN
 ================================================== */
 
-.info{
-    flex:1;
-    min-width:0;
+.info {
+
+    flex: 1;
+
+    min-width: 0;
+
 }
 
 
@@ -315,48 +380,57 @@ body{
    NÚMERO DE PEDIDO
 ================================================== */
 
-.id{
-    display:inline-flex;
+.id {
 
-    align-items:center;
+    display: inline-flex;
+
+    align-items: center;
 
     background:
-    linear-gradient(
-        135deg,
-        var(--vino),
-        var(--rosa)
-    );
 
-    color:white;
+        linear-gradient(
+            135deg,
+            var(--vino),
+            var(--rosa)
+        );
 
-    padding:12px 22px;
+    color: white;
 
-    border-radius:14px;
+    padding: 12px 22px;
 
-    font-size:1.05rem;
+    border-radius: 14px;
 
-    font-weight:700;
+    font-size: 1.05rem;
 
-    letter-spacing:1.5px;
+    font-weight: 700;
 
-    margin-bottom:22px;
+    letter-spacing: 1.5px;
+
+    margin-bottom: 22px;
 
     box-shadow:
-    0 7px 18px rgba(143,83,98,.25);
 
-    border:1px solid rgba(255,255,255,.35);
+        0 7px 18px rgba(143,83,98,.25);
+
+    border: 1px solid rgba(255,255,255,.35);
 
     transition:
-    transform .3s ease,
-    box-shadow .3s ease;
+
+        transform .3s ease,
+
+        box-shadow .3s ease;
+
 }
 
 
-.item:hover .id{
-    transform:translateY(-2px);
+.item:hover .id {
+
+    transform: translateY(-2px);
 
     box-shadow:
-    0 10px 22px rgba(143,83,98,.32);
+
+        0 10px 22px rgba(143,83,98,.32);
+
 }
 
 
@@ -364,13 +438,15 @@ body{
    DATOS
 ================================================== */
 
-.datos{
-    display:grid;
+.datos {
+
+    display: grid;
 
     grid-template-columns:
-    repeat(2,minmax(180px,1fr));
+        repeat(2,minmax(180px,1fr));
 
-    gap:14px 25px;
+    gap: 14px 25px;
+
 }
 
 
@@ -378,43 +454,52 @@ body{
    CAJAS DE INFORMACIÓN
 ================================================== */
 
-.info p{
-    margin:0;
+.info p {
 
-    background:rgba(255,250,251,.72);
+    margin: 0;
 
-    border:1px solid rgba(184,111,128,.15);
+    background: rgba(255,250,251,.72);
 
-    border-radius:12px;
+    border: 1px solid rgba(184,111,128,.15);
 
-    padding:10px 14px;
+    border-radius: 12px;
 
-    color:var(--gris);
+    padding: 10px 14px;
 
-    font-size:.92rem;
+    color: var(--gris);
 
-    line-height:1.5;
+    font-size: .92rem;
+
+    line-height: 1.5;
 
     box-shadow:
-    0 3px 10px rgba(100,70,80,.04);
+
+        0 3px 10px rgba(100,70,80,.04);
 
     transition:
-    background .3s ease,
-    transform .3s ease;
+
+        background .3s ease,
+
+        transform .3s ease;
+
 }
 
 
-.info p:hover{
-    background:rgba(255,255,255,.9);
+.info p:hover {
 
-    transform:translateX(3px);
+    background: rgba(255,255,255,.9);
+
+    transform: translateX(3px);
+
 }
 
 
-.info span{
-    color:var(--vino-oscuro);
+.info span {
 
-    font-weight:700;
+    color: var(--vino-oscuro);
+
+    font-weight: 700;
+
 }
 
 
@@ -422,50 +507,59 @@ body{
    ESTADO
 ================================================== */
 
-.estado{
-    display:inline-flex;
+.estado {
 
-    align-items:center;
+    display: inline-flex;
 
-    margin-top:22px;
+    align-items: center;
 
-    padding:11px 20px;
+    margin-top: 22px;
 
-    border-radius:14px;
+    padding: 11px 20px;
+
+    border-radius: 14px;
 
     background:
-    linear-gradient(
-        135deg,
-        #fff0f3,
-        #f5dce2
-    );
 
-    color:var(--vino-oscuro);
+        linear-gradient(
+            135deg,
+            #fff0f3,
+            #f5dce2
+        );
 
-    font-size:.88rem;
+    color: var(--vino-oscuro);
 
-    font-weight:700;
+    font-size: .88rem;
 
-    text-transform:capitalize;
+    font-weight: 700;
 
-    letter-spacing:.3px;
+    text-transform: capitalize;
 
-    border:1px solid rgba(184,111,128,.3);
+    letter-spacing: .3px;
+
+    border: 1px solid rgba(184,111,128,.3);
 
     box-shadow:
-    0 5px 15px rgba(184,111,128,.12);
+
+        0 5px 15px rgba(184,111,128,.12);
 
     transition:
-    transform .3s ease,
-    box-shadow .3s ease;
+
+        transform .3s ease,
+
+        box-shadow .3s ease;
+
 }
 
 
-.estado:hover{
-    transform:translateY(-2px);
+.estado:hover {
+
+    transform: translateY(-2px);
 
     box-shadow:
-    0 8px 20px rgba(184,111,128,.20);
+
+        0 8px 20px rgba(184,111,128,.20);
+
 }
 
 
@@ -473,95 +567,262 @@ body{
    BOTONES
 ================================================== */
 
-.botones{
-    display:flex;
+.botones {
 
-    flex-direction:column;
+    display: flex;
 
-    gap:10px;
+    flex-direction: column;
 
-    min-width:125px;
+    gap: 10px;
+
+    min-width: 125px;
+
 }
 
 
-.botones a{
-    text-decoration:none;
+.botones a {
+
+    text-decoration: none;
+
 }
 
 
-.botones button{
-    width:100%;
+.botones button {
 
-    min-width:120px;
+    width: 100%;
 
-    padding:12px 18px;
+    min-width: 120px;
 
-    border:none;
+    padding: 12px 18px;
 
-    border-radius:11px;
+    border: none;
 
-    color:white;
+    border-radius: 11px;
 
-    cursor:pointer;
+    color: white;
 
-    font-size:.85rem;
+    cursor: pointer;
 
-    font-weight:600;
+    font-size: .85rem;
+
+    font-weight: 600;
 
     transition:
-    transform .25s ease,
-    box-shadow .25s ease;
+
+        transform .25s ease,
+
+        box-shadow .25s ease;
+
 }
 
 
-.botones button:hover{
-    transform:translateY(-3px);
+.botones button:hover {
+
+    transform: translateY(-3px);
 
     box-shadow:
-    0 7px 17px rgba(100,70,80,.20);
+
+        0 7px 17px rgba(100,70,80,.20);
+
 }
 
 
-/* VER */
+/* ==================================================
+   ACEPTAR
+================================================== */
 
-.botones a:nth-child(1) button{
-    background:var(--vino);
+.btn-aceptar {
+
+    background: var(--vino);
+
 }
 
 
-/* EDITAR */
+/* ==================================================
+   RECHAZAR
+================================================== */
 
-.botones a:nth-child(2) button{
-    background:var(--rosa);
-}
-
-
-/* ELIMINAR */
-
-.botones a:nth-child(3) button,
 .btn-rechazar {
-    background:#b87986;
+
+    background: #b87986;
+
 }
 
 
-/* Estilos para SweetAlert2 */
+/* ==================================================
+   DETALLES
+================================================== */
+
+.btn-detalles {
+
+    background: var(--vino);
+
+}
+
+
+/* ==================================================
+   EDITAR
+================================================== */
+
+.btn-editar {
+
+    background: var(--rosa);
+
+}
+
+
+/* ==================================================
+   ELIMINAR
+================================================== */
+
+.btn-eliminar {
+
+    background: #b87986;
+
+}
+
+
+/* ==================================================
+   SWEETALERT2
+================================================== */
+
 .swal2-popup {
-    border-radius: 20px !important;
-    font-family: 'Segoe UI', sans-serif !important;
+
+    width: 430px !important;
+
+    max-width: 90% !important;
+
+    border-radius: 25px !important;
+
+    background: #fffaf9 !important;
+
+    border: 1px solid #ead1d8 !important;
+
+    box-shadow:
+        0 25px 70px rgba(82,43,57,.25) !important;
+
+    padding: 30px !important;
+
 }
+
 
 .swal2-title {
-    color: var(--vino-oscuro) !important;
+
+    font-family: Georgia, serif !important;
+
+    color: #713d4d !important;
+
+    font-size: 30px !important;
+
+    font-weight: 500 !important;
+
 }
+
+
+.swal2-html-container {
+
+    color: #817679 !important;
+
+    font-family: 'Segoe UI', sans-serif !important;
+
+    font-size: 14px !important;
+
+    line-height: 1.7 !important;
+
+}
+
+
+.swal2-icon.swal2-warning {
+
+    border-color: #d58da1 !important;
+
+    color: #b86f80 !important;
+
+}
+
+
+.swal2-icon.swal2-question {
+
+    border-color: #d39aaa !important;
+
+    color: #a85c76 !important;
+
+}
+
 
 .swal2-confirm {
-    background-color: var(--vino) !important;
-    border-radius: 10px !important;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #b86f80,
+            #8f5362
+        ) !important;
+
+    color: white !important;
+
+    border: none !important;
+
+    border-radius: 12px !important;
+
+    padding: 12px 23px !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+    box-shadow:
+        0 7px 18px rgba(143,83,98,.25) !important;
+
 }
 
+
+.swal2-confirm:hover {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #a85d71,
+            #7f4656
+        ) !important;
+
+}
+
+
 .swal2-cancel {
-    background-color: var(--gris) !important;
-    border-radius: 10px !important;
+
+    background: #f1e1e5 !important;
+
+    color: #713d4d !important;
+
+    border: none !important;
+
+    border-radius: 12px !important;
+
+    padding: 12px 23px !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+}
+
+
+.swal2-cancel:hover {
+
+    background: #e8d1d8 !important;
+
+}
+
+
+.swal2-actions {
+
+    gap: 10px !important;
+
+    margin-top: 20px !important;
+
 }
 
 
@@ -569,21 +830,24 @@ body{
    SIN PEDIDOS
 ================================================== */
 
-.vacio{
-    background:rgba(250,243,244,.94);
+.vacio {
 
-    border:1px solid var(--borde);
+    background: rgba(250,243,244,.94);
 
-    border-radius:22px;
+    border: 1px solid var(--borde);
 
-    padding:70px 30px;
+    border-radius: 22px;
 
-    text-align:center;
+    padding: 70px 30px;
 
-    color:var(--gris);
+    text-align: center;
+
+    color: var(--gris);
 
     box-shadow:
-    0 12px 35px rgba(100,70,80,.10);
+
+        0 12px 35px rgba(100,70,80,.10);
+
 }
 
 
@@ -591,51 +855,62 @@ body{
    VOLVER
 ================================================== */
 
-.volver{
-    text-align:center;
+.volver {
 
-    margin-top:45px;
+    text-align: center;
 
-    padding-bottom:30px;
+    margin-top: 45px;
+
+    padding-bottom: 30px;
+
 }
 
 
-.volver a{
-    display:inline-block;
+.volver a {
 
-    text-decoration:none;
+    display: inline-block;
 
-    color:white;
+    text-decoration: none;
 
-    background:var(--vino);
+    color: white;
 
-    padding:14px 32px;
+    background: var(--vino);
 
-    border-radius:30px;
+    padding: 14px 32px;
 
-    font-size:.9rem;
+    border-radius: 30px;
 
-    font-weight:600;
+    font-size: .9rem;
 
-    letter-spacing:.3px;
+    font-weight: 600;
+
+    letter-spacing: .3px;
 
     box-shadow:
-    0 7px 20px rgba(100,70,80,.18);
+
+        0 7px 20px rgba(100,70,80,.18);
 
     transition:
-    background .3s ease,
-    transform .3s ease,
-    box-shadow .3s ease;
+
+        background .3s ease,
+
+        transform .3s ease,
+
+        box-shadow .3s ease;
+
 }
 
 
-.volver a:hover{
-    background:var(--rosa);
+.volver a:hover {
 
-    transform:translateY(-3px);
+    background: var(--rosa);
+
+    transform: translateY(-3px);
 
     box-shadow:
-    0 10px 25px rgba(100,70,80,.25);
+
+        0 10px 25px rgba(100,70,80,.25);
+
 }
 
 
@@ -643,16 +918,22 @@ body{
    ANIMACIÓN
 ================================================== */
 
-@keyframes aparecer{
+@keyframes aparecer {
 
-    from{
-        opacity:0;
-        transform:translateY(20px);
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
     }
 
-    to{
-        opacity:1;
-        transform:translateY(0);
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
     }
 
 }
@@ -662,81 +943,110 @@ body{
    RESPONSIVE
 ================================================== */
 
-@media(max-width:768px){
+@media(max-width:768px) {
 
-    .header{
-        padding:50px 20px 40px;
+    .header {
+
+        padding: 50px 20px 40px;
+
     }
 
 
-    .header h1{
-        font-size:2.5rem;
-        letter-spacing:3px;
+    .header h1 {
+
+        font-size: 2.5rem;
+
+        letter-spacing: 3px;
+
     }
 
 
-    .contenedor{
-        width:92%;
-        margin:40px auto;
+    .contenedor {
+
+        width: 92%;
+
+        margin: 40px auto;
+
     }
 
 
-    .item{
-        flex-direction:column;
-        align-items:stretch;
-        padding:25px 20px;
+    .item {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 25px 20px;
+
     }
 
 
-    .id{
-        font-size:1rem;
-        padding:11px 18px;
+    .id {
+
+        font-size: 1rem;
+
+        padding: 11px 18px;
+
     }
 
 
-    .datos{
-        grid-template-columns:1fr;
-        gap:10px;
+    .datos {
+
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+
     }
 
 
-    .botones{
-        display:grid;
+    .botones {
 
-        grid-template-columns:
-        repeat(3,1fr);
+        display: grid;
 
-        gap:8px;
+        grid-template-columns: repeat(3,1fr);
 
-        min-width:0;
+        gap: 8px;
 
-        margin-top:10px;
+        min-width: 0;
+
+        margin-top: 10px;
+
     }
 
 
-    .botones button{
-        min-width:0;
-        padding:10px 5px;
-        font-size:.78rem;
+    .botones button {
+
+        min-width: 0;
+
+        padding: 10px 5px;
+
+        font-size: .78rem;
+
     }
 
 }
 
 
-@media(max-width:450px){
+@media(max-width:450px) {
 
-    .botones{
-        grid-template-columns:1fr;
+    .botones {
+
+        grid-template-columns: 1fr;
+
     }
 
 
-    .botones button{
-        width:100%;
+    .botones button {
+
+        width: 100%;
+
     }
 
 
-    .titulo-lista h2{
-        font-size:1.7rem;
+    .titulo-lista h2 {
+
+        font-size: 1.7rem;
+
     }
 
 }
@@ -746,109 +1056,123 @@ body{
    MODAL MENSAJE
 ================================================== */
 
-.modal-mensaje{
+.modal-mensaje {
 
-    position:fixed;
+    position: fixed;
 
-    top:0;
-    left:0;
+    top: 0;
 
-    width:100%;
-    height:100%;
+    left: 0;
 
-    background:rgba(0,0,0,0.45);
+    width: 100%;
 
-    display:flex;
+    height: 100%;
 
-    justify-content:center;
-    align-items:center;
+    background: rgba(0,0,0,0.45);
 
-    z-index:9999;
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 9999;
+
 }
 
 
-.mensaje-contenido{
+.mensaje-contenido {
 
-    width:400px;
+    width: 400px;
 
-    max-width:90%;
+    max-width: 90%;
 
-    background:white;
+    background: white;
 
-    padding:35px;
+    padding: 35px;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    text-align:center;
+    text-align: center;
 
     box-shadow:
-    0 10px 40px rgba(0,0,0,0.25);
 
-    animation:aparecer 0.3s ease;
-}
+        0 10px 40px rgba(0,0,0,0.25);
 
-.icono-exito{
+    animation: aparecer .3s ease;
 
-    width:65px;
-    height:65px;
-
-    margin:0 auto 15px;
-
-    border-radius:50%;
-
-    background:#dff5df;
-
-    color:#3c9b3c;
-
-    font-size:40px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    font-weight:bold;
 }
 
 
-.mensaje-contenido h2{
-    margin-bottom:10px;
+.icono-exito {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: 0 auto 15px;
+
+    border-radius: 50%;
+
+    background: #dff5df;
+
+    color: #3c9b3c;
+
+    font-size: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
 }
 
 
-.mensaje-contenido p{
+.mensaje-contenido h2 {
 
-    font-size:17px;
+    margin-bottom: 10px;
 
-    margin-bottom:25px;
 }
 
 
-.mensaje-contenido button{
+.mensaje-contenido p {
 
-    padding:10px 30px;
+    font-size: 17px;
 
-    border:none;
+    margin-bottom: 25px;
 
-    border-radius:10px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    transition:0.3s ease;
 }
 
 
-.mensaje-contenido button:hover{
+.mensaje-contenido button {
 
-    background-color:#b77f8a;
+    padding: 10px 30px;
 
-    color:black;
+    border: none;
 
-    transform:scale(1.05);
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    transition: .3s ease;
+
 }
 
+
+.mensaje-contenido button:hover {
+
+    background-color: #b77f8a;
+
+    color: black;
+
+    transform: scale(1.05);
+
+}
 
 </style>
 
@@ -868,11 +1192,20 @@ body{
             ✓
         </div>
 
-        <h2>¡Pedido actualizado!</h2>
+        <h2>
+            ¡Pedido actualizado!
+        </h2>
 
         <p>
+
             <?php
-            echo htmlspecialchars($mensaje);
+
+            echo htmlspecialchars(
+                $mensaje,
+                ENT_QUOTES,
+                'UTF-8'
+            );
+
             ?>
 
         </p>
@@ -880,57 +1213,93 @@ body{
         <button onclick="cerrarMensaje()">
             Aceptar
         </button>
+
     </div>
+
 </div>
 
 <?php endif; ?>
 
+
+<!-- ==================================================
+     ENCABEZADO
+================================================== -->
+
 <div class="header">
 
-
     <div class="header-pequeno">
-
         Administración de pedidos
-
     </div>
 
-
     <h1>
-
         PEDIDOS DIVINE
-
     </h1>
 
-
     <div class="header-linea"></div>
+
 </div>
+
+
+<!-- ==================================================
+     CONTENEDOR
+================================================== -->
+
 <div class="contenedor">
+
+
     <div class="titulo-lista">
+
         <p>
             Gestión de pedidos
         </p>
+
         <h2>
             Lista de pedidos registrados
         </h2>
+
     </div>
 
+
     <div class="lista">
+
+
 <?php
 
-if($resultado && $resultado->num_rows > 0){
+if ($resultado && $resultado->num_rows > 0) {
 
-    while($fila = $resultado->fetch_assoc()){
+    while ($fila = $resultado->fetch_assoc()) {
 
         $idPedido = $fila['ID'];
 
+        $nombrePedido = $fila['nombre'];
+
 ?>
+
+
+
+        <!-- ==================================================
+             TARJETA DEL PEDIDO
+        ================================================== -->
+
         <div class="item">
+
+
             <div class="info">
 
 
                 <div class="id">
 
-                    PEDIDO #<?php echo $idPedido; ?>
+                    PEDIDO #
+
+                    <?php
+
+                    echo htmlspecialchars(
+                        $idPedido,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+
+                    ?>
 
                 </div>
 
@@ -940,12 +1309,18 @@ if($resultado && $resultado->num_rows > 0){
 
                     <p>
 
-                        <span>Nombre:</span>
+                        <span>
+                            Nombre:
+                        </span>
 
                         <?php
+
                         echo htmlspecialchars(
-                            $fila['nombre']
+                            $fila['nombre'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
+
                         ?>
 
                     </p>
@@ -953,12 +1328,18 @@ if($resultado && $resultado->num_rows > 0){
 
                     <p>
 
-                        <span>Fecha:</span>
+                        <span>
+                            Fecha:
+                        </span>
 
                         <?php
+
                         echo htmlspecialchars(
-                            $fila['fecha']
+                            $fila['fecha'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
+
                         ?>
 
                     </p>
@@ -966,12 +1347,18 @@ if($resultado && $resultado->num_rows > 0){
 
                     <p>
 
-                        <span>Teléfono:</span>
+                        <span>
+                            Teléfono:
+                        </span>
 
                         <?php
+
                         echo htmlspecialchars(
-                            $fila['telefono']
+                            $fila['telefono'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
+
                         ?>
 
                     </p>
@@ -979,12 +1366,18 @@ if($resultado && $resultado->num_rows > 0){
 
                     <p>
 
-                        <span>Dirección:</span>
+                        <span>
+                            Dirección:
+                        </span>
 
                         <?php
+
                         echo htmlspecialchars(
-                            $fila['direccion']
+                            $fila['direccion'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
+
                         ?>
 
                     </p>
@@ -992,12 +1385,18 @@ if($resultado && $resultado->num_rows > 0){
 
                     <p>
 
-                        <span>Vendedor:</span>
+                        <span>
+                            Vendedor:
+                        </span>
 
                         <?php
+
                         echo htmlspecialchars(
-                            $fila['nombrevendedor']
+                            $fila['nombrevendedor'],
+                            ENT_QUOTES,
+                            'UTF-8'
                         );
+
                         ?>
 
                     </p>
@@ -1006,15 +1405,18 @@ if($resultado && $resultado->num_rows > 0){
                 </div>
 
 
-
                 <div class="estado">
 
                     Estado:
 
                     <?php
+
                     echo htmlspecialchars(
-                        $fila['estado']
+                        $fila['estado'],
+                        ENT_QUOTES,
+                        'UTF-8'
                     );
+
                     ?>
 
                 </div>
@@ -1024,30 +1426,32 @@ if($resultado && $resultado->num_rows > 0){
                 <br>
 
 
-
                 <!-- ==================================================
                      ACEPTAR / RECHAZAR
-                     DISPONIBLE PARA ADMINISTRADOR Y VENDEDOR
                 ================================================== -->
 
                 <div class="botones">
 
 
-                    <a
-                        href="actualizarestadopedido.php?idPedido=<?php echo $idPedido; ?>&estado=Aceptado"
+                    <!-- ACEPTAR -->
+
+                    <button
+                        type="button"
+                        class="btn-aceptar"
+                        onclick="aceptarPedido(<?php echo (int)$idPedido; ?>)"
                     >
-                        <button type="button">
-                            Aceptar
-                        </button>
-                    </a>
+                        Aceptar
+                    </button>
+
+
+                    <!-- RECHAZAR -->
+
                     <button
                         type="button"
                         class="btn-rechazar"
-                        onclick="confirmarRechazo(<?php echo $idPedido; ?>)"
+                        onclick="confirmarRechazo(<?php echo (int)$idPedido; ?>)"
                     >
-
                         Rechazar
-
                     </button>
 
 
@@ -1055,56 +1459,71 @@ if($resultado && $resultado->num_rows > 0){
 
 
             </div>
-            <div class="botones">
-                <a
-                    href="readunopedido.php?idPedido=<?php echo $idPedido; ?>"
-                >
-                    <button type="button">
 
-                        Ver
+
+            <!-- ==================================================
+                 BOTONES DERECHOS
+            ================================================== -->
+
+            <div class="botones">
+
+
+                <!-- DETALLES -->
+
+                <a
+                    href="readunopedido.php?idPedido=<?php echo urlencode($idPedido); ?>"
+                >
+
+                    <button
+                        type="button"
+                        class="btn-detalles"
+                    >
+                        Detalles
                     </button>
 
                 </a>
-                <!-- ==================================================
-                     EDITAR Y ELIMINAR
-                     SOLAMENTE ADMINISTRADOR
-                ================================================== -->
+
 
                 <?php if ($rol == "administrador") { ?>
 
 
-                    <a
-                        href="updateformpedido.php?idPedido=<?php echo $idPedido; ?>"
-                    >
-
-                        <button type="button">
-
-                            Editar
-
-                        </button>
-
-                    </a>
-
-
+                    <!-- EDITAR -->
 
                     <a
-                        href="deletepedido.php?idPedido=<?php echo $idPedido; ?>"
+                        href="updateformpedido.php?idPedido=<?php echo urlencode($idPedido); ?>"
                     >
 
                         <button
                             type="button"
-                            onclick="
-                                return confirm(
-                                    '¿Está seguro de eliminar este pedido?'
-                                );
-                            "
+                            class="btn-editar"
                         >
-
-                            Eliminar
-
+                            Editar
                         </button>
 
                     </a>
+
+
+                    <!-- ==================================================
+                         ELIMINAR
+                    ================================================== -->
+
+                    <button
+                        type="button"
+                        class="btn-eliminar"
+                        onclick="confirmarEliminacion(
+                            <?php echo (int)$idPedido; ?>,
+                            <?php echo htmlspecialchars(
+                                json_encode(
+                                    $nombrePedido,
+                                    JSON_UNESCAPED_UNICODE
+                                ),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ); ?>
+                        )"
+                    >
+                        Eliminar
+                    </button>
 
 
                 <?php } ?>
@@ -1116,14 +1535,14 @@ if($resultado && $resultado->num_rows > 0){
         </div>
 
 
+
 <?php
 
     }
 
-}else{
+} else {
 
 ?>
-
 
         <div class="vacio">
 
@@ -1131,35 +1550,47 @@ if($resultado && $resultado->num_rows > 0){
 
         </div>
 
-
 <?php
 
 }
 
 ?>
 
- 
 
     </div>
- 
+
+
 <?php
- 
+
+// ==================================================
+// RUTA VOLVER
+// ==================================================
 
 $rol = $_SESSION['rol'] ?? '';
 
 if ($rol === 'vendedor') {
+
     $rutaVolver = '../perfilvendedor.php';
+
 } elseif ($rol === 'administrador') {
+
     $rutaVolver = '../admin.php';
+
 } else {
+
     $rutaVolver = '../SESIONES/loginformcliente.php';
+
 }
+
 ?>
+
 
 <div class="volver">
 
-    <a href="<?php echo $rutaVolver; ?>">
+    <a href="<?php echo htmlspecialchars($rutaVolver); ?>">
+
         Volver al perfil
+
     </a>
 
 </div>
@@ -1167,38 +1598,257 @@ if ($rol === 'vendedor') {
 
 </div>
 
-<script>
-    if (estado.pendiente === "entregado" && estado.entregado === "pendiente ")
-     {     throw new Error("No se puede cambiar un pedido Entregado a Pendiente"); } 
-     estado.entregado = estado.pendiente;
-    
-</script>
 
 <script>
+
+
+/* ==================================================
+   CERRAR MENSAJE
+================================================== */
 
 function cerrarMensaje() {
 
-    document.querySelector(
+    const modal = document.querySelector(
         ".modal-mensaje"
-    ).style.display = "none";
+    );
+
+    if (modal) {
+
+        modal.style.display = "none";
+
+    }
 
 }
+
+
+/* ==================================================
+   ACEPTAR PEDIDO
+================================================== */
+
+function aceptarPedido(idPedido) {
+
+    Swal.fire({
+
+        title: "¿Aceptar este pedido?",
+
+        html: `
+            <div style="
+                color:#817679;
+                font-size:14px;
+                line-height:1.7;
+            ">
+
+                El pedido
+
+                <strong style="color:#8f5362;">
+                    #${idPedido}
+                </strong>
+
+                cambiará su estado a
+
+                <strong style="color:#8f5362;">
+                    Aceptado
+                </strong>.
+
+            </div>
+        `,
+
+        icon: "question",
+
+        iconColor: "#b86f80",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Sí, aceptar",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        focusCancel: true
+
+    }).then(function(result) {
+
+        if (result.isConfirmed) {
+
+            window.location.href =
+                "actualizarestadopedido.php?idPedido="
+                + encodeURIComponent(idPedido)
+                + "&estado=Aceptado";
+
+        }
+
+    });
+
+}
+
+
+/* ==================================================
+   RECHAZAR PEDIDO
+================================================== */
 
 function confirmarRechazo(idPedido) {
+
     Swal.fire({
-        title: '¿Desea rechazar este pedido?',
-        text: 'El estado pasará a "Rechazado"',
-        icon: 'warning',
+
+        title: "¿Deseas rechazar este pedido?",
+
+        html: `
+            <div style="
+                color:#817679;
+                font-size:14px;
+                line-height:1.7;
+            ">
+
+                El pedido
+
+                <strong style="color:#8f5362;">
+                    #${idPedido}
+                </strong>
+
+                cambiará su estado a
+
+                <strong style="color:#8f5362;">
+                    Rechazado
+                </strong>.
+
+            </div>
+        `,
+
+        icon: "warning",
+
+        iconColor: "#c56f86",
+
         showCancelButton: true,
-        confirmButtonText: 'Sí, rechazar',
-        cancelButtonText: 'Cancelar',
-        reverseButtons: true
-    }).then((result) => {
+
+        confirmButtonText: "Sí, rechazar",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        focusCancel: true
+
+    }).then(function(result) {
+
         if (result.isConfirmed) {
-            window.location.href = 'actualizarestadopedido.php?idPedido=' + idPedido + '&estado=Rechazado';
+
+            window.location.href =
+                "actualizarestadopedido.php?idPedido="
+                + encodeURIComponent(idPedido)
+                + "&estado=Rechazado";
+
         }
+
     });
+
 }
+
+
+/* ==================================================
+   ELIMINAR PEDIDO
+================================================== */
+
+function confirmarEliminacion(idPedido, nombreCliente) {
+
+    Swal.fire({
+
+        title: "¿Eliminar este pedido?",
+
+        html: `
+            <div style="
+                color:#817679;
+                font-size:14px;
+                line-height:1.7;
+            ">
+
+                ¿Estás seguro de que quieres
+
+                <strong style="color:#a9536d;">
+                    eliminar este pedido?
+                </strong>
+
+                <br>
+                <br>
+
+                <div style="
+                    background:#f8eaee;
+                    border:1px solid #e6cbd3;
+                    border-radius:14px;
+                    padding:14px;
+                ">
+
+                    <div style="
+                        color:#713d4d;
+                        font-weight:700;
+                        font-size:15px;
+                    ">
+
+                        Pedido #${idPedido}
+
+                    </div>
+
+
+                    <div style="
+                        color:#8b727b;
+                        font-size:12px;
+                        margin-top:4px;
+                    ">
+
+                        Cliente: ${nombreCliente}
+
+                    </div>
+
+                </div>
+
+                <br>
+
+                <span style="
+                    color:#a47784;
+                    font-size:12px;
+                ">
+
+                    Esta acción no se puede deshacer.
+
+                </span>
+
+            </div>
+        `,
+
+        icon: "warning",
+
+        iconColor: "#c15f7b",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Sí, eliminar",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        focusCancel: true
+
+    }).then(function(result) {
+
+        if (result.isConfirmed) {
+
+            window.location.href =
+                "deletepedido.php?idPedido="
+                + encodeURIComponent(idPedido);
+
+        }
+
+    });
+
+}
+
 
 </script>
 

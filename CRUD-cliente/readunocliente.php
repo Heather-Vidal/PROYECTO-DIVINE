@@ -1,54 +1,96 @@
 
-
-
-
 <?php
+
 $servidor = "localhost";
 $usuario = "root";
 $contraseña = "";
 $nombreBD = "DIVINE";
 
-$conn = new mysqli($servidor, $usuario, $contraseña, $nombreBD);
+$conn = new mysqli(
+    $servidor,
+    $usuario,
+    $contraseña,
+    $nombreBD
+);
 
 if ($conn->connect_error) {
     die("Error de conexión.");
 }
 
+
+/* =====================================================
+   OBTENER CI DEL CLIENTE
+===================================================== */
+
 $CI = $_GET['CI'] ?? '';
+
 $CI = $conn->real_escape_string($CI);
 
+
+/* =====================================================
+   BUSCAR CLIENTE
+===================================================== */
+
 $sql = "SELECT * FROM CLIENTE WHERE CI='$CI'";
+
 $resultado = $conn->query($sql);
+
 
 if ($resultado && $resultado->num_rows > 0) {
 
     $fila = $resultado->fetch_assoc();
 
     $CI = $fila['CI'];
+
     $estado = $fila['estado'];
+
+    $nombreCliente = $fila['nombre'];
+
 ?>
 
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
 
 <title>DIVINE | Cliente</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- =====================================================
+     FUENTES
+===================================================== -->
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+>
+
+
+<!-- =====================================================
+     SWEET ALERT 2
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <style>
 
-/* =========================
+/* =====================================================
    GENERAL
-========================= */
+===================================================== */
 
 * {
     box-sizing: border-box;
 }
+
 
 body {
 
@@ -61,14 +103,15 @@ body {
     background:
         linear-gradient(
             120deg,
-            rgba(35, 20, 29, .92),
-            rgba(82, 43, 57, .82)
+            rgba(35,20,29,.92),
+            rgba(82,43,57,.82)
         ),
-        url("../imagenes/dudu.png") center / cover fixed;
+        url("../imagenes/dudu.png") center/cover fixed;
 
     display: flex;
 
     align-items: center;
+
     justify-content: center;
 
     padding: 30px;
@@ -78,9 +121,9 @@ body {
 }
 
 
-/* =========================
+/* =====================================================
    CONTENEDOR
-========================= */
+===================================================== */
 
 .contenedor {
 
@@ -94,9 +137,9 @@ body {
 
     grid-template-columns: 35% 65%;
 
-    background: rgba(42, 25, 34, .94);
+    background: rgba(42,25,34,.94);
 
-    border: 1px solid rgba(220, 176, 144, .45);
+    border: 1px solid rgba(220,176,144,.45);
 
     box-shadow:
         0 30px 80px rgba(0,0,0,.55);
@@ -110,17 +153,17 @@ body {
 }
 
 
-/* =========================
+/* =====================================================
    LADO IZQUIERDO
-========================= */
+===================================================== */
 
 .lado-izquierdo {
 
     background:
         linear-gradient(
             145deg,
-            rgba(105, 54, 73, .95),
-            rgba(45, 26, 36, .98)
+            rgba(105,54,73,.95),
+            rgba(45,26,36,.98)
         );
 
     display: flex;
@@ -135,7 +178,8 @@ body {
 
     padding: 45px 30px;
 
-    border-right: 1px solid rgba(218, 170, 136, .35);
+    border-right:
+        1px solid rgba(218,170,136,.35);
 
 }
 
@@ -164,7 +208,7 @@ body {
     border-radius: 50%;
 
     background:
-        url("../imagenes/persona.png") center / contain no-repeat,
+        url("../imagenes/persona.png") center/contain no-repeat,
         linear-gradient(
             145deg,
             #b8758b,
@@ -208,9 +252,9 @@ body {
 }
 
 
-/* =========================
+/* =====================================================
    LADO DERECHO
-========================= */
+===================================================== */
 
 .lado-derecho {
 
@@ -266,9 +310,9 @@ body {
 }
 
 
-/* =========================
+/* =====================================================
    INFORMACIÓN
-========================= */
+===================================================== */
 
 .informacion {
 
@@ -338,9 +382,9 @@ body {
 }
 
 
-/* =========================
-   ESTADO
-========================= */
+/* =====================================================
+   ESTADOS
+===================================================== */
 
 .estado {
 
@@ -377,9 +421,9 @@ body {
 }
 
 
-/* =========================
+/* =====================================================
    BOTONES
-========================= */
+===================================================== */
 
 .botones {
 
@@ -419,8 +463,6 @@ body {
 }
 
 
-/* Editar */
-
 .editar {
 
     background: #7d465b;
@@ -438,8 +480,6 @@ body {
 
 }
 
-
-/* Eliminar */
 
 .eliminar {
 
@@ -459,8 +499,6 @@ body {
 }
 
 
-/* Bloquear */
-
 .bloquear {
 
     background: #b2876d;
@@ -474,10 +512,10 @@ body {
 
     background: #91684f;
 
+    transform: translateY(-2px);
+
 }
 
-
-/* Desbloquear */
 
 .desbloquear {
 
@@ -492,12 +530,14 @@ body {
 
     background: #536b58;
 
+    transform: translateY(-2px);
+
 }
 
 
-/* =========================
+/* =====================================================
    NAVEGACIÓN
-========================= */
+===================================================== */
 
 .navegacion {
 
@@ -538,11 +578,185 @@ body {
 }
 
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* =====================================================
+   SWEET ALERT DIVINE
+===================================================== */
 
-@media (max-width: 750px) {
+.swal2-popup {
+
+    width: 430px !important;
+
+    border-radius: 24px !important;
+
+    background: #fffaf9 !important;
+
+    border: 1px solid #ead1d8 !important;
+
+    box-shadow:
+        0 25px 70px rgba(70,35,49,.28) !important;
+
+    padding: 30px 30px 25px !important;
+
+}
+
+
+.swal2-title {
+
+    font-family:
+        "Cormorant Garamond",
+        serif !important;
+
+    color: #4d2c39 !important;
+
+    font-size: 32px !important;
+
+    font-weight: 600 !important;
+
+    margin-top: 5px !important;
+
+}
+
+
+.swal2-html-container {
+
+    font-family:
+        "Montserrat",
+        sans-serif !important;
+
+    color: #765b66 !important;
+
+    font-size: 13px !important;
+
+    line-height: 1.7 !important;
+
+}
+
+
+/* =====================================================
+   ICONO
+===================================================== */
+
+.swal2-icon.swal2-warning {
+
+    border-color: #d58ca3 !important;
+
+    color: #b85d7b !important;
+
+}
+
+
+.swal2-icon.swal2-question {
+
+    border-color: #c98aa0 !important;
+
+    color: #a75b76 !important;
+
+}
+
+
+/* =====================================================
+   BOTÓN CONFIRMAR
+===================================================== */
+
+.swal2-confirm {
+
+    background:
+        linear-gradient(
+            135deg,
+            #c16b88,
+            #984f6c
+        ) !important;
+
+    color: #fff !important;
+
+    border: none !important;
+
+    border-radius: 12px !important;
+
+    padding: 12px 23px !important;
+
+    font-family:
+        "Montserrat",
+        sans-serif !important;
+
+    font-size: 11px !important;
+
+    font-weight: 600 !important;
+
+    letter-spacing: .5px !important;
+
+    box-shadow:
+        0 7px 18px rgba(152,79,108,.25) !important;
+
+}
+
+
+.swal2-confirm:hover {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ad5a78,
+            #843f5b
+        ) !important;
+
+}
+
+
+/* =====================================================
+   BOTÓN CANCELAR
+===================================================== */
+
+.swal2-cancel {
+
+    background: #f1e1e5 !important;
+
+    color: #75485a !important;
+
+    border: none !important;
+
+    border-radius: 12px !important;
+
+    padding: 12px 23px !important;
+
+    font-family:
+        "Montserrat",
+        sans-serif !important;
+
+    font-size: 11px !important;
+
+    font-weight: 600 !important;
+
+    letter-spacing: .5px !important;
+
+}
+
+
+.swal2-cancel:hover {
+
+    background: #e8d1d8 !important;
+
+}
+
+
+/* =====================================================
+   ESPACIADO BOTONES SWEET ALERT
+===================================================== */
+
+.swal2-actions {
+
+    gap: 10px !important;
+
+    margin-top: 20px !important;
+
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width:750px) {
 
     .contenedor {
 
@@ -550,11 +764,13 @@ body {
 
     }
 
+
     .lado-izquierdo {
 
         padding: 35px 20px;
 
     }
+
 
     .imagen {
 
@@ -564,11 +780,13 @@ body {
 
     }
 
+
     .lado-derecho {
 
         padding: 35px 25px;
 
     }
+
 
     .titulo {
 
@@ -579,7 +797,7 @@ body {
 }
 
 
-@media (max-width: 500px) {
+@media (max-width:500px) {
 
     body {
 
@@ -587,11 +805,13 @@ body {
 
     }
 
+
     .informacion {
 
         grid-template-columns: 1fr;
 
     }
+
 
     .boton {
 
@@ -601,11 +821,21 @@ body {
 
     }
 
+
     .navegacion {
 
         flex-direction: column;
 
         gap: 15px;
+
+    }
+
+
+    .swal2-popup {
+
+        width: calc(100% - 30px) !important;
+
+        padding: 25px 20px !important;
 
     }
 
@@ -622,11 +852,12 @@ body {
 <div class="contenedor">
 
 
-    <!-- =========================
+    <!-- =================================================
          LADO IZQUIERDO
-    ========================== -->
+    ================================================== -->
 
     <div class="lado-izquierdo">
+
 
         <div class="marca">
             DIVINE
@@ -643,13 +874,14 @@ body {
             "Elegancia en cada detalle."
         </div>
 
+
     </div>
 
 
 
-    <!-- =========================
+    <!-- =================================================
          LADO DERECHO
-    ========================== -->
+    ================================================== -->
 
     <div class="lado-derecho">
 
@@ -671,6 +903,8 @@ body {
         <div class="informacion">
 
 
+            <!-- IDENTIFICACIÓN -->
+
             <div class="item">
 
                 <span class="etiqueta">
@@ -678,11 +912,20 @@ body {
                 </span>
 
                 <span class="valor">
-                    <?php echo htmlspecialchars($fila['CI']); ?>
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['CI'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>
                 </span>
 
             </div>
 
+
+
+            <!-- NOMBRE -->
 
             <div class="item">
 
@@ -691,11 +934,20 @@ body {
                 </span>
 
                 <span class="valor">
-                    <?php echo htmlspecialchars($fila['nombre']); ?>
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['nombre'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>
                 </span>
 
             </div>
 
+
+
+            <!-- DIRECCIÓN -->
 
             <div class="item">
 
@@ -704,11 +956,20 @@ body {
                 </span>
 
                 <span class="valor">
-                    <?php echo htmlspecialchars($fila['direccion']); ?>
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['direccion'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>
                 </span>
 
             </div>
 
+
+
+            <!-- TELÉFONO -->
 
             <div class="item">
 
@@ -717,11 +978,20 @@ body {
                 </span>
 
                 <span class="valor">
-                    <?php echo htmlspecialchars($fila['celular']); ?>
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['celular'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>
                 </span>
 
             </div>
 
+
+
+            <!-- ROL -->
 
             <div class="item">
 
@@ -730,17 +1000,27 @@ body {
                 </span>
 
                 <span class="valor">
-                    <?php echo htmlspecialchars($fila['rol']); ?>
+                    <?php
+                    echo htmlspecialchars(
+                        $fila['rol'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    ?>
                 </span>
 
             </div>
 
+
+
+            <!-- ESTADO -->
 
             <div class="item">
 
                 <span class="etiqueta">
                     Estado
                 </span>
+
 
                 <?php if ($estado == 'ACTIVO') { ?>
 
@@ -751,10 +1031,19 @@ body {
                 <?php } else { ?>
 
                     <span class="estado inactivo">
-                        <?php echo htmlspecialchars($estado); ?>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $estado,
+                            ENT_QUOTES,
+                            'UTF-8'
+                        );
+                        ?>
+
                     </span>
 
                 <?php } ?>
+
 
             </div>
 
@@ -763,10 +1052,14 @@ body {
 
 
 
-        <!-- ACCIONES -->
+        <!-- =================================================
+             BOTONES
+        ================================================== -->
 
         <div class="botones">
 
+
+            <!-- EDITAR -->
 
             <a
                 class="boton editar"
@@ -776,47 +1069,61 @@ body {
             </a>
 
 
+
+            <!-- ELIMINAR -->
+
             <a
                 class="boton eliminar"
                 href="deletecliente.php?CI=<?php echo urlencode($CI); ?>"
-                onclick="return confirm('¿Deseas eliminar este cliente?');"
+                onclick="confirmarEliminar(event, this.href);"
             >
                 ELIMINAR
             </a>
 
 
-            <?php
 
-            if ($estado == 'ACTIVO') {
+            <?php if ($estado == 'ACTIVO') { ?>
 
-                echo '
+
+                <!-- =========================================
+                     BLOQUEAR
+                ========================================== -->
+
                 <a
                     class="boton bloquear"
-                    href="../BLOQUEOS-usuario/bloquear.php?CI=' . urlencode($CI) . '"
+                    href="../BLOQUEOS-usuario/bloquear.php?CI=<?php echo urlencode($CI); ?>"
+                    onclick="confirmarBloquear(event, this.href);"
                 >
                     BLOQUEAR
-                </a>';
+                </a>
 
-            } else {
 
-                echo '
+            <?php } else { ?>
+
+
+                <!-- =========================================
+                     DESBLOQUEAR
+                ========================================== -->
+
                 <a
                     class="boton desbloquear"
-                    href="../BLOQUEOS-usuario/desbloquear.php?CI=' . urlencode($CI) . '"
+                    href="../BLOQUEOS-usuario/desbloquear.php?CI=<?php echo urlencode($CI); ?>"
+                    onclick="confirmarDesbloquear(event, this.href);"
                 >
                     DESBLOQUEAR
-                </a>';
+                </a>
 
-            }
 
-            ?>
+            <?php } ?>
 
 
         </div>
 
 
 
-        <!-- NAVEGACIÓN -->
+        <!-- =================================================
+             VOLVER
+        ================================================== -->
 
         <div class="navegacion">
 
@@ -827,16 +1134,186 @@ body {
                 ← VER TODOS LOS CLIENTES
             </a>
 
-
-           
-
         </div>
 
 
     </div>
 
-
 </div>
+
+
+
+<script>
+
+/* =====================================================
+   NOMBRE DEL CLIENTE
+===================================================== */
+
+const nombreCliente = <?php
+echo json_encode(
+    $nombreCliente,
+    JSON_UNESCAPED_UNICODE |
+    JSON_HEX_TAG |
+    JSON_HEX_APOS |
+    JSON_HEX_QUOT |
+    JSON_HEX_AMP
+);
+?>;
+
+
+/* =====================================================
+   ELIMINAR
+===================================================== */
+
+function confirmarEliminar(event, url) {
+
+    event.preventDefault();
+
+    Swal.fire({
+
+        icon: "warning",
+
+        iconColor: "#c46884",
+
+        title: "¿Eliminar cliente?",
+
+        html:
+            "¿Estás segura de que quieres eliminar a<br>" +
+            "<strong style='color:#a65370;'>" +
+            nombreCliente +
+            "</strong>?" +
+            "<br><br>" +
+            "<span style='font-size:12px;color:#987782;'>" +
+            "Esta acción no se puede deshacer." +
+            "</span>",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Sí, eliminar",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        buttonsStyling: true
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href = url;
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   BLOQUEAR
+===================================================== */
+
+function confirmarBloquear(event, url) {
+
+    event.preventDefault();
+
+    Swal.fire({
+
+        icon: "warning",
+
+        iconColor: "#c98269",
+
+        title: "¿Bloquear cliente?",
+
+        html:
+            "¿Estás segura de que quieres bloquear a<br>" +
+            "<strong style='color:#a65370;'>" +
+            nombreCliente +
+            "</strong>?" +
+            "<br><br>" +
+            "<span style='font-size:12px;color:#987782;'>" +
+            "El cliente quedará bloqueado y no podrá utilizar su cuenta." +
+            "</span>",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Sí, bloquear",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        buttonsStyling: true
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href = url;
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   DESBLOQUEAR
+===================================================== */
+
+function confirmarDesbloquear(event, url) {
+
+    event.preventDefault();
+
+    Swal.fire({
+
+        icon: "question",
+
+        iconColor: "#b15f7b",
+
+        title: "¿Desbloquear cliente?",
+
+        html:
+            "¿Estás segura de que quieres desbloquear a<br>" +
+            "<strong style='color:#a65370;'>" +
+            nombreCliente +
+            "</strong>?" +
+            "<br><br>" +
+            "<span style='font-size:12px;color:#987782;'>" +
+            "El cliente podrá volver a utilizar su cuenta." +
+            "</span>",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Sí, desbloquear",
+
+        cancelButtonText: "Cancelar",
+
+        reverseButtons: true,
+
+        allowOutsideClick: false,
+
+        buttonsStyling: true
+
+    }).then((resultado) => {
+
+        if (resultado.isConfirmed) {
+
+            window.location.href = url;
+
+        }
+
+    });
+
+}
+
+</script>
 
 
 </body>

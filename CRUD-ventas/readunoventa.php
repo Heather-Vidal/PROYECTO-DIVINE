@@ -84,6 +84,10 @@ if ($resultado->num_rows > 0) {
 <title>DIVINE | Detalle de venta</title>
 
 
+<!-- =====================================================
+     FUENTES
+     ===================================================== -->
+
 <link
     rel="preconnect"
     href="https://fonts.googleapis.com"
@@ -1060,7 +1064,415 @@ body::after {
 
 
 /* =========================================================
-   ANIMACIÓN
+   MODAL DE CONFIRMACIÓN
+   ========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(73,54,62,.38);
+
+    backdrop-filter:
+        blur(9px);
+
+    -webkit-backdrop-filter:
+        blur(9px);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity .3s ease,
+        visibility .3s ease;
+
+}
+
+
+/* Modal abierto */
+
+.modal.activo {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+}
+
+
+/* =========================================================
+   TARJETA DEL MODAL
+   ========================================================= */
+
+.modal-contenido {
+
+    width: 100%;
+
+    max-width: 430px;
+
+    position: relative;
+
+    padding: 34px 30px 28px;
+
+    text-align: center;
+
+    border-radius: 30px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.75);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #fff8fa 60%,
+            #fdf0f4 100%
+        );
+
+    box-shadow:
+        0 30px 80px
+        rgba(89,42,59,.25);
+
+    transform:
+        translateY(25px)
+        scale(.94);
+
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1);
+
+    overflow: hidden;
+
+}
+
+
+.modal.activo .modal-contenido {
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+/* Línea superior */
+
+.modal-contenido::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 5px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            var(--rosa),
+            var(--vino),
+            var(--champagne)
+        );
+
+}
+
+
+/* Decoración */
+
+.modal-contenido::after {
+
+    content: "♡";
+
+    position: absolute;
+
+    right: -18px;
+
+    top: -40px;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 150px;
+
+    color:
+        rgba(201,135,158,.08);
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   ICONO DEL MODAL
+   ========================================================= */
+
+.modal-icono {
+
+    width: 70px;
+    height: 70px;
+
+    margin:
+        0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 22px;
+
+    color: var(--rojo);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #fff1f5,
+            #f8dfe7
+        );
+
+    border:
+        1px solid
+        #ebc8d2;
+
+    box-shadow:
+        0 12px 25px
+        rgba(166,79,102,.12);
+
+    font-size: 28px;
+
+    animation:
+        latido 2s ease-in-out infinite;
+
+}
+
+
+/* =========================================================
+   TEXTO MODAL
+   ========================================================= */
+
+.modal-titulo {
+
+    position: relative;
+
+    z-index: 1;
+
+    color: var(--vino);
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 27px;
+
+    font-weight: 600;
+
+    margin-bottom: 9px;
+
+}
+
+
+.modal-texto {
+
+    position: relative;
+
+    z-index: 1;
+
+    max-width: 330px;
+
+    margin:
+        0 auto;
+
+    color: var(--texto-suave);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+
+}
+
+
+.modal-venta {
+
+    display: inline-block;
+
+    margin-top: 12px;
+
+    padding:
+        7px 12px;
+
+    border-radius: 20px;
+
+    color: var(--vino-claro);
+
+    background:
+        var(--rosa-claro);
+
+    border:
+        1px solid
+        var(--borde);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   BOTONES DEL MODAL
+   ========================================================= */
+
+.modal-botones {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 11px;
+
+    margin-top: 25px;
+
+}
+
+
+.modal-boton {
+
+    min-height: 48px;
+
+    border-radius: 15px;
+
+    padding:
+        10px 16px;
+
+    font-family:
+        "DM Sans",
+        Arial,
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        .25s ease;
+
+}
+
+
+/* Cancelar */
+
+.modal-cancelar {
+
+    color: var(--vino-claro);
+
+    background: white;
+
+    border:
+        1px solid
+        var(--borde);
+
+}
+
+
+.modal-cancelar:hover {
+
+    color: white;
+
+    background:
+        var(--vino-claro);
+
+    border-color:
+        var(--vino-claro);
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 18px
+        rgba(116,56,77,.16);
+
+}
+
+
+/* Confirmar */
+
+.modal-confirmar {
+
+    color: white;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #bd667e,
+            #9f4c64
+        );
+
+    border:
+        1px solid
+        #9f4c64;
+
+    box-shadow:
+        0 8px 20px
+        rgba(159,76,100,.18);
+
+}
+
+
+.modal-confirmar:hover {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #cf7890,
+            #a84e68
+        );
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(159,76,100,.27);
+
+}
+
+
+/* =========================================================
+   ANIMACIONES
    ========================================================= */
 
 @keyframes aparecer {
@@ -1080,6 +1492,26 @@ body::after {
 
         transform:
             translateY(0);
+
+    }
+
+}
+
+
+@keyframes latido {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+
+    }
+
+    50% {
+
+        transform:
+            scale(1.05);
 
     }
 
@@ -1174,6 +1606,31 @@ body::after {
 
     }
 
+
+    .modal-contenido {
+
+        padding:
+            30px 22px 23px;
+
+        border-radius: 26px;
+
+    }
+
+
+    .modal-titulo {
+
+        font-size: 24px;
+
+    }
+
+
+    .modal-botones {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
 }
 
 
@@ -1215,6 +1672,10 @@ body::after {
 
 <body>
 
+
+<!-- =====================================================
+     CONTENEDOR PRINCIPAL
+     ===================================================== -->
 
 <div class="contenedor">
 
@@ -1455,13 +1916,9 @@ body::after {
             <!-- ELIMINAR -->
 
             <a
-                href="deleteventa.php?id=<?= (int)$fila['id'] ?>"
+                href="#"
                 class="boton boton-eliminar"
-                onclick="
-                    return confirm(
-                        '¿Estás seguro de que deseas eliminar esta venta?'
-                    );
-                "
+                onclick="abrirModalEliminar(event)"
             >
 
                 <span class="boton-icono">
@@ -1505,6 +1962,170 @@ body::after {
 </div>
 
 
+<!-- =========================================================
+     MODAL DE CONFIRMACIÓN
+     ========================================================= -->
+
+<div
+    class="modal"
+    id="modalEliminar"
+    onclick="cerrarModalExterior(event)"
+>
+
+
+    <div
+        class="modal-contenido"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tituloModal"
+    >
+
+
+        <!-- ICONO -->
+
+        <div class="modal-icono">
+            ♡
+        </div>
+
+
+        <!-- TÍTULO -->
+
+        <h2
+            class="modal-titulo"
+            id="tituloModal"
+        >
+            ¿Eliminar esta venta?
+        </h2>
+
+
+        <!-- TEXTO -->
+
+        <p class="modal-texto">
+
+            Esta acción eliminará la venta registrada.
+            Una vez eliminada, no podrás recuperar esta información.
+
+        </p>
+
+
+        <!-- NÚMERO DE VENTA -->
+
+        <div class="modal-venta">
+
+            Venta #<?= htmlspecialchars(
+                $fila['id']
+            ) ?>
+
+        </div>
+
+
+        <!-- BOTONES -->
+
+        <div class="modal-botones">
+
+
+            <button
+                type="button"
+                class="modal-boton modal-cancelar"
+                onclick="cerrarModal()"
+            >
+
+                Cancelar
+
+            </button>
+
+
+            <button
+                type="button"
+                class="modal-boton modal-confirmar"
+                onclick="confirmarEliminacion()"
+            >
+
+                Sí, eliminar
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT DEL MODAL
+     ========================================================= -->
+
+<script>
+
+const modal =
+    document.getElementById("modalEliminar");
+
+
+function abrirModalEliminar(event) {
+
+    event.preventDefault();
+
+    modal.classList.add("activo");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+function cerrarModal() {
+
+    modal.classList.remove("activo");
+
+    document.body.style.overflow = "";
+
+}
+
+
+function cerrarModalExterior(event) {
+
+    if (event.target === modal) {
+
+        cerrarModal();
+
+    }
+
+}
+
+
+function confirmarEliminacion() {
+
+    window.location.href =
+        "deleteventa.php?id=<?= (int)$fila['id'] ?>";
+
+}
+
+
+/* =========================================================
+   CERRAR CON ESC
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape" &&
+            modal.classList.contains("activo")
+        ) {
+
+            cerrarModal();
+
+        }
+
+    }
+);
+
+</script>
+
+
 </body>
 
 </html>
@@ -1523,7 +2144,13 @@ body::after {
 
 <meta charset="UTF-8">
 
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
 <title>DIVINE | Venta no encontrada</title>
+
 
 <style>
 
@@ -1541,7 +2168,10 @@ body {
 
     background: #fdf5f8;
 
-    font-family: Arial, sans-serif;
+    font-family:
+        "DM Sans",
+        Arial,
+        sans-serif;
 
     color: #74384d;
 
@@ -1572,6 +2202,10 @@ body {
 .error h2 {
 
     margin-bottom: 10px;
+
+    font-family:
+        "Playfair Display",
+        serif;
 
 }
 
@@ -1604,6 +2238,7 @@ body {
 </style>
 
 </head>
+
 
 <body>
 
