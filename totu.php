@@ -1618,7 +1618,7 @@ body.menu-abierto{
         <div class="caja-caracteristica">
 
             <img
-                src="./imagenes/producs.jpg"
+                src="./imagenes/uva.jpg"
                 alt=""
             >
 
