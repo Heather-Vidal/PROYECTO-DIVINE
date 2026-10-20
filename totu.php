@@ -1674,7 +1674,7 @@ body.menu-abierto{
         <div class="tarjeta">
 
             <img
-                src="./imagenes/castaño.jpg"
+                src="./imagenes/bellito.jpg"
                 alt=""
             >
 
