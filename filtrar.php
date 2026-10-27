@@ -2,9 +2,6 @@
 
 /* ======================================================
    DIVINE - ASISTENTE IA + PRODUCTOS REALES
-   REGLAS:
-
-   1. Pregunta general
 ====================================================== */
 
 ini_set("display_errors", 0);
