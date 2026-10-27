@@ -360,6 +360,7 @@ required:"Vendedor obligatorio"
 </script>
 
 </body>
+<?php include '../boton_flotante.php'; ?>
 </html>
 
 <?php
