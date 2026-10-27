@@ -77,20 +77,12 @@ $nombreVendedor = $conn->real_escape_string($_SESSION['nombre']);
    CONTAR VENTAS DEL VENDEDOR
    SOLO VENTAS COMPLETADAS
 ========================================================= */
-
-$sqlVentas = "
-
+ $sqlVentas = "
     SELECT COUNT(*) AS total_ventas
-
     FROM VENTAS v
-
     INNER JOIN PEDIDOS p
         ON v.PEDIDOS_ID = p.ID
-
     WHERE p.nombrevendedor = '$nombreVendedor'
-
-      AND LOWER(TRIM(p.estado)) = 'Aceptado'
-
 ";
 
 $resultadoVentas = $conn->query($sqlVentas);
@@ -98,11 +90,8 @@ $resultadoVentas = $conn->query($sqlVentas);
 $totalVentas = 0;
 
 if ($resultadoVentas) {
-
     $filaVentas = $resultadoVentas->fetch_assoc();
-
     $totalVentas = $filaVentas['total_ventas'] ?? 0;
-
 }
 
 /* =========================================================
@@ -167,25 +156,18 @@ if ($resultadoPendientes) {
    VENTAS COMPLETADAS DE HOY
 --------------------------------------------------------- */
 
-$sqlVentasHoy = "
+ $sqlVentasHoy = "
 
     SELECT
-
         COUNT(v.id) AS cantidad,
-
         COALESCE(SUM(v.costototal), 0) AS total
 
     FROM VENTAS v
 
     INNER JOIN PEDIDOS p
-
         ON v.PEDIDOS_ID = p.ID
 
     WHERE p.nombrevendedor = '$nombreVendedor'
-
-      AND LOWER(TRIM(v.estado)) = 'completado'
-
-      AND LOWER(TRIM(p.estado)) = 'completado'
 
       AND DATE(v.fecha) = CURDATE()
 
@@ -194,7 +176,6 @@ $sqlVentasHoy = "
 $resultadoVentasHoy = $conn->query($sqlVentasHoy);
 
 $ventasHoy = 0;
-
 $dineroHoy = 0;
 
 if ($resultadoVentasHoy) {
@@ -1921,25 +1902,10 @@ echo htmlspecialchars(
 
 <div class="live-icon">
 
-💰
+
 
 </div>
-
-<div class="live-content">
-
-<strong>
-
-Sin ventas completadas
-
-</strong>
-
-<small>
-
-No existen ventas completadas para este vendedor.
-
-</small>
-
-</div>
+ 
 
 </div>
 
@@ -2166,7 +2132,7 @@ Tienes
 
 pedidos registrados y
 
-<?php echo $totalVentas; ?>
+<?php echo $totalVentas ; ?>
 
 ventas completadas.
 

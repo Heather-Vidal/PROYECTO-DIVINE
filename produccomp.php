@@ -152,6 +152,47 @@ if ($resultadoImagenes) {
 }
 
 
+/* BOTÓN DETALLES DEL PRODUCTO */
+.btn-detalles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 85%;
+    min-height: 36px;
+    margin: 8px auto 0;
+    padding: 8px 14px;
+
+    background: #fffaf8;
+    color: #a96778;
+
+    border: 1px solid #ead7dc;
+    border-radius: 7px;
+
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.btn-detalles:hover {
+    background: #f7e9ec;
+    color: #8f5062;
+    border-color: #d9a6b2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(159, 89, 107, 0.10);
+}
+
+.btn-detalles:focus-visible {
+    outline: 2px solid #b86f80;
+    outline-offset: 3px;
+}
+
 /* ==================================================
    BODY
 ================================================== */
@@ -1554,8 +1595,24 @@ if ($stock <= 0) {
                     Agregar al carrito
 
                 </a>
-
+<a
+    href="./CRUD-producto/readunoprodu.php?codigo=<?php
+        echo urlencode($codigo);
+    ?>&id=<?php
+        echo urlencode($fila['codigo']);
+    ?>"
+    class="btn-detalles"
+>
+    Detalles producto
+</a>
 <?php
+
+
+
+
+
+
+
 
 }
 
