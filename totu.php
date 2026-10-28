@@ -1618,7 +1618,7 @@ body.menu-abierto{
         <div class="caja-caracteristica">
 
             <img
-                src="./imagenes/producs.jpg"
+                src="./imagenes/uva.jpg"
                 alt=""
             >
 
@@ -1674,7 +1674,7 @@ body.menu-abierto{
         <div class="tarjeta">
 
             <img
-                src="./imagenes/castaño.jpg"
+                src="./imagenes/bellito.jpg"
                 alt=""
             >
 
