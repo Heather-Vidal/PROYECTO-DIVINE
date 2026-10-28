@@ -49,7 +49,7 @@ if (!$resultado) {
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DIVINE | Skincare</title>
+<title>DIVINE |  Skin Hair</title>
 
 <style>
 
@@ -818,22 +818,22 @@ include 'submenuespecial.php';
         </div>
 
         <h1>
-            SKINCARE
+            SKINHAIR
         </h1>
 
         <h2>
-            Tu piel merece sentirse hermosa.
+            Tu cabello merece lo mejor.
         </h2>
 
         <p>
             Descubre nuestra selección de productos
             pensados para acompañar tu rutina de
-            cuidado facial y darle a tu piel el
+            cuidado capilar y darle a tu bello y hermoso cabello el
             cariño que merece.
         </p>
 
         <div class="hero-frase">
-            “Cuidar tu piel también es una forma
+            “Cuidar tu cabello también es una forma
             de quererte.”
         </div>
 
@@ -856,11 +856,11 @@ include 'submenuespecial.php';
 <section class="frase-seccion">
 
     <div class="frase-pequena">
-        DIVINE SKINCARE
+        DIVINE SKINHAIR
     </div>
 
     <h2>
-        Una piel cuidada,
+        Una cabellera cuidada,
         <span>
             una sensación hermosa.
         </span>
@@ -868,7 +868,7 @@ include 'submenuespecial.php';
 
     <p>
         Encuentra productos seleccionados para
-        hidratar, cuidar y consentir tu piel
+        hidratar, cuidar y consentir tu cabellito
         todos los días.
     </p>
 
@@ -893,11 +893,11 @@ include 'submenuespecial.php';
         <div class="encabezado-izquierda">
 
             <div class="encabezado-pequeno">
-                Cuidado facial
+                Cuidado capilar
             </div>
 
             <h2 class="titulo">
-                Colección Skincare
+                Colección SkinHair
             </h2>
 
         </div>
@@ -979,7 +979,7 @@ if ($resultado->num_rows > 0) {
             <!-- ETIQUETA -->
 
             <div class="etiqueta">
-                Skincare
+                Skin hair
             </div>
 
 
@@ -1035,7 +1035,7 @@ if ($imagenProducto !== null) {
 
 
                 <div class="categoria">
-                    Cuidado facial
+                    Cuidado Capilar
                 </div>
 
 
@@ -1177,7 +1177,7 @@ if ($stock <= 0) {
 
         <div class="sin-productos">
 
-            No hay productos de skincare
+            No hay productos de skinhair
             disponibles en este momento.
 
         </div>
@@ -1206,7 +1206,7 @@ if ($stock <= 0) {
         </h3>
 
         <p>
-            Porque cuidar tu piel no tiene que ser
+            Porque cuidar tu cabello no tiene que ser
             una obligación. Haz de tu rutina un
             pequeño momento para ti.
         </p>

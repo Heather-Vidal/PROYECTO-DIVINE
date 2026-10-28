@@ -1562,53 +1562,27 @@ if (
     <!-- =================================================
          BOTONES INFERIORES
     ================================================== -->
+<div class="volver">
 
-    <div class="volver">
+    <?php if ($rol == "administrador") { ?>
 
-
-        <!-- VOLVER -->
-
-        <a
-
-            href="javascript:history.back()"
-
-            class="btn-volver"
-
-        >
-
-            ← Volver atrás
-
+        <a href="../admin.php" class="btn-registrar">
+            ← Volver al perfil
         </a>
 
+        <a href="formularioprodu.php" class="btn-registrar">
+            ＋ Registrar producto
+        </a>
 
-        <!-- =================================================
-             REGISTRAR PRODUCTO
+    <?php } elseif ($rol == "vendedor") { ?>
 
-             SOLO ADMINISTRADOR
-        ================================================== -->
+        <a href="../perfilvendedor.php" class="btn-registrar">
+            ← Volver al perfil
+        </a>
 
-        <?php if ($rol == "administrador") { ?>
-
-            <a
-
-                href="formularioprodu.php"
-
-                class="btn-registrar"
-
-            >
-
-                ＋ Registrar producto
-
-            </a>
-
-        <?php } ?>
-
-
-    </div>
-
+    <?php } ?>
 
 </div>
-
 
 <!-- =====================================================
      CONFIRMAR ELIMINACIÓN
