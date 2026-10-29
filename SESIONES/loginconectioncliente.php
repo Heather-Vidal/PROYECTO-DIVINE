@@ -12,16 +12,34 @@ if(!$conexion){
 
 $nombre = $_POST['nombre'];
 $CI = $_POST['CI'];
+$nombre = isset($_POST['nombre']) && is_string($_POST['nombre'])
+    ? trim($_POST['nombre'])
+    : '';
 
-$sql = "SELECT * FROM CLIENTE
-        WHERE nombre='$nombre'
-        AND CI='$CI'
-       
-        
-        
-        ";
+$CI = isset($_POST['CI']) && is_string($_POST['CI'])
+    ? trim($_POST['CI'])
+    : '';
 
-$resultado = mysqli_query($conexion,$sql);
+if ($nombre === '' || $CI === '') {
+    header("Location: loginformcliente.php");
+    exit();
+}
+
+/* Consulta preparada: protege ambos campos contra inyección SQL */
+$sql = "SELECT * FROM CLIENTE WHERE nombre = ? AND CI = ?";
+
+$stmt = mysqli_prepare($conexion, $sql);
+
+if (!$stmt) {
+    http_response_code(500);
+    exit("Error al procesar el inicio de sesión.");
+}
+
+mysqli_stmt_bind_param($stmt, "ss", $nombre, $CI);
+
+mysqli_stmt_execute($stmt);
+
+$resultado = mysqli_stmt_get_result($stmt);
 
 if(mysqli_num_rows($resultado) > 0){
 

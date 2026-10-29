@@ -1,28 +1,23 @@
  
- <?php 
-session_start(); 
- 
-if (isset($_SESSION['rol'])) { 
- 
-    if ($_SESSION['rol'] == 'administrador') { 
-        header("Location: ../admin.php"); 
-        exit(); 
- 
-    } elseif ($_SESSION['rol'] == 'vendedor') { 
-        header("Location: ../perfilvendedor.php"); 
-        exit(); 
-    } 
-} 
+<?php
+session_start();
+
+if (isset($_SESSION['rol'])) {
+
+    if ($_SESSION['rol'] == 'administrador') {
+        header("Location: ../admin.php");
+        exit();
+
+    } elseif ($_SESSION['rol'] == 'vendedor') {
+        header("Location: ../perfilvendedor.php");
+        exit();
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
- 
- 
- 
- <!DOCTYPE html>
 
-<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,276 +31,247 @@ if (isset($_SESSION['rol'])) {
 
 <style>
 
-*{
-box-sizing:border-box;
+* {
+    box-sizing: border-box;
 }
 
-body{
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  background-image:url('../fondoo.png');
-    background-size:cover;
-    background-position:center;
-    background-repeat:no-repeat;
-
-    font-family:'Poppins',sans-serif;
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../fondoo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'Poppins', sans-serif;
 }
 
-form{
-
-background: rgba(223, 202, 213, 0.9);
-width:850px;
-
-max-width:95%;
-
-padding:40px;
-
-border-radius:20px;
-
-box-shadow:0 10px 25px rgba(0,0,0,.25);
-
-display:grid;
-
-grid-template-columns:280px 1fr;
-
-grid-template-areas:
-"imagen titulo"
-"imagen campos"
-"imagen boton"
-"extra extra";
-
-gap:25px;
-
+form {
+    background: rgba(223, 202, 213, 0.9);
+    width: 850px;
+    max-width: 95%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    grid-template-areas:
+        "imagen titulo"
+        "imagen campos"
+        "imagen boton"
+        "extra extra";
+    gap: 25px;
 }
 
-.imagen{
-
-grid-area:imagen;
-
-background:url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png")
-center/contain no-repeat;
-
-min-height:300px;
-
+.imagen {
+    grid-area: imagen;
+    background: url("https://cdn-icons-png.flaticon.com/512/3106/3106921.png")
+        center/contain no-repeat;
+    min-height: 300px;
 }
 
-h2{
-
-grid-area:titulo;
-
-margin:0;
-
-color:#8b4f6b;
-
-font-family:'Playfair Display',serif;
-
-font-size:32px;
-
-border-bottom:3px solid #f788d2;
-
-padding-bottom:10px;
-
-width:fit-content;
-
+h2 {
+    grid-area: titulo;
+    margin: 0;
+    color: #8b4f6b;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    border-bottom: 3px solid #f788d2;
+    padding-bottom: 10px;
+    width: fit-content;
 }
 
-.campos{
-
-grid-area:campos;
-
-display:flex;
-
-flex-direction:column;
-
-gap:15px;
-
+.campos {
+    grid-area: campos;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-label{
-
-color:#8b4f6b;
-
-font-weight:500;
-
+label {
+    color: #8b4f6b;
+    font-weight: 500;
 }
 
 input[type="text"],
-input[type="password"]{
-
-width:100%;
-
-padding:12px;
-
-border:1px solid #f5b5d0;
-
-border-radius:8px;
-
-font-size:15px;
-
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #f5b5d0;
+    border-radius: 8px;
+    font-size: 15px;
 }
 
-input:focus{
-
-outline:none;
-
-border-color:rgb(255, 192, 221);
-
-box-shadow:0 0 8px rgba(54,78,99,.3);
-
+input:focus {
+    outline: none;
+    border-color: rgb(255, 192, 221);
+    box-shadow: 0 0 8px rgba(54,78,99,.3);
 }
 
-input[type="submit"]{
-grid-area:boton;
-padding:14px;
-border:none;
-border-radius:10px;
-background:rgb(255, 97, 171);
-color:white;
-
-font-size:18px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-transition:.3s;
-
+input[type="submit"] {
+    grid-area: boton;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: rgb(255, 97, 171);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
 }
 
-input[type="submit"]:hover{
-
-background:rgb(184, 126, 153);
-
+input[type="submit"]:hover {
+    background: rgb(184, 126, 153);
 }
 
-.botones-extra{
-
-grid-area:extra;
-
-display:flex;
-
-justify-content:center;
-
-gap:15px;
-
-flex-wrap:wrap;
-
+.botones-extra {
+    grid-area: extra;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
-.btn-crear{
-background:rgb(182, 45, 109);
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-size:16px;
-transition:.3s;
+.btn-crear {
+    background: rgb(182, 45, 109);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: .3s;
 }
 
-.btn-crear:hover{
-background:rgb(231, 143, 184);
+.btn-crear:hover {
+    background: rgb(231, 143, 184);
 }
 
-label.error{
-color:red;
-font-size:13px;
-opacity:.7;
+label.error {
+    color: red;
+    font-size: 13px;
+    opacity: .7;
 }
 
-@media(max-width:768px){
+@media(max-width:768px) {
 
-form{
-grid-template-columns:1fr;
-grid-template-areas:
-"imagen"
-"titulo"
-"campos"
-"boton"
-"extra";
+    form {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "imagen"
+            "titulo"
+            "campos"
+            "boton"
+            "extra";
+    }
 
-}
+    .imagen {
+        min-height: 180px;
+    }
 
-.imagen{
-min-height:180px;
-}
-
-.botones-extra{
-flex-direction:column;
-
-}
+    .botones-extra {
+        flex-direction: column;
+    }
 
 }
 
 </style>
-
 </head>
 
 <body>
 
 <form id="Form" action="loginconectioncliente.php" method="POST">
 
-<div class="imagen"></div>
+    <div class="imagen"></div>
 
-<h2>INICIAR SESIÓN</h2>
+    <h2>INICIAR SESIÓN</h2>
 
-<div class="campos">
+    <div class="campos">
 
-<label>Usuario</label> <input type="text" name="nombre" id="usuario">
+        <label for="usuario">Usuario</label>
+        <input
+            type="text"
+            name="nombre"
+            id="usuario"
+            autocomplete="username"
+            required
+        >
 
-<label>CI</label> <input type="password" name="CI" id="password">
+        <label for="password">CI</label>
+        <input
+            type="password"
+            name="CI"
+            id="password"
+            autocomplete="current-password"
+            required
+        >
 
-</div>
+    </div>
 
-<input type="submit" value="Ingresar">
+    <input type="submit" value="Ingresar">
 
-<div class="botones-extra">
+    <div class="botones-extra">
 
- 
+        <button
+            type="button"
+            class="btn-crear"
+            onclick="window.location.href='../totu.php'">
 
-<button
-type="button"
-on
-class="btn-crear"
-onclick="window.location.href='../totu.php'">
+            ⬅ Volver a Inicio
 
-⬅ Volver a Inicio
-</button>
-<button
-type="button"
-on
-class="btn-crear"
-onclick="window.location.href='../CRUD-cliente/formcliente.php'">
-Crear cuenta
-</button>
-</div>
+        </button>
+
+        <button
+            type="button"
+            class="btn-crear"
+            onclick="window.location.href='../CRUD-cliente/formcliente.php'">
+
+            Crear cuenta
+
+        </button>
+
+    </div>
+
 </form>
+
 <script>
+
 $("#Form").validate({
-rules:{
-nombre:{
-required:true,
-minlength:4
-},
-CI:{
-required:true,
-minlength:6
-}
-},
-messages:{
-nombre:{
-required:"Ingrese su usuario",
-minlength:"Mínimo 4 caracteres"
-},
-CI:{
-required:"Ingrese su contraseña",
-minlength:"Mínimo 6 caracteres"
-}
-}
+
+    rules: {
+
+        nombre: {
+            required: true,
+            minlength: 4
+        },
+
+        CI: {
+            required: true,
+            minlength: 6
+        }
+
+    },
+
+    messages: {
+
+        nombre: {
+            required: "Ingrese su usuario",
+            minlength: "Mínimo 4 caracteres"
+        },
+
+        CI: {
+            required: "Ingrese su contraseña",
+            minlength: "Mínimo 6 caracteres"
+        }
+
+    }
+
 });
+
 </script>
+
 </body>
 </html>
